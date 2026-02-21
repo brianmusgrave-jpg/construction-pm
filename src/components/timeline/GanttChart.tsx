@@ -58,7 +58,7 @@ export function GanttChart({ projectId, phases: initialPhases, planApproval }: G
   const todayPct = (differenceInDays(today, tlStart) / totalDays) * 100;
 
   // Debounced save
-  const saveTimeout = useRef<NodeJS.Timeout>();
+const saveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleDatesChange = useCallback(
     (phaseId: string, updates: {
