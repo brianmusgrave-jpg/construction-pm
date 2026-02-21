@@ -85,10 +85,3 @@ export default function LoginPage() {
     </div>
   );
 }
-```
-
-Save it, then in your terminal:
-```
-git add src/app/\(auth\)/login/page.tsx
-git commit -m "Fix: wrap useSearchParams in Suspense for prerendering"
-git push
