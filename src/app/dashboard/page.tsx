@@ -431,7 +431,7 @@ export default async function DashboardPage() {
                   return (
                     <Link
                       key={project.id}
-                      href={`/dashboard/projects/${project.id}/timeline`}
+                      href={`/dashboard/projects/${project.id}`}
                       className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all"
                     >
                       <div className="flex items-start justify-between mb-2">
