@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/ui/Sidebar";
 import { getOrgSettings } from "@/actions/settings";
 import { getThemeCSS } from "@/lib/themes";
+import { getUnreadCount } from "@/actions/notifications";
 
 export default async function DashboardLayout({
   children,
@@ -12,7 +13,10 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const orgSettings = await getOrgSettings();
+  const [orgSettings, unreadCount] = await Promise.all([
+    getOrgSettings(),
+    getUnreadCount(),
+  ]);
   const themeVars = getThemeCSS(orgSettings.theme);
 
   return (
@@ -21,6 +25,7 @@ export default async function DashboardLayout({
         user={session.user}
         logoUrl={orgSettings.logoUrl}
         companyName={orgSettings.companyName}
+        unreadCount={unreadCount}
       />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>

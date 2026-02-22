@@ -6,6 +6,7 @@ import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { del } from "@vercel/blob";
 import { DocCategory, DocStatus } from "@prisma/client";
+import { notify, getProjectMemberIds } from "@/lib/notifications";
 
 export async function createDocument(data: {
   phaseId: string;
@@ -57,6 +58,17 @@ export async function createDocument(data: {
     },
   });
 
+  // Notify project members about new document
+  const memberIds = await getProjectMemberIds(phase.projectId);
+  notify({
+    type: "DOCUMENT_UPLOADED",
+    title: `New Document: ${data.name}`,
+    message: `"${data.name}" uploaded to ${phase.name}`,
+    recipientIds: memberIds,
+    actorId: session.user.id,
+    data: { projectId: phase.projectId, phaseId: phase.id, documentId: document.id },
+  });
+
   revalidatePath(`/dashboard/projects/${phase.projectId}`);
   return document;
 }
@@ -99,6 +111,19 @@ export async function updateDocumentStatus(
       },
     },
   });
+
+  // Notify the document uploader about status change
+  const statusLabel = status === "APPROVED" ? "approved" : status === "REJECTED" ? "rejected" : "updated";
+  if (document.uploadedById) {
+    notify({
+      type: "DOCUMENT_STATUS_CHANGED",
+      title: `Document ${statusLabel}: ${document.name}`,
+      message: `"${document.name}" in ${document.phase.name} was ${statusLabel}`,
+      recipientIds: [document.uploadedById],
+      actorId: session.user.id,
+      data: { projectId: document.phase.projectId, phaseId: document.phaseId, documentId },
+    });
+  }
 
   revalidatePath(`/dashboard/projects/${document.phase.projectId}`);
   return updated;

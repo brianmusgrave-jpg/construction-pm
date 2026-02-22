@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { canManagePhase } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { notify, getProjectMemberIds } from "@/lib/notifications";
 
 const CreatePhaseSchema = z.object({
   projectId: z.string().min(1),
@@ -112,6 +113,38 @@ export async function updatePhaseStatus(
     },
     include: { project: true },
   });
+
+  // Notify project members about status change
+  const statusLabels: Record<string, string> = {
+    IN_PROGRESS: "started",
+    REVIEW_REQUESTED: "ready for review",
+    UNDER_REVIEW: "under review",
+    COMPLETE: "completed",
+    PENDING: "set to pending",
+  };
+  const memberIds = await getProjectMemberIds(phase.projectId);
+  const notifType = status === "REVIEW_REQUESTED" ? "REVIEW_REQUESTED" as const : "PHASE_STATUS_CHANGED" as const;
+  notify({
+    type: notifType,
+    title: status === "REVIEW_REQUESTED"
+      ? `Review Requested: ${phase.name}`
+      : `Phase ${statusLabels[status] || "updated"}: ${phase.name}`,
+    message: `${phase.name} on ${phase.project.name} is now ${statusLabels[status] || status.toLowerCase()}`,
+    recipientIds: memberIds,
+    actorId: session.user.id,
+    data: { projectId: phase.projectId, phaseId: phase.id },
+  });
+
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "PHASE_STATUS_CHANGED",
+      message: `${phase.name} ${statusLabels[status] || "updated"}`,
+      projectId: phase.projectId,
+      userId: session.user.id,
+      data: { phaseId: phase.id, newStatus: status },
+    },
+  }).catch(() => {}); // fire-and-forget
 
   revalidatePath(`/dashboard/projects/${phase.projectId}`);
   return phase;

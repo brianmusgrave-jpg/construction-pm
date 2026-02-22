@@ -10,6 +10,7 @@ import {
   LogOut,
   FileText,
   Camera,
+  Bell,
 } from "lucide-react";
 
 interface ContractorNavProps {
@@ -21,15 +22,17 @@ interface ContractorNavProps {
   };
   logoUrl?: string | null;
   companyName?: string | null;
+  unreadCount?: number;
 }
 
 const navigation = [
   { name: "My Work", href: "/contractor", icon: LayoutDashboard },
   { name: "Documents", href: "/contractor/documents", icon: FileText },
   { name: "Photos", href: "/contractor/photos", icon: Camera },
+  { name: "Notifications", href: "/contractor/notifications", icon: Bell },
 ];
 
-export function ContractorNav({ user, logoUrl, companyName }: ContractorNavProps) {
+export function ContractorNav({ user, logoUrl, companyName, unreadCount = 0 }: ContractorNavProps) {
   const pathname = usePathname();
 
   return (
@@ -72,6 +75,11 @@ export function ContractorNav({ user, logoUrl, companyName }: ContractorNavProps
                 >
                   <item.icon className="w-4 h-4" />
                   <span className="hidden sm:inline">{item.name}</span>
+                  {item.name === "Notifications" && unreadCount > 0 && (
+                    <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-semibold rounded-full bg-[var(--color-primary)] text-white">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}

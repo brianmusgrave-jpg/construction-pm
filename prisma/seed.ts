@@ -422,6 +422,85 @@ async function main() {
     data: { theme: "blue" },
   });
 
+  // ── Sample Notifications ──
+  await db.notification.createMany({
+    data: [
+      {
+        type: "PHASE_STATUS_CHANGED",
+        title: "Phase started: Stamped Plans",
+        message: "Stamped Plans on MSH Construction Build is now started",
+        userId: admin.id,
+        read: true,
+        data: { projectId: project.id, phaseId: phases[1].id },
+        createdAt: new Date(now.getTime() - 5 * 86400000),
+      },
+      {
+        type: "MEMBER_INVITED",
+        title: "New team member joined",
+        message: "Mike Johnson joined MSH Construction Build as Contractor",
+        userId: admin.id,
+        read: true,
+        data: { projectId: project.id },
+        createdAt: new Date(now.getTime() - 2 * 86400000),
+      },
+      {
+        type: "DOCUMENT_UPLOADED",
+        title: "New Document: Foundation Survey",
+        message: '"Foundation Survey" uploaded to Site Work',
+        userId: admin.id,
+        read: false,
+        data: { projectId: project.id, phaseId: phases[3].id },
+        createdAt: new Date(now.getTime() - 1 * 86400000),
+      },
+      {
+        type: "REVIEW_REQUESTED",
+        title: "Review Requested: Stamped Plans",
+        message: "Mike Johnson wants you to review Stamped Plans on MSH Construction Build",
+        userId: admin.id,
+        read: false,
+        data: { projectId: project.id, phaseId: phases[1].id },
+        createdAt: new Date(now.getTime() - 4 * 3600000),
+      },
+      {
+        type: "CHECKLIST_COMPLETED",
+        title: "Checklist Complete: Site Work",
+        message: "All checklist items completed for Site Work on MSH Construction Build",
+        userId: admin.id,
+        read: false,
+        data: { projectId: project.id, phaseId: phases[3].id },
+        createdAt: new Date(now.getTime() - 2 * 3600000),
+      },
+      {
+        type: "DOCUMENT_STATUS_CHANGED",
+        title: "Document approved: Building Permit",
+        message: '"Building Permit" in Stamped Plans was approved',
+        userId: admin.id,
+        read: false,
+        data: { projectId: project.id, phaseId: phases[1].id },
+        createdAt: new Date(now.getTime() - 30 * 60000),
+      },
+      // Notifications for contractor user too
+      {
+        type: "PHASE_STATUS_CHANGED",
+        title: "Phase started: Stamped Plans",
+        message: "Stamped Plans on MSH Construction Build is now started",
+        userId: contractor.id,
+        read: false,
+        data: { projectId: project.id, phaseId: phases[1].id },
+        createdAt: new Date(now.getTime() - 5 * 86400000),
+      },
+      {
+        type: "REVIEW_REQUESTED",
+        title: "Review Requested: Stamped Plans",
+        message: "Brian Musgrave wants you to review Stamped Plans",
+        userId: contractor.id,
+        read: false,
+        data: { projectId: project.id, phaseId: phases[1].id },
+        createdAt: new Date(now.getTime() - 3 * 3600000),
+      },
+    ],
+  });
+
   console.log("Seed complete!");
   console.log(`  Created 2 users`);
   console.log(`  Created ${staffMembers.length} directory contacts`);
@@ -429,6 +508,7 @@ async function main() {
   console.log(`  Created 1 project with ${phases.length} phases`);
   console.log(`  Created 6 phase assignments`);
   console.log(`  Created 8 activity log entries`);
+  console.log(`  Created 8 sample notifications`);
 }
 
 main()

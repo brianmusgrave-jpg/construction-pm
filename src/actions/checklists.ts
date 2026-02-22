@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
+import { notify, getProjectMemberIds } from "@/lib/notifications";
 
 export async function applyChecklistTemplate(
   phaseId: string,
@@ -61,14 +62,40 @@ export async function toggleChecklistItem(itemId: string) {
   });
   if (!item) throw new Error("Item not found");
 
+  const nowCompleting = !item.completed;
+
   const updated = await db.checklistItem.update({
     where: { id: itemId },
     data: {
-      completed: !item.completed,
-      completedAt: !item.completed ? new Date() : null,
-      completedById: !item.completed ? session.user.id : null,
+      completed: nowCompleting,
+      completedAt: nowCompleting ? new Date() : null,
+      completedById: nowCompleting ? session.user.id : null,
     },
   });
+
+  // If completing an item, check if all items in checklist are now done
+  if (nowCompleting) {
+    const remaining = await db.checklistItem.count({
+      where: { checklistId: item.checklist.id, completed: false },
+    });
+    if (remaining === 0) {
+      const phase = await db.phase.findUnique({
+        where: { id: item.checklist.phaseId },
+        select: { id: true, name: true, projectId: true, project: { select: { name: true } } },
+      });
+      if (phase) {
+        const memberIds = await getProjectMemberIds(phase.projectId);
+        notify({
+          type: "CHECKLIST_COMPLETED",
+          title: `Checklist Complete: ${phase.name}`,
+          message: `All checklist items completed for ${phase.name} on ${phase.project.name}`,
+          recipientIds: memberIds,
+          actorId: session.user.id,
+          data: { projectId: phase.projectId, phaseId: phase.id },
+        });
+      }
+    }
+  }
 
   revalidatePath(
     `/dashboard/projects/${item.checklist.phase.projectId}`

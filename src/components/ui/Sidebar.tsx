@@ -23,6 +23,7 @@ interface SidebarProps {
   };
   logoUrl?: string | null;
   companyName?: string | null;
+  unreadCount?: number;
 }
 
 const navigation = [
@@ -33,7 +34,7 @@ const navigation = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export function Sidebar({ user, logoUrl, companyName }: SidebarProps) {
+export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -74,6 +75,11 @@ export function Sidebar({ user, logoUrl, companyName }: SidebarProps) {
             >
               <item.icon className="w-5 h-5" />
               {item.name}
+              {item.name === "Notifications" && unreadCount > 0 && (
+                <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full bg-[var(--color-primary)] text-white">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </Link>
           );
         })}
