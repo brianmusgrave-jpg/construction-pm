@@ -22,10 +22,16 @@ export async function getNotifications(page: number = 1, limit: number = 20) {
     }),
   ]);
 
+  // Cast Prisma JsonValue to Record<string, unknown> for client components
+  const mapped = notifications.map((n) => ({
+    ...n,
+    data: (n.data as Record<string, unknown> | null),
+  }));
+
   return {
-    notifications,
+    notifications: mapped,
     total,
-    hasMore: skip + notifications.length < total,
+    hasMore: skip + mapped.length < total,
   };
 }
 
