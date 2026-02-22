@@ -48,7 +48,7 @@ export default async function ContractorDocuments() {
     select: { project: { select: { id: true, name: true } } },
   });
 
-  const projectIds = memberships.map((m) => m.project.id);
+  const projectIds = memberships.map((m: { project: { id: string; name: string } }) => m.project.id);
 
   const documents = await db.document.findMany({
     where: {
@@ -82,7 +82,7 @@ export default async function ContractorDocuments() {
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-          {documents.map((doc) => {
+          {documents.map((doc: { id: string; name: string; mimeType: string; url: string; size: number; createdAt: Date; category: string; status: string; phase: { name: string; project: { name: string } } }) => {
             const Icon = getFileIcon(doc.mimeType);
             return (
               <div

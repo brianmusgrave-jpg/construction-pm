@@ -23,7 +23,7 @@ export async function getNotifications(page: number = 1, limit: number = 20) {
   ]);
 
   // Cast Prisma JsonValue to Record<string, unknown> for client components
-  const mapped = notifications.map((n) => ({
+  const mapped = notifications.map((n: typeof notifications[number]) => ({
     ...n,
     data: (n.data as Record<string, unknown> | null),
   }));

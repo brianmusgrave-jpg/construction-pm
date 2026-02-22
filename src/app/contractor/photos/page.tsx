@@ -12,7 +12,7 @@ export default async function ContractorPhotos() {
     select: { project: { select: { id: true, name: true } } },
   });
 
-  const projectIds = memberships.map((m) => m.project.id);
+  const projectIds = memberships.map((m: { project: { id: string; name: string } }) => m.project.id);
 
   const photos = await db.photo.findMany({
     where: {
@@ -46,7 +46,7 @@ export default async function ContractorPhotos() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {photos.map((photo) => (
+          {photos.map((photo: { id: string; url: string; caption: string | null; phase: { name: string; project: { name: string } } }) => (
             <a
               key={photo.id}
               href={photo.url}

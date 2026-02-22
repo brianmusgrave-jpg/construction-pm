@@ -42,12 +42,12 @@ export default async function TimelinePage({
 
   // Calculate summary stats
   const lastEstPhase = project.phases
-    .filter((p) => !p.isMilestone)
-    .sort((a, b) => b.estEnd.getTime() - a.estEnd.getTime())[0];
+    .filter((p: typeof project.phases[0]) => !p.isMilestone)
+    .sort((a: typeof project.phases[0], b: typeof project.phases[0]) => b.estEnd.getTime() - a.estEnd.getTime())[0];
 
   const lastWorstPhase = project.phases
-    .filter((p) => !p.isMilestone && p.worstEnd)
-    .sort((a, b) => (b.worstEnd?.getTime() || 0) - (a.worstEnd?.getTime() || 0))[0];
+    .filter((p: typeof project.phases[0]) => !p.isMilestone && p.worstEnd)
+    .sort((a: typeof project.phases[0], b: typeof project.phases[0]) => (b.worstEnd?.getTime() || 0) - (a.worstEnd?.getTime() || 0))[0];
 
   const planApproval = project.planApproval || project.createdAt;
 
@@ -132,7 +132,7 @@ export default async function TimelinePage({
                 Phases
               </p>
               <p className="text-lg font-semibold text-gray-900">
-                {project.phases.filter((p) => p.status === "COMPLETE").length}/
+                {project.phases.filter((p: typeof project.phases[0]) => p.status === "COMPLETE").length}/
                 {project.phases.length}
               </p>
               <p className="text-xs text-gray-500">completed</p>

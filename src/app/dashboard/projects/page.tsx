@@ -67,7 +67,7 @@ export default async function ProjectsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => {
+          {projects.map((project: typeof projects[0]) => {
             const completed = project.phases.filter(
               (p: { status: string }) => p.status === "COMPLETE"
             ).length;

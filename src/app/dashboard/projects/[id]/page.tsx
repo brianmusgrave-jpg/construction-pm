@@ -82,16 +82,16 @@ export default async function ProjectOverviewPage({
 
   // Compute stats
   const activePhases = phases.filter(
-    (p) =>
+    (p: typeof phases[0]) =>
       p.status === "IN_PROGRESS" ||
       p.status === "REVIEW_REQUESTED" ||
       p.status === "UNDER_REVIEW"
   );
-  const completedPhases = phases.filter((p) => p.status === "COMPLETE");
+  const completedPhases = phases.filter((p: typeof phases[0]) => p.status === "COMPLETE");
   const overduePhases = phases.filter(
-    (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+    (p: typeof phases[0]) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
   );
-  const reviewPhases = phases.filter((p) => p.status === "REVIEW_REQUESTED");
+  const reviewPhases = phases.filter((p: typeof phases[0]) => p.status === "REVIEW_REQUESTED");
   const overallProgress =
     phases.length > 0
       ? Math.round((completedPhases.length / phases.length) * 100)
@@ -99,9 +99,9 @@ export default async function ProjectOverviewPage({
 
   // Checklist stats
   const allChecklistItems = phases.flatMap(
-    (p) => p.checklist?.items || []
+    (p: typeof phases[0]) => p.checklist?.items || []
   );
-  const completedChecklistItems = allChecklistItems.filter((i) => i.completed);
+  const completedChecklistItems = allChecklistItems.filter((i: { completed: boolean }) => i.completed);
   const checklistPercent =
     allChecklistItems.length > 0
       ? Math.round(
@@ -110,8 +110,8 @@ export default async function ProjectOverviewPage({
       : 0;
 
   // Document and photo counts
-  const totalDocs = phases.reduce((sum, p) => sum + p._count.documents, 0);
-  const totalPhotos = phases.reduce((sum, p) => sum + p._count.photos, 0);
+  const totalDocs = phases.reduce((sum: number, p: typeof phases[0]) => sum + p._count.documents, 0);
+  const totalPhotos = phases.reduce((sum: number, p: typeof phases[0]) => sum + p._count.photos, 0);
 
   // Budget formatting
   const budgetStr = project.budget
@@ -126,7 +126,7 @@ export default async function ProjectOverviewPage({
   const invitations = canInvite
     ? await getProjectInvitations(id).catch(() => [])
     : [];
-  const budgetPhases = phases.map((p) => ({
+  const budgetPhases = phases.map((p: typeof phases[number]) => ({
     id: p.id,
     name: p.name,
     status: p.status,
@@ -275,11 +275,11 @@ export default async function ProjectOverviewPage({
             Phases
           </h2>
           <div className="space-y-2">
-            {phases.map((phase) => {
+            {phases.map((phase: typeof phases[0]) => {
               const isOverdue =
                 phase.status !== "COMPLETE" && new Date(phase.estEnd) < now;
               const checkItems = phase.checklist?.items || [];
-              const checkDone = checkItems.filter((i) => i.completed).length;
+              const checkDone = checkItems.filter((i: { completed: boolean }) => i.completed).length;
               const owner = phase.assignments.find(
                 (a: { isOwner: boolean }) => a.isOwner
               );
@@ -403,13 +403,7 @@ export default async function ProjectOverviewPage({
               ) : (
                 <div className="divide-y divide-gray-100">
                   {recentActivity.map(
-                    (entry: {
-                      id: string;
-                      action: string;
-                      message: string;
-                      createdAt: Date;
-                      user: { name: string | null; email: string };
-                    }) => (
+                    (entry: { id: string; action: string; message: string; createdAt: Date; user: { name: string | null; email: string } }) => (
                       <div key={entry.id} className="px-4 py-3">
                         <div className="flex items-start gap-2">
                           <div className="mt-0.5 shrink-0">

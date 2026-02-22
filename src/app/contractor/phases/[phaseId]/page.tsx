@@ -185,7 +185,7 @@ export default async function ContractorPhaseDetail({
             Team ({phase.assignments.length})
           </h2>
           <div className="space-y-2">
-            {phase.assignments.map((a) => (
+            {phase.assignments.map((a: { id: string; isOwner: boolean; staff: { name: string; role: string; company: string | null } }) => (
               <div key={a.id} className="flex items-center gap-3">
                 <div className="w-7 h-7 rounded-full bg-[var(--color-primary-bg)] text-[var(--color-primary)] flex items-center justify-center text-xs font-semibold shrink-0">
                   {a.staff.name[0]}

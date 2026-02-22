@@ -121,7 +121,7 @@ export default async function ContractorDashboard() {
     for (const phase of m.project.phases) {
       if (!phaseMap.has(phase.id)) {
         const assignment = phase.assignments.find(
-          (a) => a.staff.email === user?.email
+          (a: { isOwner: boolean; staff: { email: string } }) => a.staff.email === user?.email
         );
         phaseMap.set(phase.id, {
           id: phase.id,

@@ -154,27 +154,27 @@ export default async function DashboardPage() {
 
   // Compute widget data
   const activePhases = allPhases.filter(
-    (p) =>
+    (p: { status: string }) =>
       p.status === "IN_PROGRESS" ||
       p.status === "REVIEW_REQUESTED" ||
       p.status === "UNDER_REVIEW"
   );
 
   const reviewPhases = allPhases.filter(
-    (p) => p.status === "REVIEW_REQUESTED"
+    (p: { status: string }) => p.status === "REVIEW_REQUESTED"
   );
 
   const overduePhases = allPhases.filter(
-    (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+    (p: { status: string; estEnd: Date | string }) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
   );
 
   const completedPhases = allPhases.filter(
-    (p) => p.status === "COMPLETE"
+    (p: { status: string }) => p.status === "COMPLETE"
   );
 
   const upcomingPhases = allPhases
     .filter(
-      (p) =>
+      (p: { status: string; estStart: Date | string }) =>
         p.status === "PENDING" &&
         new Date(p.estStart) <= new Date(now.getTime() + 14 * 86400000)
     )
@@ -275,7 +275,7 @@ export default async function DashboardPage() {
           </div>
           <div className="divide-y divide-gray-100">
             {/* Review Requested phases */}
-            {reviewPhases.map((phase) => (
+            {reviewPhases.map((phase: typeof allPhases[0]) => (
               <Link
                 key={phase.id}
                 href={`/dashboard/projects/${phase.project.id}/phases/${phase.id}`}
@@ -307,7 +307,7 @@ export default async function DashboardPage() {
             ))}
 
             {/* Overdue phases */}
-            {overduePhases.slice(0, 4).map((phase) => {
+            {overduePhases.slice(0, 4).map((phase: typeof allPhases[0]) => {
               const daysOver = Math.ceil(
                 (now.getTime() - new Date(phase.estEnd).getTime()) / 86400000
               );
@@ -353,7 +353,7 @@ export default async function DashboardPage() {
                 Starting Soon (next 2 weeks)
               </h3>
               <div className="space-y-2">
-                {upcomingPhases.map((phase) => (
+                {upcomingPhases.map((phase: typeof allPhases[0]) => (
                   <Link
                     key={phase.id}
                     href={`/dashboard/projects/${phase.project.id}/phases/${phase.id}`}

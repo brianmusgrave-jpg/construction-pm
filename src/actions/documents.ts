@@ -5,8 +5,10 @@ import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { del } from "@vercel/blob";
-import { DocCategory, DocStatus } from "@prisma/client";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
+
+type DocCategory = "PERMIT" | "CONTRACT" | "INVOICE" | "BLUEPRINT" | "INSPECTION" | "OTHER";
+type DocStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
 
 export async function createDocument(data: {
   phaseId: string;

@@ -69,12 +69,13 @@ export async function getProjectBudgetSummary(projectId: string) {
 
   if (!project) throw new Error("Project not found");
 
-  const totalEstimated = project.phases.reduce(
-    (sum, p) => sum + (p.estimatedCost ? Number(p.estimatedCost) : 0),
+  const phases = (project as unknown as { phases: { id: string; name: string; status: string; estimatedCost: unknown; actualCost: unknown }[] }).phases;
+  const totalEstimated = phases.reduce(
+    (sum: number, p: { estimatedCost: unknown }) => sum + (p.estimatedCost ? Number(p.estimatedCost) : 0),
     0
   );
-  const totalActual = project.phases.reduce(
-    (sum, p) => sum + (p.actualCost ? Number(p.actualCost) : 0),
+  const totalActual = phases.reduce(
+    (sum: number, p: { actualCost: unknown }) => sum + (p.actualCost ? Number(p.actualCost) : 0),
     0
   );
   const projectBudget = project.budget ? Number(project.budget) : null;
@@ -84,7 +85,7 @@ export async function getProjectBudgetSummary(projectId: string) {
     totalEstimated,
     totalActual,
     variance: totalEstimated > 0 ? totalActual - totalEstimated : 0,
-    phases: project.phases.map((p) => ({
+    phases: phases.map((p: typeof phases[number]) => ({
       id: p.id,
       name: p.name,
       status: p.status,

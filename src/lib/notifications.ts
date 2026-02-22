@@ -77,7 +77,7 @@ async function sendEmailNotifications(
     select: { email: true },
   });
 
-  const emails = users.map((u) => u.email).filter(Boolean);
+  const emails = users.map((u: typeof users[number]) => u.email).filter(Boolean);
   if (emails.length === 0) return;
 
   const projectId = (data?.projectId as string) || "";
@@ -161,5 +161,5 @@ export async function getProjectMemberIds(
     where: { projectId },
     select: { userId: true },
   });
-  return members.map((m) => m.userId);
+  return members.map((m: typeof members[number]) => m.userId);
 }

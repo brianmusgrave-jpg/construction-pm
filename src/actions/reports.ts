@@ -32,19 +32,19 @@ export async function getProjectHealthReport() {
 
   const now = new Date();
 
-  return projects.map((project) => {
+  return projects.map((project: typeof projects[number]) => {
     const phases = project.phases;
-    const completed = phases.filter((p) => p.status === "COMPLETE").length;
+    const completed = phases.filter((p: typeof phases[number]) => p.status === "COMPLETE").length;
     const active = phases.filter(
-      (p) =>
+      (p: typeof phases[number]) =>
         p.status === "IN_PROGRESS" ||
         p.status === "REVIEW_REQUESTED" ||
         p.status === "UNDER_REVIEW"
     ).length;
     const overdue = phases.filter(
-      (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+      (p: typeof phases[number]) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
     ).length;
-    const pending = phases.filter((p) => p.status === "PENDING").length;
+    const pending = phases.filter((p: typeof phases[number]) => p.status === "PENDING").length;
     const total = phases.length;
     const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
@@ -83,11 +83,11 @@ export async function getPhaseStatusBreakdown() {
     UNDER_REVIEW: 0,
     COMPLETE: 0,
   };
-  phases.forEach((p) => {
+  phases.forEach((p: typeof phases[number]) => {
     counts[p.status] = (counts[p.status] || 0) + 1;
   });
 
-  return Object.entries(counts).map(([status, count]) => ({
+  return Object.entries(counts).map(([status, count]: [string, number]) => ({
     status,
     count,
   }));
@@ -119,8 +119,8 @@ export async function getDocumentStats() {
 
   return {
     total,
-    byStatus: byStatus.map((s) => ({ status: s.status, count: s._count })),
-    byCategory: byCategory.map((c) => ({
+    byStatus: byStatus.map((s: typeof byStatus[number]) => ({ status: s.status, count: s._count })),
+    byCategory: byCategory.map((c: typeof byCategory[number]) => ({
       category: c.category,
       count: c._count,
     })),
@@ -145,25 +145,25 @@ export async function getActivityTimeline(days: number = 30) {
 
   // Group by day
   const dailyCounts: Record<string, number> = {};
-  activity.forEach((a) => {
+  activity.forEach((a: typeof activity[number]) => {
     const day = a.createdAt.toISOString().split("T")[0];
     dailyCounts[day] = (dailyCounts[day] || 0) + 1;
   });
 
   // Also group by action type
   const actionCounts: Record<string, number> = {};
-  activity.forEach((a) => {
+  activity.forEach((a: typeof activity[number]) => {
     actionCounts[a.action] = (actionCounts[a.action] || 0) + 1;
   });
 
   return {
-    daily: Object.entries(dailyCounts).map(([date, count]) => ({
+    daily: Object.entries(dailyCounts).map(([date, count]: [string, number]) => ({
       date,
       count,
     })),
     byAction: Object.entries(actionCounts)
-      .map(([action, count]) => ({ action, count }))
-      .sort((a, b) => b.count - a.count),
+      .map(([action, count]: [string, number]) => ({ action, count }))
+      .sort((a: { action: string; count: number }, b: { action: string; count: number }) => b.count - a.count),
     totalActions: activity.length,
   };
 }
@@ -196,18 +196,18 @@ export async function getTeamPerformance() {
   const now = new Date();
 
   return staff
-    .filter((s) => s.assignments.length > 0)
-    .map((s) => {
-      const phases = s.assignments.map((a) => a.phase);
-      const completed = phases.filter((p) => p.status === "COMPLETE").length;
+    .filter((s: typeof staff[number]) => s.assignments.length > 0)
+    .map((s: typeof staff[number]) => {
+      const phases = s.assignments.map((a: typeof s.assignments[number]) => a.phase);
+      const completed = phases.filter((p: typeof phases[number]) => p.status === "COMPLETE").length;
       const active = phases.filter(
-        (p) =>
+        (p: typeof phases[number]) =>
           p.status === "IN_PROGRESS" ||
           p.status === "REVIEW_REQUESTED" ||
           p.status === "UNDER_REVIEW"
       ).length;
       const overdue = phases.filter(
-        (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+        (p: typeof phases[number]) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
       ).length;
 
       return {
@@ -220,7 +220,7 @@ export async function getTeamPerformance() {
         completed,
         active,
         overdue,
-        isOwnerCount: s.assignments.filter((a) => a.isOwner).length,
+        isOwnerCount: s.assignments.filter((a: typeof s.assignments[number]) => a.isOwner).length,
       };
     });
 }
@@ -248,7 +248,7 @@ export async function getOverdueReport() {
     orderBy: { estEnd: "asc" },
   });
 
-  return overduePhases.map((p) => {
+  return overduePhases.map((p: typeof overduePhases[number]) => {
     const daysOver = Math.ceil(
       (now.getTime() - new Date(p.estEnd).getTime()) / 86400000
     );
@@ -329,8 +329,8 @@ export async function getContractorPerformance() {
 
   // Merge unique phases
   const phaseMap = new Map<string, (typeof memberPhases)[number]>();
-  memberPhases.forEach((p) => phaseMap.set(p.id, p));
-  staffPhases.forEach((a) => {
+  memberPhases.forEach((p: typeof memberPhases[number]) => phaseMap.set(p.id, p));
+  staffPhases.forEach((a: typeof staffPhases[number]) => {
     if (!phaseMap.has(a.phase.id)) {
       phaseMap.set(a.phase.id, a.phase);
     }
@@ -338,33 +338,33 @@ export async function getContractorPerformance() {
 
   const allPhases = Array.from(phaseMap.values());
 
-  const completed = allPhases.filter((p) => p.status === "COMPLETE").length;
+  const completed = allPhases.filter((p: typeof allPhases[number]) => p.status === "COMPLETE").length;
   const active = allPhases.filter(
-    (p) =>
+    (p: typeof allPhases[number]) =>
       p.status === "IN_PROGRESS" ||
       p.status === "REVIEW_REQUESTED" ||
       p.status === "UNDER_REVIEW"
   ).length;
   const overdue = allPhases.filter(
-    (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+    (p: typeof allPhases[number]) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
   ).length;
 
-  const totalDocs = allPhases.reduce((sum, p) => sum + p._count.documents, 0);
-  const totalPhotos = allPhases.reduce((sum, p) => sum + p._count.photos, 0);
+  const totalDocs = allPhases.reduce((sum: number, p: typeof allPhases[number]) => sum + p._count.documents, 0);
+  const totalPhotos = allPhases.reduce((sum: number, p: typeof allPhases[number]) => sum + p._count.photos, 0);
 
   // Checklist stats across all assigned phases
   let checklistTotal = 0;
   let checklistDone = 0;
-  allPhases.forEach((p) => {
+  allPhases.forEach((p: typeof allPhases[number]) => {
     if (p.checklist) {
       checklistTotal += p.checklist.items.length;
-      checklistDone += p.checklist.items.filter((i) => i.completed).length;
+      checklistDone += p.checklist.items.filter((i: typeof p.checklist.items[number]) => i.completed).length;
     }
   });
 
   // On-time completion rate
   const completedOnTime = allPhases.filter(
-    (p) =>
+    (p: typeof allPhases[number]) =>
       p.status === "COMPLETE" &&
       p.actualEnd &&
       new Date(p.actualEnd) <= new Date(p.estEnd)
@@ -386,7 +386,7 @@ export async function getContractorPerformance() {
       documentsUploaded: totalDocs,
       photosUploaded: totalPhotos,
     },
-    phases: allPhases.map((p) => ({
+    phases: allPhases.map((p: typeof allPhases[number]) => ({
       id: p.id,
       name: p.name,
       status: p.status,
@@ -402,7 +402,7 @@ export async function getContractorPerformance() {
       docs: p._count.documents,
       photos: p._count.photos,
       checklistTotal: p.checklist?.items.length || 0,
-      checklistDone: p.checklist?.items.filter((i) => i.completed).length || 0,
+      checklistDone: p.checklist?.items.filter((i: typeof p.checklist.items[number]) => i.completed).length || 0,
     })),
   };
 }

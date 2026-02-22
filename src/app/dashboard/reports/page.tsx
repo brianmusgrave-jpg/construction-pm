@@ -89,7 +89,7 @@ export default async function ReportsPage() {
           )}
           <ExportButton
             data={{
-              projectHealth: projectHealth.map((p) => ({
+              projectHealth: projectHealth.map((p: typeof projectHealth[number]) => ({
                 project: p.name,
                 status: p.status,
                 phases: p.phases.total,
@@ -104,17 +104,17 @@ export default async function ReportsPage() {
               documentStats: {
                 total: documentStats.total,
                 byStatus: Object.fromEntries(
-                  documentStats.byStatus.map((s) => [s.status, s.count])
+                  documentStats.byStatus.map((s: typeof documentStats.byStatus[number]) => [s.status, s.count])
                 ),
               },
-              overdueReport: overdueReport.map((o) => ({
+              overdueReport: overdueReport.map((o: typeof overdueReport[number]) => ({
                 phaseName: o.name,
                 projectName: o.projectName,
                 daysOverdue: o.daysOverdue,
                 owner: o.owner,
               })),
               teamPerformance: canManage
-                ? (teamPerformance as Awaited<ReturnType<typeof getTeamPerformance>>).map((t) => ({
+                ? (teamPerformance as Awaited<ReturnType<typeof getTeamPerformance>>).map((t: typeof teamPerformance[number]) => ({
                     name: t.name,
                     assigned: t.totalAssignments,
                     completed: t.completed,
@@ -141,7 +141,7 @@ export default async function ReportsPage() {
           value={projectHealth.length}
           icon={<HardHat className="w-5 h-5" />}
           color="blue"
-          detail={`${projectHealth.filter((p) => p.health === "on-track").length} on track`}
+          detail={`${projectHealth.filter((p: typeof projectHealth[number]) => p.health === "on-track").length} on track`}
         />
         <KpiCard
           label="Overdue"
@@ -150,7 +150,7 @@ export default async function ReportsPage() {
           color={overdueReport.length > 0 ? "red" : "green"}
           detail={
             overdueReport.length > 0
-              ? `Avg ${Math.round(overdueReport.reduce((s, o) => s + o.daysOverdue, 0) / overdueReport.length)}d behind`
+              ? `Avg ${Math.round(overdueReport.reduce((s: number, o: typeof overdueReport[number]) => s + o.daysOverdue, 0) / overdueReport.length)}d behind`
               : "All on schedule"
           }
         />
@@ -233,7 +233,7 @@ export default async function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {projectHealth.map((project) => (
+                  {projectHealth.map((project: typeof projectHealth[number]) => (
                     <tr key={project.id} className="hover:bg-gray-50">
                       <td className="px-5 py-3">
                         <Link
@@ -296,7 +296,7 @@ export default async function ReportsPage() {
                 </h2>
               </div>
               <div className="divide-y divide-gray-100">
-                {overdueReport.map((phase) => (
+                {overdueReport.map((phase: typeof overdueReport[number]) => (
                   <Link
                     key={phase.id}
                     href={`/dashboard/projects/${phase.projectId}/phases/${phase.id}`}
@@ -354,7 +354,7 @@ export default async function ReportsPage() {
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
                 By Status
               </p>
-              {documentStats.byStatus.map((s) => (
+              {documentStats.byStatus.map((s: typeof documentStats.byStatus[number]) => (
                 <div key={s.status} className="flex items-center justify-between">
                   <span
                     className={cn(
@@ -375,7 +375,7 @@ export default async function ReportsPage() {
                 <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">
                   By Category
                 </p>
-                {documentStats.byCategory.map((c) => (
+                {documentStats.byCategory.map((c: typeof documentStats.byCategory[number]) => (
                   <div
                     key={c.category}
                     className="flex items-center justify-between"
@@ -490,7 +490,7 @@ export default async function ReportsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {(teamPerformance as Awaited<ReturnType<typeof getTeamPerformance>>).map((member) => (
+                {(teamPerformance as Awaited<ReturnType<typeof getTeamPerformance>>).map((member: Awaited<ReturnType<typeof getTeamPerformance>>[number]) => (
                   <tr key={member.id} className="hover:bg-gray-50">
                     <td className="px-5 py-3">
                       <p className="font-medium text-gray-900">{member.name}</p>

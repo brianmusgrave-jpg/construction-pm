@@ -4,7 +4,44 @@ import { useRef, useCallback } from "react";
 import Link from "next/link";
 import { differenceInDays, addDays, format } from "date-fns";
 import { cn, statusColor, statusLabel, fmtShort } from "@/lib/utils";
-import type { Phase, PhaseAssignment, Staff } from "@prisma/client";
+
+interface Phase {
+  id: string;
+  projectId: string;
+  name: string;
+  detail?: string | null;
+  status: string;
+  isMilestone: boolean;
+  estStart: Date;
+  estEnd: Date;
+  worstStart?: Date | null;
+  worstEnd?: Date | null;
+  sortOrder: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Staff {
+  id: string;
+  name: string;
+  company?: string | null;
+  role?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  notes?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface PhaseAssignment {
+  id: string;
+  phaseId: string;
+  staffId: string;
+  isOwner: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  staff: Pick<Staff, "id" | "name" | "company">;
+}
 
 type PhaseWithAssignments = Phase & {
   assignments: (PhaseAssignment & {
