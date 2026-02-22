@@ -145,7 +145,7 @@ export default async function DashboardPage() {
         {showCreate && (
           <Link
             href="/dashboard/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
           >
             <Plus className="w-4 h-4" />
             New Project
@@ -273,7 +273,7 @@ export default async function DashboardPage() {
                 {showCreate && (
                   <Link
                     href="/dashboard/projects/new"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)]"
                   >
                     <Plus className="w-4 h-4" />
                     New Project
@@ -308,7 +308,7 @@ export default async function DashboardPage() {
                     <Link
                       key={project.id}
                       href={`/dashboard/projects/${project.id}/timeline`}
-                      className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:shadow-md transition-all"
+                      className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all"
                     >
                       <div className="flex items-start justify-between mb-2">
                         <div>
@@ -333,9 +333,9 @@ export default async function DashboardPage() {
 
                       {/* Current / Next Phase */}
                       {currentPhase && (
-                        <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded-lg">
-                          <HardHat className="w-4 h-4 text-blue-600 shrink-0" />
-                          <span className="text-sm text-blue-900 font-medium truncate">
+                        <div className="flex items-center gap-2 mb-3 p-2 bg-[var(--color-primary-bg)] rounded-lg">
+                          <HardHat className="w-4 h-4 text-[var(--color-primary)] shrink-0" />
+                          <span className="text-sm text-[var(--color-primary-dark)] font-medium truncate">
                             {currentPhase.name}
                           </span>
                           <span
@@ -436,7 +436,7 @@ export default async function DashboardPage() {
           <div className="mt-4 space-y-2">
             <Link
               href="/dashboard/directory"
-              className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-blue-300 transition-colors"
+              className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-[var(--color-primary-light)] transition-colors"
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Users className="w-4 h-4 text-gray-400" />
@@ -446,7 +446,7 @@ export default async function DashboardPage() {
             </Link>
             <Link
               href="/dashboard/notifications"
-              className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-blue-300 transition-colors"
+              className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-[var(--color-primary-light)] transition-colors"
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
                 <Activity className="w-4 h-4 text-gray-400" />
@@ -477,14 +477,14 @@ function WidgetCard({
   detail: string;
 }) {
   const colorMap = {
-    blue: "bg-blue-50 text-blue-600 border-blue-100",
+    blue: "bg-[var(--color-primary-bg)] text-[var(--color-primary)] border-[var(--color-primary-bg)]",
     red: "bg-red-50 text-red-600 border-red-100",
     green: "bg-green-50 text-green-600 border-green-100",
     purple: "bg-purple-50 text-purple-600 border-purple-100",
   };
 
   const iconBg = {
-    blue: "bg-blue-100 text-blue-600",
+    blue: "bg-[var(--color-primary-bg)] text-[var(--color-primary)]",
     red: "bg-red-100 text-red-600",
     green: "bg-green-100 text-green-600",
     purple: "bg-purple-100 text-purple-600",
@@ -520,7 +520,7 @@ function getActivityIcon(action: string): React.ReactNode {
   const iconClass = "w-4 h-4";
   switch (action) {
     case "PHASE_STATUS_CHANGED":
-      return <HardHat className={cn(iconClass, "text-blue-500")} />;
+      return <HardHat className={cn(iconClass, "text-[var(--color-primary)]")} />;
     case "STAFF_ASSIGNED":
     case "STAFF_UNASSIGNED":
       return <Users className={cn(iconClass, "text-purple-500")} />;

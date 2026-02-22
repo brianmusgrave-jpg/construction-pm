@@ -98,7 +98,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
         {canManage && (
           <button
             onClick={() => setModalState({ mode: "add" })}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
           >
             <Plus className="w-4 h-4" />
             Add Contact
@@ -119,7 +119,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
           {canManage && (
             <button
               onClick={() => setModalState({ mode: "add" })}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add Your First Contact
@@ -149,7 +149,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
                   {groupContacts.map((person) => (
                     <div
                       key={person.id}
-                      className="bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:shadow-md transition-all group relative"
+                      className="bg-white rounded-xl border border-gray-200 p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group relative"
                     >
                       {/* Edit button */}
                       {canManage && (
@@ -157,7 +157,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
                           onClick={() =>
                             setModalState({ mode: "edit", contact: person })
                           }
-                          className="absolute top-3 right-3 p-1.5 text-gray-300 hover:text-blue-600 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-3 right-3 p-1.5 text-gray-300 hover:text-[var(--color-primary)] rounded opacity-0 group-hover:opacity-100 transition-opacity"
                           title="Edit contact"
                         >
                           <Pencil className="w-3.5 h-3.5" />
@@ -165,7 +165,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
                       )}
 
                       <div className="flex items-start gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-medium text-sm shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] font-medium text-sm shrink-0">
                           {person.name[0]}
                         </div>
                         <div className="min-w-0 flex-1">

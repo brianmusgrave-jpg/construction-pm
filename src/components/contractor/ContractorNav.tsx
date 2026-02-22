@@ -19,6 +19,8 @@ interface ContractorNavProps {
     image?: string | null;
     role: string;
   };
+  logoUrl?: string | null;
+  companyName?: string | null;
 }
 
 const navigation = [
@@ -27,7 +29,7 @@ const navigation = [
   { name: "Photos", href: "/contractor/photos", icon: Camera },
 ];
 
-export function ContractorNav({ user }: ContractorNavProps) {
+export function ContractorNav({ user, logoUrl, companyName }: ContractorNavProps) {
   const pathname = usePathname();
 
   return (
@@ -39,9 +41,13 @@ export function ContractorNav({ user }: ContractorNavProps) {
             href="/contractor"
             className="flex items-center gap-2 shrink-0"
           >
-            <HardHat className="w-6 h-6 text-orange-500" />
+            {logoUrl ? (
+              <img src={logoUrl} alt={companyName || "Logo"} className="w-6 h-6 rounded object-contain" />
+            ) : (
+              <HardHat className="w-6 h-6 text-[var(--color-primary)]" />
+            )}
             <span className="text-base font-bold text-gray-900 hidden sm:block">
-              Contractor Portal
+              {companyName || "Contractor Portal"}
             </span>
           </Link>
 
@@ -60,7 +66,7 @@ export function ContractorNav({ user }: ContractorNavProps) {
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
                     isActive
-                      ? "bg-orange-50 text-orange-700"
+                      ? "bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)]"
                       : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   )}
                 >
@@ -77,9 +83,9 @@ export function ContractorNav({ user }: ContractorNavProps) {
               <p className="text-sm font-medium text-gray-900 leading-tight">
                 {user.name || user.email}
               </p>
-              <p className="text-xs text-orange-600">Contractor</p>
+              <p className="text-xs text-[var(--color-primary)]">Contractor</p>
             </div>
-            <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 text-sm font-medium">
+            <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] text-sm font-medium">
               {user.name?.[0] || user.email?.[0] || "?"}
             </div>
             <button

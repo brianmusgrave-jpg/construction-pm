@@ -245,7 +245,7 @@ export function DocumentSection({
         {canUpload && !showUploadForm && (
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
           >
             <Upload className="w-4 h-4" />
             Upload
@@ -274,15 +274,15 @@ export function DocumentSection({
 
       {/* Upload form (shown after files selected) */}
       {showUploadForm && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mb-4 p-4 bg-[var(--color-primary-bg)] rounded-lg border border-[var(--color-primary-light)]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-blue-900">
+            <span className="text-sm font-medium text-[var(--color-primary-dark)]">
               {pendingFiles.length} file{pendingFiles.length > 1 ? "s" : ""}{" "}
               selected
             </span>
             <button
               onClick={cancelUpload}
-              className="text-blue-400 hover:text-blue-600"
+              className="text-[var(--color-primary-light)] hover:text-[var(--color-primary)]"
               disabled={isUploading}
             >
               <X className="w-4 h-4" />
@@ -294,11 +294,11 @@ export function DocumentSection({
             {pendingFiles.map((file, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 text-xs text-blue-800"
+                className="flex items-center gap-2 text-xs text-[var(--color-primary-dark)]"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span className="truncate">{file.name}</span>
-                <span className="text-blue-500 shrink-0">
+                <span className="text-[var(--color-primary-light)] shrink-0">
                   {formatFileSize(file.size)}
                 </span>
               </div>
@@ -307,7 +307,7 @@ export function DocumentSection({
 
           {/* Category selector + action buttons */}
           <div className="flex items-center gap-3">
-            <label className="text-xs font-medium text-blue-800">
+            <label className="text-xs font-medium text-[var(--color-primary-dark)]">
               Category:
             </label>
             <select
@@ -315,7 +315,7 @@ export function DocumentSection({
               onChange={(e) =>
                 setSelectedCategory(e.target.value as DocCategory)
               }
-              className="text-sm border border-blue-300 rounded-md px-2 py-1 bg-white text-blue-900 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="text-sm border border-[var(--color-primary-light)] rounded-md px-2 py-1 bg-white text-[var(--color-primary-dark)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
               disabled={isUploading}
             >
               {CATEGORY_OPTIONS.map((opt) => (
@@ -330,14 +330,14 @@ export function DocumentSection({
             <button
               onClick={cancelUpload}
               disabled={isUploading}
-              className="px-3 py-1.5 text-sm text-blue-700 hover:bg-blue-100 rounded-md"
+              className="px-3 py-1.5 text-sm text-[var(--color-primary-dark)] hover:bg-[var(--color-primary-bg)] rounded-md"
             >
               Cancel
             </button>
             <button
               onClick={handleUpload}
               disabled={isUploading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50 inline-flex items-center gap-1.5"
+              className="px-4 py-1.5 text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-md disabled:opacity-50 inline-flex items-center gap-1.5"
             >
               {isUploading ? (
                 <>
@@ -363,13 +363,13 @@ export function DocumentSection({
           onDrop={handleDrop}
           className={`text-center py-8 border-2 border-dashed rounded-lg transition-colors ${
             isDragging
-              ? "border-blue-400 bg-blue-50"
+              ? "border-[var(--color-primary-light)] bg-[var(--color-primary-bg)]"
               : "border-gray-200 hover:border-gray-300"
           }`}
         >
           <Upload
             className={`w-8 h-8 mx-auto mb-2 ${
-              isDragging ? "text-blue-400" : "text-gray-300"
+              isDragging ? "text-[var(--color-primary-light)]" : "text-gray-300"
             }`}
           />
           <p className="text-sm text-gray-500">
@@ -390,7 +390,7 @@ export function DocumentSection({
           onDrop={handleDrop}
         >
           {isDragging && (
-            <div className="p-4 border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg text-center text-sm text-blue-600">
+            <div className="p-4 border-2 border-dashed border-[var(--color-primary-light)] bg-[var(--color-primary-bg)] rounded-lg text-center text-sm text-[var(--color-primary)]">
               Drop files to upload
             </div>
           )}
@@ -488,7 +488,7 @@ export function DocumentSection({
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-1 text-gray-400 hover:text-blue-600"
+                    className="p-1 text-gray-400 hover:text-[var(--color-primary)]"
                     title="Open"
                   >
                     <ExternalLink className="w-4 h-4" />

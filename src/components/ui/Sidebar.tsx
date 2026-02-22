@@ -21,6 +21,8 @@ interface SidebarProps {
     image?: string | null;
     role: string;
   };
+  logoUrl?: string | null;
+  companyName?: string | null;
 }
 
 const navigation = [
@@ -31,16 +33,24 @@ const navigation = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export function Sidebar({ user }: SidebarProps) {
+export function Sidebar({ user, logoUrl, companyName }: SidebarProps) {
   const pathname = usePathname();
 
   return (
     <div className="flex flex-col w-64 bg-white border-r border-gray-200">
       {/* Logo */}
       <div className="flex items-center gap-2 px-4 py-5 border-b border-gray-200">
-        <HardHat className="w-7 h-7 text-blue-600" />
-        <span className="text-lg font-bold text-gray-900">
-          Construction PM
+        {logoUrl ? (
+          <img
+            src={logoUrl}
+            alt={companyName || "Logo"}
+            className="w-7 h-7 rounded object-contain"
+          />
+        ) : (
+          <HardHat className="w-7 h-7 text-[var(--color-primary)]" />
+        )}
+        <span className="text-lg font-bold text-gray-900 truncate">
+          {companyName || "Construction PM"}
         </span>
       </div>
 
@@ -58,7 +68,7 @@ export function Sidebar({ user }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-blue-50 text-blue-700"
+                  ? "bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)]"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
               )}
             >
@@ -72,7 +82,7 @@ export function Sidebar({ user }: SidebarProps) {
       {/* User */}
       <div className="border-t border-gray-200 p-4">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-medium">
+          <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] text-sm font-medium">
             {user.name?.[0] || user.email?.[0] || "?"}
           </div>
           <div className="flex-1 min-w-0">

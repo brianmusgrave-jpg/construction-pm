@@ -150,7 +150,7 @@ export function ContactFormModal({
                   className={cn(
                     "px-3 py-2 text-sm font-medium rounded-lg border transition-colors text-center",
                     contactType === ct.value
-                      ? "border-blue-500 bg-blue-50 text-blue-700"
+                      ? "border-[var(--color-primary)] bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)]"
                       : "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
                   )}
                 >
@@ -170,7 +170,7 @@ export function ContactFormModal({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="John Smith"
-              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               autoFocus
             />
           </div>
@@ -186,7 +186,7 @@ export function ContactFormModal({
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 placeholder="ABC Electric"
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
             <div>
@@ -198,7 +198,7 @@ export function ContactFormModal({
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 placeholder="Electrician"
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
           </div>
@@ -214,7 +214,7 @@ export function ContactFormModal({
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="john@company.com"
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
             <div>
@@ -226,7 +226,7 @@ export function ContactFormModal({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="(555) 123-4567"
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
           </div>
@@ -241,7 +241,7 @@ export function ContactFormModal({
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
               placeholder="License #, specialties, availability..."
-              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
             />
           </div>
 
@@ -270,7 +270,7 @@ export function ContactFormModal({
               <button
                 type="submit"
                 disabled={saving || !name.trim()}
-                className="px-4 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
               >
                 {saving
                   ? "Saving..."

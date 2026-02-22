@@ -206,7 +206,7 @@ export function NewProjectForm() {
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
             step === 0
-              ? "bg-blue-600 text-white"
+              ? "bg-[var(--color-primary)] text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           )}
         >
@@ -222,7 +222,7 @@ export function NewProjectForm() {
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
             step === 1
-              ? "bg-blue-600 text-white"
+              ? "bg-[var(--color-primary)] text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
           )}
         >
@@ -238,7 +238,7 @@ export function NewProjectForm() {
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
             step === 2
-              ? "bg-blue-600 text-white"
+              ? "bg-[var(--color-primary)] text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
           )}
         >
@@ -268,13 +268,13 @@ export function NewProjectForm() {
               <button
                 onClick={() => selectTemplate({ type: "residential" })}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-blue-400 hover:bg-blue-50/50",
+                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-[var(--color-primary-light)] hover:bg-[var(--color-primary-bg)]",
                   templateChoice?.type === "residential"
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-[var(--color-primary)] bg-[var(--color-primary-bg)]"
                     : "border-gray-200 bg-white"
                 )}
               >
-                <HardHat className="w-8 h-8 text-blue-600" />
+                <HardHat className="w-8 h-8 text-[var(--color-primary)]" />
                 <span className="text-sm font-semibold text-gray-900">
                   Residential
                 </span>
@@ -286,9 +286,9 @@ export function NewProjectForm() {
               <button
                 onClick={() => selectTemplate({ type: "commercial" })}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-blue-400 hover:bg-blue-50/50",
+                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-[var(--color-primary-light)] hover:bg-[var(--color-primary-bg)]",
                   templateChoice?.type === "commercial"
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-[var(--color-primary)] bg-[var(--color-primary-bg)]"
                     : "border-gray-200 bg-white"
                 )}
               >
@@ -304,9 +304,9 @@ export function NewProjectForm() {
               <button
                 onClick={() => selectTemplate({ type: "blank" })}
                 className={cn(
-                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-blue-400 hover:bg-blue-50/50",
+                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-[var(--color-primary-light)] hover:bg-[var(--color-primary-bg)]",
                   templateChoice?.type === "blank"
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-[var(--color-primary)] bg-[var(--color-primary-bg)]"
                     : "border-gray-200 bg-white"
                 )}
               >
@@ -373,7 +373,7 @@ export function NewProjectForm() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Smith Residence Build"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
             />
           </div>
 
@@ -386,7 +386,7 @@ export function NewProjectForm() {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
               placeholder="Project scope, notes, special requirements..."
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
             />
           </div>
 
@@ -399,7 +399,7 @@ export function NewProjectForm() {
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="123 Main St, City, State"
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
             />
           </div>
 
@@ -412,7 +412,7 @@ export function NewProjectForm() {
                 type="date"
                 value={planApproval}
                 onChange={(e) => setPlanApproval(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
             <div>
@@ -426,7 +426,7 @@ export function NewProjectForm() {
                 step="0.01"
                 min="0"
                 placeholder="0.00"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
           </div>
@@ -448,7 +448,7 @@ export function NewProjectForm() {
                 setError(null);
                 setStep(2);
               }}
-              className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
             >
               Next: Review Phases
             </button>
@@ -464,7 +464,7 @@ export function NewProjectForm() {
             <div className="flex items-center gap-2">
               <button
                 onClick={addPhase}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 Add Phase
@@ -586,7 +586,7 @@ export function NewProjectForm() {
                           updatePhase(phase.id, { name: e.target.value })
                         }
                         placeholder="e.g. Framing"
-                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                       />
                     </div>
                     <div className="col-span-2 sm:col-span-1 flex items-end">
@@ -599,7 +599,7 @@ export function NewProjectForm() {
                               isMilestone: e.target.checked,
                             })
                           }
-                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                         />
                         <span className="text-sm text-gray-700">
                           Milestone (single date)
@@ -619,14 +619,14 @@ export function NewProjectForm() {
                         updatePhase(phase.id, { detail: e.target.value })
                       }
                       placeholder="Scope, notes, trade involved..."
-                      className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                     />
                   </div>
 
                   {/* Date fields */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-blue-600 mb-1">
+                      <label className="block text-xs font-medium text-[var(--color-primary)] mb-1">
                         Est. Start *
                       </label>
                       <input
@@ -635,12 +635,12 @@ export function NewProjectForm() {
                         onChange={(e) =>
                           updatePhase(phase.id, { estStart: e.target.value })
                         }
-                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                       />
                     </div>
                     {!phase.isMilestone && (
                       <div>
-                        <label className="block text-xs font-medium text-blue-600 mb-1">
+                        <label className="block text-xs font-medium text-[var(--color-primary)] mb-1">
                           Est. End *
                         </label>
                         <input
@@ -649,7 +649,7 @@ export function NewProjectForm() {
                           onChange={(e) =>
                             updatePhase(phase.id, { estEnd: e.target.value })
                           }
-                          className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                          className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                         />
                       </div>
                     )}
@@ -708,7 +708,7 @@ export function NewProjectForm() {
               <button
                 onClick={handleSubmit}
                 disabled={submitting || !name.trim()}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
+                className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
               >
                 {submitting ? (
                   "Creating..."

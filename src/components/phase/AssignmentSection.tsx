@@ -74,7 +74,7 @@ export function AssignmentSection({
         {canEdit && (
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="inline-flex items-center gap-1 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium"
           >
             <Plus className="w-4 h-4" />
             Assign
@@ -132,7 +132,7 @@ export function AssignmentSection({
                 placeholder="Search by name, company, or role..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                 autoFocus
               />
             </div>
@@ -162,7 +162,7 @@ export function AssignmentSection({
                       <button
                         onClick={() => handleAssign(staff.id, false)}
                         disabled={loading}
-                        className="px-2.5 py-1 text-xs font-medium bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 disabled:opacity-50"
+                        className="px-2.5 py-1 text-xs font-medium bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)] rounded-lg hover:bg-[var(--color-primary-bg)] disabled:opacity-50"
                       >
                         Add
                       </button>
@@ -199,7 +199,7 @@ function StaffCard({
   return (
     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-sm font-medium">
+        <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] text-sm font-medium">
           {assignment.staff.name[0]}
         </div>
         <div>

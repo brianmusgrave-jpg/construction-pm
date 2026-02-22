@@ -1,10 +1,17 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Settings } from "lucide-react";
+import { can } from "@/lib/permissions";
+import { getOrgSettings } from "@/actions/settings";
+import { ThemeSelector } from "@/components/settings/ThemeSelector";
+import { LogoUploader } from "@/components/settings/LogoUploader";
 
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
+
+  const orgSettings = await getOrgSettings();
+  const userRole = session.user.role || "VIEWER";
+  const canManage = can(userRole, "manage", "phase");
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -15,6 +22,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
+      {/* Profile section */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Profile</h2>
         <div className="space-y-3">
@@ -43,6 +51,23 @@ export default async function SettingsPage() {
         </div>
       </div>
 
+      {/* Appearance section (admin/PM only) */}
+      {canManage && (
+        <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6 space-y-8">
+          <h2 className="text-lg font-semibold text-gray-900">Appearance</h2>
+
+          <LogoUploader
+            logoUrl={orgSettings.logoUrl}
+            companyName={orgSettings.companyName}
+          />
+
+          <div className="border-t border-gray-100 pt-6">
+            <ThemeSelector currentTheme={orgSettings.theme} />
+          </div>
+        </div>
+      )}
+
+      {/* Notifications placeholder */}
       <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-2">
           Notification Preferences

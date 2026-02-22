@@ -51,13 +51,13 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="admin@constructionpm.com"
-            className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
           />
         </div>
         <button
           type="submit"
           disabled={loading}
-          className="w-full p-3 bg-blue-600 text-white rounded-lg text-base font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="w-full p-3 bg-[var(--color-primary)] text-white rounded-lg text-base font-medium hover:bg-[var(--color-primary-dark)] disabled:opacity-50 transition-colors"
         >
           {loading ? "Signing in..." : "Sign In"}
         </button>

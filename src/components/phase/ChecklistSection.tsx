@@ -119,7 +119,7 @@ export function ChecklistSection({
         {canEdit && checklist && (
           <button
             onClick={() => setShowAddItem(true)}
-            className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
+            className="inline-flex items-center gap-1 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium"
           >
             <Plus className="w-4 h-4" />
             Add Item
@@ -134,7 +134,7 @@ export function ChecklistSection({
           {canEdit && templates.length > 0 && (
             <button
               onClick={() => setShowTemplatePicker(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)]"
             >
               <ListChecks className="w-4 h-4" />
               Apply Template
@@ -152,7 +152,7 @@ export function ChecklistSection({
                   style={{
                     width: `${progressPct}%`,
                     backgroundColor:
-                      progressPct === 100 ? "#16a34a" : "#3b82f6",
+                      progressPct === 100 ? "#16a34a" : "var(--color-primary)",
                   }}
                 />
               </div>
@@ -218,13 +218,13 @@ export function ChecklistSection({
                 value={newItemTitle}
                 onChange={(e) => setNewItemTitle(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
-                className="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                 autoFocus
               />
               <button
                 onClick={handleAddItem}
                 disabled={loading || !newItemTitle.trim()}
-                className="px-3 py-2 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="px-3 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] disabled:opacity-50"
               >
                 Add
               </button>

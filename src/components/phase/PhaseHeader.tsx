@@ -99,7 +99,7 @@ export function PhaseHeader({
                         ? "bg-green-600 text-white hover:bg-green-700"
                         : t.next === "IN_PROGRESS" && phase.status === "UNDER_REVIEW"
                           ? "border border-gray-300 text-gray-700 hover:bg-gray-50"
-                          : "bg-blue-600 text-white hover:bg-blue-700"
+                          : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
                     )}
                   >
                     {loading === t.next ? "..." : t.label}

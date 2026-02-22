@@ -1,6 +1,8 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/ui/Sidebar";
+import { getOrgSettings } from "@/actions/settings";
+import { getThemeCSS } from "@/lib/themes";
 
 export default async function DashboardLayout({
   children,
@@ -10,9 +12,16 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
+  const orgSettings = await getOrgSettings();
+  const themeVars = getThemeCSS(orgSettings.theme);
+
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar user={session.user} />
+    <div className="flex h-screen bg-gray-50" style={themeVars as React.CSSProperties}>
+      <Sidebar
+        user={session.user}
+        logoUrl={orgSettings.logoUrl}
+        companyName={orgSettings.companyName}
+      />
       <main className="flex-1 overflow-auto">{children}</main>
     </div>
   );

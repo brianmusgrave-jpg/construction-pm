@@ -6,6 +6,7 @@ async function main() {
   console.log("Seeding database...");
 
   // ── Clean existing data (order matters for foreign keys) ──
+  await db.orgSettings.deleteMany();
   await db.activityLog.deleteMany();
   await db.phaseAssignment.deleteMany();
   await db.checklistItem.deleteMany();
@@ -415,6 +416,11 @@ async function main() {
       },
     }),
   ]);
+
+  // ── Organization Settings (default theme) ──
+  await db.orgSettings.create({
+    data: { theme: "blue" },
+  });
 
   console.log("Seed complete!");
   console.log(`  Created 2 users`);

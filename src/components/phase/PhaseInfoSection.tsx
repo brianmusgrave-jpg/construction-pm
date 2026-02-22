@@ -44,7 +44,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
         </div>
         <div className="w-full bg-gray-100 rounded-full h-2">
           <div
-            className="bg-blue-600 h-2 rounded-full transition-all"
+            className="bg-[var(--color-primary)] h-2 rounded-full transition-all"
             style={{ width: `${phase.progress}%` }}
           />
         </div>
@@ -53,7 +53,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
       {/* Date grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm font-medium text-blue-700">
+          <div className="flex items-center gap-2 text-sm font-medium text-[var(--color-primary-dark)]">
             <Calendar className="w-4 h-4" />
             Estimated Timeline
           </div>
