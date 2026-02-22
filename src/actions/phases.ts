@@ -54,6 +54,17 @@ export async function createPhase(data: z.infer<typeof CreatePhaseSchema>) {
     },
   });
 
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "PHASE_CREATED",
+      message: `Added phase "${parsed.name}"`,
+      projectId: parsed.projectId,
+      userId: session.user.id,
+      data: { phaseId: phase.id },
+    },
+  }).catch(() => {});
+
   revalidatePath(`/dashboard/projects/${parsed.projectId}`);
   return phase;
 }
@@ -178,15 +189,24 @@ export async function assignStaffToPhase(
 
   const assignment = await db.phaseAssignment.create({
     data: { phaseId, staffId, isOwner },
+    include: {
+      staff: { select: { name: true } },
+      phase: { select: { name: true, projectId: true } },
+    },
   });
 
-  const phase = await db.phase.findUnique({
-    where: { id: phaseId },
-    select: { projectId: true },
-  });
-  if (phase) {
-    revalidatePath(`/dashboard/projects/${phase.projectId}`);
-  }
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "STAFF_ASSIGNED",
+      message: `Assigned ${assignment.staff.name} to ${assignment.phase.name}${isOwner ? " as owner" : ""}`,
+      projectId: assignment.phase.projectId,
+      userId: session.user.id,
+      data: { phaseId, staffId },
+    },
+  }).catch(() => {});
+
+  revalidatePath(`/dashboard/projects/${assignment.phase.projectId}`);
 
   return assignment;
 }
@@ -198,8 +218,21 @@ export async function unassignStaffFromPhase(assignmentId: string) {
 
   const assignment = await db.phaseAssignment.delete({
     where: { id: assignmentId },
-    include: { phase: { select: { projectId: true } } },
+    include: {
+      staff: { select: { name: true } },
+      phase: { select: { name: true, projectId: true } },
+    },
   });
+
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "STAFF_UNASSIGNED",
+      message: `Removed ${assignment.staff.name} from ${assignment.phase.name}`,
+      projectId: assignment.phase.projectId,
+      userId: session.user.id,
+    },
+  }).catch(() => {});
 
   revalidatePath(`/dashboard/projects/${assignment.phase.projectId}`);
 }

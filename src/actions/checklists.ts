@@ -39,8 +39,19 @@ export async function applyChecklistTemplate(
         })),
       },
     },
-    include: { phase: { select: { projectId: true } } },
+    include: { phase: { select: { name: true, projectId: true } } },
   });
+
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "CHECKLIST_APPLIED",
+      message: `Applied "${template.name}" checklist to ${checklist.phase.name}`,
+      projectId: checklist.phase.projectId,
+      userId: session.user.id,
+      data: { phaseId, templateId, templateName: template.name },
+    },
+  }).catch(() => {});
 
   revalidatePath(`/dashboard/projects/${checklist.phase.projectId}`);
   return checklist;
@@ -72,6 +83,17 @@ export async function toggleChecklistItem(itemId: string) {
       completedById: nowCompleting ? session.user.id : null,
     },
   });
+
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "CHECKLIST_ITEM_TOGGLED",
+      message: `${nowCompleting ? "Completed" : "Unchecked"} "${item.title}"`,
+      projectId: item.checklist.phase.projectId,
+      userId: session.user.id,
+      data: { phaseId: item.checklist.phaseId, itemId: itemId, completed: nowCompleting },
+    },
+  }).catch(() => {});
 
   // If completing an item, check if all items in checklist are now done
   if (nowCompleting) {
