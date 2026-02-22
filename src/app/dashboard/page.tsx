@@ -282,7 +282,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {projects.map((project: typeof projects[number]) => {
+                {projects.map((project) => {
                   const phases = project.phases;
                   const completed = phases.filter(
                     (p: { status: string }) => p.status === "COMPLETE"
