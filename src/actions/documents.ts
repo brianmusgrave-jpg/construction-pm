@@ -121,7 +121,7 @@ export async function updateDocumentStatus(
       message: `"${document.name}" in ${document.phase.name} was ${statusLabel}`,
       recipientIds: [document.uploadedById],
       actorId: session.user.id,
-      data: { projectId: document.phase.projectId, phaseId: document.phaseId, documentId },
+      data: { projectId: document.phase.projectId, phaseId: document.phaseId, documentId, documentName: document.name, newStatus: status },
     });
   }
 

@@ -143,7 +143,7 @@ export async function updatePhaseStatus(
     message: `${phase.name} on ${phase.project.name} is now ${statusLabels[status] || status.toLowerCase()}`,
     recipientIds: memberIds,
     actorId: session.user.id,
-    data: { projectId: phase.projectId, phaseId: phase.id },
+    data: { projectId: phase.projectId, phaseId: phase.id, newStatus: status },
   });
 
   // Log activity

@@ -6,6 +6,7 @@ import { can } from "@/lib/permissions";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 import { randomBytes } from "crypto";
+import { sendInvitationEmail } from "@/lib/email";
 
 // ── Create Invitation ──
 
@@ -67,6 +68,15 @@ export async function createInvitation(
       data: { email: normalizedEmail, role },
     },
   }).catch(() => {});
+
+  // Send invitation email (fire-and-forget)
+  sendInvitationEmail(
+    normalizedEmail,
+    invitation.project.name,
+    role,
+    token,
+    session.user.name || session.user.email || "A team member"
+  ).catch(() => {});
 
   // Notify existing project members
   const memberIds = await getProjectMemberIds(projectId);
