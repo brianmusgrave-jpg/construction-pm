@@ -23,6 +23,8 @@ import {
 import { cn, statusColor, statusLabel, fmtShort, fmtLong, fmtRelative } from "@/lib/utils";
 import { can } from "@/lib/permissions";
 import { BudgetSection } from "@/components/project/BudgetSection";
+import { TeamSection } from "@/components/project/TeamSection";
+import { getProjectInvitations } from "@/actions/invitations";
 
 export default async function ProjectOverviewPage({
   params,
@@ -118,6 +120,12 @@ export default async function ProjectOverviewPage({
 
   const userRole = session.user.role || "VIEWER";
   const canManageBudget = can(userRole, "manage", "phase");
+  const canInvite = can(userRole, "create", "member");
+
+  // Fetch pending invitations for the team section
+  const invitations = canInvite
+    ? await getProjectInvitations(id).catch(() => [])
+    : [];
   const budgetPhases = phases.map((p) => ({
     id: p.id,
     name: p.name,
@@ -364,43 +372,22 @@ export default async function ProjectOverviewPage({
         {/* Right: Team + Activity */}
         <div className="space-y-5">
           {/* Team */}
-          <div>
-            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
-              Team ({project.members.length})
-            </h2>
-            <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100">
-              {project.members.map(
-                (member: {
-                  id: string;
-                  role: string;
-                  user: {
-                    id: string;
-                    name: string | null;
-                    email: string;
-                    role: string;
-                    image: string | null;
-                  };
-                }) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center gap-3 px-4 py-3"
-                  >
-                    <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] text-[var(--color-primary)] flex items-center justify-center text-sm font-semibold shrink-0">
-                      {(member.user.name || member.user.email)[0].toUpperCase()}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {member.user.name || member.user.email}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {statusLabel(member.role)}
-                      </p>
-                    </div>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
+          <TeamSection
+            projectId={id}
+            members={project.members.map((m: { id: string; role: string; user: { id: string; name: string | null; email: string; role: string; image: string | null } }) => ({
+              id: m.id,
+              role: m.role,
+              user: m.user,
+            }))}
+            invitations={invitations.map((inv: { id: string; email: string; role: string; expiresAt: Date; createdAt: Date }) => ({
+              id: inv.id,
+              email: inv.email,
+              role: inv.role,
+              expiresAt: inv.expiresAt,
+              createdAt: inv.createdAt,
+            }))}
+            canInvite={canInvite}
+          />
 
           {/* Activity */}
           <div>
