@@ -5,10 +5,27 @@ const db = new PrismaClient();
 async function main() {
   console.log("Seeding database...");
 
+  // ── Clean existing data (order matters for foreign keys) ──
+  await db.phaseAssignment.deleteMany();
+  await db.checklistItem.deleteMany();
+  await db.checklist.deleteMany();
+  await db.checklistTemplateItem.deleteMany();
+  await db.checklistTemplate.deleteMany();
+  await db.document.deleteMany();
+  await db.photo.deleteMany();
+  await db.notification.deleteMany();
+  await db.phase.deleteMany();
+  await db.projectMember.deleteMany();
+  await db.invitation.deleteMany();
+  await db.project.deleteMany();
+  await db.staff.deleteMany();
+
+  console.log("  Cleaned existing data");
+
   // ── Create Admin User ──
   const admin = await db.user.upsert({
     where: { email: "admin@constructionpm.com" },
-    update: {},
+    update: { name: "Brian Musgrave", role: "ADMIN", company: "Construction PM" },
     create: {
       email: "admin@constructionpm.com",
       name: "Brian Musgrave",
@@ -17,7 +34,7 @@ async function main() {
     },
   });
 
-  // ── Create Sample Contractor ──
+  // ── Create Sample Contractor User ──
   const contractor = await db.user.upsert({
     where: { email: "contractor@example.com" },
     update: {},
@@ -29,33 +46,27 @@ async function main() {
     },
   });
 
-  // ── Create Staff Library ──
+  // ── Create Directory Contacts ──
   const staffMembers = await Promise.all([
+    // TEAM - your own people
     db.staff.create({
       data: {
         name: "Mike Johnson",
         company: "Johnson Construction",
         role: "General Contractor",
+        contactType: "TEAM",
         email: "mike@johnsonconstruction.com",
         phone: "555-0101",
         createdById: admin.id,
       },
     }),
-    db.staff.create({
-      data: {
-        name: "Sarah Chen",
-        company: "Chen Engineering",
-        role: "Structural Engineer",
-        email: "sarah@cheneng.com",
-        phone: "555-0102",
-        createdById: admin.id,
-      },
-    }),
+    // SUBCONTRACTORS
     db.staff.create({
       data: {
         name: "Tom Williams",
         company: "Williams Electric",
         role: "Electrician",
+        contactType: "SUBCONTRACTOR",
         email: "tom@williamselectric.com",
         phone: "555-0103",
         createdById: admin.id,
@@ -66,6 +77,7 @@ async function main() {
         name: "Lisa Park",
         company: "Park Plumbing",
         role: "Plumber",
+        contactType: "SUBCONTRACTOR",
         email: "lisa@parkplumbing.com",
         phone: "555-0104",
         createdById: admin.id,
@@ -73,11 +85,36 @@ async function main() {
     }),
     db.staff.create({
       data: {
+        name: "Sarah Chen",
+        company: "Chen Engineering",
+        role: "Structural Engineer",
+        contactType: "SUBCONTRACTOR",
+        email: "sarah@cheneng.com",
+        phone: "555-0102",
+        createdById: admin.id,
+      },
+    }),
+    // INSPECTORS
+    db.staff.create({
+      data: {
         name: "David Martinez",
         company: "City Permits Office",
-        role: "Inspector",
+        role: "Building Inspector",
+        contactType: "INSPECTOR",
         email: "david.martinez@city.gov",
         phone: "555-0105",
+        createdById: admin.id,
+      },
+    }),
+    // VENDORS
+    db.staff.create({
+      data: {
+        name: "ABC Supply",
+        company: "ABC Supply Co.",
+        role: "Lumber & Materials",
+        contactType: "VENDOR",
+        email: "orders@abcsupply.com",
+        phone: "555-0200",
         createdById: admin.id,
       },
     }),
@@ -273,58 +310,31 @@ async function main() {
     }),
   ]);
 
-  // ── Assign Staff to Phases ──
-  await db.phaseAssignment.create({
-    data: {
-      phaseId: phases[1].id, // Stamped Plans
-      staffId: staffMembers[4].id, // Inspector
-      isOwner: true,
-    },
-  });
-
-  await db.phaseAssignment.create({
-    data: {
-      phaseId: phases[3].id, // Site Work
-      staffId: staffMembers[0].id, // General Contractor
-      isOwner: true,
-    },
-  });
-
-  await db.phaseAssignment.create({
-    data: {
-      phaseId: phases[3].id, // Site Work
-      staffId: staffMembers[3].id, // Plumber
-      isOwner: false,
-    },
-  });
-
-  await db.phaseAssignment.create({
-    data: {
-      phaseId: phases[6].id, // Finishing Work
-      staffId: staffMembers[0].id, // General Contractor
-      isOwner: true,
-    },
-  });
-
-  await db.phaseAssignment.create({
-    data: {
-      phaseId: phases[6].id, // Finishing Work
-      staffId: staffMembers[2].id, // Electrician
-      isOwner: false,
-    },
-  });
-
-  await db.phaseAssignment.create({
-    data: {
-      phaseId: phases[6].id, // Finishing Work
-      staffId: staffMembers[3].id, // Plumber
-      isOwner: false,
-    },
-  });
+  // ── Assign Contacts to Phases ──
+  await Promise.all([
+    db.phaseAssignment.create({
+      data: { phaseId: phases[1].id, staffId: staffMembers[4].id, isOwner: true }, // Stamped Plans → Inspector
+    }),
+    db.phaseAssignment.create({
+      data: { phaseId: phases[3].id, staffId: staffMembers[0].id, isOwner: true }, // Site Work → GC
+    }),
+    db.phaseAssignment.create({
+      data: { phaseId: phases[3].id, staffId: staffMembers[2].id, isOwner: false }, // Site Work → Plumber
+    }),
+    db.phaseAssignment.create({
+      data: { phaseId: phases[6].id, staffId: staffMembers[0].id, isOwner: true }, // Finishing → GC
+    }),
+    db.phaseAssignment.create({
+      data: { phaseId: phases[6].id, staffId: staffMembers[1].id, isOwner: false }, // Finishing → Electrician
+    }),
+    db.phaseAssignment.create({
+      data: { phaseId: phases[6].id, staffId: staffMembers[2].id, isOwner: false }, // Finishing → Plumber
+    }),
+  ]);
 
   console.log("Seed complete!");
-  console.log(`  Created ${2} users`);
-  console.log(`  Created ${staffMembers.length} staff members`);
+  console.log(`  Created 2 users`);
+  console.log(`  Created ${staffMembers.length} directory contacts`);
   console.log(`  Created 4 checklist templates`);
   console.log(`  Created 1 project with ${phases.length} phases`);
   console.log(`  Created 6 phase assignments`);

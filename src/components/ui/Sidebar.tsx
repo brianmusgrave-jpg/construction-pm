@@ -26,7 +26,7 @@ interface SidebarProps {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-  { name: "Staff Library", href: "/dashboard/staff", icon: Users },
+  { name: "Directory", href: "/dashboard/directory", icon: Users },
   { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

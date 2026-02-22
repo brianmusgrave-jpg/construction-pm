@@ -174,16 +174,17 @@ enum PhaseStatus {
   COMPLETE
 }
 
-// ── Staff Library & Assignments ──
+// ── Directory & Assignments ──
 
 model Staff {
-  id        String  @id @default(cuid())
-  name      String
-  company   String?
-  role      String? // "Electrician", "Plumber", "Inspector", etc.
-  email     String?
-  phone     String?
-  notes     String? @db.Text
+  id          String      @id @default(cuid())
+  name        String
+  company     String?
+  role        String?     // "Electrician", "Plumber", "Inspector", etc.
+  contactType ContactType @default(SUBCONTRACTOR) @map("contact_type")
+  email       String?
+  phone       String?
+  notes       String?     @db.Text
 
   createdBy   User?   @relation("staff_created_by", fields: [createdById], references: [id])
   createdById String? @map("created_by_id")
@@ -194,6 +195,13 @@ model Staff {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("staff")
+}
+
+enum ContactType {
+  TEAM
+  SUBCONTRACTOR
+  VENDOR
+  INSPECTOR
 }
 
 model PhaseAssignment {
