@@ -422,6 +422,7 @@ enum ActivityType {
   PROJECT_STATUS_CHANGED
   MEMBER_INVITED
   MEMBER_JOINED
+  MEMBER_REMOVED
 }
 
 // ── Organization Settings (Theming) ──
