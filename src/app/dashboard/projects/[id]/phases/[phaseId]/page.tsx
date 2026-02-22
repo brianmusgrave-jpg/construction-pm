@@ -7,6 +7,7 @@ import { PhaseInfoSection } from "@/components/phase/PhaseInfoSection";
 import { AssignmentSection } from "@/components/phase/AssignmentSection";
 import { ChecklistSection } from "@/components/phase/ChecklistSection";
 import { DocumentSection } from "@/components/phase/DocumentSection";
+import { PhotoSection } from "@/components/phase/PhotoSection";
 
 export default async function PhaseDetailPage({
   params,
@@ -103,6 +104,13 @@ export default async function PhaseDetailPage({
           documents={phase.documents}
           canUpload={can(userRole, "create", "document")}
           canManageStatus={canManage}
+        />
+
+        <PhotoSection
+          phaseId={phaseId}
+          photos={phase.photos}
+          canUpload={can(userRole, "create", "photo")}
+          canDelete={can(userRole, "delete", "photo")}
         />
       </div>
     </div>
