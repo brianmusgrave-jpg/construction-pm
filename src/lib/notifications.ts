@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { Prisma } from "@prisma/client";
 
 type NotificationType =
   | "PHASE_STATUS_CHANGED"
@@ -51,7 +52,7 @@ export async function notify(options: NotifyOptions): Promise<void> {
         title,
         message,
         userId,
-        data: data ?? undefined,
+        data: (data as Prisma.InputJsonValue) ?? Prisma.JsonNull,
       })),
     });
 
