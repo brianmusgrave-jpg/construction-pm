@@ -48,6 +48,7 @@ export default async function PhaseDetailPage({
       photos: {
         include: {
           uploadedBy: { select: { id: true, name: true } },
+          flaggedBy: { select: { name: true } },
         },
         orderBy: { takenAt: "desc" },
       },
@@ -111,6 +112,7 @@ export default async function PhaseDetailPage({
           photos={phase.photos}
           canUpload={can(userRole, "create", "photo")}
           canDelete={can(userRole, "delete", "photo")}
+          canFlag={canManage}
         />
       </div>
     </div>

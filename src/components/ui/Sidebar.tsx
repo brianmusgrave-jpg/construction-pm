@@ -17,6 +17,7 @@ import {
   X,
   BarChart3,
 } from "lucide-react";
+import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 
 interface SidebarProps {
   user: {
@@ -83,6 +84,11 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: Sidebar
         >
           <X className="w-5 h-5" />
         </button>
+      </div>
+
+      {/* Search */}
+      <div className="px-3 pt-3">
+        <SearchButton />
       </div>
 
       {/* Navigation */}
@@ -199,6 +205,9 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: Sidebar
       <div className="hidden lg:flex lg:flex-col w-64 bg-white border-r border-gray-200 shrink-0">
         {sidebarContent}
       </div>
+
+      {/* Global search palette */}
+      <SearchPalette />
     </>
   );
 }

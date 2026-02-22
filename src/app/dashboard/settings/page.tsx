@@ -2,8 +2,10 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { can } from "@/lib/permissions";
 import { getOrgSettings } from "@/actions/settings";
+import { getChecklistTemplates } from "@/actions/templates";
 import { ThemeSelector } from "@/components/settings/ThemeSelector";
 import { LogoUploader } from "@/components/settings/LogoUploader";
+import { ChecklistTemplateManager } from "@/components/settings/ChecklistTemplateManager";
 
 export default async function SettingsPage() {
   const session = await auth();
@@ -12,6 +14,7 @@ export default async function SettingsPage() {
   const orgSettings = await getOrgSettings();
   const userRole = session.user.role || "VIEWER";
   const canManage = can(userRole, "manage", "phase");
+  const templates = canManage ? await getChecklistTemplates() : [];
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -64,6 +67,13 @@ export default async function SettingsPage() {
           <div className="border-t border-gray-100 pt-6">
             <ThemeSelector currentTheme={orgSettings.theme} />
           </div>
+        </div>
+      )}
+
+      {/* Checklist Templates (admin/PM only) */}
+      {canManage && (
+        <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
+          <ChecklistTemplateManager templates={templates} />
         </div>
       )}
 

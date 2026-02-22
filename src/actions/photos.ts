@@ -5,6 +5,13 @@ import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { del } from "@vercel/blob";
+import { notify, getProjectMemberIds } from "@/lib/notifications";
+
+type PhotoFlagType =
+  | "REPLACEMENT_NEEDED"
+  | "ADDITIONAL_ANGLES"
+  | "ADDITIONAL_PHOTOS"
+  | "CLARIFICATION_NEEDED";
 
 export async function createPhoto(data: {
   phaseId: string;
@@ -88,6 +95,94 @@ export async function updatePhotoCaption(photoId: string, caption: string) {
   const updated = await db.photo.update({
     where: { id: photoId },
     data: { caption },
+  });
+
+  revalidatePath(`/dashboard/projects/${photo.phase.projectId}`);
+  return updated;
+}
+
+export async function flagPhoto(
+  photoId: string,
+  flagType: PhotoFlagType,
+  flagNote?: string
+) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  // Only PM+ can flag photos
+  const userRole = session.user.role || "VIEWER";
+  if (userRole !== "ADMIN" && userRole !== "PROJECT_MANAGER") {
+    throw new Error("Only PMs and admins can flag photos");
+  }
+
+  const photo = await db.photo.findUnique({
+    where: { id: photoId },
+    include: {
+      phase: { select: { projectId: true, name: true } },
+    },
+  });
+  if (!photo) throw new Error("Photo not found");
+
+  const updated = await db.photo.update({
+    where: { id: photoId },
+    data: {
+      flagType: flagType as never,
+      flagNote: flagNote || null,
+      flaggedById: session.user.id,
+      flaggedAt: new Date(),
+    },
+  });
+
+  // Notify the photo uploader
+  const flagLabels: Record<string, string> = {
+    REPLACEMENT_NEEDED: "Replacement needed",
+    ADDITIONAL_ANGLES: "Additional angles requested",
+    ADDITIONAL_PHOTOS: "Additional photos requested",
+    CLARIFICATION_NEEDED: "Clarification needed",
+  };
+
+  if (photo.uploadedById !== session.user.id) {
+    notify({
+      type: "PHOTO_UPLOADED", // reuse existing type
+      title: `Photo flagged: ${flagLabels[flagType]}`,
+      message: `A photo in ${photo.phase.name} was flagged${flagNote ? `: "${flagNote}"` : ""}`,
+      recipientIds: [photo.uploadedById],
+      actorId: session.user.id,
+      data: {
+        projectId: photo.phase.projectId,
+        phaseId: photo.phaseId,
+        photoId,
+      },
+    });
+  }
+
+  revalidatePath(`/dashboard/projects/${photo.phase.projectId}`);
+  return updated;
+}
+
+export async function clearPhotoFlag(photoId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const userRole = session.user.role || "VIEWER";
+  if (userRole !== "ADMIN" && userRole !== "PROJECT_MANAGER") {
+    throw new Error("Only PMs and admins can clear flags");
+  }
+
+  const photo = await db.photo.findUnique({
+    where: { id: photoId },
+    include: { phase: { select: { projectId: true } } },
+  });
+  if (!photo) throw new Error("Photo not found");
+
+  const updated = await db.photo.update({
+    where: { id: photoId },
+    data: {
+      flagType: null,
+      flagNote: null,
+      flaggedById: null,
+      flaggedAt: null,
+    },
   });
 
   revalidatePath(`/dashboard/projects/${photo.phase.projectId}`);

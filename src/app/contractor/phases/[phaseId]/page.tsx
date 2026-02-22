@@ -74,6 +74,7 @@ export default async function ContractorPhaseDetail({
       photos: {
         include: {
           uploadedBy: { select: { id: true, name: true } },
+          flaggedBy: { select: { name: true } },
         },
         orderBy: { takenAt: "desc" },
       },

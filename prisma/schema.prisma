@@ -70,6 +70,7 @@ model User {
   notifications  Notification[]
   documents      Document[]       @relation("uploaded_documents")
   photos         Photo[]
+  flaggedPhotos  Photo[]          @relation("flagged_photos")
   checklistItems ChecklistItem[]  @relation("completed_by")
   staffCreated   Staff[]          @relation("staff_created_by")
   activityLogs   ActivityLog[]
@@ -326,6 +327,13 @@ model Photo {
   caption String?
   takenAt DateTime @default(now()) @map("taken_at")
 
+  // Flagging for followup
+  flagType    PhotoFlagType? @map("flag_type")
+  flagNote    String?        @map("flag_note") @db.Text
+  flaggedBy   User?          @relation("flagged_photos", fields: [flaggedById], references: [id])
+  flaggedById String?        @map("flagged_by_id")
+  flaggedAt   DateTime?      @map("flagged_at")
+
   phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
   phaseId String @map("phase_id")
 
@@ -334,6 +342,13 @@ model Photo {
 
   @@index([phaseId])
   @@map("photos")
+}
+
+enum PhotoFlagType {
+  REPLACEMENT_NEEDED
+  ADDITIONAL_ANGLES
+  ADDITIONAL_PHOTOS
+  CLARIFICATION_NEEDED
 }
 
 // ── Notifications ──
