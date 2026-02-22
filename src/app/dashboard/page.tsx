@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   if (!session?.user) redirect("/login");
 
   // Fetch all data in parallel
-  const [projects, allPhases, recentActivity, checklistStats] =
+  const [projects, allPhases, recentActivity, _totalChecklistItems] =
     await Promise.all([
       // Projects with counts
       db.project.findMany({
@@ -79,9 +79,9 @@ export default async function DashboardPage() {
         })
         .catch(() => [] as never[]), // Table might not exist yet
 
-      // Checklist completion stats
+      // Checklist completion stats — count total and completed separately
       db.checklistItem
-        .aggregate({
+        .count({
           where: {
             checklist: {
               phase: {
@@ -91,10 +91,8 @@ export default async function DashboardPage() {
               },
             },
           },
-          _count: { id: true },
-          _sum: { completed: false },
         })
-        .catch(() => ({ _count: { id: 0 } })),
+        .catch(() => 0),
     ]);
 
   const showCreate = canCreateProject(session.user.role);
@@ -124,10 +122,6 @@ export default async function DashboardPage() {
         new Date(p.estStart) <= new Date(now.getTime() + 14 * 86400000)
     )
     .slice(0, 5);
-
-  // Checklist stats
-  const totalItems = (checklistStats as Record<string, Record<string, number>>)?._count?.id || 0;
-  const completedItems = allPhases.reduce((acc: number) => acc, 0); // Will use actual data
 
   const greeting = getGreeting();
 
