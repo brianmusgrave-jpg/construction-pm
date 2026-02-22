@@ -22,7 +22,7 @@ interface ChecklistItem {
   title: string;
   order: number;
   completed: boolean;
-  completedAt: string | null;
+  completedAt: Date | string | null;
   completedBy: { id: string; name: string | null; email: string } | null;
 }
 
