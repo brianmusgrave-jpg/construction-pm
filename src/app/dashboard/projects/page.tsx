@@ -38,7 +38,7 @@ export default async function ProjectsPage() {
         {showCreate && (
           <Link
             href="/dashboard/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
           >
             <Plus className="w-4 h-4" />
             New Project
@@ -58,7 +58,7 @@ export default async function ProjectsPage() {
           {showCreate && (
             <Link
               href="/dashboard/projects/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)]"
             >
               <Plus className="w-4 h-4" />
               New Project
@@ -80,7 +80,7 @@ export default async function ProjectsPage() {
               <Link
                 key={project.id}
                 href={`/dashboard/projects/${project.id}/timeline`}
-                className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:shadow-md transition-all"
+                className="block bg-white rounded-xl border border-gray-200 p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all"
               >
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-base font-semibold text-gray-900 truncate pr-2">
@@ -111,7 +111,7 @@ export default async function ProjectsPage() {
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-1.5">
                     <div
-                      className="bg-blue-600 h-1.5 rounded-full transition-all"
+                      className="bg-[var(--color-primary)] h-1.5 rounded-full transition-all"
                       style={{ width: `${progress}%` }}
                     />
                   </div>

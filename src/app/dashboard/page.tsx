@@ -369,7 +369,7 @@ export default async function DashboardPage() {
                               style={{
                                 width: `${progress}%`,
                                 backgroundColor:
-                                  progress === 100 ? "#16a34a" : "#3b82f6",
+                                  progress === 100 ? "#16a34a" : "var(--color-primary)",
                               }}
                             />
                           </div>
