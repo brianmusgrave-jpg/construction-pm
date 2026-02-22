@@ -36,17 +36,17 @@ interface Staff {
   email?: string | null;
   phone?: string | null;
   notes?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface PhaseAssignment {
   id: string;
-  phaseId: string;
-  staffId: string;
+  phaseId?: string;
+  staffId?: string;
   isOwner: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface Document {

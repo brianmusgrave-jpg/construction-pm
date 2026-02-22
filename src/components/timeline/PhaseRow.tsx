@@ -17,36 +17,19 @@ interface Phase {
   worstStart?: Date | null;
   worstEnd?: Date | null;
   sortOrder: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-interface Staff {
-  id: string;
-  name: string;
-  company?: string | null;
-  role?: string | null;
-  email?: string | null;
-  phone?: string | null;
-  notes?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 interface PhaseAssignment {
   id: string;
-  phaseId: string;
-  staffId: string;
   isOwner: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  staff: Pick<Staff, "id" | "name" | "company">;
+  staff: { id: string; name: string; company: string | null };
+  [key: string]: unknown;
 }
 
 type PhaseWithAssignments = Phase & {
-  assignments: (PhaseAssignment & {
-    staff: Pick<Staff, "id" | "name" | "company">;
-  })[];
+  assignments: PhaseAssignment[];
   _count?: { documents: number; photos: number };
 };
 
