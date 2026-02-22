@@ -72,6 +72,7 @@ model User {
   photos         Photo[]
   checklistItems ChecklistItem[]  @relation("completed_by")
   staffCreated   Staff[]          @relation("staff_created_by")
+  activityLogs   ActivityLog[]
 
   @@map("users")
 }
@@ -96,9 +97,10 @@ model Project {
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @updatedAt @map("updated_at")
 
-  members     ProjectMember[]
-  phases      Phase[]
-  invitations Invitation[]
+  members      ProjectMember[]
+  phases       Phase[]
+  invitations  Invitation[]
+  activityLogs ActivityLog[]
 
   @@map("projects")
 }
@@ -362,6 +364,43 @@ enum NotificationType {
   REVIEW_REQUESTED
   REVIEW_COMPLETED
   TIMELINE_SHIFTED
+  MEMBER_INVITED
+}
+
+// ── Activity Log ──
+
+model ActivityLog {
+  id        String       @id @default(cuid())
+  action    ActivityType
+  message   String
+  data      Json?        // Flexible metadata (phaseId, staffId, oldStatus, newStatus, etc.)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @map("project_id")
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([projectId, createdAt])
+  @@index([userId, createdAt])
+  @@map("activity_logs")
+}
+
+enum ActivityType {
+  PHASE_CREATED
+  PHASE_STATUS_CHANGED
+  PHASE_DATES_CHANGED
+  STAFF_ASSIGNED
+  STAFF_UNASSIGNED
+  CHECKLIST_APPLIED
+  CHECKLIST_ITEM_TOGGLED
+  DOCUMENT_UPLOADED
+  DOCUMENT_STATUS_CHANGED
+  PHOTO_UPLOADED
+  PROJECT_CREATED
+  PROJECT_STATUS_CHANGED
   MEMBER_INVITED
 }
 

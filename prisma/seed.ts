@@ -6,6 +6,7 @@ async function main() {
   console.log("Seeding database...");
 
   // ── Clean existing data (order matters for foreign keys) ──
+  await db.activityLog.deleteMany();
   await db.phaseAssignment.deleteMany();
   await db.checklistItem.deleteMany();
   await db.checklist.deleteMany();
@@ -332,12 +333,96 @@ async function main() {
     }),
   ]);
 
+  // ── Activity Log Entries (for dashboard feed) ──
+  const now = new Date();
+  await Promise.all([
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "PROJECT_CREATED",
+        message: "Created project MSH Construction Build",
+        createdAt: new Date(now.getTime() - 7 * 86400000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "PHASE_STATUS_CHANGED",
+        message: "Plans Confirmed marked as Complete",
+        data: { phaseId: phases[0].id, oldStatus: "PENDING", newStatus: "COMPLETE" },
+        createdAt: new Date(now.getTime() - 6 * 86400000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "PHASE_STATUS_CHANGED",
+        message: "Stamped Plans moved to In Progress",
+        data: { phaseId: phases[1].id, oldStatus: "PENDING", newStatus: "IN_PROGRESS" },
+        createdAt: new Date(now.getTime() - 5 * 86400000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "STAFF_ASSIGNED",
+        message: "Assigned David Martinez as owner of Stamped Plans",
+        data: { phaseId: phases[1].id, staffName: "David Martinez" },
+        createdAt: new Date(now.getTime() - 5 * 86400000 + 3600000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: contractor.id,
+        action: "STAFF_ASSIGNED",
+        message: "Assigned Mike Johnson as owner of Site Work",
+        data: { phaseId: phases[3].id, staffName: "Mike Johnson" },
+        createdAt: new Date(now.getTime() - 3 * 86400000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "STAFF_ASSIGNED",
+        message: "Assigned Lisa Park to Site Work",
+        data: { phaseId: phases[3].id, staffName: "Lisa Park" },
+        createdAt: new Date(now.getTime() - 3 * 86400000 + 1800000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "MEMBER_INVITED",
+        message: "Added Mike Johnson as Contractor",
+        createdAt: new Date(now.getTime() - 2 * 86400000),
+      },
+    }),
+    db.activityLog.create({
+      data: {
+        projectId: project.id,
+        userId: admin.id,
+        action: "STAFF_ASSIGNED",
+        message: "Assigned Tom Williams to Finishing Work",
+        data: { phaseId: phases[6].id, staffName: "Tom Williams" },
+        createdAt: new Date(now.getTime() - 1 * 86400000),
+      },
+    }),
+  ]);
+
   console.log("Seed complete!");
   console.log(`  Created 2 users`);
   console.log(`  Created ${staffMembers.length} directory contacts`);
   console.log(`  Created 4 checklist templates`);
   console.log(`  Created 1 project with ${phases.length} phases`);
   console.log(`  Created 6 phase assignments`);
+  console.log(`  Created 8 activity log entries`);
 }
 
 main()

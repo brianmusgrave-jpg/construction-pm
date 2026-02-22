@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useCallback } from "react";
+import Link from "next/link";
 import { differenceInDays, addDays, format } from "date-fns";
 import { cn, statusColor, statusLabel, fmtShort } from "@/lib/utils";
 import type { Phase, PhaseAssignment, Staff } from "@prisma/client";
@@ -14,6 +15,7 @@ type PhaseWithAssignments = Phase & {
 
 interface PhaseRowProps {
   phase: PhaseWithAssignments;
+  projectId: string;
   tlStart: Date;
   totalDays: number;
   todayPct: number;
@@ -30,6 +32,7 @@ interface PhaseRowProps {
 
 export function PhaseRow({
   phase,
+  projectId,
   tlStart,
   totalDays,
   todayPct,
@@ -113,9 +116,12 @@ export function PhaseRow({
       {/* Label column */}
       <div className="w-52 min-w-52 px-4 py-3 flex flex-col justify-center border-r border-gray-100">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm text-gray-900 truncate">
+          <Link
+            href={`/dashboard/projects/${projectId}/phases/${phase.id}`}
+            className="font-medium text-sm text-gray-900 truncate hover:text-blue-600 transition-colors"
+          >
             {phase.name}
-          </span>
+          </Link>
           <span
             className={cn(
               "text-[10px] font-medium px-1.5 py-0.5 rounded",

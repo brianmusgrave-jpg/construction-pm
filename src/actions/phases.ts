@@ -126,6 +126,51 @@ export async function deletePhase(phaseId: string) {
   revalidatePath(`/dashboard/projects/${phase.projectId}`);
 }
 
+export async function assignStaffToPhase(
+  phaseId: string,
+  staffId: string,
+  isOwner: boolean = false
+) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!canManagePhase(session.user.role)) throw new Error("Forbidden");
+
+  // If assigning as owner, remove existing owner first
+  if (isOwner) {
+    await db.phaseAssignment.updateMany({
+      where: { phaseId, isOwner: true },
+      data: { isOwner: false },
+    });
+  }
+
+  const assignment = await db.phaseAssignment.create({
+    data: { phaseId, staffId, isOwner },
+  });
+
+  const phase = await db.phase.findUnique({
+    where: { id: phaseId },
+    select: { projectId: true },
+  });
+  if (phase) {
+    revalidatePath(`/dashboard/projects/${phase.projectId}`);
+  }
+
+  return assignment;
+}
+
+export async function unassignStaffFromPhase(assignmentId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!canManagePhase(session.user.role)) throw new Error("Forbidden");
+
+  const assignment = await db.phaseAssignment.delete({
+    where: { id: assignmentId },
+    include: { phase: { select: { projectId: true } } },
+  });
+
+  revalidatePath(`/dashboard/projects/${assignment.phase.projectId}`);
+}
+
 export async function getProjectPhases(projectId: string) {
   return db.phase.findMany({
     where: { projectId },

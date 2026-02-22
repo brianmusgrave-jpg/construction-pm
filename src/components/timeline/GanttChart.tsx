@@ -147,6 +147,7 @@ const saveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
               <PhaseRow
                 key={phase.id}
                 phase={phase}
+                projectId={projectId}
                 tlStart={tlStart}
                 totalDays={totalDays}
                 todayPct={todayPct}
