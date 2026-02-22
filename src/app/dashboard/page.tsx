@@ -16,6 +16,12 @@ import {
   FileText,
   ArrowRight,
   Activity,
+  Bell,
+  Eye,
+  ChevronRight,
+  Building2,
+  TrendingUp,
+  CircleDot,
 } from "lucide-react";
 import { cn, statusColor, statusLabel, fmtShort, fmtRelative } from "@/lib/utils";
 
@@ -24,67 +30,84 @@ export default async function DashboardPage() {
   if (!session?.user) redirect("/login");
 
   // Fetch all data in parallel
-  const [projects, allPhases, recentActivity, _totalChecklistItems] =
-    await Promise.all([
-      // Projects with counts
-      db.project.findMany({
-        where: { members: { some: { userId: session.user.id } } },
-        include: {
-          _count: { select: { phases: true, members: true } },
-          phases: {
-            select: {
-              id: true,
-              name: true,
-              status: true,
-              progress: true,
-              estStart: true,
-              estEnd: true,
-              worstEnd: true,
-              projectId: true,
-            },
-            orderBy: { sortOrder: "asc" },
+  const [
+    projects,
+    allPhases,
+    recentNotifications,
+    pendingDocuments,
+    checklistStats,
+    recentActivity,
+  ] = await Promise.all([
+    // Projects with counts
+    db.project.findMany({
+      where: { members: { some: { userId: session.user.id } } },
+      include: {
+        _count: { select: { phases: true, members: true } },
+        phases: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            progress: true,
+            estStart: true,
+            estEnd: true,
+            worstEnd: true,
+            projectId: true,
           },
+          orderBy: { sortOrder: "asc" },
         },
-        orderBy: { updatedAt: "desc" },
-      }),
+      },
+      orderBy: { updatedAt: "desc" },
+    }),
 
-      // All phases the user can see (for widgets)
-      db.phase.findMany({
+    // All phases the user can see
+    db.phase.findMany({
+      where: {
+        project: { members: { some: { userId: session.user.id } } },
+      },
+      include: {
+        project: { select: { id: true, name: true } },
+        assignments: {
+          include: { staff: { select: { name: true } } },
+          where: { isOwner: true },
+          take: 1,
+        },
+      },
+      orderBy: { estEnd: "asc" },
+    }),
+
+    // Recent notifications for this user
+    db.notification
+      .findMany({
+        where: { userId: session.user.id },
+        orderBy: { createdAt: "desc" },
+        take: 8,
+      })
+      .catch(() => [] as never[]),
+
+    // Pending documents count
+    db.document
+      .count({
         where: {
-          project: { members: { some: { userId: session.user.id } } },
-        },
-        include: {
-          project: { select: { id: true, name: true } },
-          assignments: {
-            include: { staff: { select: { name: true } } },
-            where: { isOwner: true },
-            take: 1,
+          status: "PENDING",
+          phase: {
+            project: {
+              members: { some: { userId: session.user.id } },
+            },
           },
         },
-        orderBy: { estEnd: "asc" },
-      }),
+      })
+      .catch(() => 0),
 
-      // Recent activity
-      db.activityLog
-        .findMany({
-          where: {
-            project: { members: { some: { userId: session.user.id } } },
-          },
-          include: {
-            user: { select: { name: true, email: true } },
-            project: { select: { name: true } },
-          },
-          orderBy: { createdAt: "desc" },
-          take: 15,
-        })
-        .catch(() => [] as never[]), // Table might not exist yet
-
-      // Checklist completion stats — count total and completed separately
+    // Checklist stats
+    Promise.all([
       db.checklistItem
         .count({
           where: {
+            completed: true,
             checklist: {
               phase: {
+                status: { in: ["IN_PROGRESS", "REVIEW_REQUESTED", "UNDER_REVIEW"] },
                 project: {
                   members: { some: { userId: session.user.id } },
                 },
@@ -93,37 +116,76 @@ export default async function DashboardPage() {
           },
         })
         .catch(() => 0),
-    ]);
+      db.checklistItem
+        .count({
+          where: {
+            checklist: {
+              phase: {
+                status: { in: ["IN_PROGRESS", "REVIEW_REQUESTED", "UNDER_REVIEW"] },
+                project: {
+                  members: { some: { userId: session.user.id } },
+                },
+              },
+            },
+          },
+        })
+        .catch(() => 0),
+    ]),
+
+    // Recent activity log
+    db.activityLog
+      .findMany({
+        where: {
+          project: { members: { some: { userId: session.user.id } } },
+        },
+        include: {
+          user: { select: { name: true, email: true } },
+          project: { select: { name: true } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      })
+      .catch(() => [] as never[]),
+  ]);
 
   const showCreate = canCreateProject(session.user.role);
   const now = new Date();
+  const [completedItems, totalItems] = checklistStats;
 
   // Compute widget data
   const activePhases = allPhases.filter(
-    (p: { status: string }) =>
+    (p) =>
       p.status === "IN_PROGRESS" ||
       p.status === "REVIEW_REQUESTED" ||
       p.status === "UNDER_REVIEW"
   );
 
+  const reviewPhases = allPhases.filter(
+    (p) => p.status === "REVIEW_REQUESTED"
+  );
+
   const overduePhases = allPhases.filter(
-    (p: { status: string; estEnd: Date }) =>
-      p.status !== "COMPLETE" && new Date(p.estEnd) < now
+    (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
   );
 
   const completedPhases = allPhases.filter(
-    (p: { status: string }) => p.status === "COMPLETE"
+    (p) => p.status === "COMPLETE"
   );
 
   const upcomingPhases = allPhases
     .filter(
-      (p: { status: string; estStart: Date }) =>
+      (p) =>
         p.status === "PENDING" &&
         new Date(p.estStart) <= new Date(now.getTime() + 14 * 86400000)
     )
     .slice(0, 5);
 
   const greeting = getGreeting();
+  const checklistPercent =
+    totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+  // Items needing attention
+  const attentionCount = reviewPhases.length + (pendingDocuments as number) + overduePhases.length;
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -140,6 +202,12 @@ export default async function DashboardPage() {
               day: "numeric",
               year: "numeric",
             })}
+            {attentionCount > 0 && (
+              <span className="ml-2 text-amber-600 font-medium">
+                · {attentionCount} item{attentionCount !== 1 ? "s" : ""} need
+                {attentionCount === 1 ? "s" : ""} attention
+              </span>
+            )}
           </p>
         </div>
         {showCreate && (
@@ -153,8 +221,8 @@ export default async function DashboardPage() {
         )}
       </div>
 
-      {/* Summary Widgets */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* KPI Widgets */}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <WidgetCard
           icon={<HardHat className="w-5 h-5" />}
           label="Active Phases"
@@ -163,68 +231,119 @@ export default async function DashboardPage() {
           detail={`${allPhases.length} total`}
         />
         <WidgetCard
+          icon={<Eye className="w-5 h-5" />}
+          label="Needs Review"
+          value={reviewPhases.length}
+          color={reviewPhases.length > 0 ? "amber" : "green"}
+          detail={
+            reviewPhases.length > 0 ? "awaiting approval" : "all clear"
+          }
+        />
+        <WidgetCard
           icon={<AlertTriangle className="w-5 h-5" />}
           label="Overdue"
           value={overduePhases.length}
           color={overduePhases.length > 0 ? "red" : "green"}
-          detail={overduePhases.length > 0 ? "needs attention" : "all on track"}
+          detail={overduePhases.length > 0 ? "past deadline" : "on track"}
         />
         <WidgetCard
-          icon={<CheckCircle2 className="w-5 h-5" />}
-          label="Completed"
-          value={completedPhases.length}
-          color="green"
-          detail={`of ${allPhases.length} phases`}
+          icon={<FileText className="w-5 h-5" />}
+          label="Pending Docs"
+          value={pendingDocuments as number}
+          color={(pendingDocuments as number) > 0 ? "amber" : "green"}
+          detail={(pendingDocuments as number) > 0 ? "need review" : "all reviewed"}
         />
         <WidgetCard
-          icon={<FolderKanban className="w-5 h-5" />}
-          label="Projects"
-          value={projects.length}
-          color="purple"
-          detail={`${projects.filter((p: { status: string }) => p.status === "ACTIVE").length} active`}
+          icon={<ClipboardCheck className="w-5 h-5" />}
+          label="Checklists"
+          value={checklistPercent}
+          valueSuffix="%"
+          color={checklistPercent >= 80 ? "green" : checklistPercent >= 50 ? "blue" : "amber"}
+          detail={`${completedItems}/${totalItems} items`}
         />
       </div>
 
+      {/* Attention Panel — only show when there are items */}
+      {(reviewPhases.length > 0 || overduePhases.length > 0) && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
+            <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+              <CircleDot className="w-4 h-4 text-amber-500" />
+              Needs Your Attention
+            </h2>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {/* Review Requested phases */}
+            {reviewPhases.map((phase) => (
+              <Link
+                key={phase.id}
+                href={`/dashboard/projects/${phase.project.id}/phases/${phase.id}`}
+                className="flex items-center gap-4 px-5 py-3 hover:bg-blue-50/50 transition-colors group"
+              >
+                <div className="p-2 rounded-lg bg-amber-100 text-amber-600 shrink-0">
+                  <Eye className="w-4 h-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    Review Requested: {phase.name}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {phase.project.name}
+                    {phase.assignments[0] &&
+                      ` · ${phase.assignments[0].staff.name}`}
+                  </p>
+                </div>
+                <span
+                  className={cn(
+                    "text-xs font-medium px-2 py-0.5 rounded-full shrink-0",
+                    statusColor("REVIEW_REQUESTED")
+                  )}
+                >
+                  {statusLabel("REVIEW_REQUESTED")}
+                </span>
+                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-[var(--color-primary)] transition-colors shrink-0" />
+              </Link>
+            ))}
+
+            {/* Overdue phases */}
+            {overduePhases.slice(0, 4).map((phase) => {
+              const daysOver = Math.ceil(
+                (now.getTime() - new Date(phase.estEnd).getTime()) / 86400000
+              );
+              return (
+                <Link
+                  key={phase.id}
+                  href={`/dashboard/projects/${phase.project.id}/phases/${phase.id}`}
+                  className="flex items-center gap-4 px-5 py-3 hover:bg-red-50/50 transition-colors group"
+                >
+                  <div className="p-2 rounded-lg bg-red-100 text-red-600 shrink-0">
+                    <AlertTriangle className="w-4 h-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      Overdue: {phase.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {phase.project.name}
+                      {phase.assignments[0] &&
+                        ` · ${phase.assignments[0].staff.name}`}
+                    </p>
+                  </div>
+                  <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full shrink-0">
+                    {daysOver}d overdue
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-red-500 transition-colors shrink-0" />
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Main content: two columns */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column: Projects + Overdue + Upcoming */}
+        {/* Left column: Projects + Upcoming */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Overdue Alert */}
-          {overduePhases.length > 0 && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-              <h3 className="text-sm font-semibold text-red-800 flex items-center gap-2 mb-3">
-                <AlertTriangle className="w-4 h-4" />
-                Overdue Phases ({overduePhases.length})
-              </h3>
-              <div className="space-y-2">
-                {overduePhases.slice(0, 4).map((phase: { id: string; name: string; estEnd: Date; project: { id: string; name: string }; assignments: { staff: { name: string } }[] }) => {
-                  const daysOver = Math.ceil(
-                    (now.getTime() - new Date(phase.estEnd).getTime()) / 86400000
-                  );
-                  return (
-                    <Link
-                      key={phase.id}
-                      href={`/dashboard/projects/${phase.project.id}/phases/${phase.id}`}
-                      className="flex items-center justify-between p-2 bg-white rounded-lg hover:bg-red-50 transition-colors"
-                    >
-                      <div>
-                        <span className="text-sm font-medium text-gray-900">
-                          {phase.name}
-                        </span>
-                        <span className="text-xs text-gray-500 ml-2">
-                          {phase.project.name}
-                        </span>
-                      </div>
-                      <span className="text-xs font-medium text-red-600">
-                        {daysOver}d overdue
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
           {/* Upcoming Starts */}
           {upcomingPhases.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
@@ -233,7 +352,7 @@ export default async function DashboardPage() {
                 Starting Soon (next 2 weeks)
               </h3>
               <div className="space-y-2">
-                {upcomingPhases.map((phase: { id: string; name: string; estStart: Date; project: { id: string; name: string }; assignments: { staff: { name: string } }[] }) => (
+                {upcomingPhases.map((phase) => (
                   <Link
                     key={phase.id}
                     href={`/dashboard/projects/${phase.project.id}/phases/${phase.id}`}
@@ -258,9 +377,14 @@ export default async function DashboardPage() {
 
           {/* Project Cards */}
           <div>
-            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
-              Projects
-            </h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                Projects
+              </h2>
+              <span className="text-xs text-gray-500">
+                {projects.filter((p: { status: string }) => p.status === "ACTIVE").length} active · {projects.length} total
+              </span>
+            </div>
             {projects.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
                 <FolderKanban className="w-12 h-12 text-gray-300 mx-auto mb-4" />
@@ -282,7 +406,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {projects.map((project: typeof projects[number]) => {
+                {projects.map((project: (typeof projects)[number]) => {
                   const phases = project.phases;
                   const completed = phases.filter(
                     (p: { status: string }) => p.status === "COMPLETE"
@@ -369,7 +493,9 @@ export default async function DashboardPage() {
                               style={{
                                 width: `${progress}%`,
                                 backgroundColor:
-                                  progress === 100 ? "#16a34a" : "var(--color-primary)",
+                                  progress === 100
+                                    ? "#16a34a"
+                                    : "var(--color-primary)",
                               }}
                             />
                           </div>
@@ -390,50 +516,134 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Right column: Activity Feed */}
-        <div>
-          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
-            Recent Activity
-          </h2>
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            {recentActivity.length === 0 ? (
-              <div className="p-6 text-center">
-                <Activity className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-                <p className="text-sm text-gray-500">No activity yet</p>
-                <p className="text-xs text-gray-400 mt-1">
-                  Actions like status changes, assignments, and uploads will
-                  appear here
-                </p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100">
-                {recentActivity.map((entry: { id: string; action: string; message: string; createdAt: Date; user: { name: string | null; email: string }; project: { name: string } }) => (
-                  <div key={entry.id} className="p-3">
-                    <div className="flex items-start gap-2">
-                      <div className="mt-0.5 shrink-0">
-                        {getActivityIcon(entry.action)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm text-gray-900">{entry.message}</p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-gray-500">
-                            {entry.user.name || entry.user.email}
-                          </span>
-                          <span className="text-xs text-gray-400">·</span>
-                          <span className="text-xs text-gray-400">
-                            {fmtRelative(entry.createdAt)}
-                          </span>
+        {/* Right column: Notifications + Activity + Quick Links */}
+        <div className="space-y-5">
+          {/* Recent Notifications */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+                Notifications
+              </h2>
+              <Link
+                href="/dashboard/notifications"
+                className="text-xs text-[var(--color-primary)] hover:underline"
+              >
+                View all
+              </Link>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              {recentNotifications.length === 0 ? (
+                <div className="p-6 text-center">
+                  <Bell className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-sm text-gray-500">No notifications yet</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Status changes, reviews, and uploads will appear here
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100">
+                  {recentNotifications.map(
+                    (notif: {
+                      id: string;
+                      type: string;
+                      title: string;
+                      message: string;
+                      read: boolean;
+                      createdAt: Date;
+                    }) => (
+                      <div
+                        key={notif.id}
+                        className={cn(
+                          "px-4 py-3 transition-colors",
+                          !notif.read && "bg-blue-50/40"
+                        )}
+                      >
+                        <div className="flex items-start gap-2.5">
+                          {!notif.read && (
+                            <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--color-primary)] shrink-0" />
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p
+                              className={cn(
+                                "text-sm truncate",
+                                !notif.read
+                                  ? "font-medium text-gray-900"
+                                  : "text-gray-700"
+                              )}
+                            >
+                              {notif.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-0.5 truncate">
+                              {notif.message}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              {fmtRelative(notif.createdAt)}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                    )
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div>
+            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+              Activity
+            </h2>
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              {recentActivity.length === 0 ? (
+                <div className="p-6 text-center">
+                  <Activity className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-sm text-gray-500">No activity yet</p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Status changes and uploads will appear here
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100">
+                  {recentActivity.map(
+                    (entry: {
+                      id: string;
+                      action: string;
+                      message: string;
+                      createdAt: Date;
+                      user: { name: string | null; email: string };
+                      project: { name: string };
+                    }) => (
+                      <div key={entry.id} className="px-4 py-3">
+                        <div className="flex items-start gap-2">
+                          <div className="mt-0.5 shrink-0">
+                            {getActivityIcon(entry.action)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm text-gray-900">
+                              {entry.message}
+                            </p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-gray-500">
+                                {entry.user.name || entry.user.email}
+                              </span>
+                              <span className="text-xs text-gray-400">·</span>
+                              <span className="text-xs text-gray-400">
+                                {fmtRelative(entry.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Quick Links */}
-          <div className="mt-4 space-y-2">
+          <div className="space-y-2">
             <Link
               href="/dashboard/directory"
               className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-[var(--color-primary-light)] transition-colors"
@@ -445,12 +655,12 @@ export default async function DashboardPage() {
               <ArrowRight className="w-4 h-4 text-gray-400" />
             </Link>
             <Link
-              href="/dashboard/notifications"
+              href="/dashboard/settings"
               className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-[var(--color-primary-light)] transition-colors"
             >
               <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                <Activity className="w-4 h-4 text-gray-400" />
-                Notifications
+                <Building2 className="w-4 h-4 text-gray-400" />
+                Settings
               </span>
               <ArrowRight className="w-4 h-4 text-gray-400" />
             </Link>
@@ -467,13 +677,15 @@ function WidgetCard({
   icon,
   label,
   value,
+  valueSuffix,
   color,
   detail,
 }: {
   icon: React.ReactNode;
   label: string;
   value: number;
-  color: "blue" | "red" | "green" | "purple";
+  valueSuffix?: string;
+  color: "blue" | "red" | "green" | "purple" | "amber";
   detail: string;
 }) {
   const colorMap = {
@@ -481,6 +693,7 @@ function WidgetCard({
     red: "bg-red-50 text-red-600 border-red-100",
     green: "bg-green-50 text-green-600 border-green-100",
     purple: "bg-purple-50 text-purple-600 border-purple-100",
+    amber: "bg-amber-50 text-amber-600 border-amber-100",
   };
 
   const iconBg = {
@@ -488,19 +701,22 @@ function WidgetCard({
     red: "bg-red-100 text-red-600",
     green: "bg-green-100 text-green-600",
     purple: "bg-purple-100 text-purple-600",
+    amber: "bg-amber-100 text-amber-600",
   };
 
   return (
     <div
-      className={cn(
-        "rounded-xl border p-4 transition-colors",
-        colorMap[color]
-      )}
+      className={cn("rounded-xl border p-4 transition-colors", colorMap[color])}
     >
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", iconBg[color])}>{icon}</div>
         <div>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-2xl font-bold">
+            {value}
+            {valueSuffix && (
+              <span className="text-base font-semibold">{valueSuffix}</span>
+            )}
+          </p>
           <p className="text-xs font-medium opacity-80">{label}</p>
         </div>
       </div>
@@ -520,7 +736,9 @@ function getActivityIcon(action: string): React.ReactNode {
   const iconClass = "w-4 h-4";
   switch (action) {
     case "PHASE_STATUS_CHANGED":
-      return <HardHat className={cn(iconClass, "text-[var(--color-primary)]")} />;
+      return (
+        <HardHat className={cn(iconClass, "text-[var(--color-primary)]")} />
+      );
     case "STAFF_ASSIGNED":
     case "STAFF_UNASSIGNED":
       return <Users className={cn(iconClass, "text-purple-500")} />;
