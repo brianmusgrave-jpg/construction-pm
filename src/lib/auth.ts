@@ -16,27 +16,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }),
         ]
       : []),
-    // Dev-only credentials provider for testing without OAuth/email setup
-    ...(process.env.NODE_ENV === "development"
-      ? [
-          Credentials({
-            name: "Dev Login",
-            credentials: {
-              email: { label: "Email", type: "email" },
-            },
-            async authorize(credentials) {
-              if (!credentials?.email) return null;
-              const email = credentials.email as string;
-              const user = await db.user.findUnique({ where: { email } });
-              if (user) return user;
-              // Auto-create user in dev mode
-              return db.user.create({
-                data: { email, name: email.split("@")[0], role: "ADMIN" },
-              });
-            },
-          }),
-        ]
-      : []),
+    // Credentials provider (email-based login)
+    Credentials({
+      name: "Email Login",
+      credentials: {
+        email: { label: "Email", type: "email" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) return null;
+        const email = credentials.email as string;
+        const user = await db.user.findUnique({ where: { email } });
+        if (user) return user;
+        return null;
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
