@@ -13,6 +13,7 @@ import {
   HardHat,
   AlertTriangle,
   Eye,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -175,6 +176,21 @@ export default async function ContractorDashboard() {
     return a.estStart.getTime() - b.estStart.getTime();
   });
 
+  // Fetch recent activity for assigned phases
+  const phaseIds = Array.from(phaseMap.keys());
+  const recentActivity = phaseIds.length > 0
+    ? await db.activityLog.findMany({
+        where: {
+          OR: phaseIds.map((id) => ({
+            data: { path: ["phaseId"], equals: id },
+          })),
+        },
+        include: { user: { select: { name: true, email: true } } },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+      }).catch(() => [] as never[])
+    : [];
+
   const now = new Date();
   const activePhases = assignedPhases.filter(
     (p) =>
@@ -187,6 +203,15 @@ export default async function ContractorDashboard() {
   );
   const overduePhases = assignedPhases.filter(
     (p) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+  );
+
+  // Phases ending soon (within 7 days, not complete)
+  const sevenDays = new Date(now.getTime() + 7 * 86400000);
+  const upcomingDeadlines = assignedPhases.filter(
+    (p) =>
+      p.status !== "COMPLETE" &&
+      new Date(p.estEnd) >= now &&
+      new Date(p.estEnd) <= sevenDays
   );
 
   return (
@@ -290,6 +315,68 @@ export default async function ContractorDashboard() {
                 </Link>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming deadlines */}
+      {upcomingDeadlines.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <h3 className="text-sm font-semibold text-amber-800 flex items-center gap-2 mb-2">
+            <Calendar className="w-4 h-4" />
+            Due This Week
+          </h3>
+          <div className="space-y-2">
+            {upcomingDeadlines.map((phase) => {
+              const daysLeft = Math.ceil(
+                (new Date(phase.estEnd).getTime() - now.getTime()) / 86400000
+              );
+              return (
+                <Link
+                  key={phase.id}
+                  href={`/contractor/phases/${phase.id}`}
+                  className="flex items-center justify-between p-2 bg-white rounded-lg hover:bg-amber-50 transition-colors"
+                >
+                  <div className="min-w-0">
+                    <span className="text-sm font-medium text-gray-900 truncate block">
+                      {phase.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {phase.projectName}
+                    </span>
+                  </div>
+                  <span className="text-xs font-medium text-amber-700 shrink-0 ml-2">
+                    {daysLeft === 0 ? "Due today" : `${daysLeft}d left`}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Recent activity */}
+      {recentActivity.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+            Recent Activity
+          </h3>
+          <div className="space-y-3">
+            {recentActivity.map((entry: { id: string; message: string; createdAt: Date; user: { name: string | null; email: string } }) => (
+              <div key={entry.id} className="flex items-start gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1.5 shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-sm text-gray-700">{entry.message}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {entry.user.name || entry.user.email} ·{" "}
+                    {new Date(entry.createdAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    })}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
