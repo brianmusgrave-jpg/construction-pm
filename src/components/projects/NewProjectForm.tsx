@@ -10,11 +10,28 @@ import {
   GripVertical,
   Diamond,
   HardHat,
+  Building2,
+  Wrench,
+  Zap,
+  Droplets,
+  Wind,
+  Columns3,
+  Frame,
+  Home,
+  Paintbrush,
+  ArrowLeft,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  RESIDENTIAL_TEMPLATE,
+  COMMERCIAL_TEMPLATE,
+  TRADE_TEMPLATES,
+} from "@/lib/phase-templates";
+import type { TradeTemplate } from "@/lib/phase-templates";
 
 interface PhaseInput {
-  id: string; // client-side key
+  id: string;
   name: string;
   detail: string;
   isMilestone: boolean;
@@ -39,21 +56,31 @@ function newPhase(): PhaseInput {
   };
 }
 
-// Common residential construction phases for the quick-add template
-const RESIDENTIAL_TEMPLATE: Omit<PhaseInput, "id" | "expanded">[] = [
-  { name: "Pre-Construction / Permitting", detail: "Plans, permits, site survey, engineering", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Site Work / Foundation", detail: "Clearing, grading, excavation, footings, foundation, backfill", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Framing", detail: "Floor systems, walls, roof trusses, sheathing, windows/doors", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Rough-In (MEP)", detail: "Rough plumbing, electrical, HVAC, low-voltage", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Insulation & Drywall", detail: "Insulation, vapor barrier, drywall hang/tape/finish", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Interior Finishes", detail: "Trim, cabinets, countertops, flooring, paint, tile, fixtures", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Exterior Finishes", detail: "Siding, roofing, gutters, exterior paint, landscaping", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Final MEP & Punch List", detail: "Fixture install, panel termination, HVAC startup, final walkthrough", isMilestone: false, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-  { name: "Certificate of Occupancy", detail: "Final inspections, CO issued", isMilestone: true, estStart: "", estEnd: "", worstStart: "", worstEnd: "" },
-];
+// Icon lookup for trade templates
+const tradeIcons: Record<string, typeof Zap> = {
+  Zap,
+  Droplets,
+  Wind,
+  Columns3,
+  Frame,
+  Home,
+  Paintbrush,
+};
+
+function getTradeIcon(iconName: string) {
+  return tradeIcons[iconName] || Wrench;
+}
+
+type TemplateChoice =
+  | { type: "residential" }
+  | { type: "commercial" }
+  | { type: "trade"; tradeId: string }
+  | { type: "blank" }
+  | null;
 
 export function NewProjectForm() {
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<0 | 1 | 2>(0);
+  const [templateChoice, setTemplateChoice] = useState<TemplateChoice>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -92,13 +119,35 @@ export function NewProjectForm() {
     setPhases(newPhases);
   }
 
-  function applyTemplate() {
-    const templatePhases = RESIDENTIAL_TEMPLATE.map((t) => ({
-      ...t,
-      id: crypto.randomUUID(),
-      expanded: false,
-    }));
-    setPhases(templatePhases);
+  function applyTemplatePhases(
+    templatePhases: { name: string; detail: string; isMilestone: boolean }[]
+  ) {
+    setPhases(
+      templatePhases.map((t) => ({
+        ...t,
+        id: crypto.randomUUID(),
+        estStart: "",
+        estEnd: "",
+        worstStart: "",
+        worstEnd: "",
+        expanded: false,
+      }))
+    );
+  }
+
+  function selectTemplate(choice: TemplateChoice) {
+    setTemplateChoice(choice);
+    if (choice?.type === "residential") {
+      applyTemplatePhases(RESIDENTIAL_TEMPLATE.phases);
+    } else if (choice?.type === "commercial") {
+      applyTemplatePhases(COMMERCIAL_TEMPLATE.phases);
+    } else if (choice?.type === "trade") {
+      const trade = TRADE_TEMPLATES.find((t) => t.id === choice.tradeId);
+      if (trade) applyTemplatePhases(trade.phases);
+    } else {
+      setPhases([]);
+    }
+    setStep(1);
   }
 
   function toggleAllExpand(expanded: boolean) {
@@ -111,7 +160,6 @@ export function NewProjectForm() {
       return;
     }
 
-    // Validate phases have required fields
     for (const phase of phases) {
       if (!phase.name.trim()) {
         setError(`Phase ${phases.indexOf(phase) + 1} needs a name`);
@@ -154,10 +202,10 @@ export function NewProjectForm() {
       {/* Step indicator */}
       <div className="flex items-center gap-3 mb-2">
         <button
-          onClick={() => setStep(1)}
+          onClick={() => setStep(0)}
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
-            step === 1
+            step === 0
               ? "bg-blue-600 text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
           )}
@@ -165,12 +213,28 @@ export function NewProjectForm() {
           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
             1
           </span>
-          Project Details
+          Template
         </button>
         <div className="w-8 h-px bg-gray-300" />
         <button
-          onClick={() => name.trim() && setStep(2)}
-          disabled={!name.trim()}
+          onClick={() => templateChoice && setStep(1)}
+          disabled={!templateChoice}
+          className={cn(
+            "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
+            step === 1
+              ? "bg-blue-600 text-white"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-40 disabled:cursor-not-allowed"
+          )}
+        >
+          <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+            2
+          </span>
+          Details
+        </button>
+        <div className="w-8 h-px bg-gray-300" />
+        <button
+          onClick={() => templateChoice && name.trim() && setStep(2)}
+          disabled={!templateChoice || !name.trim()}
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors",
             step === 2
@@ -179,9 +243,9 @@ export function NewProjectForm() {
           )}
         >
           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
-            2
+            3
           </span>
-          Build Phases
+          Phases
         </button>
       </div>
 
@@ -189,6 +253,111 @@ export function NewProjectForm() {
       {error && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
           {error}
+        </div>
+      )}
+
+      {/* Step 0: Template Picker */}
+      {step === 0 && (
+        <div className="space-y-6">
+          {/* Main project types */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+              Project Type
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <button
+                onClick={() => selectTemplate({ type: "residential" })}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-blue-400 hover:bg-blue-50/50",
+                  templateChoice?.type === "residential"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white"
+                )}
+              >
+                <HardHat className="w-8 h-8 text-blue-600" />
+                <span className="text-sm font-semibold text-gray-900">
+                  Residential
+                </span>
+                <span className="text-xs text-gray-500">
+                  9 phases · permitting to CO
+                </span>
+              </button>
+
+              <button
+                onClick={() => selectTemplate({ type: "commercial" })}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-blue-400 hover:bg-blue-50/50",
+                  templateChoice?.type === "commercial"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white"
+                )}
+              >
+                <Building2 className="w-8 h-8 text-indigo-600" />
+                <span className="text-sm font-semibold text-gray-900">
+                  Commercial
+                </span>
+                <span className="text-xs text-gray-500">
+                  12 phases · steel to commissioning
+                </span>
+              </button>
+
+              <button
+                onClick={() => selectTemplate({ type: "blank" })}
+                className={cn(
+                  "flex flex-col items-center gap-2 p-5 rounded-xl border-2 transition-all text-center hover:border-blue-400 hover:bg-blue-50/50",
+                  templateChoice?.type === "blank"
+                    ? "border-blue-500 bg-blue-50"
+                    : "border-gray-200 bg-white"
+                )}
+              >
+                <Plus className="w-8 h-8 text-gray-400" />
+                <span className="text-sm font-semibold text-gray-900">
+                  Blank
+                </span>
+                <span className="text-xs text-gray-500">
+                  Start from scratch
+                </span>
+              </button>
+            </div>
+          </div>
+
+          {/* Trade templates */}
+          <div>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+              Trade-Specific
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {TRADE_TEMPLATES.map((trade) => {
+                const Icon = getTradeIcon(trade.icon);
+                const isSelected =
+                  templateChoice?.type === "trade" &&
+                  (templateChoice as { type: "trade"; tradeId: string })
+                    .tradeId === trade.id;
+                return (
+                  <button
+                    key={trade.id}
+                    onClick={() =>
+                      selectTemplate({ type: "trade", tradeId: trade.id })
+                    }
+                    className={cn(
+                      "flex flex-col items-center gap-1.5 p-4 rounded-xl border-2 transition-all text-center hover:border-orange-400 hover:bg-orange-50/50",
+                      isSelected
+                        ? "border-orange-500 bg-orange-50"
+                        : "border-gray-200 bg-white"
+                    )}
+                  >
+                    <Icon className="w-6 h-6 text-orange-500" />
+                    <span className="text-sm font-medium text-gray-900">
+                      {trade.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {trade.phases.length} phases
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
 
@@ -262,7 +431,14 @@ export function NewProjectForm() {
             </div>
           </div>
 
-          <div className="pt-4 flex justify-end">
+          <div className="pt-4 flex justify-between">
+            <button
+              onClick={() => setStep(0)}
+              className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Template
+            </button>
             <button
               onClick={() => {
                 if (!name.trim()) {
@@ -274,7 +450,7 @@ export function NewProjectForm() {
               }}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
-              Next: Add Phases
+              Next: Review Phases
             </button>
           </div>
         </div>
@@ -293,15 +469,6 @@ export function NewProjectForm() {
                 <Plus className="w-4 h-4" />
                 Add Phase
               </button>
-              {phases.length === 0 && (
-                <button
-                  onClick={applyTemplate}
-                  className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <HardHat className="w-4 h-4" />
-                  Residential Template
-                </button>
-              )}
             </div>
             {phases.length > 1 && (
               <div className="flex items-center gap-2 text-sm">
@@ -328,7 +495,7 @@ export function NewProjectForm() {
               <HardHat className="w-10 h-10 text-gray-300 mx-auto mb-3" />
               <p className="text-sm text-gray-500 mb-1">No phases yet</p>
               <p className="text-xs text-gray-400">
-                Add phases manually or start from a template
+                Add phases manually or go back to choose a template
               </p>
             </div>
           )}
@@ -529,9 +696,10 @@ export function NewProjectForm() {
           <div className="flex items-center justify-between pt-4">
             <button
               onClick={() => setStep(1)}
-              className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
             >
-              Back
+              <ArrowLeft className="w-4 h-4" />
+              Details
             </button>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
@@ -540,9 +708,16 @@ export function NewProjectForm() {
               <button
                 onClick={handleSubmit}
                 disabled={submitting || !name.trim()}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
               >
-                {submitting ? "Creating..." : "Create Project"}
+                {submitting ? (
+                  "Creating..."
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Create Project
+                  </>
+                )}
               </button>
             </div>
           </div>

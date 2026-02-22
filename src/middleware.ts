@@ -10,7 +10,9 @@ export default auth((req) => {
   if (publicPaths.some((p) => pathname.startsWith(p))) {
     // Redirect logged-in users away from login page
     if (isLoggedIn && pathname === "/login") {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      const role = (req.auth?.user as { role?: string })?.role;
+      const dest = role === "CONTRACTOR" ? "/contractor" : "/dashboard";
+      return NextResponse.redirect(new URL(dest, req.url));
     }
     return NextResponse.next();
   }
@@ -25,6 +27,19 @@ export default auth((req) => {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // Role-based routing
+  const role = (req.auth?.user as { role?: string })?.role;
+
+  // Contractors trying to access /dashboard get redirected to /contractor
+  if (role === "CONTRACTOR" && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/contractor", req.url));
+  }
+
+  // Non-contractors trying to access /contractor get redirected to /dashboard
+  if (role !== "CONTRACTOR" && pathname.startsWith("/contractor")) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
   return NextResponse.next();
