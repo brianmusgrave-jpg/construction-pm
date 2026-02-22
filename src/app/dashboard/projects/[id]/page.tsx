@@ -21,6 +21,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { cn, statusColor, statusLabel, fmtShort, fmtLong, fmtRelative } from "@/lib/utils";
+import { can } from "@/lib/permissions";
+import { BudgetSection } from "@/components/project/BudgetSection";
 
 export default async function ProjectOverviewPage({
   params,
@@ -113,6 +115,16 @@ export default async function ProjectOverviewPage({
   const budgetStr = project.budget
     ? `$${Number(project.budget).toLocaleString()}`
     : null;
+
+  const userRole = session.user.role || "VIEWER";
+  const canManageBudget = can(userRole, "manage", "phase");
+  const budgetPhases = phases.map((p) => ({
+    id: p.id,
+    name: p.name,
+    status: p.status,
+    estimatedCost: p.estimatedCost ? Number(p.estimatedCost) : null,
+    actualCost: p.actualCost ? Number(p.actualCost) : null,
+  }));
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
@@ -238,6 +250,14 @@ export default async function ProjectOverviewPage({
           color="purple"
         />
       </div>
+
+      {/* Budget */}
+      <BudgetSection
+        projectId={id}
+        projectBudget={project.budget ? Number(project.budget) : null}
+        phases={budgetPhases}
+        canManage={canManageBudget}
+      />
 
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">

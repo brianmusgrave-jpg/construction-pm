@@ -31,18 +31,33 @@ interface SidebarProps {
   unreadCount?: number;
 }
 
-const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-  { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
-  { name: "Directory", href: "/dashboard/directory", icon: Users },
-  { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
-];
+function getNavigation(role: string) {
+  const base = [
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
+    { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
+  ];
+
+  // Stakeholders & viewers get a simpler nav
+  if (role === "STAKEHOLDER" || role === "VIEWER") {
+    return [
+      ...base,
+      { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
+    ];
+  }
+
+  return [
+    ...base,
+    { name: "Directory", href: "/dashboard/directory", icon: Users },
+    { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
+    { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  ];
+}
 
 export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigation = getNavigation(user.role);
 
   // Close mobile sidebar on route change
   useEffect(() => {

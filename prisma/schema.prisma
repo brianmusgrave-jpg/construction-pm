@@ -154,6 +154,10 @@ model Phase {
   actualStart DateTime? @map("actual_start")
   actualEnd   DateTime? @map("actual_end")
 
+  // Budget tracking
+  estimatedCost Decimal? @map("estimated_cost") @db.Decimal(12, 2)
+  actualCost    Decimal? @map("actual_cost") @db.Decimal(12, 2)
+
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String  @map("project_id")
 

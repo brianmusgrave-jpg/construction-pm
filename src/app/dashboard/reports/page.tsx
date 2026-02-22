@@ -10,6 +10,7 @@ import {
   getOverdueReport,
 } from "@/actions/reports";
 import { cn, statusColor, statusLabel, fmtShort } from "@/lib/utils";
+import { ExportButton } from "@/components/reports/ExportButton";
 import {
   BarChart3,
   TrendingUp,
@@ -79,12 +80,51 @@ export default async function ReportsPage() {
             {" · "}Last 30 days
           </p>
         </div>
-        {isAdmin && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
-            <Shield className="w-3.5 h-3.5" />
-            Admin View
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {isAdmin && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
+              <Shield className="w-3.5 h-3.5" />
+              Admin View
+            </span>
+          )}
+          <ExportButton
+            data={{
+              projectHealth: projectHealth.map((p) => ({
+                project: p.name,
+                status: p.status,
+                phases: p.phases.total,
+                completedPhases: p.phases.completed,
+                progress: p.progress,
+                overdue: p.phases.overdue,
+              })),
+              phaseBreakdown: phaseBreakdown.map((p) => ({
+                status: p.status,
+                count: p.count,
+              })),
+              documentStats: {
+                total: documentStats.total,
+                byStatus: Object.fromEntries(
+                  documentStats.byStatus.map((s) => [s.status, s.count])
+                ),
+              },
+              overdueReport: overdueReport.map((o) => ({
+                phaseName: o.name,
+                projectName: o.projectName,
+                daysOverdue: o.daysOverdue,
+                owner: o.owner,
+              })),
+              teamPerformance: canManage
+                ? (teamPerformance as Awaited<ReturnType<typeof getTeamPerformance>>).map((t) => ({
+                    name: t.name,
+                    assigned: t.totalAssignments,
+                    completed: t.completed,
+                    active: t.active,
+                    overdue: t.overdue,
+                  }))
+                : undefined,
+            }}
+          />
+        </div>
       </div>
 
       {/* Top-level KPIs */}
