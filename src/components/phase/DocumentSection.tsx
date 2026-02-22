@@ -12,7 +12,7 @@ interface Document {
   status: string;
   version: number;
   notes: string | null;
-  createdAt: string;
+  createdAt: Date;
   uploadedBy: { id: string; name: string | null; email: string };
 }
 
