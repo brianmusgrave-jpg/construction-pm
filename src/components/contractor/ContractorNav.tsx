@@ -11,6 +11,7 @@ import {
   FileText,
   Camera,
   Bell,
+  BarChart3,
 } from "lucide-react";
 
 interface ContractorNavProps {
@@ -29,6 +30,7 @@ const navigation = [
   { name: "My Work", href: "/contractor", icon: LayoutDashboard },
   { name: "Documents", href: "/contractor/documents", icon: FileText },
   { name: "Photos", href: "/contractor/photos", icon: Camera },
+  { name: "Reports", href: "/contractor/reports", icon: BarChart3 },
   { name: "Notifications", href: "/contractor/notifications", icon: Bell },
 ];
 

@@ -15,6 +15,7 @@ import {
   HardHat,
   Menu,
   X,
+  BarChart3,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -32,6 +33,7 @@ interface SidebarProps {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
+  { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
   { name: "Directory", href: "/dashboard/directory", icon: Users },
   { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
