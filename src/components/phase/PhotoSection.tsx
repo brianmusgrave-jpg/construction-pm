@@ -18,7 +18,7 @@ import {
   Eye,
 } from "lucide-react";
 import { upload } from "@vercel/blob/client";
-import { createPhoto, deletePhoto, flagPhoto, clearPhotoFlag } from "@/actions/photos";
+import { createPhoto, createPhotoBatch, deletePhoto, flagPhoto, clearPhotoFlag } from "@/actions/photos";
 
 interface Photo {
   id: string;
@@ -98,6 +98,7 @@ export function PhotoSection({
   const [flagNoteText, setFlagNoteText] = useState("");
   const [pendingFlag, setPendingFlag] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -139,6 +140,8 @@ export function PhotoSection({
     setError(null);
 
     try {
+      // Upload all files to blob storage first
+      const uploadedUrls: { url: string }[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         setUploadProgress(
@@ -151,10 +154,20 @@ export function PhotoSection({
           access: "public",
           handleUploadUrl: "/api/upload",
         });
+        uploadedUrls.push({ url: blob.url });
+      }
 
+      // Create all photo records in one batch
+      if (uploadedUrls.length > 1) {
+        setUploadProgress("Saving photos...");
+        await createPhotoBatch({
+          phaseId,
+          photos: uploadedUrls,
+        });
+      } else if (uploadedUrls.length === 1) {
         await createPhoto({
           phaseId,
-          url: blob.url,
+          url: uploadedUrls[0].url,
         });
       }
     } catch (err) {
@@ -227,24 +240,45 @@ export function PhotoSection({
             )}
           </h2>
           {canUpload && (
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] disabled:opacity-50"
-            >
+            <div className="flex items-center gap-2">
               {isUploading ? (
-                <>
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)]">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   {uploadProgress || "Uploading..."}
-                </>
+                </span>
               ) : (
                 <>
-                  <Camera className="w-4 h-4" />
-                  Add Photos
+                  <button
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] sm:hidden"
+                    title="Take photo"
+                  >
+                    <Camera className="w-4 h-4" />
+                    Camera
+                  </button>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
+                    title="Upload photos"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span className="hidden sm:inline">Add Photos</span>
+                    <span className="sm:hidden">Gallery</span>
+                  </button>
                 </>
               )}
-            </button>
+            </div>
           )}
+          {/* Camera capture input (rear camera) */}
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
+          {/* File picker input (multi-select from gallery) */}
           <input
             ref={fileInputRef}
             type="file"

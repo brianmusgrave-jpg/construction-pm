@@ -54,6 +54,57 @@ export async function createPhoto(data: {
   return photo;
 }
 
+export async function createPhotoBatch(data: {
+  phaseId: string;
+  photos: { url: string; caption?: string }[];
+}) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const userRole = session.user.role || "VIEWER";
+  if (!can(userRole, "create", "photo")) throw new Error("Forbidden");
+
+  const phase = await db.phase.findUnique({
+    where: { id: data.phaseId },
+    select: { id: true, projectId: true, name: true },
+  });
+  if (!phase) throw new Error("Phase not found");
+
+  const created = await db.photo.createMany({
+    data: data.photos.map((p) => ({
+      url: p.url,
+      caption: p.caption || null,
+      phaseId: data.phaseId,
+      uploadedById: session.user.id,
+    })),
+  });
+
+  // Log activity
+  db.activityLog.create({
+    data: {
+      action: "PHOTO_UPLOADED",
+      message: `Added ${data.photos.length} photo${data.photos.length > 1 ? "s" : ""} to ${phase.name}`,
+      projectId: phase.projectId,
+      userId: session.user.id,
+      data: { phaseId: phase.id, count: data.photos.length },
+    },
+  }).catch(() => {});
+
+  // Notify project members
+  const memberIds = await getProjectMemberIds(phase.projectId);
+  notify({
+    type: "PHOTO_UPLOADED",
+    title: `${data.photos.length} photo${data.photos.length > 1 ? "s" : ""} added to ${phase.name}`,
+    message: `${session.user.name || session.user.email} uploaded ${data.photos.length} photo${data.photos.length > 1 ? "s" : ""} to ${phase.name}`,
+    recipientIds: memberIds,
+    actorId: session.user.id,
+    data: { projectId: phase.projectId, phaseId: phase.id },
+  });
+
+  revalidatePath(`/dashboard/projects/${phase.projectId}`);
+  return { count: created.count };
+}
+
 export async function deletePhoto(photoId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
