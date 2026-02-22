@@ -34,7 +34,7 @@ export function SearchPalette() {
   const [selectedIdx, setSelectedIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keyboard shortcut: Cmd+K / Ctrl+K
   useEffect(() => {
