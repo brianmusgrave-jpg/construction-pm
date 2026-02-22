@@ -81,7 +81,7 @@ export default async function PhaseDetailPage({
         canManage={canManage}
       />
 
-      <div className="flex-1 p-6 max-w-5xl mx-auto w-full space-y-6">
+      <div className="flex-1 p-4 sm:p-6 max-w-5xl mx-auto w-full space-y-4 sm:space-y-6">
         <PhaseInfoSection phase={phase} canEdit={canEdit} />
 
         <AssignmentSection

@@ -54,29 +54,29 @@ export function PhaseHeader({
   }
 
   return (
-    <div className="px-6 py-4 border-b border-gray-200 bg-white">
+    <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-white">
       <div className="max-w-5xl mx-auto">
-        <div className="flex items-center gap-1 text-sm text-gray-500 mb-3">
+        <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500 mb-3 overflow-x-auto">
           <Link
             href={`/dashboard/projects/${projectId}`}
-            className="hover:text-gray-700"
+            className="hover:text-gray-700 shrink-0"
           >
             {projectName}
           </Link>
-          <span>/</span>
+          <span className="shrink-0">/</span>
           <Link
             href={`/dashboard/projects/${projectId}/timeline`}
-            className="hover:text-gray-700"
+            className="hover:text-gray-700 shrink-0"
           >
             Timeline
           </Link>
-          <span>/</span>
-          <span className="text-gray-400">{phase.name}</span>
+          <span className="shrink-0">/</span>
+          <span className="text-gray-400 truncate">{phase.name}</span>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-bold text-gray-900">{phase.name}</h1>
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">{phase.name}</h1>
             <span
               className={cn(
                 "text-xs font-medium px-2 py-0.5 rounded-full",

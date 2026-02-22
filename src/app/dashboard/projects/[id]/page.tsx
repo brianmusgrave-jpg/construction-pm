@@ -115,55 +115,57 @@ export default async function ProjectOverviewPage({
     : null;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <Link
-            href="/dashboard"
-            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Dashboard
-          </Link>
-          <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-          <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
-            {project.address && (
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5" />
-                {project.address}
-              </span>
-            )}
-            {budgetStr && (
-              <span className="flex items-center gap-1">
-                <DollarSign className="w-3.5 h-3.5" />
-                {budgetStr}
-              </span>
-            )}
-            {project.estCompletion && (
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5" />
-                Est. {fmtLong(project.estCompletion)}
-              </span>
-            )}
+      <div>
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Dashboard
+        </Link>
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{project.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+              {project.address && (
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3.5 h-3.5" />
+                  {project.address}
+                </span>
+              )}
+              {budgetStr && (
+                <span className="flex items-center gap-1">
+                  <DollarSign className="w-3.5 h-3.5" />
+                  {budgetStr}
+                </span>
+              )}
+              {project.estCompletion && (
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5" />
+                  Est. {fmtLong(project.estCompletion)}
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span
-            className={cn(
-              "text-xs font-medium px-3 py-1 rounded-full",
-              statusColor(project.status)
-            )}
-          >
-            {statusLabel(project.status)}
-          </span>
-          <Link
-            href={`/dashboard/projects/${id}/timeline`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
-          >
-            <Calendar className="w-4 h-4" />
-            Timeline
-          </Link>
+          <div className="flex items-center gap-3 shrink-0">
+            <span
+              className={cn(
+                "text-xs font-medium px-3 py-1 rounded-full",
+                statusColor(project.status)
+              )}
+            >
+              {statusLabel(project.status)}
+            </span>
+            <Link
+              href={`/dashboard/projects/${id}/timeline`}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+            >
+              <Calendar className="w-4 h-4" />
+              Timeline
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -198,7 +200,7 @@ export default async function ProjectOverviewPage({
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
         <StatCard
           icon={<HardHat className="w-4 h-4" />}
           label="Active"
@@ -238,7 +240,7 @@ export default async function ProjectOverviewPage({
       </div>
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left: Phase list */}
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
@@ -304,8 +306,8 @@ export default async function ProjectOverviewPage({
                     </div>
                   </div>
 
-                  {/* Counters */}
-                  <div className="flex items-center gap-3 shrink-0">
+                  {/* Counters — hidden on very small screens */}
+                  <div className="hidden sm:flex items-center gap-3 shrink-0">
                     {phase._count.documents > 0 && (
                       <span className="flex items-center gap-1 text-xs text-gray-400">
                         <FileText className="w-3.5 h-3.5" />

@@ -188,14 +188,14 @@ export default async function DashboardPage() {
   const attentionCount = reviewPhases.length + (pendingDocuments as number) + overduePhases.length;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
             {greeting}, {session.user.name?.split(" ")[0] || "there"}
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">
             {new Date().toLocaleDateString("en-US", {
               weekday: "long",
               month: "long",
@@ -213,16 +213,17 @@ export default async function DashboardPage() {
         {showCreate && (
           <Link
             href="/dashboard/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors shrink-0"
           >
             <Plus className="w-4 h-4" />
-            New Project
+            <span className="hidden sm:inline">New Project</span>
+            <span className="sm:hidden">New</span>
           </Link>
         )}
       </div>
 
       {/* KPI Widgets */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="flex gap-3 overflow-x-auto pb-1 sm:grid sm:grid-cols-3 sm:overflow-visible lg:grid-cols-5">
         <WidgetCard
           icon={<HardHat className="w-5 h-5" />}
           label="Active Phases"
@@ -341,9 +342,9 @@ export default async function DashboardPage() {
       )}
 
       {/* Main content: two columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Left column: Projects + Upcoming */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
           {/* Upcoming Starts */}
           {upcomingPhases.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
@@ -706,7 +707,7 @@ function WidgetCard({
 
   return (
     <div
-      className={cn("rounded-xl border p-4 transition-colors", colorMap[color])}
+      className={cn("rounded-xl border p-4 transition-colors min-w-[140px] sm:min-w-0 shrink-0 sm:shrink", colorMap[color])}
     >
       <div className="flex items-center gap-3">
         <div className={cn("p-2 rounded-lg", iconBg[color])}>{icon}</div>
