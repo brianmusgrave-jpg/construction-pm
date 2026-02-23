@@ -45,18 +45,18 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
   );
 
   // Per-project budget breakdown (amountSpent derived from phase actualCost sums)
-  type ProjectWithPhases = (typeof projects)[number];
-  const projectBudgets = projects
-    .filter((p: ProjectWithPhases) => Number(p.budget ?? 0) > 0)
-    .map((p: ProjectWithPhases) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const projectBudgets = (projects as any[])
+    .filter((p) => Number(p.budget ?? 0) > 0)
+    .map((p) => {
       const spent = (p.phases ?? []).reduce(
-        (sum: number, ph: { actualCost: number | null }) => sum + Number(ph.actualCost ?? 0),
+        (sum: number, ph: { actualCost: unknown }) => sum + Number(ph.actualCost ?? 0),
         0
       );
       return {
-        name: p.name.length > 20 ? p.name.slice(0, 20) + "…" : p.name,
+        name: (p.name as string).length > 20 ? (p.name as string).slice(0, 20) + "…" : (p.name as string),
         estimated: Number(p.budget ?? 0),
-        actual: spent,
+        actual: spent as number,
       };
     })
     .sort((a: { estimated: number }, b: { estimated: number }) => b.estimated - a.estimated)

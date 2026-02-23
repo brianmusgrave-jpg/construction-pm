@@ -1,5 +1,9 @@
 "use server";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// QuickBooks models (quickBooksConnection, quickBooksSyncLog) are not in the
+// generated Prisma client types yet, so (db as any) casts are necessary.
+
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
@@ -108,8 +112,8 @@ export async function exchangeQuickBooksCode(
     });
 
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Connection failed" };
+  } catch (err: unknown) {
+    return { success: false, error: (err instanceof Error ? err.message : null) || "Connection failed" };
   }
 }
 
@@ -153,8 +157,8 @@ export async function disconnectQuickBooks(): Promise<{ success: boolean; error?
   try {
     await (db as any).quickBooksConnection.deleteMany();
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Disconnect failed" };
+  } catch (err: unknown) {
+    return { success: false, error: (err instanceof Error ? err.message : null) || "Disconnect failed" };
   }
 }
 
@@ -190,8 +194,8 @@ export async function updateQuickBooksSyncSettings(settings: {
       data: validated,
     });
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Update failed" };
+  } catch (err: unknown) {
+    return { success: false, error: (err instanceof Error ? err.message : null) || "Update failed" };
   }
 }
 
@@ -287,9 +291,9 @@ export async function triggerQuickBooksSync(
           itemsFailed++;
           errors.push("Failed to fetch invoices");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         itemsFailed++;
-        errors.push(`Invoice sync error: ${e.message}`);
+        errors.push(`Invoice sync error: ${e instanceof Error ? e.message : "Unknown"}`);
       }
     }
 
@@ -310,9 +314,9 @@ export async function triggerQuickBooksSync(
           itemsFailed++;
           errors.push("Failed to fetch expenses");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         itemsFailed++;
-        errors.push(`Expense sync error: ${e.message}`);
+        errors.push(`Expense sync error: ${e instanceof Error ? e.message : "Unknown"}`);
       }
     }
 
@@ -333,9 +337,9 @@ export async function triggerQuickBooksSync(
           itemsFailed++;
           errors.push("Failed to fetch vendors");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         itemsFailed++;
-        errors.push(`Vendor sync error: ${e.message}`);
+        errors.push(`Vendor sync error: ${e instanceof Error ? e.message : "Unknown"}`);
       }
     }
 
@@ -356,9 +360,9 @@ export async function triggerQuickBooksSync(
           itemsFailed++;
           errors.push("Failed to fetch customers");
         }
-      } catch (e: any) {
+      } catch (e: unknown) {
         itemsFailed++;
-        errors.push(`Customer sync error: ${e.message}`);
+        errors.push(`Customer sync error: ${e instanceof Error ? e.message : "Unknown"}`);
       }
     }
 
@@ -388,8 +392,8 @@ export async function triggerQuickBooksSync(
     });
 
     return { success: true, syncLogId: syncLog.id };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Sync failed" };
+  } catch (err: unknown) {
+    return { success: false, error: (err instanceof Error ? err.message : null) || "Sync failed" };
   }
 }
 
