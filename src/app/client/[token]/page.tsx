@@ -7,15 +7,12 @@ import {
   DollarSign,
   CheckCircle2,
   Clock,
-  AlertTriangle,
   HardHat,
   FileText,
   Camera,
   Receipt,
   TrendingUp,
-  Download,
   Eye,
-  ChevronRight,
   Shield,
 } from "lucide-react";
 
