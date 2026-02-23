@@ -2,6 +2,7 @@ import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
+import { rateLimitHeaders } from "@/lib/rate-limit";
 
 // Allowed file types for construction documents
 const ALLOWED_TYPES = [
@@ -20,6 +21,16 @@ const ALLOWED_TYPES = [
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 30 uploads per minute per IP
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const rl = rateLimitHeaders(`upload:${ip}`, 30, 60_000);
+  if (rl.limited) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded" },
+      { status: 429, headers: rl.headers }
+    );
+  }
+
   const body = (await request.json()) as HandleUploadBody;
 
   try {

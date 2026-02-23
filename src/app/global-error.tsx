@@ -11,17 +11,44 @@ export default function GlobalError({
     <html>
       <body style={{ padding: "2rem", fontFamily: "system-ui, sans-serif" }}>
         <h1 style={{ color: "#dc2626" }}>Something went wrong</h1>
-        <pre style={{ background: "#fef2f2", padding: "1rem", borderRadius: "0.5rem", overflow: "auto", whiteSpace: "pre-wrap" }}>
-          {error.message}
-        </pre>
+        <p style={{ color: "#374151", marginTop: "0.5rem" }}>
+          An unexpected error occurred. Please try again or contact support if the
+          issue persists.
+        </p>
         {error.digest && (
-          <p style={{ color: "#6b7280", fontSize: "0.875rem" }}>
-            Digest: {error.digest}
+          <p style={{ color: "#6b7280", fontSize: "0.875rem", marginTop: "0.5rem" }}>
+            Error ID: {error.digest}
           </p>
         )}
-        <pre style={{ background: "#f3f4f6", padding: "1rem", borderRadius: "0.5rem", overflow: "auto", whiteSpace: "pre-wrap", fontSize: "0.75rem", marginTop: "1rem" }}>
-          {error.stack}
-        </pre>
+        {process.env.NODE_ENV === "development" && (
+          <>
+            <pre
+              style={{
+                background: "#fef2f2",
+                padding: "1rem",
+                borderRadius: "0.5rem",
+                overflow: "auto",
+                whiteSpace: "pre-wrap",
+                marginTop: "1rem",
+              }}
+            >
+              {error.message}
+            </pre>
+            <pre
+              style={{
+                background: "#f3f4f6",
+                padding: "1rem",
+                borderRadius: "0.5rem",
+                overflow: "auto",
+                whiteSpace: "pre-wrap",
+                fontSize: "0.75rem",
+                marginTop: "0.5rem",
+              }}
+            >
+              {error.stack}
+            </pre>
+          </>
+        )}
         <button
           onClick={() => reset()}
           style={{

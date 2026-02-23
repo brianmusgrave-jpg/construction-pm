@@ -7,6 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { rateLimitHeaders } from "@/lib/rate-limit";
 
 // Server action imports
 import { updatePhaseStatus, updatePhaseDates } from "@/actions/phases";
@@ -171,6 +172,16 @@ async function dispatchAction(action: string, p: Record<string, unknown>): Promi
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 sync requests per minute per IP
+  const ip = request.headers.get("x-forwarded-for") || "unknown";
+  const rl = rateLimitHeaders(`sync:${ip}`, 20, 60_000);
+  if (rl.limited) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Try again later." },
+      { status: 429, headers: rl.headers }
+    );
+  }
+
   // Authenticate
   const session = await auth();
   if (!session?.user?.id) {

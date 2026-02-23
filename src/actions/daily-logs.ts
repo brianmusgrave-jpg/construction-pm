@@ -3,6 +3,20 @@
 import { db } from "@/lib/db-types";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const CreateDailyLogSchema = z.object({
+  projectId: z.string().min(1),
+  date: z.string().min(1),
+  weather: z.string().max(100).optional(),
+  tempHigh: z.number().optional(),
+  tempLow: z.number().optional(),
+  crewCount: z.number().nonnegative().optional(),
+  equipment: z.string().max(2000).optional(),
+  workSummary: z.string().min(1).max(5000),
+  issues: z.string().max(5000).optional(),
+  notes: z.string().max(5000).optional(),
+});
 
 export async function getDailyLogs(projectId: string) {
   const session = await auth();
@@ -30,6 +44,7 @@ export async function createDailyLog(data: {
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+  const validated = CreateDailyLogSchema.parse(data);
 
   const log = await db.dailyLog.create({
     data: {

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db-types";
+import { verifyClientToken } from "@/actions/client-tokens";
 import {
   Building2,
   MapPin,
@@ -82,10 +83,8 @@ export default async function ClientPortalPage({
 }) {
   const { token } = await params;
 
-  const ct = await db.clientToken.findUnique({ where: { token } });
-  if (!ct || !ct.active) notFound();
-  if (ct.expiresAt && new Date(ct.expiresAt) < new Date()) notFound();
-  if (!ct.projectId) notFound();
+  const ct = await verifyClientToken(token);
+  if (!ct || !ct.projectId) notFound();
 
   const project = await (db as any).project.findUnique({
     where: { id: ct.projectId },

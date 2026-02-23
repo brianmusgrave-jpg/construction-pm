@@ -4,6 +4,21 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db-types";
 import type { Material, MaterialStatus } from "@/lib/db-types";
+import { z } from "zod";
+
+const CreateMaterialSchema = z.object({
+  phaseId: z.string().min(1),
+  name: z.string().min(1).max(300),
+  quantity: z.number().positive(),
+  unit: z.string().min(1).max(50),
+  cost: z.number().nonnegative().optional(),
+  supplier: z.string().max(300).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+const MaterialStatusSchema = z.enum([
+  "ORDERED", "SHIPPED", "DELIVERED", "INSTALLED", "BACKORDERED",
+]);
 
 async function requireMember(phaseId: string) {
   const session = await auth();
@@ -37,7 +52,8 @@ export async function createMaterial(data: {
   supplier?: string;
   notes?: string;
 }): Promise<void> {
-  const { projectId } = await requireMember(data.phaseId);
+  const validated = CreateMaterialSchema.parse(data);
+  const { projectId } = await requireMember(validated.phaseId);
   await db.material.create({
     data: {
       phaseId: data.phaseId,
@@ -57,6 +73,7 @@ export async function updateMaterialStatus(
   materialId: string,
   status: MaterialStatus
 ): Promise<void> {
+  MaterialStatusSchema.parse(status);
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthenticated");
   const mat = await db.material.findUnique({

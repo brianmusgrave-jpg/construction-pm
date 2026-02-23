@@ -3,6 +3,8 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
+import { encryptToken, decryptToken } from "@/lib/crypto";
+import { z } from "zod";
 
 // ── QuickBooks OAuth Configuration ──
 const QB_CLIENT_ID = process.env.QUICKBOOKS_CLIENT_ID || "";
@@ -91,15 +93,15 @@ export async function exchangeQuickBooksCode(
       create: {
         companyId: realmId,
         companyName,
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
+        accessToken: encryptToken(tokens.access_token),
+        refreshToken: encryptToken(tokens.refresh_token),
         tokenExpiry: new Date(Date.now() + tokens.expires_in * 1000),
         scope: tokens.scope || "com.intuit.quickbooks.accounting",
       },
       update: {
         companyName,
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
+        accessToken: encryptToken(tokens.access_token),
+        refreshToken: encryptToken(tokens.refresh_token),
         tokenExpiry: new Date(Date.now() + tokens.expires_in * 1000),
         scope: tokens.scope || "com.intuit.quickbooks.accounting",
       },
@@ -157,6 +159,14 @@ export async function disconnectQuickBooks(): Promise<{ success: boolean; error?
 }
 
 // ── Update Sync Settings ──
+const SyncSettingsSchema = z.object({
+  syncEnabled: z.boolean().optional(),
+  syncInvoices: z.boolean().optional(),
+  syncExpenses: z.boolean().optional(),
+  syncVendors: z.boolean().optional(),
+  syncCustomers: z.boolean().optional(),
+});
+
 export async function updateQuickBooksSyncSettings(settings: {
   syncEnabled?: boolean;
   syncInvoices?: boolean;
@@ -171,12 +181,13 @@ export async function updateQuickBooksSyncSettings(settings: {
   }
 
   try {
+    const validated = SyncSettingsSchema.parse(settings);
     const connection = await (db as any).quickBooksConnection.findFirst();
     if (!connection) return { success: false, error: "No QuickBooks connection found" };
 
     await (db as any).quickBooksConnection.update({
       where: { id: connection.id },
-      data: settings,
+      data: validated,
     });
     return { success: true };
   } catch (err: any) {
@@ -194,7 +205,7 @@ async function refreshAccessToken(connectionId: string): Promise<string | null> 
 
     // Check if token is still valid
     if (new Date(connection.tokenExpiry) > new Date(Date.now() + 60000)) {
-      return connection.accessToken;
+      return decryptToken(connection.accessToken);
     }
 
     const basicAuth = Buffer.from(`${QB_CLIENT_ID}:${QB_CLIENT_SECRET}`).toString("base64");
@@ -207,7 +218,7 @@ async function refreshAccessToken(connectionId: string): Promise<string | null> 
       },
       body: new URLSearchParams({
         grant_type: "refresh_token",
-        refresh_token: connection.refreshToken,
+        refresh_token: decryptToken(connection.refreshToken),
       }),
     });
 
@@ -217,8 +228,8 @@ async function refreshAccessToken(connectionId: string): Promise<string | null> 
     await (db as any).quickBooksConnection.update({
       where: { id: connectionId },
       data: {
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token || connection.refreshToken,
+        accessToken: encryptToken(tokens.access_token),
+        refreshToken: encryptToken(tokens.refresh_token || decryptToken(connection.refreshToken)),
         tokenExpiry: new Date(Date.now() + tokens.expires_in * 1000),
       },
     });

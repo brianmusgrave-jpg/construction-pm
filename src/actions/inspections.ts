@@ -4,6 +4,17 @@ import { db } from "@/lib/db-types";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
+import { z } from "zod";
+
+const CreateInspectionSchema = z.object({
+  phaseId: z.string().min(1),
+  title: z.string().min(1).max(500),
+  inspectorName: z.string().max(200).optional(),
+  scheduledAt: z.string().min(1),
+  notifyOnResult: z.boolean().optional(),
+});
+
+const InspectionResultSchema = z.enum(["PASS", "FAIL", "CONDITIONAL"]);
 
 export async function getInspections(phaseId: string) {
   const session = await auth();
@@ -23,6 +34,7 @@ export async function createInspection(data: {
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+  const validated = CreateInspectionSchema.parse(data);
 
   const phase = await db.phase.findUnique({
     where: { id: data.phaseId },
@@ -62,6 +74,7 @@ export async function recordInspectionResult(
 ) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
+  InspectionResultSchema.parse(result);
 
   const inspection = await db.inspection.findUnique({
     where: { id: inspectionId },
