@@ -17,6 +17,20 @@ import {
   Shield,
   ExternalLink,
   BookOpen,
+  Receipt,
+  ClipboardList,
+  SearchCheck,
+  Package,
+  Gavel,
+  WifiOff,
+  BarChart3,
+  MapPin,
+  Globe,
+  Upload,
+  KeyRound,
+  Webhook,
+  TrendingUp,
+  CalendarClock,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -123,6 +137,84 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "comments-usage", titleKey: "articles.phaseComments", contentKey: "articles.phaseCommentsContent", tags: ["comment", "discuss", "communication", "message"] },
+      ],
+    },
+    {
+      id: "change-orders",
+      titleKey: "sections.changeOrders",
+      icon: <Receipt className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "co-overview", titleKey: "articles.changeOrders", contentKey: "articles.changeOrdersContent", tags: ["change order", "scope", "amendment", "approval", "cost impact"] },
+      ],
+    },
+    {
+      id: "daily-logs",
+      titleKey: "sections.dailyLogs",
+      icon: <ClipboardList className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "dl-overview", titleKey: "articles.dailyLogs", contentKey: "articles.dailyLogsContent", tags: ["daily log", "journal", "weather", "crew", "safety"] },
+      ],
+    },
+    {
+      id: "inspections",
+      titleKey: "sections.inspections",
+      icon: <SearchCheck className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "insp-overview", titleKey: "articles.inspections", contentKey: "articles.inspectionsContent", tags: ["inspection", "quality", "compliance", "pass", "fail"] },
+      ],
+    },
+    {
+      id: "materials",
+      titleKey: "sections.materials",
+      icon: <Package className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "mat-overview", titleKey: "articles.materials", contentKey: "articles.materialsContent", tags: ["material", "supply", "order", "delivery", "install"] },
+      ],
+    },
+    {
+      id: "bids",
+      titleKey: "sections.bids",
+      icon: <Gavel className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "bid-overview", titleKey: "articles.subcontractorBids", contentKey: "articles.subcontractorBidsContent", tags: ["bid", "subcontractor", "proposal", "tender", "award"] },
+      ],
+    },
+    {
+      id: "offline",
+      titleKey: "sections.offline",
+      icon: <WifiOff className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "offline-mode", titleKey: "articles.offlineMode", contentKey: "articles.offlineModeContent", tags: ["offline", "sync", "queue", "connectivity", "field"] },
+      ],
+    },
+    {
+      id: "analytics",
+      titleKey: "sections.analytics",
+      icon: <BarChart3 className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "analytics-dash", titleKey: "articles.analyticsDashboard", contentKey: "articles.analyticsDashboardContent", tags: ["analytics", "chart", "report", "dashboard", "statistics"] },
+        { id: "budget-forecast", titleKey: "articles.budgetForecasting", contentKey: "articles.budgetForecastingContent", tags: ["forecast", "prediction", "trend", "CPI", "earned value"] },
+        { id: "report-schedule", titleKey: "articles.reportScheduling", contentKey: "articles.reportSchedulingContent", tags: ["report", "schedule", "automatic", "email", "recurring"] },
+      ],
+    },
+    {
+      id: "advanced",
+      titleKey: "sections.advanced",
+      icon: <Globe className="w-5 h-5" />,
+      category: "admin",
+      articles: [
+        { id: "adv-gps", titleKey: "articles.gpsPhotos", contentKey: "articles.gpsPhotosContent", tags: ["GPS", "map", "location", "geotag", "coordinates"] },
+        { id: "adv-client-portal", titleKey: "articles.clientPortal", contentKey: "articles.clientPortalContent", tags: ["client", "portal", "token", "read-only", "share"] },
+        { id: "adv-bulk-import", titleKey: "articles.bulkImport", contentKey: "articles.bulkImportContent", tags: ["import", "CSV", "bulk", "batch", "spreadsheet"] },
+        { id: "adv-2fa", titleKey: "articles.twoFactorAuth", contentKey: "articles.twoFactorAuthContent", tags: ["2FA", "security", "authenticator", "TOTP", "two-factor"] },
+        { id: "adv-api", titleKey: "articles.apiWebhooks", contentKey: "articles.apiWebhooksContent", tags: ["API", "webhook", "integration", "HMAC", "REST"] },
       ],
     },
     {

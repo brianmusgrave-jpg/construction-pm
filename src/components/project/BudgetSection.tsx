@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateProjectBudget, updatePhaseCosts } from "@/actions/budget";
-import { DollarSign, TrendingUp, TrendingDown, Minus, Pencil, Check, X } from "lucide-react";
+import { DollarSign, TrendingUp, TrendingDown, Minus, Pencil, Check, X, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 
@@ -229,6 +229,75 @@ export function BudgetSection({
           </div>
         </div>
       )}
+
+      {/* Budget Forecasting */}
+      {totalEstimated > 0 && totalActual > 0 && (() => {
+        const completedPhases = phases.filter((p) => p.status === "COMPLETE" || p.status === "Complete").length;
+        const totalPhases = phases.length;
+        const completionPct = totalPhases > 0 ? completedPhases / totalPhases : 0;
+        // Earned Value metrics
+        const budgetAtCompletion = projectBudget || totalEstimated;
+        // CPI = Earned Value / Actual Cost  (EV ≈ BAC × % complete)
+        const earnedValue = budgetAtCompletion * completionPct;
+        const cpi = totalActual > 0 ? earnedValue / totalActual : 1;
+        // EAC = BAC / CPI (Estimate at Completion)
+        const eac = cpi > 0 ? budgetAtCompletion / cpi : budgetAtCompletion;
+        // VAC = BAC - EAC (Variance at Completion)
+        const vac = budgetAtCompletion - eac;
+        const isOverBudget = vac < 0;
+
+        return (
+          <div className="px-4 sm:px-5 py-3 border-b border-gray-100 bg-gray-50/50">
+            <div className="flex items-center gap-2 mb-2">
+              <BarChart3 className="w-3.5 h-3.5 text-blue-600" />
+              <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                {t("forecast")}
+              </h3>
+              <span className="text-[10px] text-gray-400 ml-auto">
+                {completedPhases}/{totalPhases} {t("phasesComplete")}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div>
+                <p className="text-[10px] text-gray-500">{t("projectedFinal")}</p>
+                <p className={`text-sm font-bold ${isOverBudget ? "text-red-600" : "text-green-600"}`}>
+                  {fmt(Math.round(eac))}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] text-gray-500">{t("cpi")}</p>
+                <p className={`text-sm font-bold ${cpi < 1 ? "text-red-600" : cpi > 1 ? "text-green-600" : "text-gray-900"}`}>
+                  {cpi.toFixed(2)}
+                </p>
+              </div>
+              <div>
+                <p className="text-[10px] text-gray-500">{t("eac")}</p>
+                <p className="text-sm font-bold text-gray-900">{fmt(Math.round(eac))}</p>
+              </div>
+              <div>
+                <p className="text-[10px] text-gray-500">{t("vac")}</p>
+                <p className={`text-sm font-bold ${vac < 0 ? "text-red-600" : vac > 0 ? "text-green-600" : "text-gray-900"}`}>
+                  {vac === 0 ? "—" : `${vac > 0 ? "+" : ""}${fmt(Math.round(vac))}`}
+                </p>
+              </div>
+            </div>
+            {completionPct > 0 && (
+              <div className="mt-2">
+                <div className="flex items-center justify-between text-[10px] text-gray-500 mb-1">
+                  <span>{t("earnedValue")}</span>
+                  <span>{fmt(Math.round(earnedValue))} / {fmt(budgetAtCompletion)}</span>
+                </div>
+                <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-blue-500 transition-all"
+                    style={{ width: `${Math.min(completionPct * 100, 100)}%` }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Phase breakdown */}
       <div className="divide-y divide-gray-100">
