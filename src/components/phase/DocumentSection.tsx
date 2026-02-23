@@ -21,6 +21,8 @@ import {
   updateDocumentStatus,
   deleteDocument,
 } from "@/actions/documents";
+import { useTranslations } from "next-intl";
+import { DocumentAIPanel } from "./DocumentAIPanel";
 
 interface Document {
   id: string;
@@ -34,6 +36,8 @@ interface Document {
   notes: string | null;
   createdAt: Date;
   uploadedBy: { id: string; name: string | null; email: string };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extractedData?: any;
 }
 
 interface DocumentSectionProps {
@@ -58,23 +62,12 @@ const STATUS_BADGE: Record<string, string> = {
   EXPIRED: "bg-gray-100 text-gray-600",
 };
 
-const CATEGORY_LABEL: Record<string, string> = {
-  PERMIT: "Permit",
-  CONTRACT: "Contract",
-  INVOICE: "Invoice",
-  BLUEPRINT: "Blueprint",
-  INSPECTION: "Inspection",
-  OTHER: "Other",
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  PENDING: "pending",
+  APPROVED: "approved",
+  REJECTED: "rejected",
+  EXPIRED: "expired",
 };
-
-const CATEGORY_OPTIONS: { value: DocCategory; label: string }[] = [
-  { value: "PERMIT", label: "Permit" },
-  { value: "CONTRACT", label: "Contract" },
-  { value: "INVOICE", label: "Invoice" },
-  { value: "BLUEPRINT", label: "Blueprint" },
-  { value: "INSPECTION", label: "Inspection" },
-  { value: "OTHER", label: "Other" },
-];
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -94,7 +87,7 @@ function getFileIcon(mimeType: string) {
 }
 
 function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
   });
@@ -106,6 +99,28 @@ export function DocumentSection({
   canUpload,
   canManageStatus,
 }: DocumentSectionProps) {
+  const t = useTranslations("documents");
+  const ts = useTranslations("status");
+  const tc = useTranslations("common");
+
+  const CATEGORY_LABEL: Record<string, string> = {
+    PERMIT: t("permit"),
+    CONTRACT: t("contract"),
+    INVOICE: t("invoice"),
+    BLUEPRINT: t("blueprint"),
+    INSPECTION: t("inspection"),
+    OTHER: t("other"),
+  };
+
+  const CATEGORY_OPTIONS: { value: DocCategory; label: string }[] = [
+    { value: "PERMIT", label: t("permit") },
+    { value: "CONTRACT", label: t("contract") },
+    { value: "INVOICE", label: t("invoice") },
+    { value: "BLUEPRINT", label: t("blueprint") },
+    { value: "INSPECTION", label: t("inspection") },
+    { value: "OTHER", label: t("other") },
+  ];
+
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
@@ -165,17 +180,15 @@ export function DocumentSection({
         const file = pendingFiles[i];
         setUploadProgress(
           pendingFiles.length > 1
-            ? `Uploading ${i + 1} of ${pendingFiles.length}...`
-            : `Uploading ${file.name}...`
+            ? t("uploading", { current: i + 1, total: pendingFiles.length })
+            : t("uploadingFile", { name: file.name })
         );
 
-        // Upload to Vercel Blob
         const blob = await upload(file.name, file, {
           access: "public",
           handleUploadUrl: "/api/upload",
         });
 
-        // Create document record in database
         await createDocument({
           phaseId,
           name: file.name,
@@ -186,7 +199,6 @@ export function DocumentSection({
         });
       }
 
-      // Reset form
       setPendingFiles([]);
       setShowUploadForm(false);
       setSelectedCategory("OTHER");
@@ -212,18 +224,18 @@ export function DocumentSection({
       setStatusMenuId(null);
     } catch (err) {
       setError(
-        err instanceof Error ? err.message : "Failed to update status"
+        err instanceof Error ? err.message : t("failedToUpdateStatus")
       );
     }
   };
 
   const handleDelete = async (docId: string) => {
-    if (!confirm("Delete this document? This cannot be undone.")) return;
+    if (!confirm(t("deleteConfirm"))) return;
     setDeletingId(docId);
     try {
       await deleteDocument(docId);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete");
+      setError(err instanceof Error ? err.message : t("failedToDelete"));
     } finally {
       setDeletingId(null);
     }
@@ -240,15 +252,15 @@ export function DocumentSection({
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Documents ({documents.length})
+          {t("title", { count: documents.length })}
         </h2>
         {canUpload && !showUploadForm && (
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
           >
             <Upload className="w-4 h-4" />
-            Upload
+            {tc("upload")}
           </button>
         )}
         <input
@@ -274,15 +286,14 @@ export function DocumentSection({
 
       {/* Upload form (shown after files selected) */}
       {showUploadForm && (
-        <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+        <div className="mb-4 p-4 bg-[var(--color-primary-bg)] rounded-lg border border-[var(--color-primary-light)]">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-blue-900">
-              {pendingFiles.length} file{pendingFiles.length > 1 ? "s" : ""}{" "}
-              selected
+            <span className="text-sm font-medium text-[var(--color-primary-dark)]">
+              {t("filesSelected", { count: pendingFiles.length })}
             </span>
             <button
               onClick={cancelUpload}
-              className="text-blue-400 hover:text-blue-600"
+              className="text-[var(--color-primary-light)] hover:text-[var(--color-primary)]"
               disabled={isUploading}
             >
               <X className="w-4 h-4" />
@@ -294,11 +305,11 @@ export function DocumentSection({
             {pendingFiles.map((file, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 text-xs text-blue-800"
+                className="flex items-center gap-2 text-xs text-[var(--color-primary-dark)]"
               >
                 <FileText className="w-3.5 h-3.5" />
                 <span className="truncate">{file.name}</span>
-                <span className="text-blue-500 shrink-0">
+                <span className="text-[var(--color-primary-light)] shrink-0">
                   {formatFileSize(file.size)}
                 </span>
               </div>
@@ -307,15 +318,15 @@ export function DocumentSection({
 
           {/* Category selector + action buttons */}
           <div className="flex items-center gap-3">
-            <label className="text-xs font-medium text-blue-800">
-              Category:
+            <label className="text-xs font-medium text-[var(--color-primary-dark)]">
+              {t("category")}
             </label>
             <select
               value={selectedCategory}
               onChange={(e) =>
                 setSelectedCategory(e.target.value as DocCategory)
               }
-              className="text-sm border border-blue-300 rounded-md px-2 py-1 bg-white text-blue-900 focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className="text-sm border border-[var(--color-primary-light)] rounded-md px-2 py-1 bg-white text-[var(--color-primary-dark)] focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)]"
               disabled={isUploading}
             >
               {CATEGORY_OPTIONS.map((opt) => (
@@ -330,24 +341,24 @@ export function DocumentSection({
             <button
               onClick={cancelUpload}
               disabled={isUploading}
-              className="px-3 py-1.5 text-sm text-blue-700 hover:bg-blue-100 rounded-md"
+              className="px-3 py-1.5 text-sm text-[var(--color-primary-dark)] hover:bg-[var(--color-primary-bg)] rounded-md"
             >
-              Cancel
+              {tc("cancel")}
             </button>
             <button
               onClick={handleUpload}
               disabled={isUploading}
-              className="px-4 py-1.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:opacity-50 inline-flex items-center gap-1.5"
+              className="px-4 py-1.5 text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-md disabled:opacity-50 inline-flex items-center gap-1.5"
             >
               {isUploading ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  {uploadProgress || "Uploading..."}
+                  {uploadProgress || tc("loading")}
                 </>
               ) : (
                 <>
                   <Upload className="w-3.5 h-3.5" />
-                  Upload
+                  {tc("upload")}
                 </>
               )}
             </button>
@@ -363,21 +374,21 @@ export function DocumentSection({
           onDrop={handleDrop}
           className={`text-center py-8 border-2 border-dashed rounded-lg transition-colors ${
             isDragging
-              ? "border-blue-400 bg-blue-50"
+              ? "border-[var(--color-primary-light)] bg-[var(--color-primary-bg)]"
               : "border-gray-200 hover:border-gray-300"
           }`}
         >
           <Upload
             className={`w-8 h-8 mx-auto mb-2 ${
-              isDragging ? "text-blue-400" : "text-gray-300"
+              isDragging ? "text-[var(--color-primary-light)]" : "text-gray-300"
             }`}
           />
           <p className="text-sm text-gray-500">
-            {isDragging ? "Drop files here" : "No documents yet"}
+            {isDragging ? t("dropHere") : t("noDocumentsYet")}
           </p>
           {canUpload && !isDragging && (
             <p className="text-xs text-gray-400 mt-1">
-              Drag & drop files or click Upload above
+              {t("dragDropDocs")}
             </p>
           )}
         </div>
@@ -390,8 +401,8 @@ export function DocumentSection({
           onDrop={handleDrop}
         >
           {isDragging && (
-            <div className="p-4 border-2 border-dashed border-blue-400 bg-blue-50 rounded-lg text-center text-sm text-blue-600">
-              Drop files to upload
+            <div className="p-4 border-2 border-dashed border-[var(--color-primary-light)] bg-[var(--color-primary-bg)] rounded-lg text-center text-sm text-[var(--color-primary)]">
+              {t("dropToUpload")}
             </div>
           )}
           {documents.map((doc) => {
@@ -399,8 +410,9 @@ export function DocumentSection({
             return (
               <div
                 key={doc.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group"
+                className="p-3 bg-gray-50 rounded-lg group"
               >
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <Icon className="w-5 h-5 text-gray-400 shrink-0" />
                   <div className="min-w-0">
@@ -438,7 +450,7 @@ export function DocumentSection({
                           "bg-gray-100 text-gray-600"
                         }`}
                       >
-                        {doc.status}
+                        {ts(STATUS_LABEL_KEYS[doc.status] || "pending")}
                         <ChevronDown className="w-2.5 h-2.5" />
                       </button>
                     ) : (
@@ -448,7 +460,7 @@ export function DocumentSection({
                           "bg-gray-100 text-gray-600"
                         }`}
                       >
-                        {doc.status}
+                        {ts(STATUS_LABEL_KEYS[doc.status] || "pending")}
                       </span>
                     )}
 
@@ -461,7 +473,7 @@ export function DocumentSection({
                           }
                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-green-700 hover:bg-green-50"
                         >
-                          <Check className="w-3 h-3" /> Approve
+                          <Check className="w-3 h-3" /> {t("approve")}
                         </button>
                         <button
                           onClick={() =>
@@ -469,7 +481,7 @@ export function DocumentSection({
                           }
                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-red-700 hover:bg-red-50"
                         >
-                          <Ban className="w-3 h-3" /> Reject
+                          <Ban className="w-3 h-3" /> {t("reject")}
                         </button>
                         <button
                           onClick={() =>
@@ -477,7 +489,7 @@ export function DocumentSection({
                           }
                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-yellow-700 hover:bg-yellow-50"
                         >
-                          <AlertCircle className="w-3 h-3" /> Reset to Pending
+                          <AlertCircle className="w-3 h-3" /> {t("resetToPending")}
                         </button>
                       </div>
                     )}
@@ -488,8 +500,8 @@ export function DocumentSection({
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-1 text-gray-400 hover:text-blue-600"
-                    title="Open"
+                    className="p-1 text-gray-400 hover:text-[var(--color-primary)]"
+                    title={tc("open")}
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
@@ -500,7 +512,7 @@ export function DocumentSection({
                       onClick={() => handleDelete(doc.id)}
                       disabled={deletingId === doc.id}
                       className="p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                      title="Delete"
+                      title={tc("delete")}
                     >
                       {deletingId === doc.id ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -510,6 +522,12 @@ export function DocumentSection({
                     </button>
                   )}
                 </div>
+              </div>
+              {/* AI Extraction panel */}
+              <DocumentAIPanel
+                documentId={doc.id}
+                initialData={doc.extractedData ?? null}
+              />
               </div>
             );
           })}

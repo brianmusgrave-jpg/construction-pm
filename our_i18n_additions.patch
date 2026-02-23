@@ -1,0 +1,4584 @@
+diff --git a/messages/en.json b/messages/en.json
+index c21a6a2..710c128 100644
+--- a/messages/en.json
++++ b/messages/en.json
+@@ -158,7 +158,12 @@
+     "worstEnd": "Worst End",
+     "creating": "Creating...",
+     "createProject": "Create Project",
+-    "phaseCount": "{count} phase{count, plural, one {} other {s}}"
++    "phaseCount": "{count} phase{count, plural, one {} other {s}}",
++    "phasesStep": "Phases",
++    "untitledPhase": "Untitled Phase",
++    "nameRequired": "Project name is required",
++    "phaseNeedsName": "Phase {n} needs a name",
++    "phaseNeedsDates": "\"{name}\" needs estimated start and end dates"
+   },
+   "phases": {
+     "phaseDetails": "Phase Details",
+@@ -169,6 +174,7 @@
+     "started": "Started",
+     "completedDash": "— Completed",
+     "timeline": "Timeline",
++    "milestone": "Milestone",
+     "startPhase": "Start Phase",
+     "requestReview": "Request Review",
+     "beginReview": "Begin Review",
+@@ -216,7 +222,11 @@
+     "invitedAs": "Invited as",
+     "joining": "Joining...",
+     "acceptInvitation": "Accept Invitation",
+-    "signInToAccept": "Sign In to Accept"
++    "signInToAccept": "Sign In to Accept",
++    "sent": "Invitation sent to {email}",
++    "linkCopied": "Invite link copied to clipboard",
++    "cancelled": "Invitation cancelled",
++    "failedToCancel": "Failed to cancel invitation"
+   },
+   "budget": {
+     "title": "Budget",
+@@ -225,7 +235,13 @@
+     "estimated": "Estimated",
+     "actual": "Actual",
+     "variance": "Variance",
+-    "budgetUsed": "Budget Used"
++    "budgetUsed": "Budget Used",
++    "updated": "Budget updated",
++    "failedToUpdate": "Failed to update budget",
++    "costsUpdated": "Phase costs updated",
++    "failedToUpdateCosts": "Failed to update costs",
++    "estShort": "Est.",
++    "varShort": "Var."
+   },
+   "documents": {
+     "title": "Documents ({count})",
+@@ -245,7 +261,10 @@
+     "failedToDelete": "Failed to delete",
+     "approve": "Approve",
+     "reject": "Reject",
+-    "resetToPending": "Reset to Pending"
++    "resetToPending": "Reset to Pending",
++    "filesSelected": "{count} file{count, plural, one {} other {s}} selected",
++    "failedToUpdateStatus": "Failed to update status",
++    "dropHere": "Drop files here"
+   },
+   "photos": {
+     "title": "Photos ({count})",
+@@ -270,7 +289,11 @@
+     "flagForFollowup": "Flag for followup",
+     "changeFlag": "Change flag",
+     "clearFlag": "Clear flag",
+-    "viewFullSize": "View full size"
++    "viewFullSize": "View full size",
++    "flagPhotoBtn": "Flag Photo",
++    "addNote": "add a note? (optional)",
++    "deleteConfirm": "Delete this photo? This cannot be undone.",
++    "dropHere": "Drop images here"
+   },
+   "checklist": {
+     "title": "Checklist",
+@@ -480,7 +503,10 @@
+     "role": "Contractor",
+     "reviewRequested": "Review requested — your PM will be notified",
+     "requesting": "Requesting...",
+-    "requestReview": "Request Review"
++    "requestReview": "Request Review",
++    "noActivePhases": "No active phases right now",
++    "daysLeft": "{days}d left",
++    "dueToday": "Due today"
+   },
+   "reports": {
+     "export": "Export",
+@@ -500,12 +526,64 @@
+     "unassigned": "Unassigned",
+     "name": "Name",
+     "assignedPhases": "Assigned Phases",
+-    "active": "Active"
++    "active": "Active",
++    "organizationOverview": "Organization-wide overview",
++    "yourPortfolio": "Your project portfolio",
++    "projectOverview": "Project overview",
++    "overallProgress": "Overall Progress",
++    "onTrack": "on track",
++    "allOnSchedule": "All on schedule",
++    "actionsThisMonth": "Actions this month"
+   },
+   "gantt": {
+     "estimated": "Estimated",
+     "worstCase": "Worst Case",
+     "today": "Today",
+     "dragHelp": "Drag bars to slide • Drag edges to resize"
++  },
++  "directory": {
++    "title": "Directory",
++    "contactCount": "{count} contact{count, plural, one {} other {s}} across {groups} categor{groups, plural, one {y} other {ies}}",
++    "addContact": "Add Contact",
++    "addFirstContact": "Add Your First Contact",
++    "noContactsYet": "No contacts yet",
++    "noContactsMessage": "Add team members, subcontractors, vendors, and inspectors to your directory.",
++    "editContact": "Edit contact",
++    "assignedTo": "Assigned to",
++    "teamLabel": "Team",
++    "teamDesc": "Your employees and core team",
++    "subcontractorLabel": "Subcontractors",
++    "subcontractorDesc": "Trades and specialty contractors",
++    "vendorLabel": "Vendors",
++    "vendorDesc": "Suppliers and material providers",
++    "inspectorLabel": "Inspectors",
++    "inspectorDesc": "City inspectors, engineers, and consultants",
++    "addContactModal": "Add Contact",
++    "editContactModal": "Edit Contact",
++    "type": "Type",
++    "nameField": "Name *",
++    "company": "Company",
++    "roleTrade": "Role / Trade",
++    "email": "Email",
++    "phone": "Phone",
++    "notes": "Notes",
++    "teamMember": "Team Member",
++    "subcontractor": "Subcontractor",
++    "vendorSupplier": "Vendor / Supplier",
++    "inspector": "Inspector",
++    "namePlaceholder": "John Smith",
++    "companyPlaceholder": "ABC Electric",
++    "rolePlaceholder": "Electrician",
++    "emailPlaceholder": "john@company.com",
++    "phonePlaceholder": "(555) 123-4567",
++    "notesPlaceholder": "License #, specialties, availability...",
++    "deleteContact": "Delete Contact",
++    "deleting": "Deleting...",
++    "nameRequired": "Name is required",
++    "somethingWentWrong": "Something went wrong",
++    "failedToDelete": "Failed to delete",
++    "deleteConfirm": "Delete {name}? This will also remove all their phase assignments.",
++    "addContactBtn": "Add Contact",
++    "saveChanges": "Save Changes"
+   }
+ }
+\ No newline at end of file
+diff --git a/messages/es.json b/messages/es.json
+index 0814824..5182f79 100644
+--- a/messages/es.json
++++ b/messages/es.json
+@@ -158,7 +158,12 @@
+     "worstEnd": "Fin peor caso",
+     "creating": "Creando...",
+     "createProject": "Crear proyecto",
+-    "phaseCount": "{count} fase{count, plural, one {} other {s}}"
++    "phaseCount": "{count} fase{count, plural, one {} other {s}}",
++    "phasesStep": "Fases",
++    "untitledPhase": "Fase sin título",
++    "nameRequired": "El nombre del proyecto es requerido",
++    "phaseNeedsName": "La fase {n} necesita un nombre",
++    "phaseNeedsDates": "\"{name}\" necesita fechas de inicio y fin estimadas"
+   },
+   "phases": {
+     "phaseDetails": "Detalles de la fase",
+@@ -169,6 +174,7 @@
+     "started": "Iniciada",
+     "completedDash": "— Completada",
+     "timeline": "Cronograma",
++    "milestone": "Hito",
+     "startPhase": "Iniciar fase",
+     "requestReview": "Solicitar revisión",
+     "beginReview": "Comenzar revisión",
+@@ -216,7 +222,11 @@
+     "invitedAs": "Invitado como",
+     "joining": "Uniéndose...",
+     "acceptInvitation": "Aceptar invitación",
+-    "signInToAccept": "Inicia sesión para aceptar"
++    "signInToAccept": "Inicia sesión para aceptar",
++    "sent": "Invitación enviada a {email}",
++    "linkCopied": "Enlace de invitación copiado al portapapeles",
++    "cancelled": "Invitación cancelada",
++    "failedToCancel": "Error al cancelar la invitación"
+   },
+   "budget": {
+     "title": "Presupuesto",
+@@ -225,7 +235,13 @@
+     "estimated": "Estimado",
+     "actual": "Real",
+     "variance": "Variación",
+-    "budgetUsed": "Presupuesto utilizado"
++    "budgetUsed": "Presupuesto utilizado",
++    "updated": "Presupuesto actualizado",
++    "failedToUpdate": "Error al actualizar el presupuesto",
++    "costsUpdated": "Costos de fase actualizados",
++    "failedToUpdateCosts": "Error al actualizar los costos",
++    "estShort": "Est.",
++    "varShort": "Var."
+   },
+   "documents": {
+     "title": "Documentos ({count})",
+@@ -245,7 +261,10 @@
+     "failedToDelete": "Error al eliminar",
+     "approve": "Aprobar",
+     "reject": "Rechazar",
+-    "resetToPending": "Restablecer a pendiente"
++    "resetToPending": "Restablecer a pendiente",
++    "filesSelected": "{count} archivo{count, plural, one {} other {s}} seleccionado{count, plural, one {} other {s}}",
++    "failedToUpdateStatus": "Error al actualizar el estado",
++    "dropHere": "Suelta los archivos aquí"
+   },
+   "photos": {
+     "title": "Fotos ({count})",
+@@ -270,7 +289,11 @@
+     "flagForFollowup": "Marcar para seguimiento",
+     "changeFlag": "Cambiar marca",
+     "clearFlag": "Quitar marca",
+-    "viewFullSize": "Ver tamaño completo"
++    "viewFullSize": "Ver tamaño completo",
++    "flagPhotoBtn": "Marcar foto",
++    "addNote": "¿agregar una nota? (opcional)",
++    "deleteConfirm": "¿Eliminar esta foto? Esta acción no se puede deshacer.",
++    "dropHere": "Suelta las imágenes aquí"
+   },
+   "checklist": {
+     "title": "Lista de verificación",
+@@ -480,7 +503,10 @@
+     "role": "Contratista",
+     "reviewRequested": "Revisión solicitada — tu PM será notificado",
+     "requesting": "Solicitando...",
+-    "requestReview": "Solicitar revisión"
++    "requestReview": "Solicitar revisión",
++    "noActivePhases": "No hay fases activas en este momento",
++    "daysLeft": "{days}d restantes",
++    "dueToday": "Vence hoy"
+   },
+   "reports": {
+     "export": "Exportar",
+@@ -500,12 +526,64 @@
+     "unassigned": "Sin asignar",
+     "name": "Nombre",
+     "assignedPhases": "Fases asignadas",
+-    "active": "Activas"
++    "active": "Activas",
++    "organizationOverview": "Resumen de toda la organización",
++    "yourPortfolio": "Tu portafolio de proyectos",
++    "projectOverview": "Resumen del proyecto",
++    "overallProgress": "Progreso general",
++    "onTrack": "en horario",
++    "allOnSchedule": "Todo en horario",
++    "actionsThisMonth": "Acciones este mes"
+   },
+   "gantt": {
+     "estimated": "Estimado",
+     "worstCase": "Peor caso",
+     "today": "Hoy",
+     "dragHelp": "Arrastra las barras para deslizar • Arrastra los bordes para redimensionar"
++  },
++  "directory": {
++    "title": "Directorio",
++    "contactCount": "{count} contacto{count, plural, one {} other {s}} en {groups} categorí{groups, plural, one {a} other {as}}",
++    "addContact": "Agregar contacto",
++    "addFirstContact": "Agregar tu primer contacto",
++    "noContactsYet": "Sin contactos aún",
++    "noContactsMessage": "Agrega miembros del equipo, subcontratistas, proveedores e inspectores a tu directorio.",
++    "editContact": "Editar contacto",
++    "assignedTo": "Asignado a",
++    "teamLabel": "Equipo",
++    "teamDesc": "Tus empleados y equipo principal",
++    "subcontractorLabel": "Subcontratistas",
++    "subcontractorDesc": "Contratistas de gremios y especialidades",
++    "vendorLabel": "Proveedores",
++    "vendorDesc": "Suministradores y proveedores de materiales",
++    "inspectorLabel": "Inspectores",
++    "inspectorDesc": "Inspectores municipales, ingenieros y consultores",
++    "addContactModal": "Agregar contacto",
++    "editContactModal": "Editar contacto",
++    "type": "Tipo",
++    "nameField": "Nombre *",
++    "company": "Empresa",
++    "roleTrade": "Cargo / Gremio",
++    "email": "Correo electrónico",
++    "phone": "Teléfono",
++    "notes": "Notas",
++    "teamMember": "Miembro del equipo",
++    "subcontractor": "Subcontratista",
++    "vendorSupplier": "Proveedor",
++    "inspector": "Inspector",
++    "namePlaceholder": "Juan García",
++    "companyPlaceholder": "ABC Electric",
++    "rolePlaceholder": "Electricista",
++    "emailPlaceholder": "juan@empresa.com",
++    "phonePlaceholder": "(555) 123-4567",
++    "notesPlaceholder": "No. de licencia, especialidades, disponibilidad...",
++    "deleteContact": "Eliminar contacto",
++    "deleting": "Eliminando...",
++    "nameRequired": "El nombre es obligatorio",
++    "somethingWentWrong": "Algo salió mal",
++    "failedToDelete": "Error al eliminar",
++    "deleteConfirm": "¿Eliminar {name}? Esto también eliminará todas sus asignaciones de fase.",
++    "addContactBtn": "Agregar contacto",
++    "saveChanges": "Guardar cambios"
+   }
+ }
+\ No newline at end of file
+diff --git a/package-lock.json b/package-lock.json
+index 3fb0f09..c73f6eb 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -16,6 +16,7 @@
+         "lucide-react": "^0.575.0",
+         "next": "16.1.6",
+         "next-auth": "^5.0.0-beta.30",
++        "next-intl": "^4.8.3",
+         "prisma": "^5.22.0",
+         "react": "19.2.3",
+         "react-dom": "19.2.3",
+@@ -949,6 +950,58 @@
+         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+       }
+     },
++    "node_modules/@formatjs/ecma402-abstract": {
++      "version": "3.1.1",
++      "resolved": "https://registry.npmjs.org/@formatjs/ecma402-abstract/-/ecma402-abstract-3.1.1.tgz",
++      "integrity": "sha512-jhZbTwda+2tcNrs4kKvxrPLPjx8QsBCLCUgrrJ/S+G9YrGHWLhAyFMMBHJBnBoOwuLHd7L14FgYudviKaxkO2Q==",
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/fast-memoize": "3.1.0",
++        "@formatjs/intl-localematcher": "0.8.1",
++        "decimal.js": "^10.6.0",
++        "tslib": "^2.8.1"
++      }
++    },
++    "node_modules/@formatjs/fast-memoize": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/@formatjs/fast-memoize/-/fast-memoize-3.1.0.tgz",
++      "integrity": "sha512-b5mvSWCI+XVKiz5WhnBCY3RJ4ZwfjAidU0yVlKa3d3MSgKmH1hC3tBGEAtYyN5mqL7N0G5x0BOUYyO8CEupWgg==",
++      "license": "MIT",
++      "dependencies": {
++        "tslib": "^2.8.1"
++      }
++    },
++    "node_modules/@formatjs/icu-messageformat-parser": {
++      "version": "3.5.1",
++      "resolved": "https://registry.npmjs.org/@formatjs/icu-messageformat-parser/-/icu-messageformat-parser-3.5.1.tgz",
++      "integrity": "sha512-sSDmSvmmoVQ92XqWb499KrIhv/vLisJU8ITFrx7T7NZHUmMY7EL9xgRowAosaljhqnj/5iufG24QrdzB6X3ItA==",
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/ecma402-abstract": "3.1.1",
++        "@formatjs/icu-skeleton-parser": "2.1.1",
++        "tslib": "^2.8.1"
++      }
++    },
++    "node_modules/@formatjs/icu-skeleton-parser": {
++      "version": "2.1.1",
++      "resolved": "https://registry.npmjs.org/@formatjs/icu-skeleton-parser/-/icu-skeleton-parser-2.1.1.tgz",
++      "integrity": "sha512-PSFABlcNefjI6yyk8f7nyX1DC7NHmq6WaCHZLySEXBrXuLOB2f935YsnzuPjlz+ibhb9yWTdPeVX1OVcj24w2Q==",
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/ecma402-abstract": "3.1.1",
++        "tslib": "^2.8.1"
++      }
++    },
++    "node_modules/@formatjs/intl-localematcher": {
++      "version": "0.8.1",
++      "resolved": "https://registry.npmjs.org/@formatjs/intl-localematcher/-/intl-localematcher-0.8.1.tgz",
++      "integrity": "sha512-xwEuwQFdtSq1UKtQnyTZWC+eHdv7Uygoa+H2k/9uzBVQjDyp9r20LNDNKedWXll7FssT3GRHvqsdJGYSUWqYFA==",
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/fast-memoize": "3.1.0",
++        "tslib": "^2.8.1"
++      }
++    },
+     "node_modules/@humanfs/core": {
+       "version": "0.19.1",
+       "resolved": "https://registry.npmjs.org/@humanfs/core/-/core-0.19.1.tgz",
+@@ -1731,6 +1784,313 @@
+         "url": "https://github.com/sponsors/panva"
+       }
+     },
++    "node_modules/@parcel/watcher": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher/-/watcher-2.5.6.tgz",
++      "integrity": "sha512-tmmZ3lQxAe/k/+rNnXQRawJ4NjxO2hqiOLTHvWchtGZULp4RyFeh6aU4XdOYBFe2KE1oShQTv4AblOs2iOrNnQ==",
++      "hasInstallScript": true,
++      "license": "MIT",
++      "dependencies": {
++        "detect-libc": "^2.0.3",
++        "is-glob": "^4.0.3",
++        "node-addon-api": "^7.0.0",
++        "picomatch": "^4.0.3"
++      },
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      },
++      "optionalDependencies": {
++        "@parcel/watcher-android-arm64": "2.5.6",
++        "@parcel/watcher-darwin-arm64": "2.5.6",
++        "@parcel/watcher-darwin-x64": "2.5.6",
++        "@parcel/watcher-freebsd-x64": "2.5.6",
++        "@parcel/watcher-linux-arm-glibc": "2.5.6",
++        "@parcel/watcher-linux-arm-musl": "2.5.6",
++        "@parcel/watcher-linux-arm64-glibc": "2.5.6",
++        "@parcel/watcher-linux-arm64-musl": "2.5.6",
++        "@parcel/watcher-linux-x64-glibc": "2.5.6",
++        "@parcel/watcher-linux-x64-musl": "2.5.6",
++        "@parcel/watcher-win32-arm64": "2.5.6",
++        "@parcel/watcher-win32-ia32": "2.5.6",
++        "@parcel/watcher-win32-x64": "2.5.6"
++      }
++    },
++    "node_modules/@parcel/watcher-android-arm64": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-android-arm64/-/watcher-android-arm64-2.5.6.tgz",
++      "integrity": "sha512-YQxSS34tPF/6ZG7r/Ih9xy+kP/WwediEUsqmtf0cuCV5TPPKw/PQHRhueUo6JdeFJaqV3pyjm0GdYjZotbRt/A==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "android"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-darwin-arm64": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-darwin-arm64/-/watcher-darwin-arm64-2.5.6.tgz",
++      "integrity": "sha512-Z2ZdrnwyXvvvdtRHLmM4knydIdU9adO3D4n/0cVipF3rRiwP+3/sfzpAwA/qKFL6i1ModaabkU7IbpeMBgiVEA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-darwin-x64": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-darwin-x64/-/watcher-darwin-x64-2.5.6.tgz",
++      "integrity": "sha512-HgvOf3W9dhithcwOWX9uDZyn1lW9R+7tPZ4sug+NGrGIo4Rk1hAXLEbcH1TQSqxts0NYXXlOWqVpvS1SFS4fRg==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-freebsd-x64": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-freebsd-x64/-/watcher-freebsd-x64-2.5.6.tgz",
++      "integrity": "sha512-vJVi8yd/qzJxEKHkeemh7w3YAn6RJCtYlE4HPMoVnCpIXEzSrxErBW5SJBgKLbXU3WdIpkjBTeUNtyBVn8TRng==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "freebsd"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm-glibc": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm-glibc/-/watcher-linux-arm-glibc-2.5.6.tgz",
++      "integrity": "sha512-9JiYfB6h6BgV50CCfasfLf/uvOcJskMSwcdH1PHH9rvS1IrNy8zad6IUVPVUfmXr+u+Km9IxcfMLzgdOudz9EQ==",
++      "cpu": [
++        "arm"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm-musl": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm-musl/-/watcher-linux-arm-musl-2.5.6.tgz",
++      "integrity": "sha512-Ve3gUCG57nuUUSyjBq/MAM0CzArtuIOxsBdQ+ftz6ho8n7s1i9E1Nmk/xmP323r2YL0SONs1EuwqBp2u1k5fxg==",
++      "cpu": [
++        "arm"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm64-glibc": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm64-glibc/-/watcher-linux-arm64-glibc-2.5.6.tgz",
++      "integrity": "sha512-f2g/DT3NhGPdBmMWYoxixqYr3v/UXcmLOYy16Bx0TM20Tchduwr4EaCbmxh1321TABqPGDpS8D/ggOTaljijOA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-arm64-musl": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-arm64-musl/-/watcher-linux-arm64-musl-2.5.6.tgz",
++      "integrity": "sha512-qb6naMDGlbCwdhLj6hgoVKJl2odL34z2sqkC7Z6kzir8b5W65WYDpLB6R06KabvZdgoHI/zxke4b3zR0wAbDTA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-x64-glibc": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-x64-glibc/-/watcher-linux-x64-glibc-2.5.6.tgz",
++      "integrity": "sha512-kbT5wvNQlx7NaGjzPFu8nVIW1rWqV780O7ZtkjuWaPUgpv2NMFpjYERVi0UYj1msZNyCzGlaCWEtzc+exjMGbQ==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-linux-x64-musl": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-linux-x64-musl/-/watcher-linux-x64-musl-2.5.6.tgz",
++      "integrity": "sha512-1JRFeC+h7RdXwldHzTsmdtYR/Ku8SylLgTU/reMuqdVD7CtLwf0VR1FqeprZ0eHQkO0vqsbvFLXUmYm/uNKJBg==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-win32-arm64": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-win32-arm64/-/watcher-win32-arm64-2.5.6.tgz",
++      "integrity": "sha512-3ukyebjc6eGlw9yRt678DxVF7rjXatWiHvTXqphZLvo7aC5NdEgFufVwjFfY51ijYEWpXbqF5jtrK275z52D4Q==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-win32-ia32": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-win32-ia32/-/watcher-win32-ia32-2.5.6.tgz",
++      "integrity": "sha512-k35yLp1ZMwwee3Ez/pxBi5cf4AoBKYXj00CZ80jUz5h8prpiaQsiRPKQMxoLstNuqe2vR4RNPEAEcjEFzhEz/g==",
++      "cpu": [
++        "ia32"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher-win32-x64": {
++      "version": "2.5.6",
++      "resolved": "https://registry.npmjs.org/@parcel/watcher-win32-x64/-/watcher-win32-x64-2.5.6.tgz",
++      "integrity": "sha512-hbQlYcCq5dlAX9Qx+kFb0FHue6vbjlf0FrNzSKdYK2APUf7tGfGxQCk2ihEREmbR6ZMc0MVAD5RIX/41gpUzTw==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">= 10.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/parcel"
++      }
++    },
++    "node_modules/@parcel/watcher/node_modules/picomatch": {
++      "version": "4.0.3",
++      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-4.0.3.tgz",
++      "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/jonschlinkert"
++      }
++    },
+     "node_modules/@playwright/test": {
+       "version": "1.58.2",
+       "resolved": "https://registry.npmjs.org/@playwright/test/-/test-1.58.2.tgz",
+@@ -2167,6 +2527,178 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/@schummar/icu-type-parser": {
++      "version": "1.21.5",
++      "resolved": "https://registry.npmjs.org/@schummar/icu-type-parser/-/icu-type-parser-1.21.5.tgz",
++      "integrity": "sha512-bXHSaW5jRTmke9Vd0h5P7BtWZG9Znqb8gSDxZnxaGSJnGwPLDPfS+3g0BKzeWqzgZPsIVZkM7m2tbo18cm5HBw==",
++      "license": "MIT"
++    },
++    "node_modules/@swc/core-darwin-arm64": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-darwin-arm64/-/core-darwin-arm64-1.15.11.tgz",
++      "integrity": "sha512-QoIupRWVH8AF1TgxYyeA5nS18dtqMuxNwchjBIwJo3RdwLEFiJq6onOx9JAxHtuPwUkIVuU2Xbp+jCJ7Vzmgtg==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-darwin-x64": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-darwin-x64/-/core-darwin-x64-1.15.11.tgz",
++      "integrity": "sha512-S52Gu1QtPSfBYDiejlcfp9GlN+NjTZBRRNsz8PNwBgSE626/FUf2PcllVUix7jqkoMC+t0rS8t+2/aSWlMuQtA==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "darwin"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-arm-gnueabihf": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-arm-gnueabihf/-/core-linux-arm-gnueabihf-1.15.11.tgz",
++      "integrity": "sha512-lXJs8oXo6Z4yCpimpQ8vPeCjkgoHu5NoMvmJZ8qxDyU99KVdg6KwU9H79vzrmB+HfH+dCZ7JGMqMF//f8Cfvdg==",
++      "cpu": [
++        "arm"
++      ],
++      "license": "Apache-2.0",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-arm64-gnu": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-arm64-gnu/-/core-linux-arm64-gnu-1.15.11.tgz",
++      "integrity": "sha512-chRsz1K52/vj8Mfq/QOugVphlKPWlMh10V99qfH41hbGvwAU6xSPd681upO4bKiOr9+mRIZZW+EfJqY42ZzRyA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-arm64-musl": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-arm64-musl/-/core-linux-arm64-musl-1.15.11.tgz",
++      "integrity": "sha512-PYftgsTaGnfDK4m6/dty9ryK1FbLk+LosDJ/RJR2nkXGc8rd+WenXIlvHjWULiBVnS1RsjHHOXmTS4nDhe0v0w==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-x64-gnu": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.15.11.tgz",
++      "integrity": "sha512-DKtnJKIHiZdARyTKiX7zdRjiDS1KihkQWatQiCHMv+zc2sfwb4Glrodx2VLOX4rsa92NLR0Sw8WLcPEMFY1szQ==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-linux-x64-musl": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.15.11.tgz",
++      "integrity": "sha512-mUjjntHj4+8WBaiDe5UwRNHuEzLjIWBTSGTw0JT9+C9/Yyuh4KQqlcEQ3ro6GkHmBGXBFpGIj/o5VMyRWfVfWw==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "linux"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-win32-arm64-msvc": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-win32-arm64-msvc/-/core-win32-arm64-msvc-1.15.11.tgz",
++      "integrity": "sha512-ZkNNG5zL49YpaFzfl6fskNOSxtcZ5uOYmWBkY4wVAvgbSAQzLRVBp+xArGWh2oXlY/WgL99zQSGTv7RI5E6nzA==",
++      "cpu": [
++        "arm64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-win32-ia32-msvc": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-win32-ia32-msvc/-/core-win32-ia32-msvc-1.15.11.tgz",
++      "integrity": "sha512-6XnzORkZCQzvTQ6cPrU7iaT9+i145oLwnin8JrfsLG41wl26+5cNQ2XV3zcbrnFEV6esjOceom9YO1w9mGJByw==",
++      "cpu": [
++        "ia32"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/core-win32-x64-msvc": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.15.11.tgz",
++      "integrity": "sha512-IQ2n6af7XKLL6P1gIeZACskSxK8jWtoKpJWLZmdXTDj1MGzktUy4i+FvpdtxFmJWNavRWH1VmTr6kAubRDHeKw==",
++      "cpu": [
++        "x64"
++      ],
++      "license": "Apache-2.0 AND MIT",
++      "optional": true,
++      "os": [
++        "win32"
++      ],
++      "engines": {
++        "node": ">=10"
++      }
++    },
++    "node_modules/@swc/counter": {
++      "version": "0.1.3",
++      "resolved": "https://registry.npmjs.org/@swc/counter/-/counter-0.1.3.tgz",
++      "integrity": "sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==",
++      "license": "Apache-2.0"
++    },
+     "node_modules/@swc/helpers": {
+       "version": "0.5.15",
+       "resolved": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.15.tgz",
+@@ -2176,6 +2708,15 @@
+         "tslib": "^2.8.0"
+       }
+     },
++    "node_modules/@swc/types": {
++      "version": "0.1.25",
++      "resolved": "https://registry.npmjs.org/@swc/types/-/types-0.1.25.tgz",
++      "integrity": "sha512-iAoY/qRhNH8a/hBvm3zKj9qQ4oc2+3w1unPJa2XvTK3XjeLXtzcCingVPw/9e5mn1+0yPqxcBGp9Jf0pkfMb1g==",
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@swc/counter": "^0.1.3"
++      }
++    },
+     "node_modules/@tailwindcss/node": {
+       "version": "4.2.0",
+       "resolved": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.2.0.tgz",
+@@ -3885,6 +4426,12 @@
+         }
+       }
+     },
++    "node_modules/decimal.js": {
++      "version": "10.6.0",
++      "resolved": "https://registry.npmjs.org/decimal.js/-/decimal.js-10.6.0.tgz",
++      "integrity": "sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==",
++      "license": "MIT"
++    },
+     "node_modules/deep-eql": {
+       "version": "5.0.2",
+       "resolved": "https://registry.npmjs.org/deep-eql/-/deep-eql-5.0.2.tgz",
+@@ -3942,7 +4489,6 @@
+       "version": "2.1.2",
+       "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+       "integrity": "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==",
+-      "devOptional": true,
+       "license": "Apache-2.0",
+       "engines": {
+         "node": ">=8"
+@@ -5163,6 +5709,21 @@
+         "hermes-estree": "0.25.1"
+       }
+     },
++    "node_modules/icu-minify": {
++      "version": "4.8.3",
++      "resolved": "https://registry.npmjs.org/icu-minify/-/icu-minify-4.8.3.tgz",
++      "integrity": "sha512-65Av7FLosNk7bPbmQx5z5XG2Y3T2GFppcjiXh4z1idHeVgQxlDpAmkGoYI0eFzAvrOnjpWTL5FmPDhsdfRMPEA==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/amannn"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/icu-messageformat-parser": "^3.4.0"
++      }
++    },
+     "node_modules/ignore": {
+       "version": "5.3.2",
+       "resolved": "https://registry.npmjs.org/ignore/-/ignore-5.3.2.tgz",
+@@ -5215,6 +5776,18 @@
+         "node": ">= 0.4"
+       }
+     },
++    "node_modules/intl-messageformat": {
++      "version": "11.1.2",
++      "resolved": "https://registry.npmjs.org/intl-messageformat/-/intl-messageformat-11.1.2.tgz",
++      "integrity": "sha512-ucSrQmZGAxfiBHfBRXW/k7UC8MaGFlEj4Ry1tKiDcmgwQm1y3EDl40u+4VNHYomxJQMJi9NEI3riDRlth96jKg==",
++      "license": "BSD-3-Clause",
++      "dependencies": {
++        "@formatjs/ecma402-abstract": "3.1.1",
++        "@formatjs/fast-memoize": "3.1.0",
++        "@formatjs/icu-messageformat-parser": "3.5.1",
++        "tslib": "^2.8.1"
++      }
++    },
+     "node_modules/is-array-buffer": {
+       "version": "3.0.5",
+       "resolved": "https://registry.npmjs.org/is-array-buffer/-/is-array-buffer-3.0.5.tgz",
+@@ -5400,7 +5973,6 @@
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+       "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+-      "dev": true,
+       "license": "MIT",
+       "engines": {
+         "node": ">=0.10.0"
+@@ -5446,7 +6018,6 @@
+       "version": "4.0.3",
+       "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+       "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+-      "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "is-extglob": "^2.1.1"
+@@ -6275,6 +6846,15 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/negotiator": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-1.0.0.tgz",
++      "integrity": "sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==",
++      "license": "MIT",
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
+     "node_modules/next": {
+       "version": "16.1.6",
+       "resolved": "https://registry.npmjs.org/next/-/next-16.1.6.tgz",
+@@ -6384,6 +6964,93 @@
+         }
+       }
+     },
++    "node_modules/next-intl": {
++      "version": "4.8.3",
++      "resolved": "https://registry.npmjs.org/next-intl/-/next-intl-4.8.3.tgz",
++      "integrity": "sha512-PvdBDWg+Leh7BR7GJUQbCDVVaBRn37GwDBWc9sv0rVQOJDQ5JU1rVzx9EEGuOGYo0DHAl70++9LQ7HxTawdL7w==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/amannn"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/intl-localematcher": "^0.8.1",
++        "@parcel/watcher": "^2.4.1",
++        "@swc/core": "^1.15.2",
++        "icu-minify": "^4.8.3",
++        "negotiator": "^1.0.0",
++        "next-intl-swc-plugin-extractor": "^4.8.3",
++        "po-parser": "^2.1.1",
++        "use-intl": "^4.8.3"
++      },
++      "peerDependencies": {
++        "next": "^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0",
++        "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0",
++        "typescript": "^5.0.0"
++      },
++      "peerDependenciesMeta": {
++        "typescript": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/next-intl-swc-plugin-extractor": {
++      "version": "4.8.3",
++      "resolved": "https://registry.npmjs.org/next-intl-swc-plugin-extractor/-/next-intl-swc-plugin-extractor-4.8.3.tgz",
++      "integrity": "sha512-YcaT+R9z69XkGhpDarVFWUprrCMbxgIQYPUaXoE6LGVnLjGdo8hu3gL6bramDVjNKViYY8a/pXPy7Bna0mXORg==",
++      "license": "MIT"
++    },
++    "node_modules/next-intl/node_modules/@swc/core": {
++      "version": "1.15.11",
++      "resolved": "https://registry.npmjs.org/@swc/core/-/core-1.15.11.tgz",
++      "integrity": "sha512-iLmLTodbYxU39HhMPaMUooPwO/zqJWvsqkrXv1ZI38rMb048p6N7qtAtTp37sw9NzSrvH6oli8EdDygo09IZ/w==",
++      "hasInstallScript": true,
++      "license": "Apache-2.0",
++      "dependencies": {
++        "@swc/counter": "^0.1.3",
++        "@swc/types": "^0.1.25"
++      },
++      "engines": {
++        "node": ">=10"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/swc"
++      },
++      "optionalDependencies": {
++        "@swc/core-darwin-arm64": "1.15.11",
++        "@swc/core-darwin-x64": "1.15.11",
++        "@swc/core-linux-arm-gnueabihf": "1.15.11",
++        "@swc/core-linux-arm64-gnu": "1.15.11",
++        "@swc/core-linux-arm64-musl": "1.15.11",
++        "@swc/core-linux-x64-gnu": "1.15.11",
++        "@swc/core-linux-x64-musl": "1.15.11",
++        "@swc/core-win32-arm64-msvc": "1.15.11",
++        "@swc/core-win32-ia32-msvc": "1.15.11",
++        "@swc/core-win32-x64-msvc": "1.15.11"
++      },
++      "peerDependencies": {
++        "@swc/helpers": ">=0.5.17"
++      },
++      "peerDependenciesMeta": {
++        "@swc/helpers": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/next-intl/node_modules/@swc/helpers": {
++      "version": "0.5.19",
++      "resolved": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.19.tgz",
++      "integrity": "sha512-QamiFeIK3txNjgUTNppE6MiG3p7TdninpZu0E0PbqVh1a9FNLT2FRhisaa4NcaX52XVhA5l7Pk58Ft7Sqi/2sA==",
++      "license": "Apache-2.0",
++      "optional": true,
++      "peer": true,
++      "dependencies": {
++        "tslib": "^2.8.0"
++      }
++    },
+     "node_modules/next/node_modules/postcss": {
+       "version": "8.4.31",
+       "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.4.31.tgz",
+@@ -6412,6 +7079,12 @@
+         "node": "^10 || ^12 || >=14"
+       }
+     },
++    "node_modules/node-addon-api": {
++      "version": "7.1.1",
++      "resolved": "https://registry.npmjs.org/node-addon-api/-/node-addon-api-7.1.1.tgz",
++      "integrity": "sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==",
++      "license": "MIT"
++    },
+     "node_modules/node-exports-info": {
+       "version": "1.6.0",
+       "resolved": "https://registry.npmjs.org/node-exports-info/-/node-exports-info-1.6.0.tgz",
+@@ -6761,6 +7434,12 @@
+         "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
+       }
+     },
++    "node_modules/po-parser": {
++      "version": "2.1.1",
++      "resolved": "https://registry.npmjs.org/po-parser/-/po-parser-2.1.1.tgz",
++      "integrity": "sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==",
++      "license": "MIT"
++    },
+     "node_modules/possible-typed-array-names": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/possible-typed-array-names/-/possible-typed-array-names-1.1.0.tgz",
+@@ -7924,7 +8603,7 @@
+       "version": "5.9.3",
+       "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+       "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+-      "dev": true,
++      "devOptional": true,
+       "license": "Apache-2.0",
+       "bin": {
+         "tsc": "bin/tsc",
+@@ -8069,6 +8748,27 @@
+         "punycode": "^2.1.0"
+       }
+     },
++    "node_modules/use-intl": {
++      "version": "4.8.3",
++      "resolved": "https://registry.npmjs.org/use-intl/-/use-intl-4.8.3.tgz",
++      "integrity": "sha512-nLxlC/RH+le6g3amA508Itnn/00mE+J22ui21QhOWo5V9hCEC43+WtnRAITbJW0ztVZphev5X9gvOf2/Dk9PLA==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/amannn"
++        }
++      ],
++      "license": "MIT",
++      "dependencies": {
++        "@formatjs/fast-memoize": "^3.1.0",
++        "@schummar/icu-type-parser": "1.21.5",
++        "icu-minify": "^4.8.3",
++        "intl-messageformat": "^11.1.0"
++      },
++      "peerDependencies": {
++        "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0"
++      }
++    },
+     "node_modules/vite": {
+       "version": "7.3.1",
+       "resolved": "https://registry.npmjs.org/vite/-/vite-7.3.1.tgz",
+diff --git a/src/components/contractor/ContractorPhaseActions.tsx b/src/components/contractor/ContractorPhaseActions.tsx
+index 2ec3589..640faae 100644
+--- a/src/components/contractor/ContractorPhaseActions.tsx
++++ b/src/components/contractor/ContractorPhaseActions.tsx
+@@ -3,6 +3,7 @@
+ import { useState } from "react";
+ import { updatePhaseStatus } from "@/actions/phases";
+ import { Eye, Loader2 } from "lucide-react";
++import { useTranslations } from "next-intl";
+ 
+ interface ContractorPhaseActionsProps {
+   phaseId: string;
+@@ -13,6 +14,7 @@ export function ContractorPhaseActions({
+   phaseId,
+   status,
+ }: ContractorPhaseActionsProps) {
++  const t = useTranslations("contractor");
+   const [loading, setLoading] = useState(false);
+   const [done, setDone] = useState(false);
+ 
+@@ -31,7 +33,7 @@ export function ContractorPhaseActions({
+     return (
+       <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 px-4 py-2.5 rounded-lg">
+         <Eye className="w-4 h-4" />
+-        Review requested — your PM will be notified
++        {t("reviewRequested")}
+       </div>
+     );
+   }
+@@ -47,12 +49,12 @@ export function ContractorPhaseActions({
+       {loading ? (
+         <>
+           <Loader2 className="w-4 h-4 animate-spin" />
+-          Requesting...
++          {t("requesting")}
+         </>
+       ) : (
+         <>
+           <Eye className="w-4 h-4" />
+-          Request Review
++          {t("requestReview")}
+         </>
+       )}
+     </button>
+diff --git a/src/components/directory/ContactFormModal.tsx b/src/components/directory/ContactFormModal.tsx
+index 1985430..f5cfd91 100644
+--- a/src/components/directory/ContactFormModal.tsx
++++ b/src/components/directory/ContactFormModal.tsx
+@@ -4,6 +4,7 @@ import { useState } from "react";
+ import { X } from "lucide-react";
+ import { createStaff, updateStaff, deleteStaff } from "@/actions/staff";
+ import { cn } from "@/lib/utils";
++import { useTranslations } from "next-intl";
+ 
+ type ContactType = "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR";
+ 
+@@ -24,18 +25,17 @@ interface ContactFormModalProps {
+   onClose: () => void;
+ }
+ 
+-const CONTACT_TYPES: { value: ContactType; label: string }[] = [
+-  { value: "TEAM", label: "Team Member" },
+-  { value: "SUBCONTRACTOR", label: "Subcontractor" },
+-  { value: "VENDOR", label: "Vendor / Supplier" },
+-  { value: "INSPECTOR", label: "Inspector" },
+-];
++export function ContactFormModal({ mode, contact, onClose }: ContactFormModalProps) {
++  const t = useTranslations("directory");
++  const tc = useTranslations("common");
++
++  const CONTACT_TYPES: { value: ContactType; label: string }[] = [
++    { value: "TEAM", label: t("teamMember") },
++    { value: "SUBCONTRACTOR", label: t("subcontractor") },
++    { value: "VENDOR", label: t("vendorSupplier") },
++    { value: "INSPECTOR", label: t("inspector") },
++  ];
+ 
+-export function ContactFormModal({
+-  mode,
+-  contact,
+-  onClose,
+-}: ContactFormModalProps) {
+   const [saving, setSaving] = useState(false);
+   const [deleting, setDeleting] = useState(false);
+   const [error, setError] = useState<string | null>(null);
+@@ -53,7 +53,7 @@ export function ContactFormModal({
+   async function handleSubmit(e: React.FormEvent) {
+     e.preventDefault();
+     if (!name.trim()) {
+-      setError("Name is required");
++      setError(t("nameRequired"));
+       return;
+     }
+ 
+@@ -85,50 +85,39 @@ export function ContactFormModal({
+       }
+       onClose();
+     } catch (e) {
+-      setError(e instanceof Error ? e.message : "Something went wrong");
++      setError(e instanceof Error ? e.message : t("somethingWentWrong"));
+       setSaving(false);
+     }
+   }
+ 
+   async function handleDelete() {
+     if (!contact) return;
+-    if (!confirm(`Delete ${contact.name}? This will also remove all their phase assignments.`))
+-      return;
++    if (!confirm(t("deleteConfirm", { name: contact.name }))) return;
+ 
+     setDeleting(true);
+     try {
+       await deleteStaff(contact.id);
+       onClose();
+     } catch (e) {
+-      setError(e instanceof Error ? e.message : "Failed to delete");
++      setError(e instanceof Error ? e.message : t("failedToDelete"));
+       setDeleting(false);
+     }
+   }
+ 
+   return (
+     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+-      {/* Backdrop */}
+-      <div
+-        className="absolute inset-0 bg-black/40"
+-        onClick={onClose}
+-      />
++      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+ 
+-      {/* Modal */}
+       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-auto">
+-        {/* Header */}
+         <div className="flex items-center justify-between p-5 border-b border-gray-200">
+           <h2 className="text-lg font-semibold text-gray-900">
+-            {mode === "add" ? "Add Contact" : "Edit Contact"}
++            {mode === "add" ? t("addContactModal") : t("editContactModal")}
+           </h2>
+-          <button
+-            onClick={onClose}
+-            className="p-1 text-gray-400 hover:text-gray-600 rounded"
+-          >
++          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded">
+             <X className="w-5 h-5" />
+           </button>
+         </div>
+ 
+-        {/* Form */}
+         <form onSubmit={handleSubmit} className="p-5 space-y-4">
+           {error && (
+             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+@@ -136,11 +125,8 @@ export function ContactFormModal({
+             </div>
+           )}
+ 
+-          {/* Contact type */}
+           <div>
+-            <label className="block text-sm font-medium text-gray-700 mb-2">
+-              Type
+-            </label>
++            <label className="block text-sm font-medium text-gray-700 mb-2">{t("type")}</label>
+             <div className="grid grid-cols-2 gap-2">
+               {CONTACT_TYPES.map((ct) => (
+                 <button
+@@ -160,92 +146,75 @@ export function ContactFormModal({
+             </div>
+           </div>
+ 
+-          {/* Name */}
+           <div>
+-            <label className="block text-sm font-medium text-gray-700 mb-1">
+-              Name *
+-            </label>
++            <label className="block text-sm font-medium text-gray-700 mb-1">{t("nameField")}</label>
+             <input
+               type="text"
+               value={name}
+               onChange={(e) => setName(e.target.value)}
+-              placeholder="John Smith"
++              placeholder={t("namePlaceholder")}
+               className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+               autoFocus
+             />
+           </div>
+ 
+-          {/* Company + Role */}
+           <div className="grid grid-cols-2 gap-3">
+             <div>
+-              <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Company
+-              </label>
++              <label className="block text-sm font-medium text-gray-700 mb-1">{t("company")}</label>
+               <input
+                 type="text"
+                 value={company}
+                 onChange={(e) => setCompany(e.target.value)}
+-                placeholder="ABC Electric"
++                placeholder={t("companyPlaceholder")}
+                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+               />
+             </div>
+             <div>
+-              <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Role / Trade
+-              </label>
++              <label className="block text-sm font-medium text-gray-700 mb-1">{t("roleTrade")}</label>
+               <input
+                 type="text"
+                 value={role}
+                 onChange={(e) => setRole(e.target.value)}
+-                placeholder="Electrician"
++                placeholder={t("rolePlaceholder")}
+                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+               />
+             </div>
+           </div>
+ 
+-          {/* Email + Phone */}
+           <div className="grid grid-cols-2 gap-3">
+             <div>
+-              <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Email
+-              </label>
++              <label className="block text-sm font-medium text-gray-700 mb-1">{t("email")}</label>
+               <input
+                 type="email"
+                 value={email}
+                 onChange={(e) => setEmail(e.target.value)}
+-                placeholder="john@company.com"
++                placeholder={t("emailPlaceholder")}
+                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+               />
+             </div>
+             <div>
+-              <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Phone
+-              </label>
++              <label className="block text-sm font-medium text-gray-700 mb-1">{t("phone")}</label>
+               <input
+                 type="tel"
+                 value={phone}
+                 onChange={(e) => setPhone(e.target.value)}
+-                placeholder="(555) 123-4567"
++                placeholder={t("phonePlaceholder")}
+                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+               />
+             </div>
+           </div>
+ 
+-          {/* Notes */}
+           <div>
+-            <label className="block text-sm font-medium text-gray-700 mb-1">
+-              Notes
+-            </label>
++            <label className="block text-sm font-medium text-gray-700 mb-1">{t("notes")}</label>
+             <textarea
+               value={notes}
+               onChange={(e) => setNotes(e.target.value)}
+               rows={2}
+-              placeholder="License #, specialties, availability..."
++              placeholder={t("notesPlaceholder")}
+               className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
+             />
+           </div>
+ 
+-          {/* Actions */}
+           <div className="flex items-center justify-between pt-2">
+             <div>
+               {mode === "edit" && contact && (
+@@ -255,7 +224,7 @@ export function ContactFormModal({
+                   disabled={deleting}
+                   className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50"
+                 >
+-                  {deleting ? "Deleting..." : "Delete Contact"}
++                  {deleting ? t("deleting") : t("deleteContact")}
+                 </button>
+               )}
+             </div>
+@@ -265,7 +234,7 @@ export function ContactFormModal({
+                 onClick={onClose}
+                 className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+               >
+-                Cancel
++                {tc("cancel")}
+               </button>
+               <button
+                 type="submit"
+@@ -273,10 +242,10 @@ export function ContactFormModal({
+                 className="px-4 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
+               >
+                 {saving
+-                  ? "Saving..."
++                  ? tc("saving")
+                   : mode === "add"
+-                    ? "Add Contact"
+-                    : "Save Changes"}
++                    ? t("addContactBtn")
++                    : t("saveChanges")}
+               </button>
+             </div>
+           </div>
+diff --git a/src/components/directory/DirectoryClient.tsx b/src/components/directory/DirectoryClient.tsx
+index 8af3f66..a69bfaf 100644
+--- a/src/components/directory/DirectoryClient.tsx
++++ b/src/components/directory/DirectoryClient.tsx
+@@ -13,44 +13,9 @@ import {
+   Pencil,
+ } from "lucide-react";
+ import { ContactFormModal } from "./ContactFormModal";
++import { useTranslations } from "next-intl";
+ 
+-const TYPE_CONFIG = {
+-  TEAM: {
+-    label: "Team",
+-    description: "Your employees and core team",
+-    icon: HardHat,
+-    color: "bg-blue-50 text-blue-700 border-blue-200",
+-    badge: "bg-blue-100 text-blue-700",
+-  },
+-  SUBCONTRACTOR: {
+-    label: "Subcontractors",
+-    description: "Trades and specialty contractors",
+-    icon: Users,
+-    color: "bg-orange-50 text-orange-700 border-orange-200",
+-    badge: "bg-orange-100 text-orange-700",
+-  },
+-  VENDOR: {
+-    label: "Vendors",
+-    description: "Suppliers and material providers",
+-    icon: Truck,
+-    color: "bg-green-50 text-green-700 border-green-200",
+-    badge: "bg-green-100 text-green-700",
+-  },
+-  INSPECTOR: {
+-    label: "Inspectors",
+-    description: "City inspectors, engineers, and consultants",
+-    icon: ClipboardCheck,
+-    color: "bg-purple-50 text-purple-700 border-purple-200",
+-    badge: "bg-purple-100 text-purple-700",
+-  },
+-} as const;
+-
+-const TYPE_ORDER: (keyof typeof TYPE_CONFIG)[] = [
+-  "TEAM",
+-  "SUBCONTRACTOR",
+-  "INSPECTOR",
+-  "VENDOR",
+-];
++type ContactType = "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR";
+ 
+ interface Contact {
+   id: string;
+@@ -73,6 +38,48 @@ interface DirectoryClientProps {
+ }
+ 
+ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
++  const t = useTranslations("directory");
++  const tc = useTranslations("common");
++
++  const TYPE_CONFIG: Record<ContactType, {
++    label: string;
++    description: string;
++    icon: React.ComponentType<{ className?: string }>;
++    color: string;
++    badge: string;
++  }> = {
++    TEAM: {
++      label: t("teamLabel"),
++      description: t("teamDesc"),
++      icon: HardHat,
++      color: "bg-blue-50 text-blue-700 border-blue-200",
++      badge: "bg-blue-100 text-blue-700",
++    },
++    SUBCONTRACTOR: {
++      label: t("subcontractorLabel"),
++      description: t("subcontractorDesc"),
++      icon: Users,
++      color: "bg-orange-50 text-orange-700 border-orange-200",
++      badge: "bg-orange-100 text-orange-700",
++    },
++    VENDOR: {
++      label: t("vendorLabel"),
++      description: t("vendorDesc"),
++      icon: Truck,
++      color: "bg-green-50 text-green-700 border-green-200",
++      badge: "bg-green-100 text-green-700",
++    },
++    INSPECTOR: {
++      label: t("inspectorLabel"),
++      description: t("inspectorDesc"),
++      icon: ClipboardCheck,
++      color: "bg-purple-50 text-purple-700 border-purple-200",
++      badge: "bg-purple-100 text-purple-700",
++    },
++  };
++
++  const TYPE_ORDER: ContactType[] = ["TEAM", "SUBCONTRACTOR", "INSPECTOR", "VENDOR"];
++
+   const [modalState, setModalState] = useState<
+     | { mode: "add"; contact?: undefined }
+     | { mode: "edit"; contact: Contact }
+@@ -89,10 +96,9 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+     <div className="p-6 max-w-7xl mx-auto">
+       <div className="flex items-center justify-between mb-6">
+         <div>
+-          <h1 className="text-2xl font-bold text-gray-900">Directory</h1>
++          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+           <p className="text-sm text-gray-500 mt-1">
+-            {contacts.length} contact{contacts.length !== 1 ? "s" : ""} across{" "}
+-            {grouped.length} categor{grouped.length !== 1 ? "ies" : "y"}
++            {t("contactCount", { count: contacts.length, groups: grouped.length })}
+           </p>
+         </div>
+         {canManage && (
+@@ -101,7 +107,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+             className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
+           >
+             <Plus className="w-4 h-4" />
+-            Add Contact
++            {t("addContact")}
+           </button>
+         )}
+       </div>
+@@ -109,20 +115,15 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+       {contacts.length === 0 ? (
+         <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
+           <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+-          <h3 className="text-lg font-medium text-gray-900 mb-1">
+-            No contacts yet
+-          </h3>
+-          <p className="text-sm text-gray-500 mb-4">
+-            Add team members, subcontractors, vendors, and inspectors to your
+-            directory.
+-          </p>
++          <h3 className="text-lg font-medium text-gray-900 mb-1">{t("noContactsYet")}</h3>
++          <p className="text-sm text-gray-500 mb-4">{t("noContactsMessage")}</p>
+           {canManage && (
+             <button
+               onClick={() => setModalState({ mode: "add" })}
+               className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
+             >
+               <Plus className="w-4 h-4" />
+-              Add Your First Contact
++              {t("addFirstContact")}
+             </button>
+           )}
+         </div>
+@@ -134,16 +135,10 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+               <div key={type}>
+                 <div className="flex items-center gap-2 mb-3">
+                   <Icon className="w-5 h-5 text-gray-400" />
+-                  <h2 className="text-lg font-semibold text-gray-900">
+-                    {config.label}
+-                  </h2>
+-                  <span className="text-xs text-gray-400">
+-                    {groupContacts.length}
+-                  </span>
++                  <h2 className="text-lg font-semibold text-gray-900">{config.label}</h2>
++                  <span className="text-xs text-gray-400">{groupContacts.length}</span>
+                 </div>
+-                <p className="text-sm text-gray-500 mb-3 -mt-1">
+-                  {config.description}
+-                </p>
++                <p className="text-sm text-gray-500 mb-3 -mt-1">{config.description}</p>
+ 
+                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                   {groupContacts.map((person) => (
+@@ -151,14 +146,11 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+                       key={person.id}
+                       className="bg-white rounded-xl border border-gray-200 p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group relative"
+                     >
+-                      {/* Edit button */}
+                       {canManage && (
+                         <button
+-                          onClick={() =>
+-                            setModalState({ mode: "edit", contact: person })
+-                          }
++                          onClick={() => setModalState({ mode: "edit", contact: person })}
+                           className="absolute top-3 right-3 p-1.5 text-gray-300 hover:text-[var(--color-primary)] rounded opacity-0 group-hover:opacity-100 transition-opacity"
+-                          title="Edit contact"
++                          title={t("editContact")}
+                         >
+                           <Pencil className="w-3.5 h-3.5" />
+                         </button>
+@@ -173,14 +165,10 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+                             {person.name}
+                           </h3>
+                           {person.role && (
+-                            <p className="text-sm text-gray-500">
+-                              {person.role}
+-                            </p>
++                            <p className="text-sm text-gray-500">{person.role}</p>
+                           )}
+                         </div>
+-                        <span
+-                          className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${config.badge}`}
+-                        >
++                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${config.badge}`}>
+                           {config.label}
+                         </span>
+                       </div>
+@@ -209,7 +197,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+                       {person.assignments.length > 0 && (
+                         <div className="mt-3 pt-3 border-t border-gray-100">
+                           <p className="text-xs text-gray-400 uppercase tracking-wide mb-1.5">
+-                            Assigned to
++                            {t("assignedTo")}
+                           </p>
+                           <div className="flex flex-wrap gap-1.5">
+                             {person.assignments.map((a) => (
+@@ -232,7 +220,6 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
+         </div>
+       )}
+ 
+-      {/* Modal */}
+       {modalState && (
+         <ContactFormModal
+           mode={modalState.mode}
+diff --git a/src/components/phase/AssignmentSection.tsx b/src/components/phase/AssignmentSection.tsx
+index 767e22e..5a1b9bf 100644
+--- a/src/components/phase/AssignmentSection.tsx
++++ b/src/components/phase/AssignmentSection.tsx
+@@ -3,6 +3,7 @@
+ import { useState } from "react";
+ import { Users, Plus, X, Crown, Building2 } from "lucide-react";
+ import { assignStaffToPhase, unassignStaffFromPhase } from "@/actions/phases";
++import { useTranslations } from "next-intl";
+ 
+ interface Assignment {
+   id: string;
+@@ -37,6 +38,8 @@ export function AssignmentSection({
+   allStaff,
+   canEdit,
+ }: AssignmentSectionProps) {
++  const t = useTranslations("team");
++  const tc = useTranslations("common");
+   const [showModal, setShowModal] = useState(false);
+   const [search, setSearch] = useState("");
+   const [loading, setLoading] = useState(false);
+@@ -69,7 +72,7 @@ export function AssignmentSection({
+     <div className="bg-white rounded-xl border border-gray-200 p-5">
+       <div className="flex items-center justify-between mb-4">
+         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+-          Team ({assignments.length})
++          {t("title", { count: assignments.length })}
+         </h2>
+         {canEdit && (
+           <button
+@@ -77,7 +80,7 @@ export function AssignmentSection({
+             className="inline-flex items-center gap-1 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium"
+           >
+             <Plus className="w-4 h-4" />
+-            Assign
++            {t("assign")}
+           </button>
+         )}
+       </div>
+@@ -85,78 +88,45 @@ export function AssignmentSection({
+       {assignments.length === 0 ? (
+         <div className="text-center py-6">
+           <Users className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+-          <p className="text-sm text-gray-500">No one assigned yet</p>
++          <p className="text-sm text-gray-500">{t("noOneAssigned")}</p>
+         </div>
+       ) : (
+         <div className="space-y-2">
+-          {owner && (
+-            <StaffCard
+-              assignment={owner}
+-              canEdit={canEdit}
+-              onUnassign={handleUnassign}
+-            />
+-          )}
++          {owner && <StaffCard assignment={owner} canEdit={canEdit} onUnassign={handleUnassign} removeLabel={tc("remove")} />}
+           {others.map((a) => (
+-            <StaffCard
+-              key={a.id}
+-              assignment={a}
+-              canEdit={canEdit}
+-              onUnassign={handleUnassign}
+-            />
++            <StaffCard key={a.id} assignment={a} canEdit={canEdit} onUnassign={handleUnassign} removeLabel={tc("remove")} />
+           ))}
+         </div>
+       )}
+ 
+-      {/* Assignment Modal */}
+       {showModal && (
+         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+           <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[70vh] flex flex-col">
+             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+-              <h3 className="font-semibold text-gray-900">
+-                Assign to Phase
+-              </h3>
+-              <button
+-                onClick={() => {
+-                  setShowModal(false);
+-                  setSearch("");
+-                }}
+-                className="text-gray-400 hover:text-gray-600"
+-              >
++              <h3 className="font-semibold text-gray-900">{t("assignToPhase")}</h3>
++              <button onClick={() => { setShowModal(false); setSearch(""); }} className="text-gray-400 hover:text-gray-600">
+                 <X className="w-5 h-5" />
+               </button>
+             </div>
+-
+             <div className="p-4 border-b border-gray-100">
+               <input
+                 type="text"
+-                placeholder="Search by name, company, or role..."
++                placeholder={t("searchPlaceholder")}
+                 value={search}
+                 onChange={(e) => setSearch(e.target.value)}
+                 className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                 autoFocus
+               />
+             </div>
+-
+             <div className="flex-1 overflow-auto p-2">
+               {available.length === 0 ? (
+-                <p className="text-sm text-gray-500 text-center py-4">
+-                  No matching contacts found
+-                </p>
++                <p className="text-sm text-gray-500 text-center py-4">{t("noMatchingContacts")}</p>
+               ) : (
+                 available.map((staff) => (
+-                  <div
+-                    key={staff.id}
+-                    className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
+-                  >
++                  <div key={staff.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
+                     <div>
+-                      <p className="text-sm font-medium text-gray-900">
+-                        {staff.name}
+-                      </p>
+-                      <p className="text-xs text-gray-500">
+-                        {[staff.role, staff.company]
+-                          .filter(Boolean)
+-                          .join(" · ")}
+-                      </p>
++                      <p className="text-sm font-medium text-gray-900">{staff.name}</p>
++                      <p className="text-xs text-gray-500">{[staff.role, staff.company].filter(Boolean).join(" · ")}</p>
+                     </div>
+                     <div className="flex gap-1.5">
+                       <button
+@@ -164,7 +134,7 @@ export function AssignmentSection({
+                         disabled={loading}
+                         className="px-2.5 py-1 text-xs font-medium bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)] rounded-lg hover:bg-[var(--color-primary-bg)] disabled:opacity-50"
+                       >
+-                        Add
++                        {tc("add")}
+                       </button>
+                       {!owner && (
+                         <button
+@@ -172,7 +142,7 @@ export function AssignmentSection({
+                           disabled={loading}
+                           className="px-2.5 py-1 text-xs font-medium bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 disabled:opacity-50"
+                         >
+-                          Add as Owner
++                          {t("addAsOwner")}
+                         </button>
+                       )}
+                     </div>
+@@ -191,10 +161,12 @@ function StaffCard({
+   assignment,
+   canEdit,
+   onUnassign,
++  removeLabel,
+ }: {
+   assignment: Assignment;
+   canEdit: boolean;
+   onUnassign: (id: string) => void;
++  removeLabel: string;
+ }) {
+   return (
+     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+@@ -204,12 +176,8 @@ function StaffCard({
+         </div>
+         <div>
+           <div className="flex items-center gap-1.5">
+-            <span className="text-sm font-medium text-gray-900">
+-              {assignment.staff.name}
+-            </span>
+-            {assignment.isOwner && (
+-              <Crown className="w-3.5 h-3.5 text-yellow-500" />
+-            )}
++            <span className="text-sm font-medium text-gray-900">{assignment.staff.name}</span>
++            {assignment.isOwner && <Crown className="w-3.5 h-3.5 text-yellow-500" />}
+           </div>
+           <div className="flex items-center gap-1.5 text-xs text-gray-500">
+             {assignment.staff.role && <span>{assignment.staff.role}</span>}
+@@ -226,11 +194,7 @@ function StaffCard({
+         </div>
+       </div>
+       {canEdit && (
+-        <button
+-          onClick={() => onUnassign(assignment.id)}
+-          className="text-gray-400 hover:text-red-500 p-1"
+-          title="Remove"
+-        >
++        <button onClick={() => onUnassign(assignment.id)} className="text-gray-400 hover:text-red-500 p-1" title={removeLabel}>
+           <X className="w-4 h-4" />
+         </button>
+       )}
+diff --git a/src/components/phase/ChecklistSection.tsx b/src/components/phase/ChecklistSection.tsx
+index 28d5698..bd3b087 100644
+--- a/src/components/phase/ChecklistSection.tsx
++++ b/src/components/phase/ChecklistSection.tsx
+@@ -16,6 +16,7 @@ import {
+   addCustomChecklistItem,
+   deleteChecklistItem,
+ } from "@/actions/checklists";
++import { useTranslations } from "next-intl";
+ 
+ interface ChecklistItem {
+   id: string;
+@@ -52,6 +53,8 @@ export function ChecklistSection({
+   canEdit,
+   canManage,
+ }: ChecklistSectionProps) {
++  const t = useTranslations("checklist");
++  const tc = useTranslations("common");
+   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
+   const [showAddItem, setShowAddItem] = useState(false);
+   const [newItemTitle, setNewItemTitle] = useState("");
+@@ -109,7 +112,7 @@ export function ChecklistSection({
+     <div className="bg-white rounded-xl border border-gray-200 p-5">
+       <div className="flex items-center justify-between mb-4">
+         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+-          Checklist
++          {t("title")}
+           {total > 0 && (
+             <span className="ml-2 text-gray-500 normal-case font-normal">
+               {completed}/{total}
+@@ -122,7 +125,7 @@ export function ChecklistSection({
+             className="inline-flex items-center gap-1 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium"
+           >
+             <Plus className="w-4 h-4" />
+-            Add Item
++            {t("addItem")}
+           </button>
+         )}
+       </div>
+@@ -130,20 +133,19 @@ export function ChecklistSection({
+       {!checklist ? (
+         <div className="text-center py-6">
+           <ClipboardList className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+-          <p className="text-sm text-gray-500 mb-3">No checklist yet</p>
++          <p className="text-sm text-gray-500 mb-3">{t("noChecklistYet")}</p>
+           {canEdit && templates.length > 0 && (
+             <button
+               onClick={() => setShowTemplatePicker(true)}
+               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)]"
+             >
+               <ListChecks className="w-4 h-4" />
+-              Apply Template
++              {t("applyTemplate")}
+             </button>
+           )}
+         </div>
+       ) : (
+         <>
+-          {/* Progress bar */}
+           {total > 0 && (
+             <div className="mb-4">
+               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+@@ -151,22 +153,17 @@ export function ChecklistSection({
+                   className="h-full rounded-full transition-all duration-300"
+                   style={{
+                     width: `${progressPct}%`,
+-                    backgroundColor:
+-                      progressPct === 100 ? "#16a34a" : "var(--color-primary)",
++                    backgroundColor: progressPct === 100 ? "#16a34a" : "var(--color-primary)",
+                   }}
+                 />
+               </div>
+-              <p className="text-xs text-gray-500 mt-1">{progressPct}% complete</p>
++              <p className="text-xs text-gray-500 mt-1">{progressPct}{t("percentComplete")}</p>
+             </div>
+           )}
+ 
+-          {/* Items */}
+           <div className="space-y-1">
+             {items.map((item) => (
+-              <div
+-                key={item.id}
+-                className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 group"
+-              >
++              <div key={item.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 group">
+                 <button
+                   onClick={() => canEdit && handleToggle(item.id)}
+                   disabled={!canEdit || togglingId === item.id}
+@@ -179,20 +176,13 @@ export function ChecklistSection({
+                   )}
+                 </button>
+                 <div className="flex-1 min-w-0">
+-                  <span
+-                    className={`text-sm ${
+-                      item.completed
+-                        ? "text-gray-400 line-through"
+-                        : "text-gray-900"
+-                    }`}
+-                  >
++                  <span className={`text-sm ${item.completed ? "text-gray-400 line-through" : "text-gray-900"}`}>
+                     {item.title}
+                   </span>
+                   {item.completed && item.completedBy && (
+                     <p className="text-xs text-gray-400 mt-0.5">
+                       {item.completedBy.name || item.completedBy.email}
+-                      {item.completedAt &&
+-                        ` · ${new Date(item.completedAt).toLocaleDateString()}`}
++                      {item.completedAt && ` · ${new Date(item.completedAt).toLocaleDateString()}`}
+                     </p>
+                   )}
+                 </div>
+@@ -200,7 +190,7 @@ export function ChecklistSection({
+                   <button
+                     onClick={() => handleDeleteItem(item.id)}
+                     className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 shrink-0"
+-                    title="Delete item"
++                    title={tc("delete")}
+                   >
+                     <Trash2 className="w-3.5 h-3.5" />
+                   </button>
+@@ -209,12 +199,11 @@ export function ChecklistSection({
+             ))}
+           </div>
+ 
+-          {/* Add item inline */}
+           {showAddItem && (
+             <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+               <input
+                 type="text"
+-                placeholder="New checklist item..."
++                placeholder={t("newItemPlaceholder")}
+                 value={newItemTitle}
+                 onChange={(e) => setNewItemTitle(e.target.value)}
+                 onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
+@@ -226,15 +215,9 @@ export function ChecklistSection({
+                 disabled={loading || !newItemTitle.trim()}
+                 className="px-3 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] disabled:opacity-50"
+               >
+-                Add
++                {tc("add")}
+               </button>
+-              <button
+-                onClick={() => {
+-                  setShowAddItem(false);
+-                  setNewItemTitle("");
+-                }}
+-                className="p-2 text-gray-400 hover:text-gray-600"
+-              >
++              <button onClick={() => { setShowAddItem(false); setNewItemTitle(""); }} className="p-2 text-gray-400 hover:text-gray-600">
+                 <X className="w-4 h-4" />
+               </button>
+             </div>
+@@ -242,36 +225,25 @@ export function ChecklistSection({
+         </>
+       )}
+ 
+-      {/* Template Picker Modal */}
+       {showTemplatePicker && (
+         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+           <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+-              <h3 className="font-semibold text-gray-900">
+-                Choose a Template
+-              </h3>
+-              <button
+-                onClick={() => setShowTemplatePicker(false)}
+-                className="text-gray-400 hover:text-gray-600"
+-              >
++              <h3 className="font-semibold text-gray-900">{t("chooseTemplate")}</h3>
++              <button onClick={() => setShowTemplatePicker(false)} className="text-gray-400 hover:text-gray-600">
+                 <X className="w-5 h-5" />
+               </button>
+             </div>
+-
+             <div className="p-2">
+-              {templates.map((t) => (
++              {templates.map((tmpl) => (
+                 <button
+-                  key={t.id}
+-                  onClick={() => handleApplyTemplate(t.id)}
++                  key={tmpl.id}
++                  onClick={() => handleApplyTemplate(tmpl.id)}
+                   disabled={loading}
+                   className="w-full text-left p-3 hover:bg-gray-50 rounded-lg disabled:opacity-50"
+                 >
+-                  <p className="text-sm font-medium text-gray-900">
+-                    {t.name}
+-                  </p>
+-                  <p className="text-xs text-gray-500 mt-0.5">
+-                    {t.items.length} items
+-                  </p>
++                  <p className="text-sm font-medium text-gray-900">{tmpl.name}</p>
++                  <p className="text-xs text-gray-500 mt-0.5">{t("itemCount", { count: tmpl.items.length })}</p>
+                 </button>
+               ))}
+             </div>
+diff --git a/src/components/phase/CommentSection.tsx b/src/components/phase/CommentSection.tsx
+index 6a3aa34..7d303be 100644
+--- a/src/components/phase/CommentSection.tsx
++++ b/src/components/phase/CommentSection.tsx
+@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
+ import { MessageSquare, Send, Trash2, Loader2 } from "lucide-react";
+ import { addPhaseComment, deletePhaseComment } from "@/actions/comments";
+ import { formatDistanceToNow } from "date-fns";
++import { useTranslations } from "next-intl";
+ 
+ interface User {
+   id: string;
+@@ -33,6 +34,7 @@ export function CommentSection({
+   currentUserId,
+   isAdmin = false,
+ }: CommentSectionProps) {
++  const t = useTranslations("comments");
+   const [newComment, setNewComment] = useState<string>("");
+   const [isPending, startTransition] = useTransition();
+   const [deletingId, setDeletingId] = useState<string | null>(null);
+@@ -40,16 +42,11 @@ export function CommentSection({
+ 
+   const handleAddComment = async (): Promise<void> => {
+     if (!newComment.trim()) return;
+-
+     const commentText: string = newComment.trim();
+     setNewComment("");
+-
+     startTransition(async () => {
+       try {
+-        const result: Comment = await addPhaseComment({
+-          phaseId,
+-          content: commentText,
+-        });
++        const result: Comment = await addPhaseComment({ phaseId, content: commentText });
+         setLocalComments((prev: Comment[]) => [result, ...prev]);
+       } catch (error: unknown) {
+         console.error("Failed to add comment:", error);
+@@ -60,13 +57,10 @@ export function CommentSection({
+ 
+   const handleDeleteComment = (commentId: string): void => {
+     setDeletingId(commentId);
+-
+     startTransition(async () => {
+       try {
+         await deletePhaseComment(commentId);
+-        setLocalComments((prev: Comment[]) =>
+-          prev.filter((c: Comment) => c.id !== commentId)
+-        );
++        setLocalComments((prev: Comment[]) => prev.filter((c) => c.id !== commentId));
+       } catch (error: unknown) {
+         console.error("Failed to delete comment:", error);
+       } finally {
+@@ -75,24 +69,15 @@ export function CommentSection({
+     });
+   };
+ 
+-  const getAvatarLetter = (user: User): string => {
+-    if (user.name) {
+-      return user.name.charAt(0).toUpperCase();
+-    }
+-    return user.email.charAt(0).toUpperCase();
+-  };
++  const getAvatarLetter = (user: User): string =>
++    user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+ 
+-  const getUserDisplayName = (user: User): string => {
+-    return user.name || user.email;
+-  };
+-
+-  const canDelete = (commentUserId: string): boolean => {
+-    return commentUserId === currentUserId || isAdmin;
+-  };
++  const getUserDisplayName = (user: User): string => user.name || user.email;
++  const canDelete = (commentUserId: string): boolean =>
++    commentUserId === currentUserId || isAdmin;
+ 
+   const sortedComments: Comment[] = [...localComments].sort(
+-    (a: Comment, b: Comment) =>
+-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
++    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+   );
+ 
+   return (
+@@ -100,7 +85,7 @@ export function CommentSection({
+       <div className="flex items-center gap-2 mb-4">
+         <MessageSquare className="w-5 h-5 text-gray-600" />
+         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+-          Comments
++          {t("title")}
+           {localComments.length > 0 && (
+             <span className="ml-2 text-gray-500 normal-case font-normal">
+               {localComments.length}
+@@ -112,57 +97,38 @@ export function CommentSection({
+       {localComments.length === 0 ? (
+         <div className="text-center py-6">
+           <MessageSquare className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+-          <p className="text-sm text-gray-500">No comments yet</p>
++          <p className="text-sm text-gray-500">{t("noCommentsYet")}</p>
+         </div>
+       ) : (
+         <div className="space-y-3 mb-4 max-h-96 overflow-y-auto">
+           {sortedComments.map((comment: Comment) => (
+-            <div
+-              key={comment.id}
+-              className="flex gap-3 p-3 rounded-lg hover:bg-gray-50 group"
+-            >
++            <div key={comment.id} className="flex gap-3 p-3 rounded-lg hover:bg-gray-50 group">
+               <div className="flex-shrink-0">
+                 {comment.user.image ? (
+-                  <img
+-                    src={comment.user.image}
+-                    alt={getUserDisplayName(comment.user)}
+-                    className="w-8 h-8 rounded-full"
+-                  />
++                  <img src={comment.user.image} alt={getUserDisplayName(comment.user)} className="w-8 h-8 rounded-full" />
+                 ) : (
+                   <div className="w-8 h-8 rounded-full bg-[var(--color-primary)] text-white text-xs font-semibold flex items-center justify-center">
+                     {getAvatarLetter(comment.user)}
+                   </div>
+                 )}
+               </div>
+-
+               <div className="flex-1 min-w-0">
+                 <div className="flex items-baseline gap-2">
+-                  <p className="text-sm font-medium text-gray-900">
+-                    {getUserDisplayName(comment.user)}
+-                  </p>
++                  <p className="text-sm font-medium text-gray-900">{getUserDisplayName(comment.user)}</p>
+                   <p className="text-xs text-gray-500">
+-                    {formatDistanceToNow(new Date(comment.createdAt), {
+-                      addSuffix: true,
+-                    })}
++                    {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+                   </p>
+                 </div>
+-                <p className="text-sm text-gray-700 mt-1 break-words">
+-                  {comment.content}
+-                </p>
++                <p className="text-sm text-gray-700 mt-1 break-words">{comment.content}</p>
+               </div>
+-
+               {canDelete(comment.user.id) && (
+                 <button
+                   onClick={() => handleDeleteComment(comment.id)}
+                   disabled={deletingId === comment.id || isPending}
+                   className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-gray-400 hover:text-red-500 p-1 disabled:opacity-50"
+-                  title="Delete comment"
++                  title={t("deleteComment")}
+                 >
+-                  {deletingId === comment.id ? (
+-                    <Loader2 className="w-4 h-4 animate-spin" />
+-                  ) : (
+-                    <Trash2 className="w-4 h-4" />
+-                  )}
++                  {deletingId === comment.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                 </button>
+               )}
+             </div>
+@@ -173,16 +139,11 @@ export function CommentSection({
+       <div className="flex items-end gap-2 pt-3 border-t border-gray-100">
+         <input
+           type="text"
+-          placeholder="Add a comment..."
++          placeholder={t("addComment")}
+           value={newComment}
+-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+-            setNewComment(e.target.value)
+-          }
++          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewComment(e.target.value)}
+           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+-            if (e.key === "Enter" && !e.shiftKey && !isPending) {
+-              e.preventDefault();
+-              handleAddComment();
+-            }
++            if (e.key === "Enter" && !e.shiftKey && !isPending) { e.preventDefault(); handleAddComment(); }
+           }}
+           disabled={isPending}
+           className="flex-1 p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none disabled:bg-gray-50"
+@@ -191,13 +152,9 @@ export function CommentSection({
+           onClick={handleAddComment}
+           disabled={isPending || !newComment.trim()}
+           className="p-2 text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] disabled:opacity-50 disabled:cursor-not-allowed"
+-          title="Send comment"
++          title={t("sendComment")}
+         >
+-          {isPending ? (
+-            <Loader2 className="w-5 h-5 animate-spin" />
+-          ) : (
+-            <Send className="w-5 h-5" />
+-          )}
++          {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+         </button>
+       </div>
+     </div>
+diff --git a/src/components/phase/DocumentSection.tsx b/src/components/phase/DocumentSection.tsx
+index 8fae689..918bbdd 100644
+--- a/src/components/phase/DocumentSection.tsx
++++ b/src/components/phase/DocumentSection.tsx
+@@ -21,6 +21,7 @@ import {
+   updateDocumentStatus,
+   deleteDocument,
+ } from "@/actions/documents";
++import { useTranslations } from "next-intl";
+ 
+ interface Document {
+   id: string;
+@@ -58,24 +59,13 @@ const STATUS_BADGE: Record<string, string> = {
+   EXPIRED: "bg-gray-100 text-gray-600",
+ };
+ 
+-const CATEGORY_LABEL: Record<string, string> = {
+-  PERMIT: "Permit",
+-  CONTRACT: "Contract",
+-  INVOICE: "Invoice",
+-  BLUEPRINT: "Blueprint",
+-  INSPECTION: "Inspection",
+-  OTHER: "Other",
++const STATUS_LABEL_KEYS: Record<string, string> = {
++  PENDING: "pending",
++  APPROVED: "approved",
++  REJECTED: "rejected",
++  EXPIRED: "expired",
+ };
+ 
+-const CATEGORY_OPTIONS: { value: DocCategory; label: string }[] = [
+-  { value: "PERMIT", label: "Permit" },
+-  { value: "CONTRACT", label: "Contract" },
+-  { value: "INVOICE", label: "Invoice" },
+-  { value: "BLUEPRINT", label: "Blueprint" },
+-  { value: "INSPECTION", label: "Inspection" },
+-  { value: "OTHER", label: "Other" },
+-];
+-
+ function formatFileSize(bytes: number): string {
+   if (bytes < 1024) return `${bytes} B`;
+   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+@@ -94,7 +84,7 @@ function getFileIcon(mimeType: string) {
+ }
+ 
+ function formatDate(date: Date): string {
+-  return new Date(date).toLocaleDateString("en-US", {
++  return new Date(date).toLocaleDateString(undefined, {
+     month: "short",
+     day: "numeric",
+   });
+@@ -106,6 +96,28 @@ export function DocumentSection({
+   canUpload,
+   canManageStatus,
+ }: DocumentSectionProps) {
++  const t = useTranslations("documents");
++  const ts = useTranslations("status");
++  const tc = useTranslations("common");
++
++  const CATEGORY_LABEL: Record<string, string> = {
++    PERMIT: t("permit"),
++    CONTRACT: t("contract"),
++    INVOICE: t("invoice"),
++    BLUEPRINT: t("blueprint"),
++    INSPECTION: t("inspection"),
++    OTHER: t("other"),
++  };
++
++  const CATEGORY_OPTIONS: { value: DocCategory; label: string }[] = [
++    { value: "PERMIT", label: t("permit") },
++    { value: "CONTRACT", label: t("contract") },
++    { value: "INVOICE", label: t("invoice") },
++    { value: "BLUEPRINT", label: t("blueprint") },
++    { value: "INSPECTION", label: t("inspection") },
++    { value: "OTHER", label: t("other") },
++  ];
++
+   const [isDragging, setIsDragging] = useState(false);
+   const [isUploading, setIsUploading] = useState(false);
+   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+@@ -165,17 +177,15 @@ export function DocumentSection({
+         const file = pendingFiles[i];
+         setUploadProgress(
+           pendingFiles.length > 1
+-            ? `Uploading ${i + 1} of ${pendingFiles.length}...`
+-            : `Uploading ${file.name}...`
++            ? t("uploading", { current: i + 1, total: pendingFiles.length })
++            : t("uploadingFile", { name: file.name })
+         );
+ 
+-        // Upload to Vercel Blob
+         const blob = await upload(file.name, file, {
+           access: "public",
+           handleUploadUrl: "/api/upload",
+         });
+ 
+-        // Create document record in database
+         await createDocument({
+           phaseId,
+           name: file.name,
+@@ -186,7 +196,6 @@ export function DocumentSection({
+         });
+       }
+ 
+-      // Reset form
+       setPendingFiles([]);
+       setShowUploadForm(false);
+       setSelectedCategory("OTHER");
+@@ -212,18 +221,18 @@ export function DocumentSection({
+       setStatusMenuId(null);
+     } catch (err) {
+       setError(
+-        err instanceof Error ? err.message : "Failed to update status"
++        err instanceof Error ? err.message : t("failedToUpdateStatus")
+       );
+     }
+   };
+ 
+   const handleDelete = async (docId: string) => {
+-    if (!confirm("Delete this document? This cannot be undone.")) return;
++    if (!confirm(t("deleteConfirm"))) return;
+     setDeletingId(docId);
+     try {
+       await deleteDocument(docId);
+     } catch (err) {
+-      setError(err instanceof Error ? err.message : "Failed to delete");
++      setError(err instanceof Error ? err.message : t("failedToDelete"));
+     } finally {
+       setDeletingId(null);
+     }
+@@ -240,7 +249,7 @@ export function DocumentSection({
+     <div className="bg-white rounded-xl border border-gray-200 p-5">
+       <div className="flex items-center justify-between mb-4">
+         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+-          Documents ({documents.length})
++          {t("title", { count: documents.length })}
+         </h2>
+         {canUpload && !showUploadForm && (
+           <button
+@@ -248,7 +257,7 @@ export function DocumentSection({
+             className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
+           >
+             <Upload className="w-4 h-4" />
+-            Upload
++            {tc("upload")}
+           </button>
+         )}
+         <input
+@@ -277,8 +286,7 @@ export function DocumentSection({
+         <div className="mb-4 p-4 bg-[var(--color-primary-bg)] rounded-lg border border-[var(--color-primary-light)]">
+           <div className="flex items-center justify-between mb-3">
+             <span className="text-sm font-medium text-[var(--color-primary-dark)]">
+-              {pendingFiles.length} file{pendingFiles.length > 1 ? "s" : ""}{" "}
+-              selected
++              {t("filesSelected", { count: pendingFiles.length })}
+             </span>
+             <button
+               onClick={cancelUpload}
+@@ -308,7 +316,7 @@ export function DocumentSection({
+           {/* Category selector + action buttons */}
+           <div className="flex items-center gap-3">
+             <label className="text-xs font-medium text-[var(--color-primary-dark)]">
+-              Category:
++              {t("category")}
+             </label>
+             <select
+               value={selectedCategory}
+@@ -332,7 +340,7 @@ export function DocumentSection({
+               disabled={isUploading}
+               className="px-3 py-1.5 text-sm text-[var(--color-primary-dark)] hover:bg-[var(--color-primary-bg)] rounded-md"
+             >
+-              Cancel
++              {tc("cancel")}
+             </button>
+             <button
+               onClick={handleUpload}
+@@ -342,12 +350,12 @@ export function DocumentSection({
+               {isUploading ? (
+                 <>
+                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
+-                  {uploadProgress || "Uploading..."}
++                  {uploadProgress || tc("loading")}
+                 </>
+               ) : (
+                 <>
+                   <Upload className="w-3.5 h-3.5" />
+-                  Upload
++                  {tc("upload")}
+                 </>
+               )}
+             </button>
+@@ -373,11 +381,11 @@ export function DocumentSection({
+             }`}
+           />
+           <p className="text-sm text-gray-500">
+-            {isDragging ? "Drop files here" : "No documents yet"}
++            {isDragging ? t("dropHere") : t("noDocumentsYet")}
+           </p>
+           {canUpload && !isDragging && (
+             <p className="text-xs text-gray-400 mt-1">
+-              Drag & drop files or click Upload above
++              {t("dragDropDocs")}
+             </p>
+           )}
+         </div>
+@@ -391,7 +399,7 @@ export function DocumentSection({
+         >
+           {isDragging && (
+             <div className="p-4 border-2 border-dashed border-[var(--color-primary-light)] bg-[var(--color-primary-bg)] rounded-lg text-center text-sm text-[var(--color-primary)]">
+-              Drop files to upload
++              {t("dropToUpload")}
+             </div>
+           )}
+           {documents.map((doc) => {
+@@ -438,7 +446,7 @@ export function DocumentSection({
+                           "bg-gray-100 text-gray-600"
+                         }`}
+                       >
+-                        {doc.status}
++                        {ts(STATUS_LABEL_KEYS[doc.status] || "pending")}
+                         <ChevronDown className="w-2.5 h-2.5" />
+                       </button>
+                     ) : (
+@@ -448,7 +456,7 @@ export function DocumentSection({
+                           "bg-gray-100 text-gray-600"
+                         }`}
+                       >
+-                        {doc.status}
++                        {ts(STATUS_LABEL_KEYS[doc.status] || "pending")}
+                       </span>
+                     )}
+ 
+@@ -461,7 +469,7 @@ export function DocumentSection({
+                           }
+                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-green-700 hover:bg-green-50"
+                         >
+-                          <Check className="w-3 h-3" /> Approve
++                          <Check className="w-3 h-3" /> {t("approve")}
+                         </button>
+                         <button
+                           onClick={() =>
+@@ -469,7 +477,7 @@ export function DocumentSection({
+                           }
+                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-red-700 hover:bg-red-50"
+                         >
+-                          <Ban className="w-3 h-3" /> Reject
++                          <Ban className="w-3 h-3" /> {t("reject")}
+                         </button>
+                         <button
+                           onClick={() =>
+@@ -477,7 +485,7 @@ export function DocumentSection({
+                           }
+                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-yellow-700 hover:bg-yellow-50"
+                         >
+-                          <AlertCircle className="w-3 h-3" /> Reset to Pending
++                          <AlertCircle className="w-3 h-3" /> {t("resetToPending")}
+                         </button>
+                       </div>
+                     )}
+@@ -489,7 +497,7 @@ export function DocumentSection({
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="p-1 text-gray-400 hover:text-[var(--color-primary)]"
+-                    title="Open"
++                    title={tc("open")}
+                   >
+                     <ExternalLink className="w-4 h-4" />
+                   </a>
+@@ -500,7 +508,7 @@ export function DocumentSection({
+                       onClick={() => handleDelete(doc.id)}
+                       disabled={deletingId === doc.id}
+                       className="p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+-                      title="Delete"
++                      title={tc("delete")}
+                     >
+                       {deletingId === doc.id ? (
+                         <Loader2 className="w-4 h-4 animate-spin" />
+diff --git a/src/components/phase/PhaseHeader.tsx b/src/components/phase/PhaseHeader.tsx
+index f3c9844..7762655 100644
+--- a/src/components/phase/PhaseHeader.tsx
++++ b/src/components/phase/PhaseHeader.tsx
+@@ -1,22 +1,35 @@
+ "use client";
+ 
+ import Link from "next/link";
+-import { ArrowLeft } from "lucide-react";
+-import { cn, statusColor, statusLabel } from "@/lib/utils";
++import { cn, statusColor } from "@/lib/utils";
+ import { updatePhaseStatus } from "@/actions/phases";
+ import { useState } from "react";
++import { useTranslations } from "next-intl";
+ 
+-const STATUS_TRANSITIONS: Record<string, { label: string; next: string }[]> = {
+-  PENDING: [{ label: "Start Phase", next: "IN_PROGRESS" }],
+-  IN_PROGRESS: [{ label: "Request Review", next: "REVIEW_REQUESTED" }],
+-  REVIEW_REQUESTED: [{ label: "Begin Review", next: "UNDER_REVIEW" }],
++interface StatusTransition {
++  labelKey: string;
++  next: string;
++}
++
++const STATUS_TRANSITION_KEYS: Record<string, StatusTransition[]> = {
++  PENDING: [{ labelKey: "startPhase", next: "IN_PROGRESS" }],
++  IN_PROGRESS: [{ labelKey: "requestReview", next: "REVIEW_REQUESTED" }],
++  REVIEW_REQUESTED: [{ labelKey: "beginReview", next: "UNDER_REVIEW" }],
+   UNDER_REVIEW: [
+-    { label: "Approve & Complete", next: "COMPLETE" },
+-    { label: "Send Back", next: "IN_PROGRESS" },
++    { labelKey: "approveComplete", next: "COMPLETE" },
++    { labelKey: "sendBack", next: "IN_PROGRESS" },
+   ],
+   COMPLETE: [],
+ };
+ 
++const STATUS_LABEL_KEYS: Record<string, string> = {
++  PENDING: "pending",
++  IN_PROGRESS: "inProgress",
++  REVIEW_REQUESTED: "reviewRequested",
++  UNDER_REVIEW: "underReview",
++  COMPLETE: "complete",
++};
++
+ interface PhaseHeaderProps {
+   phase: {
+     id: string;
+@@ -38,9 +51,11 @@ export function PhaseHeader({
+   canEdit,
+   canManage,
+ }: PhaseHeaderProps) {
++  const t = useTranslations("phases");
++  const ts = useTranslations("status");
+   const [loading, setLoading] = useState<string | null>(null);
+ 
+-  const transitions = STATUS_TRANSITIONS[phase.status] || [];
++  const transitions = STATUS_TRANSITION_KEYS[phase.status] || [];
+   const reviewActions = ["UNDER_REVIEW", "COMPLETE"];
+ 
+   async function handleTransition(nextStatus: string) {
+@@ -48,7 +63,7 @@ export function PhaseHeader({
+     try {
+       await updatePhaseStatus(phase.id, nextStatus);
+     } catch {
+-      // Error handling — toast would go here
++      // Error handling
+     }
+     setLoading(null);
+   }
+@@ -68,7 +83,7 @@ export function PhaseHeader({
+             href={`/dashboard/projects/${projectId}/timeline`}
+             className="hover:text-gray-700 shrink-0"
+           >
+-            Timeline
++            {t("timeline")}
+           </Link>
+           <span className="shrink-0">/</span>
+           <span className="text-gray-400 truncate">{phase.name}</span>
+@@ -83,36 +98,36 @@ export function PhaseHeader({
+                 statusColor(phase.status)
+               )}
+             >
+-              {statusLabel(phase.status)}
++              {ts(STATUS_LABEL_KEYS[phase.status] || "pending")}
+             </span>
+             {phase.isMilestone && (
+               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
+-                Milestone
++                {t("milestone")}
+               </span>
+             )}
+           </div>
+ 
+           {canEdit && transitions.length > 0 && (
+             <div className="flex gap-2">
+-              {transitions.map((t) => {
+-                const needsManage = reviewActions.includes(t.next);
++              {transitions.map((tr) => {
++                const needsManage = reviewActions.includes(tr.next);
+                 if (needsManage && !canManage) return null;
+ 
+                 return (
+                   <button
+-                    key={t.next}
+-                    onClick={() => handleTransition(t.next)}
++                    key={tr.next}
++                    onClick={() => handleTransition(tr.next)}
+                     disabled={loading !== null}
+                     className={cn(
+                       "px-3 py-1.5 text-sm font-medium rounded-lg transition-colors disabled:opacity-50",
+-                      t.next === "COMPLETE"
++                      tr.next === "COMPLETE"
+                         ? "bg-green-600 text-white hover:bg-green-700"
+-                        : t.next === "IN_PROGRESS" && phase.status === "UNDER_REVIEW"
++                        : tr.next === "IN_PROGRESS" && phase.status === "UNDER_REVIEW"
+                           ? "border border-gray-300 text-gray-700 hover:bg-gray-50"
+                           : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
+                     )}
+                   >
+-                    {loading === t.next ? "..." : t.label}
++                    {loading === tr.next ? "..." : t(tr.labelKey)}
+                   </button>
+                 );
+               })}
+diff --git a/src/components/phase/PhaseInfoSection.tsx b/src/components/phase/PhaseInfoSection.tsx
+index f434086..cb70f4d 100644
+--- a/src/components/phase/PhaseInfoSection.tsx
++++ b/src/components/phase/PhaseInfoSection.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { fmtLong, daysBetween } from "@/lib/utils";
+ import { Calendar, Clock } from "lucide-react";
++import { useTranslations } from "next-intl";
+ 
+ interface PhaseInfoProps {
+   phase: {
+@@ -20,6 +21,7 @@ interface PhaseInfoProps {
+ }
+ 
+ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
++  const t = useTranslations("phases");
+   const estDays = daysBetween(phase.estStart, phase.estEnd);
+   const worstDays =
+     phase.worstStart && phase.worstEnd
+@@ -29,7 +31,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
+   return (
+     <div className="bg-white rounded-xl border border-gray-200 p-5">
+       <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
+-        Phase Details
++        {t("phaseDetails")}
+       </h2>
+ 
+       {phase.detail && (
+@@ -39,7 +41,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
+       {/* Progress bar */}
+       <div className="mb-4">
+         <div className="flex justify-between text-xs text-gray-500 mb-1">
+-          <span>Progress</span>
++          <span>{t("progress")}</span>
+           <span>{phase.progress}%</span>
+         </div>
+         <div className="w-full bg-gray-100 rounded-full h-2">
+@@ -55,7 +57,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
+         <div className="space-y-2">
+           <div className="flex items-center gap-2 text-sm font-medium text-[var(--color-primary-dark)]">
+             <Calendar className="w-4 h-4" />
+-            Estimated Timeline
++            {t("estimatedTimeline")}
+           </div>
+           <div className="text-sm text-gray-600 pl-6">
+             <p>{fmtLong(phase.estStart)} — {fmtLong(phase.estEnd)}</p>
+@@ -69,7 +71,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
+           <div className="space-y-2">
+             <div className="flex items-center gap-2 text-sm font-medium text-red-600">
+               <Clock className="w-4 h-4" />
+-              Worst Case
++              {t("worstCase")}
+             </div>
+             <div className="text-sm text-gray-600 pl-6">
+               <p>{fmtLong(phase.worstStart)} — {fmtLong(phase.worstEnd)}</p>
+@@ -84,12 +86,12 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
+           <div className="space-y-2">
+             <div className="flex items-center gap-2 text-sm font-medium text-green-700">
+               <Calendar className="w-4 h-4" />
+-              Actual
++              {t("actual")}
+             </div>
+             <div className="text-sm text-gray-600 pl-6">
+               <p>
+-                Started {fmtLong(phase.actualStart)}
+-                {phase.actualEnd && ` — Completed ${fmtLong(phase.actualEnd)}`}
++                {t("started")} {fmtLong(phase.actualStart)}
++                {phase.actualEnd && <> {t("completedDash")} {fmtLong(phase.actualEnd)}</>}
+               </p>
+             </div>
+           </div>
+diff --git a/src/components/phase/PhotoSection.tsx b/src/components/phase/PhotoSection.tsx
+index dfa3ebd..85b42a1 100644
+--- a/src/components/phase/PhotoSection.tsx
++++ b/src/components/phase/PhotoSection.tsx
+@@ -19,6 +19,7 @@ import {
+ } from "lucide-react";
+ import { upload } from "@vercel/blob/client";
+ import { createPhoto, createPhotoBatch, deletePhoto, flagPhoto, clearPhotoFlag } from "@/actions/photos";
++import { useTranslations } from "next-intl";
+ 
+ interface Photo {
+   id: string;
+@@ -39,42 +40,8 @@ interface PhotoSectionProps {
+   canFlag?: boolean;
+ }
+ 
+-const FLAG_OPTIONS = [
+-  {
+-    value: "REPLACEMENT_NEEDED",
+-    label: "Replacement needed",
+-    icon: RotateCw,
+-    color: "text-red-600",
+-  },
+-  {
+-    value: "ADDITIONAL_ANGLES",
+-    label: "Additional angles",
+-    icon: Eye,
+-    color: "text-amber-600",
+-  },
+-  {
+-    value: "ADDITIONAL_PHOTOS",
+-    label: "More photos needed",
+-    icon: ImagePlus,
+-    color: "text-blue-600",
+-  },
+-  {
+-    value: "CLARIFICATION_NEEDED",
+-    label: "Clarification needed",
+-    icon: HelpCircle,
+-    color: "text-purple-600",
+-  },
+-];
+-
+-const FLAG_BADGE: Record<string, { bg: string; text: string; label: string }> = {
+-  REPLACEMENT_NEEDED: { bg: "bg-red-100", text: "text-red-700", label: "Replace" },
+-  ADDITIONAL_ANGLES: { bg: "bg-amber-100", text: "text-amber-700", label: "Angles" },
+-  ADDITIONAL_PHOTOS: { bg: "bg-blue-100", text: "text-blue-700", label: "More" },
+-  CLARIFICATION_NEEDED: { bg: "bg-purple-100", text: "text-purple-700", label: "Clarify" },
+-};
+-
+ function formatDate(date: Date): string {
+-  return new Date(date).toLocaleDateString("en-US", {
++  return new Date(date).toLocaleDateString(undefined, {
+     month: "short",
+     day: "numeric",
+   });
+@@ -87,6 +54,44 @@ export function PhotoSection({
+   canDelete,
+   canFlag = false,
+ }: PhotoSectionProps) {
++  const t = useTranslations("photos");
++  const tc = useTranslations("common");
++  const td = useTranslations("documents");
++
++  const FLAG_OPTIONS = [
++    {
++      value: "REPLACEMENT_NEEDED",
++      label: t("replacementNeeded"),
++      icon: RotateCw,
++      color: "text-red-600",
++    },
++    {
++      value: "ADDITIONAL_ANGLES",
++      label: t("additionalAngles"),
++      icon: Eye,
++      color: "text-amber-600",
++    },
++    {
++      value: "ADDITIONAL_PHOTOS",
++      label: t("morePhotosNeeded"),
++      icon: ImagePlus,
++      color: "text-blue-600",
++    },
++    {
++      value: "CLARIFICATION_NEEDED",
++      label: t("clarificationNeeded"),
++      icon: HelpCircle,
++      color: "text-purple-600",
++    },
++  ];
++
++  const FLAG_BADGE: Record<string, { bg: string; text: string; label: string }> = {
++    REPLACEMENT_NEEDED: { bg: "bg-red-100", text: "text-red-700", label: t("replaceShort") },
++    ADDITIONAL_ANGLES: { bg: "bg-amber-100", text: "text-amber-700", label: t("anglesShort") },
++    ADDITIONAL_PHOTOS: { bg: "bg-blue-100", text: "text-blue-700", label: t("moreShort") },
++    CLARIFICATION_NEEDED: { bg: "bg-purple-100", text: "text-purple-700", label: t("clarifyShort") },
++  };
++
+   const [isDragging, setIsDragging] = useState(false);
+   const [isUploading, setIsUploading] = useState(false);
+   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
+@@ -140,14 +145,13 @@ export function PhotoSection({
+     setError(null);
+ 
+     try {
+-      // Upload all files to blob storage first
+       const uploadedUrls: { url: string }[] = [];
+       for (let i = 0; i < files.length; i++) {
+         const file = files[i];
+         setUploadProgress(
+           files.length > 1
+-            ? `Uploading ${i + 1} of ${files.length}...`
+-            : `Uploading ${file.name}...`
++            ? td("uploading", { current: i + 1, total: files.length })
++            : td("uploadingFile", { name: file.name })
+         );
+ 
+         const blob = await upload(file.name, file, {
+@@ -157,9 +161,8 @@ export function PhotoSection({
+         uploadedUrls.push({ url: blob.url });
+       }
+ 
+-      // Create all photo records in one batch
+       if (uploadedUrls.length > 1) {
+-        setUploadProgress("Saving photos...");
++        setUploadProgress(t("savingPhotos"));
+         await createPhotoBatch({
+           phaseId,
+           photos: uploadedUrls,
+@@ -173,7 +176,7 @@ export function PhotoSection({
+     } catch (err) {
+       console.error("Photo upload error:", err);
+       setError(
+-        err instanceof Error ? err.message : "Upload failed. Please try again."
++        err instanceof Error ? err.message : t("uploadFailed")
+       );
+     } finally {
+       setIsUploading(false);
+@@ -182,7 +185,7 @@ export function PhotoSection({
+   };
+ 
+   const handleDelete = async (photoId: string) => {
+-    if (!confirm("Delete this photo? This cannot be undone.")) return;
++    if (!confirm(t("deleteConfirm"))) return;
+     setDeletingId(photoId);
+     try {
+       await deletePhoto(photoId);
+@@ -195,7 +198,6 @@ export function PhotoSection({
+ 
+   const handleFlag = async (photoId: string, flagType: string) => {
+     setFlagMenuId(null);
+-    // Show note input
+     setFlagNoteId(photoId);
+     setPendingFlag(flagType);
+   };
+@@ -232,10 +234,10 @@ export function PhotoSection({
+       <div className="bg-white rounded-xl border border-gray-200 p-5">
+         <div className="flex items-center justify-between mb-4">
+           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+-            Photos ({photos.length})
++            {t("title", { count: photos.length })}
+             {flaggedCount > 0 && (
+               <span className="ml-2 text-xs font-medium text-amber-600 normal-case">
+-                · {flaggedCount} flagged
++                {t("flagged", { count: flaggedCount })}
+               </span>
+             )}
+           </h2>
+@@ -244,26 +246,26 @@ export function PhotoSection({
+               {isUploading ? (
+                 <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)]">
+                   <Loader2 className="w-4 h-4 animate-spin" />
+-                  {uploadProgress || "Uploading..."}
++                  {uploadProgress || tc("loading")}
+                 </span>
+               ) : (
+                 <>
+                   <button
+                     onClick={() => cameraInputRef.current?.click()}
+                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] sm:hidden"
+-                    title="Take photo"
++                    title={t("camera")}
+                   >
+                     <Camera className="w-4 h-4" />
+-                    Camera
++                    {t("camera")}
+                   </button>
+                   <button
+                     onClick={() => fileInputRef.current?.click()}
+                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
+-                    title="Upload photos"
++                    title={t("addPhotos")}
+                   >
+                     <Upload className="w-4 h-4" />
+-                    <span className="hidden sm:inline">Add Photos</span>
+-                    <span className="sm:hidden">Gallery</span>
++                    <span className="hidden sm:inline">{t("addPhotos")}</span>
++                    <span className="sm:hidden">{t("gallery")}</span>
+                   </button>
+                 </>
+               )}
+@@ -304,13 +306,13 @@ export function PhotoSection({
+         {flagNoteId && (
+           <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+             <p className="text-sm font-medium text-amber-800 mb-2">
+-              {FLAG_OPTIONS.find((o) => o.value === pendingFlag)?.label || "Flag"} — add a note? (optional)
++              {FLAG_OPTIONS.find((o) => o.value === pendingFlag)?.label || "Flag"} — {t("addNote")}
+             </p>
+             <input
+               type="text"
+               value={flagNoteText}
+               onChange={(e) => setFlagNoteText(e.target.value)}
+-              placeholder="e.g., Need wider angle showing foundation connection"
++              placeholder="e.g. Need wider angle showing foundation connection"
+               className="w-full text-sm border border-amber-300 rounded-md px-3 py-1.5 bg-white focus:ring-1 focus:ring-amber-400 focus:border-amber-400 mb-2"
+               onKeyDown={(e) => e.key === "Enter" && submitFlag()}
+               autoFocus
+@@ -324,13 +326,13 @@ export function PhotoSection({
+                 }}
+                 className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded"
+               >
+-                Cancel
++                {tc("cancel")}
+               </button>
+               <button
+                 onClick={submitFlag}
+                 className="px-3 py-1 text-xs font-medium text-white bg-amber-600 hover:bg-amber-700 rounded"
+               >
+-                Flag Photo
++                {t("flagPhotoBtn")}
+               </button>
+             </div>
+           </div>
+@@ -354,11 +356,11 @@ export function PhotoSection({
+               }`}
+             />
+             <p className="text-sm text-gray-500">
+-              {isDragging ? "Drop images here" : "No photos yet"}
++              {isDragging ? t("dropHere") : t("noPhotosYet")}
+             </p>
+             {canUpload && !isDragging && (
+               <p className="text-xs text-gray-400 mt-1">
+-                Drag & drop images or click Add Photos above
++                {t("dragDropPhotos")}
+               </p>
+             )}
+           </div>
+@@ -371,7 +373,7 @@ export function PhotoSection({
+           >
+             {isDragging && (
+               <div className="mb-3 p-4 border-2 border-dashed border-[var(--color-primary-light)] bg-[var(--color-primary-bg)] rounded-lg text-center text-sm text-[var(--color-primary)]">
+-                Drop images to upload
++                {t("dropImages")}
+               </div>
+             )}
+             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+@@ -387,7 +389,7 @@ export function PhotoSection({
+                   >
+                     <img
+                       src={photo.url}
+-                      alt={photo.caption || "Phase photo"}
++                      alt={photo.caption || t("phasePhoto")}
+                       className="w-full h-full object-cover"
+                     />
+ 
+@@ -414,7 +416,7 @@ export function PhotoSection({
+                       <div className="w-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <div className="flex items-center justify-between">
+                           <div className="text-xs text-white">
+-                            <span>{photo.uploadedBy.name || "Unknown"}</span>
++                            <span>{photo.uploadedBy.name || "—"}</span>
+                             <span className="mx-1">·</span>
+                             <span>{formatDate(photo.takenAt)}</span>
+                           </div>
+@@ -434,7 +436,7 @@ export function PhotoSection({
+                                       ? "text-amber-400 hover:text-amber-300"
+                                       : "text-white/80 hover:text-white"
+                                   }`}
+-                                  title={photo.flagType ? "Change flag" : "Flag for followup"}
++                                  title={photo.flagType ? t("changeFlag") : t("flagForFollowup")}
+                                 >
+                                   <Flag className="w-3.5 h-3.5" />
+                                 </button>
+@@ -471,7 +473,7 @@ export function PhotoSection({
+                                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-green-600 hover:bg-green-50"
+                                         >
+                                           <CheckCircle2 className="w-3 h-3" />
+-                                          Clear flag
++                                          {t("clearFlag")}
+                                         </button>
+                                       </>
+                                     )}
+@@ -482,7 +484,7 @@ export function PhotoSection({
+                             <button
+                               onClick={() => setLightboxUrl(photo.url)}
+                               className="p-1 text-white/80 hover:text-white"
+-                              title="View full size"
++                              title={t("viewFullSize")}
+                             >
+                               <Maximize2 className="w-3.5 h-3.5" />
+                             </button>
+@@ -491,7 +493,7 @@ export function PhotoSection({
+                                 onClick={() => handleDelete(photo.id)}
+                                 disabled={deletingId === photo.id}
+                                 className="p-1 text-white/80 hover:text-red-400"
+-                                title="Delete"
++                                title={tc("delete")}
+                               >
+                                 {deletingId === photo.id ? (
+                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
+@@ -531,7 +533,7 @@ export function PhotoSection({
+           </button>
+           <img
+             src={lightboxUrl}
+-            alt="Full size"
++            alt={t("phasePhoto")}
+             className="max-w-full max-h-full object-contain rounded"
+             onClick={(e) => e.stopPropagation()}
+           />
+diff --git a/src/components/project/AcceptInvitation.tsx b/src/components/project/AcceptInvitation.tsx
+index 9100983..c8a9850 100644
+--- a/src/components/project/AcceptInvitation.tsx
++++ b/src/components/project/AcceptInvitation.tsx
+@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
+ import { acceptInvitation } from "@/actions/invitations";
+ import { CheckCircle2, XCircle, Loader2, HardHat } from "lucide-react";
+ import { useRouter } from "next/navigation";
++import { useTranslations } from "next-intl";
+ 
+ interface InviteDetails {
+   id: string;
+@@ -22,6 +23,8 @@ interface Props {
+ }
+ 
+ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
++  const t = useTranslations("invitations");
++  const tc = useTranslations("common");
+   const router = useRouter();
+   const [isPending, startTransition] = useTransition();
+   const [result, setResult] = useState<{
+@@ -38,43 +41,37 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+           <XCircle className="w-8 h-8 text-red-500" />
+         </div>
+-        <h1 className="text-xl font-bold text-gray-900 mb-2">Invitation Expired</h1>
+-        <p className="text-sm text-gray-500 mb-6">
+-          This invitation has expired. Please ask the project owner to send a new one.
+-        </p>
++        <h1 className="text-xl font-bold text-gray-900 mb-2">{t("expired")}</h1>
++        <p className="text-sm text-gray-500 mb-6">{t("expiredMessage")}</p>
+         <a
+           href="/login"
+           className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+         >
+-          Go to Login
++          {t("goToLogin")}
+         </a>
+       </div>
+     );
+   }
+ 
+   if (result?.success) {
+-    const dest = result.alreadyMember
+-      ? `/dashboard/projects/${result.projectId}`
+-      : `/dashboard/projects/${result.projectId}`;
+-
+     return (
+       <div className="text-center">
+         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+           <CheckCircle2 className="w-8 h-8 text-green-500" />
+         </div>
+         <h1 className="text-xl font-bold text-gray-900 mb-2">
+-          {result.alreadyMember ? "Already a Member" : "Welcome to the Team!"}
++          {result.alreadyMember ? t("alreadyMember") : t("welcomeToTeam")}
+         </h1>
+         <p className="text-sm text-gray-500 mb-6">
+           {result.alreadyMember
+-            ? `You're already a member of ${result.projectName}.`
+-            : `You've joined ${result.projectName} successfully.`}
++            ? t("alreadyMemberMessage", { project: result.projectName ?? "" })
++            : t("joinedMessage", { project: result.projectName ?? "" })}
+         </p>
+         <button
+-          onClick={() => router.push(dest)}
++          onClick={() => router.push(`/dashboard/projects/${result.projectId}`)}
+           className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+         >
+-          Go to Project
++          {t("goToProject")}
+         </button>
+       </div>
+     );
+@@ -86,13 +83,13 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+           <XCircle className="w-8 h-8 text-red-500" />
+         </div>
+-        <h1 className="text-xl font-bold text-gray-900 mb-2">Something Went Wrong</h1>
++        <h1 className="text-xl font-bold text-gray-900 mb-2">{t("somethingWentWrong")}</h1>
+         <p className="text-sm text-gray-500 mb-6">{result.error}</p>
+         <a
+           href="/login"
+           className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+         >
+-          Go to Login
++          {t("goToLogin")}
+         </a>
+       </div>
+     );
+@@ -115,11 +112,10 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+       <div className="w-16 h-16 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center mx-auto mb-4">
+         <HardHat className="w-8 h-8 text-[var(--color-primary)]" />
+       </div>
+-      <h1 className="text-xl font-bold text-gray-900 mb-1">
+-        You&apos;re Invited
+-      </h1>
++      <h1 className="text-xl font-bold text-gray-900 mb-1">{t("youreInvited")}</h1>
+       <p className="text-sm text-gray-500 mb-6">
+-        You&apos;ve been invited to join <span className="font-semibold text-gray-700">{invite.projectName}</span>
++        {t("invitedToJoin")}{" "}
++        <span className="font-semibold text-gray-700">{invite.projectName}</span>
+         {invite.projectAddress && (
+           <span className="block text-xs text-gray-400 mt-1">{invite.projectAddress}</span>
+         )}
+@@ -127,17 +123,17 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+ 
+       <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-2">
+         <div className="flex justify-between text-sm">
+-          <span className="text-gray-500">Role</span>
++          <span className="text-gray-500">{t("role")}</span>
+           <span className="font-medium text-gray-900">
+             {invite.role.charAt(0) + invite.role.slice(1).toLowerCase()}
+           </span>
+         </div>
+         <div className="flex justify-between text-sm">
+-          <span className="text-gray-500">Invited as</span>
++          <span className="text-gray-500">{t("invitedAs")}</span>
+           <span className="font-medium text-gray-900">{invite.email}</span>
+         </div>
+         <div className="flex justify-between text-sm">
+-          <span className="text-gray-500">Expires</span>
++          <span className="text-gray-500">{tc("expires")}</span>
+           <span className="font-medium text-gray-900">
+             {new Date(invite.expiresAt).toLocaleDateString("en-US", {
+               month: "short",
+@@ -157,10 +153,10 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+           {isPending ? (
+             <>
+               <Loader2 className="w-4 h-4 animate-spin" />
+-              Joining...
++              {t("joining")}
+             </>
+           ) : (
+-            "Accept Invitation"
++            t("acceptInvitation")
+           )}
+         </button>
+       ) : (
+@@ -168,7 +164,7 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+           href={`/login?callbackUrl=/invite/${token}`}
+           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+         >
+-          Sign In to Accept
++          {t("signInToAccept")}
+         </a>
+       )}
+     </div>
+diff --git a/src/components/project/BudgetSection.tsx b/src/components/project/BudgetSection.tsx
+index 76ea4cf..d156411 100644
+--- a/src/components/project/BudgetSection.tsx
++++ b/src/components/project/BudgetSection.tsx
+@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
+ import { updateProjectBudget, updatePhaseCosts } from "@/actions/budget";
+ import { DollarSign, TrendingUp, TrendingDown, Minus, Pencil, Check, X } from "lucide-react";
+ import { toast } from "sonner";
++import { useTranslations } from "next-intl";
+ 
+ interface PhaseBudget {
+   id: string;
+@@ -22,7 +23,7 @@ interface Props {
+ 
+ function fmt(n: number | null): string {
+   if (n === null || n === 0) return "—";
+-  return `$${n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
++  return `$${n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+ }
+ 
+ function pct(actual: number, estimated: number): number {
+@@ -36,6 +37,7 @@ export function BudgetSection({
+   phases: initialPhases,
+   canManage,
+ }: Props) {
++  const t = useTranslations("budget");
+   const [projectBudget, setProjectBudget] = useState(initialBudget);
+   const [phases, setPhases] = useState(initialPhases);
+   const [editingBudget, setEditingBudget] = useState(false);
+@@ -58,9 +60,9 @@ export function BudgetSection({
+         await updateProjectBudget(projectId, num);
+         setProjectBudget(num);
+         setEditingBudget(false);
+-        toast.success("Budget updated");
++        toast.success(t("updated"));
+       } catch {
+-        toast.error("Failed to update budget");
++        toast.error(t("failedToUpdate"));
+       }
+     });
+   }
+@@ -83,9 +85,9 @@ export function BudgetSection({
+           )
+         );
+         setEditingPhaseId(null);
+-        toast.success("Phase costs updated");
++        toast.success(t("costsUpdated"));
+       } catch {
+-        toast.error("Failed to update costs");
++        toast.error(t("failedToUpdateCosts"));
+       }
+     });
+   }
+@@ -97,7 +99,7 @@ export function BudgetSection({
+         <div className="flex items-center justify-between">
+           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+             <DollarSign className="w-4 h-4 text-green-600" />
+-            Budget
++            {t("title")}
+           </h2>
+           {canManage && !editingBudget && (
+             <button
+@@ -108,7 +110,7 @@ export function BudgetSection({
+               className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1"
+             >
+               <Pencil className="w-3 h-3" />
+-              Edit Total
++              {t("editTotal")}
+             </button>
+           )}
+         </div>
+@@ -116,7 +118,7 @@ export function BudgetSection({
+         {/* Project budget inline edit */}
+         {editingBudget ? (
+           <div className="flex items-center gap-2 mt-2">
+-            <span className="text-sm text-gray-500">Total Budget:</span>
++            <span className="text-sm text-gray-500">{t("totalBudget")}</span>
+             <div className="flex items-center gap-1">
+               <span className="text-sm text-gray-400">$</span>
+               <input
+@@ -149,7 +151,7 @@ export function BudgetSection({
+         ) : (
+           projectBudget && (
+             <p className="text-sm text-gray-500 mt-1">
+-              Total Budget: <span className="font-semibold text-gray-900">{fmt(projectBudget)}</span>
++              {t("totalBudget")} <span className="font-semibold text-gray-900">{fmt(projectBudget)}</span>
+             </p>
+           )
+         )}
+@@ -158,15 +160,15 @@ export function BudgetSection({
+       {/* Summary cards */}
+       <div className="grid grid-cols-3 gap-0 border-b border-gray-100">
+         <div className="px-4 py-3 text-center border-r border-gray-100">
+-          <p className="text-xs text-gray-500 mb-0.5">Estimated</p>
++          <p className="text-xs text-gray-500 mb-0.5">{t("estimated")}</p>
+           <p className="text-base font-bold text-gray-900">{fmt(totalEstimated)}</p>
+         </div>
+         <div className="px-4 py-3 text-center border-r border-gray-100">
+-          <p className="text-xs text-gray-500 mb-0.5">Actual</p>
++          <p className="text-xs text-gray-500 mb-0.5">{t("actual")}</p>
+           <p className="text-base font-bold text-gray-900">{fmt(totalActual)}</p>
+         </div>
+         <div className="px-4 py-3 text-center">
+-          <p className="text-xs text-gray-500 mb-0.5">Variance</p>
++          <p className="text-xs text-gray-500 mb-0.5">{t("variance")}</p>
+           <p
+             className={`text-base font-bold flex items-center justify-center gap-1 ${
+               variance > 0 ? "text-red-600" : variance < 0 ? "text-green-600" : "text-gray-900"
+@@ -188,7 +190,7 @@ export function BudgetSection({
+       {budgetUsed !== null && (
+         <div className="px-4 sm:px-5 py-3 border-b border-gray-100">
+           <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
+-            <span>Budget Used</span>
++            <span>{t("budgetUsed")}</span>
+             <span className={budgetUsed > 100 ? "text-red-600 font-semibold" : ""}>
+               {budgetUsed}%
+             </span>
+@@ -224,7 +226,7 @@ export function BudgetSection({
+                   <p className="text-sm font-medium text-gray-900 mb-2">{phase.name}</p>
+                   <div className="flex flex-wrap items-center gap-3">
+                     <div className="flex items-center gap-1">
+-                      <span className="text-xs text-gray-500 w-16">Estimated:</span>
++                      <span className="text-xs text-gray-500 w-16">{t("estimated")}:</span>
+                       <span className="text-xs text-gray-400">$</span>
+                       <input
+                         type="text"
+@@ -236,7 +238,7 @@ export function BudgetSection({
+                       />
+                     </div>
+                     <div className="flex items-center gap-1">
+-                      <span className="text-xs text-gray-500 w-16">Actual:</span>
++                      <span className="text-xs text-gray-500 w-16">{t("actual")}:</span>
+                       <span className="text-xs text-gray-400">$</span>
+                       <input
+                         type="text"
+@@ -277,16 +279,16 @@ export function BudgetSection({
+                   </div>
+                   <div className="flex items-center gap-4 text-xs shrink-0">
+                     <div className="text-right">
+-                      <p className="text-gray-400">Est.</p>
++                      <p className="text-gray-400">{t("estShort")}</p>
+                       <p className="text-gray-700 font-medium">{fmt(phase.estimatedCost)}</p>
+                     </div>
+                     <div className="text-right">
+-                      <p className="text-gray-400">Actual</p>
++                      <p className="text-gray-400">{t("actual")}</p>
+                       <p className="text-gray-700 font-medium">{fmt(phase.actualCost)}</p>
+                     </div>
+                     {phaseVariance !== null && (
+                       <div className="text-right w-16">
+-                        <p className="text-gray-400">Var.</p>
++                        <p className="text-gray-400">{t("varShort")}</p>
+                         <p
+                           className={`font-medium ${
+                             phaseVariance > 0 ? "text-red-600" : phaseVariance < 0 ? "text-green-600" : "text-gray-500"
+diff --git a/src/components/project/InviteModal.tsx b/src/components/project/InviteModal.tsx
+index a59a5be..a30829f 100644
+--- a/src/components/project/InviteModal.tsx
++++ b/src/components/project/InviteModal.tsx
+@@ -7,12 +7,11 @@ import {
+   Mail,
+   UserPlus,
+   Loader2,
+-  Copy,
+-  Check,
+   Clock,
+   Trash2,
+ } from "lucide-react";
+ import { toast } from "sonner";
++import { useTranslations } from "next-intl";
+ 
+ interface Invitation {
+   id: string;
+@@ -28,19 +27,20 @@ interface Props {
+   onClose: () => void;
+ }
+ 
+-const ROLES = [
+-  { value: "MANAGER", label: "Manager", desc: "Can manage phases, team, and settings" },
+-  { value: "CONTRACTOR", label: "Contractor", desc: "Can update assigned phases and upload files" },
+-  { value: "STAKEHOLDER", label: "Stakeholder", desc: "Read-only access to project progress" },
+-  { value: "VIEWER", label: "Viewer", desc: "View-only access" },
+-] as const;
+-
+ export function InviteModal({ projectId, invitations: initialInvitations, onClose }: Props) {
++  const t = useTranslations("invitations");
++  const tc = useTranslations("common");
+   const [email, setEmail] = useState("");
+   const [role, setRole] = useState<string>("CONTRACTOR");
+   const [invitations, setInvitations] = useState(initialInvitations);
+   const [isPending, startTransition] = useTransition();
+-  const [copied, setCopied] = useState<string | null>(null);
++
++  const ROLES = [
++    { value: "MANAGER", label: t("manager"), desc: t("managerDesc") },
++    { value: "CONTRACTOR", label: t("contractor"), desc: t("contractorDesc") },
++    { value: "STAKEHOLDER", label: t("stakeholder"), desc: t("stakeholderDesc") },
++    { value: "VIEWER", label: t("viewer"), desc: t("viewerDesc") },
++  ] as const;
+ 
+   function handleInvite(e: React.FormEvent) {
+     e.preventDefault();
+@@ -53,17 +53,16 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+           email.trim(),
+           role as "OWNER" | "MANAGER" | "CONTRACTOR" | "STAKEHOLDER" | "VIEWER"
+         );
+-        toast.success(`Invitation sent to ${email.trim()}`);
++        toast.success(t("sent", { email: email.trim() }));
+         setInvitations((prev) => [
+           { id: result.id, email: result.email, role: result.role, expiresAt: result.expiresAt, createdAt: new Date() },
+           ...prev,
+         ]);
+         setEmail("");
+ 
+-        // Copy invite link
+         const link = `${window.location.origin}/invite/${result.token}`;
+         await navigator.clipboard.writeText(link);
+-        toast.success("Invite link copied to clipboard");
++        toast.success(t("linkCopied"));
+       } catch (err: unknown) {
+         const msg = err instanceof Error ? err.message : "Failed to send invitation";
+         toast.error(msg);
+@@ -76,54 +75,37 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+       try {
+         await cancelInvitation(invitationId);
+         setInvitations((prev) => prev.filter((i) => i.id !== invitationId));
+-        toast.success("Invitation cancelled");
++        toast.success(t("cancelled"));
+       } catch {
+-        toast.error("Failed to cancel invitation");
++        toast.error(t("failedToCancel"));
+       }
+     });
+   }
+ 
+-  function copyLink(token: string) {
+-    const link = `${window.location.origin}/invite/${token}`;
+-    navigator.clipboard.writeText(link);
+-    setCopied(token);
+-    setTimeout(() => setCopied(null), 2000);
+-  }
+-
+   const pendingInvitations = invitations.filter(
+     (i) => new Date(i.expiresAt) > new Date()
+   );
+-  const expiredInvitations = invitations.filter(
+-    (i) => new Date(i.expiresAt) <= new Date()
+-  );
+ 
+   return (
+     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+-      {/* Overlay */}
+       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+ 
+-      {/* Modal */}
+       <div className="relative bg-white rounded-2xl shadow-xl max-w-lg w-full max-h-[80vh] overflow-y-auto">
+-        {/* Header */}
+         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+           <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+             <UserPlus className="w-5 h-5 text-[var(--color-primary)]" />
+-            Invite Team Member
++            {t("inviteTeamMember")}
+           </h2>
+-          <button
+-            onClick={onClose}
+-            className="p-1 text-gray-400 hover:text-gray-600 rounded"
+-          >
++          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded">
+             <X className="w-5 h-5" />
+           </button>
+         </div>
+ 
+-        {/* Form */}
+         <form onSubmit={handleInvite} className="px-6 py-4 border-b border-gray-100">
+           <div className="space-y-3">
+             <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Email address
++                {t("emailAddress")}
+               </label>
+               <div className="flex gap-2">
+                 <div className="relative flex-1">
+@@ -132,7 +114,7 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+                     type="email"
+                     value={email}
+                     onChange={(e) => setEmail(e.target.value)}
+-                    placeholder="colleague@example.com"
++                    placeholder={t("emailPlaceholder")}
+                     className="w-full pl-10 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+                     required
+                     autoFocus
+@@ -148,14 +130,14 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+                   ) : (
+                     <UserPlus className="w-4 h-4" />
+                   )}
+-                  Invite
++                  {tc("invite")}
+                 </button>
+               </div>
+             </div>
+ 
+             <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Role
++                {t("role")}
+               </label>
+               <div className="grid grid-cols-2 gap-2">
+                 {ROLES.map((r) => (
+@@ -178,24 +160,20 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+           </div>
+         </form>
+ 
+-        {/* Pending invitations */}
+         {pendingInvitations.length > 0 && (
+           <div className="px-6 py-4">
+             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+-              Pending Invitations ({pendingInvitations.length})
++              {t("pendingInvitations", { count: pendingInvitations.length })}
+             </h3>
+             <div className="space-y-2">
+               {pendingInvitations.map((inv) => (
+-                <div
+-                  key={inv.id}
+-                  className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+-                >
++                <div key={inv.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                   <Mail className="w-4 h-4 text-gray-400 shrink-0" />
+                   <div className="flex-1 min-w-0">
+                     <p className="text-sm text-gray-900 truncate">{inv.email}</p>
+                     <p className="text-xs text-gray-500 flex items-center gap-1">
+                       <Clock className="w-3 h-3" />
+-                      Expires{" "}
++                      {tc("expires")}{" "}
+                       {new Date(inv.expiresAt).toLocaleDateString("en-US", {
+                         month: "short",
+                         day: "numeric",
+@@ -207,7 +185,7 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+                   <button
+                     onClick={() => handleCancel(inv.id)}
+                     className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+-                    title="Cancel invitation"
++                    title={t("cancelInvitation")}
+                   >
+                     <Trash2 className="w-3.5 h-3.5" />
+                   </button>
+@@ -217,11 +195,8 @@ export function InviteModal({ projectId, invitations: initialInvitations, onClos
+           </div>
+         )}
+ 
+-        {/* Note */}
+         <div className="px-6 py-3 bg-gray-50 rounded-b-2xl">
+-          <p className="text-xs text-gray-500">
+-            The invite link will be copied to your clipboard. Share it with the person you&apos;re inviting. Links expire after 7 days.
+-          </p>
++          <p className="text-xs text-gray-500">{t("inviteLinkInfo")}</p>
+         </div>
+       </div>
+     </div>
+diff --git a/src/components/project/TeamSection.tsx b/src/components/project/TeamSection.tsx
+index 6b1c85c..308f22d 100644
+--- a/src/components/project/TeamSection.tsx
++++ b/src/components/project/TeamSection.tsx
+@@ -3,6 +3,7 @@
+ import { useState } from "react";
+ import { UserPlus, Users } from "lucide-react";
+ import { InviteModal } from "./InviteModal";
++import { useTranslations } from "next-intl";
+ 
+ interface Member {
+   id: string;
+@@ -32,13 +33,15 @@ interface Props {
+ }
+ 
+ export function TeamSection({ projectId, members, invitations, canInvite }: Props) {
++  const t = useTranslations("team");
++  const ti = useTranslations("common");
+   const [showInvite, setShowInvite] = useState(false);
+ 
+   return (
+     <div>
+       <div className="flex items-center justify-between mb-3">
+         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+-          Team ({members.length})
++          {t("title", { count: members.length })}
+         </h2>
+         {canInvite && (
+           <button
+@@ -46,7 +49,7 @@ export function TeamSection({ projectId, members, invitations, canInvite }: Prop
+             className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors"
+           >
+             <UserPlus className="w-3.5 h-3.5" />
+-            Invite
++            {ti("invite")}
+           </button>
+         )}
+       </div>
+@@ -54,14 +57,11 @@ export function TeamSection({ projectId, members, invitations, canInvite }: Prop
+         {members.length === 0 ? (
+           <div className="p-6 text-center">
+             <Users className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+-            <p className="text-sm text-gray-500">No team members yet</p>
++            <p className="text-sm text-gray-500">{t("noTeamMembers")}</p>
+           </div>
+         ) : (
+           members.map((member) => (
+-            <div
+-              key={member.id}
+-              className="flex items-center gap-3 px-4 py-3"
+-            >
++            <div key={member.id} className="flex items-center gap-3 px-4 py-3">
+               <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] text-[var(--color-primary)] flex items-center justify-center text-sm font-semibold shrink-0">
+                 {(member.user.name || member.user.email)[0].toUpperCase()}
+               </div>
+diff --git a/src/components/projects/NewProjectForm.tsx b/src/components/projects/NewProjectForm.tsx
+index caf9896..045121f 100644
+--- a/src/components/projects/NewProjectForm.tsx
++++ b/src/components/projects/NewProjectForm.tsx
+@@ -29,6 +29,7 @@ import {
+   TRADE_TEMPLATES,
+ } from "@/lib/phase-templates";
+ import type { TradeTemplate } from "@/lib/phase-templates";
++import { useTranslations } from "next-intl";
+ 
+ interface PhaseInput {
+   id: string;
+@@ -79,6 +80,9 @@ type TemplateChoice =
+   | null;
+ 
+ export function NewProjectForm() {
++  const t = useTranslations("projects");
++  const tc = useTranslations("common");
++
+   const [step, setStep] = useState<0 | 1 | 2>(0);
+   const [templateChoice, setTemplateChoice] = useState<TemplateChoice>(null);
+   const [submitting, setSubmitting] = useState(false);
+@@ -123,8 +127,8 @@ export function NewProjectForm() {
+     templatePhases: { name: string; detail: string; isMilestone: boolean }[]
+   ) {
+     setPhases(
+-      templatePhases.map((t) => ({
+-        ...t,
++      templatePhases.map((tp) => ({
++        ...tp,
+         id: crypto.randomUUID(),
+         estStart: "",
+         estEnd: "",
+@@ -156,17 +160,17 @@ export function NewProjectForm() {
+ 
+   async function handleSubmit() {
+     if (!name.trim()) {
+-      setError("Project name is required");
++      setError(t("nameRequired"));
+       return;
+     }
+ 
+     for (const phase of phases) {
+       if (!phase.name.trim()) {
+-        setError(`Phase ${phases.indexOf(phase) + 1} needs a name`);
++        setError(t("phaseNeedsName", { n: phases.indexOf(phase) + 1 }));
+         return;
+       }
+       if (!phase.estStart || !phase.estEnd) {
+-        setError(`"${phase.name}" needs estimated start and end dates`);
++        setError(t("phaseNeedsDates", { name: phase.name }));
+         return;
+       }
+     }
+@@ -192,7 +196,7 @@ export function NewProjectForm() {
+         })),
+       });
+     } catch (e) {
+-      setError(e instanceof Error ? e.message : "Something went wrong");
++      setError(e instanceof Error ? e.message : tc("somethingWentWrong"));
+       setSubmitting(false);
+     }
+   }
+@@ -213,7 +217,7 @@ export function NewProjectForm() {
+           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+             1
+           </span>
+-          Template
++          {t("template")}
+         </button>
+         <div className="w-8 h-px bg-gray-300" />
+         <button
+@@ -229,7 +233,7 @@ export function NewProjectForm() {
+           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+             2
+           </span>
+-          Details
++          {t("details")}
+         </button>
+         <div className="w-8 h-px bg-gray-300" />
+         <button
+@@ -245,7 +249,7 @@ export function NewProjectForm() {
+           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
+             3
+           </span>
+-          Phases
++          {t("phasesStep")}
+         </button>
+       </div>
+ 
+@@ -262,7 +266,7 @@ export function NewProjectForm() {
+           {/* Main project types */}
+           <div>
+             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+-              Project Type
++              {t("projectType")}
+             </h3>
+             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+               <button
+@@ -276,10 +280,10 @@ export function NewProjectForm() {
+               >
+                 <HardHat className="w-8 h-8 text-[var(--color-primary)]" />
+                 <span className="text-sm font-semibold text-gray-900">
+-                  Residential
++                  {t("residential")}
+                 </span>
+                 <span className="text-xs text-gray-500">
+-                  9 phases · permitting to CO
++                  {t("residentialDesc")}
+                 </span>
+               </button>
+ 
+@@ -294,10 +298,10 @@ export function NewProjectForm() {
+               >
+                 <Building2 className="w-8 h-8 text-indigo-600" />
+                 <span className="text-sm font-semibold text-gray-900">
+-                  Commercial
++                  {t("commercial")}
+                 </span>
+                 <span className="text-xs text-gray-500">
+-                  12 phases · steel to commissioning
++                  {t("commercialDesc")}
+                 </span>
+               </button>
+ 
+@@ -312,10 +316,10 @@ export function NewProjectForm() {
+               >
+                 <Plus className="w-8 h-8 text-gray-400" />
+                 <span className="text-sm font-semibold text-gray-900">
+-                  Blank
++                  {t("blank")}
+                 </span>
+                 <span className="text-xs text-gray-500">
+-                  Start from scratch
++                  {t("blankDesc")}
+                 </span>
+               </button>
+             </div>
+@@ -324,7 +328,7 @@ export function NewProjectForm() {
+           {/* Trade templates */}
+           <div>
+             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
+-              Trade-Specific
++              {t("tradeSpecific")}
+             </h3>
+             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+               {TRADE_TEMPLATES.map((trade) => {
+@@ -351,7 +355,7 @@ export function NewProjectForm() {
+                       {trade.name}
+                     </span>
+                     <span className="text-xs text-gray-500">
+-                      {trade.phases.length} phases
++                      {t("phaseCount", { count: trade.phases.length })}
+                     </span>
+                   </button>
+                 );
+@@ -366,39 +370,39 @@ export function NewProjectForm() {
+         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">
+-              Project Name *
++              {t("projectName")}
+             </label>
+             <input
+               type="text"
+               value={name}
+               onChange={(e) => setName(e.target.value)}
+-              placeholder="e.g. Smith Residence Build"
++              placeholder={t("projectNamePlaceholder")}
+               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+             />
+           </div>
+ 
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">
+-              Description
++              {t("description")}
+             </label>
+             <textarea
+               value={description}
+               onChange={(e) => setDescription(e.target.value)}
+               rows={3}
+-              placeholder="Project scope, notes, special requirements..."
++              placeholder={t("descriptionPlaceholder")}
+               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
+             />
+           </div>
+ 
+           <div>
+             <label className="block text-sm font-medium text-gray-700 mb-1">
+-              Site Address
++              {t("siteAddress")}
+             </label>
+             <input
+               type="text"
+               value={address}
+               onChange={(e) => setAddress(e.target.value)}
+-              placeholder="123 Main St, City, State"
++              placeholder={t("addressPlaceholder")}
+               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+             />
+           </div>
+@@ -406,7 +410,7 @@ export function NewProjectForm() {
+           <div className="grid grid-cols-2 gap-4">
+             <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Plan Approval Date
++                {t("planApproval")}
+               </label>
+               <input
+                 type="date"
+@@ -417,7 +421,7 @@ export function NewProjectForm() {
+             </div>
+             <div>
+               <label className="block text-sm font-medium text-gray-700 mb-1">
+-                Budget ($)
++                {t("budget")}
+               </label>
+               <input
+                 type="number"
+@@ -437,12 +441,12 @@ export function NewProjectForm() {
+               className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
+             >
+               <ArrowLeft className="w-4 h-4" />
+-              Template
++              {t("template")}
+             </button>
+             <button
+               onClick={() => {
+                 if (!name.trim()) {
+-                  setError("Project name is required");
++                  setError(t("nameRequired"));
+                   return;
+                 }
+                 setError(null);
+@@ -450,7 +454,7 @@ export function NewProjectForm() {
+               }}
+               className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+             >
+-              Next: Review Phases
++              {t("nextReviewPhases")}
+             </button>
+           </div>
+         </div>
+@@ -467,7 +471,7 @@ export function NewProjectForm() {
+                 className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
+               >
+                 <Plus className="w-4 h-4" />
+-                Add Phase
++                {t("addPhase")}
+               </button>
+             </div>
+             {phases.length > 1 && (
+@@ -476,14 +480,14 @@ export function NewProjectForm() {
+                   onClick={() => toggleAllExpand(true)}
+                   className="text-gray-500 hover:text-gray-700"
+                 >
+-                  Expand all
++                  {t("expandAll")}
+                 </button>
+                 <span className="text-gray-300">|</span>
+                 <button
+                   onClick={() => toggleAllExpand(false)}
+                   className="text-gray-500 hover:text-gray-700"
+                 >
+-                  Collapse all
++                  {t("collapseAll")}
+                 </button>
+               </div>
+             )}
+@@ -493,9 +497,9 @@ export function NewProjectForm() {
+           {phases.length === 0 && (
+             <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
+               <HardHat className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+-              <p className="text-sm text-gray-500 mb-1">No phases yet</p>
++              <p className="text-sm text-gray-500 mb-1">{t("noPhasesYet")}</p>
+               <p className="text-xs text-gray-400">
+-                Add phases manually or go back to choose a template
++                {t("addPhasesHelp")}
+               </p>
+             </div>
+           )}
+@@ -551,7 +555,7 @@ export function NewProjectForm() {
+                     phase.name ? "text-gray-900" : "text-gray-400 italic"
+                   )}
+                 >
+-                  {phase.name || "Untitled Phase"}
++                  {phase.name || t("untitledPhase")}
+                 </span>
+ 
+                 {phase.estStart && phase.estEnd && (
+@@ -577,7 +581,7 @@ export function NewProjectForm() {
+                   <div className="grid grid-cols-2 gap-3">
+                     <div className="col-span-2 sm:col-span-1">
+                       <label className="block text-xs font-medium text-gray-600 mb-1">
+-                        Phase Name *
++                        {t("phaseName")}
+                       </label>
+                       <input
+                         type="text"
+@@ -585,7 +589,7 @@ export function NewProjectForm() {
+                         onChange={(e) =>
+                           updatePhase(phase.id, { name: e.target.value })
+                         }
+-                        placeholder="e.g. Framing"
++                        placeholder={t("phaseNamePlaceholder")}
+                         className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                       />
+                     </div>
+@@ -602,7 +606,7 @@ export function NewProjectForm() {
+                           className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                         />
+                         <span className="text-sm text-gray-700">
+-                          Milestone (single date)
++                          {t("milestone")}
+                         </span>
+                       </label>
+                     </div>
+@@ -610,7 +614,7 @@ export function NewProjectForm() {
+ 
+                   <div>
+                     <label className="block text-xs font-medium text-gray-600 mb-1">
+-                      Details
++                      {t("details")}
+                     </label>
+                     <input
+                       type="text"
+@@ -618,7 +622,7 @@ export function NewProjectForm() {
+                       onChange={(e) =>
+                         updatePhase(phase.id, { detail: e.target.value })
+                       }
+-                      placeholder="Scope, notes, trade involved..."
++                      placeholder={t("scope")}
+                       className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+                     />
+                   </div>
+@@ -627,7 +631,7 @@ export function NewProjectForm() {
+                   <div className="grid grid-cols-2 gap-3">
+                     <div>
+                       <label className="block text-xs font-medium text-[var(--color-primary)] mb-1">
+-                        Est. Start *
++                        {t("estStart")}
+                       </label>
+                       <input
+                         type="date"
+@@ -641,7 +645,7 @@ export function NewProjectForm() {
+                     {!phase.isMilestone && (
+                       <div>
+                         <label className="block text-xs font-medium text-[var(--color-primary)] mb-1">
+-                          Est. End *
++                          {t("estEnd")}
+                         </label>
+                         <input
+                           type="date"
+@@ -659,7 +663,7 @@ export function NewProjectForm() {
+                     <div className="grid grid-cols-2 gap-3">
+                       <div>
+                         <label className="block text-xs font-medium text-red-500 mb-1">
+-                          Worst Start
++                          {t("worstStart")}
+                         </label>
+                         <input
+                           type="date"
+@@ -674,7 +678,7 @@ export function NewProjectForm() {
+                       </div>
+                       <div>
+                         <label className="block text-xs font-medium text-red-500 mb-1">
+-                          Worst End
++                          {t("worstEnd")}
+                         </label>
+                         <input
+                           type="date"
+@@ -699,11 +703,11 @@ export function NewProjectForm() {
+               className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
+             >
+               <ArrowLeft className="w-4 h-4" />
+-              Details
++              {t("details")}
+             </button>
+             <div className="flex items-center gap-3">
+               <span className="text-sm text-gray-500">
+-                {phases.length} phase{phases.length !== 1 ? "s" : ""}
++                {t("phaseCount", { count: phases.length })}
+               </span>
+               <button
+                 onClick={handleSubmit}
+@@ -711,11 +715,11 @@ export function NewProjectForm() {
+                 className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
+               >
+                 {submitting ? (
+-                  "Creating..."
++                  t("creating")
+                 ) : (
+                   <>
+                     <Check className="w-4 h-4" />
+-                    Create Project
++                    {t("createProject")}
+                   </>
+                 )}
+               </button>
+diff --git a/src/components/reports/ExportButton.tsx b/src/components/reports/ExportButton.tsx
+index 5f776d4..c89eb9e 100644
+--- a/src/components/reports/ExportButton.tsx
++++ b/src/components/reports/ExportButton.tsx
+@@ -2,6 +2,7 @@
+ 
+ import { useState } from "react";
+ import { Download } from "lucide-react";
++import { useTranslations } from "next-intl";
+ 
+ interface ExportData {
+   projectHealth: Array<{
+@@ -56,18 +57,15 @@ function downloadCSV(filename: string, content: string) {
+ }
+ 
+ export function ExportButton({ data }: Props) {
++  const t = useTranslations("reports");
+   const [showMenu, setShowMenu] = useState(false);
+ 
+   function exportProjectHealth() {
+     const csv = toCSV(
+-      ["Project", "Status", "Total Phases", "Completed", "Progress %", "Overdue"],
++      [t("project"), t("status"), t("totalPhases"), t("completed"), t("progressPct"), t("overdue")],
+       data.projectHealth.map((p) => [
+-        p.project,
+-        p.status,
+-        String(p.phases),
+-        String(p.completedPhases),
+-        String(p.progress),
+-        String(p.overdue),
++        p.project, p.status, String(p.phases), String(p.completedPhases),
++        String(p.progress), String(p.overdue),
+       ])
+     );
+     downloadCSV("project-health-report.csv", csv);
+@@ -76,12 +74,9 @@ export function ExportButton({ data }: Props) {
+ 
+   function exportOverdue() {
+     const csv = toCSV(
+-      ["Phase", "Project", "Days Overdue", "Owner"],
++      [t("phase"), t("project"), t("daysOverdue"), t("owner")],
+       data.overdueReport.map((o) => [
+-        o.phaseName,
+-        o.projectName,
+-        String(o.daysOverdue),
+-        o.owner || "Unassigned",
++        o.phaseName, o.projectName, String(o.daysOverdue), o.owner || t("unassigned"),
+       ])
+     );
+     downloadCSV("overdue-report.csv", csv);
+@@ -91,13 +86,9 @@ export function ExportButton({ data }: Props) {
+   function exportTeamPerformance() {
+     if (!data.teamPerformance) return;
+     const csv = toCSV(
+-      ["Name", "Assigned Phases", "Completed", "Active", "Overdue"],
+-      data.teamPerformance.map((t) => [
+-        t.name,
+-        String(t.assigned),
+-        String(t.completed),
+-        String(t.active),
+-        String(t.overdue),
++      [t("name"), t("assignedPhases"), t("completed"), t("active"), t("overdue")],
++      data.teamPerformance.map((tm) => [
++        tm.name, String(tm.assigned), String(tm.completed), String(tm.active), String(tm.overdue),
+       ])
+     );
+     downloadCSV("team-performance.csv", csv);
+@@ -105,10 +96,9 @@ export function ExportButton({ data }: Props) {
+   }
+ 
+   function exportAll() {
+-    // Build combined summary
+     let content = "=== PROJECT HEALTH ===\n";
+     content += toCSV(
+-      ["Project", "Status", "Phases", "Completed", "Progress %", "Overdue"],
++      [t("project"), t("status"), t("totalPhases"), t("completed"), t("progressPct"), t("overdue")],
+       data.projectHealth.map((p) => [
+         p.project, p.status, String(p.phases), String(p.completedPhases), String(p.progress), String(p.overdue),
+       ])
+@@ -116,30 +106,30 @@ export function ExportButton({ data }: Props) {
+ 
+     content += "\n\n=== PHASE STATUS BREAKDOWN ===\n";
+     content += toCSV(
+-      ["Status", "Count"],
++      [t("status"), "Count"],
+       data.phaseBreakdown.map((p) => [p.status, String(p.count)])
+     );
+ 
+     content += "\n\n=== DOCUMENT STATS ===\n";
+     content += `Total: ${data.documentStats.total}\n`;
+     content += toCSV(
+-      ["Status", "Count"],
++      [t("status"), "Count"],
+       Object.entries(data.documentStats.byStatus).map(([k, v]) => [k, String(v)])
+     );
+ 
+     if (data.overdueReport.length > 0) {
+       content += "\n\n=== OVERDUE PHASES ===\n";
+       content += toCSV(
+-        ["Phase", "Project", "Days Overdue", "Owner"],
+-        data.overdueReport.map((o) => [o.phaseName, o.projectName, String(o.daysOverdue), o.owner || "Unassigned"])
++        [t("phase"), t("project"), t("daysOverdue"), t("owner")],
++        data.overdueReport.map((o) => [o.phaseName, o.projectName, String(o.daysOverdue), o.owner || t("unassigned")])
+       );
+     }
+ 
+     if (data.teamPerformance && data.teamPerformance.length > 0) {
+       content += "\n\n=== TEAM PERFORMANCE ===\n";
+       content += toCSV(
+-        ["Name", "Assigned", "Completed", "Active", "Overdue"],
+-        data.teamPerformance.map((t) => [t.name, String(t.assigned), String(t.completed), String(t.active), String(t.overdue)])
++        [t("name"), t("assignedPhases"), t("completed"), t("active"), t("overdue")],
++        data.teamPerformance.map((tm) => [tm.name, String(tm.assigned), String(tm.completed), String(tm.active), String(tm.overdue)])
+       );
+     }
+ 
+@@ -154,40 +144,25 @@ export function ExportButton({ data }: Props) {
+         className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+       >
+         <Download className="w-4 h-4" />
+-        Export
++        {t("export")}
+       </button>
+ 
+       {showMenu && (
+         <>
+-          <div
+-            className="fixed inset-0 z-10"
+-            onClick={() => setShowMenu(false)}
+-          />
++          <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+           <div className="absolute right-0 top-full mt-1 z-20 bg-white rounded-lg border border-gray-200 shadow-lg py-1 w-48">
+-            <button
+-              onClick={exportAll}
+-              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+-            >
+-              Full Report (CSV)
++            <button onClick={exportAll} className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
++              {t("fullReport")}
+             </button>
+-            <button
+-              onClick={exportProjectHealth}
+-              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+-            >
+-              Project Health
++            <button onClick={exportProjectHealth} className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
++              {t("projectHealth")}
+             </button>
+-            <button
+-              onClick={exportOverdue}
+-              className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+-            >
+-              Overdue Report
++            <button onClick={exportOverdue} className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
++              {t("overdueReport")}
+             </button>
+             {data.teamPerformance && data.teamPerformance.length > 0 && (
+-              <button
+-                onClick={exportTeamPerformance}
+-                className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50"
+-              >
+-                Team Performance
++              <button onClick={exportTeamPerformance} className="w-full px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-50">
++                {t("teamPerformance")}
+               </button>
+             )}
+           </div>
+diff --git a/src/components/settings/ChecklistTemplateManager.tsx b/src/components/settings/ChecklistTemplateManager.tsx
+index c4f3a66..c610b6a 100644
+--- a/src/components/settings/ChecklistTemplateManager.tsx
++++ b/src/components/settings/ChecklistTemplateManager.tsx
+@@ -17,6 +17,7 @@ import {
+   ChevronRight,
+ } from "lucide-react";
+ import { toast } from "sonner";
++import { useTranslations } from "next-intl";
+ 
+ interface TemplateItem {
+   id: string;
+@@ -35,6 +36,7 @@ interface Props {
+ }
+ 
+ export function ChecklistTemplateManager({ templates: initial }: Props) {
++  const t = useTranslations("settings");
+   const [templates, setTemplates] = useState(initial);
+   const [editingId, setEditingId] = useState<string | null>(null);
+   const [creating, setCreating] = useState(false);
+@@ -46,10 +48,10 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+       <div className="flex items-center justify-between mb-4">
+         <div>
+           <h2 className="text-lg font-semibold text-gray-900">
+-            Checklist Templates
++            {t("checklistTemplates")}
+           </h2>
+           <p className="text-sm text-gray-500 mt-0.5">
+-            Create reusable checklists that can be applied to project phases.
++            {t("templatesDescription")}
+           </p>
+         </div>
+         {!creating && !editingId && (
+@@ -58,7 +60,7 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity"
+           >
+             <Plus className="w-4 h-4" />
+-            New Template
++            {t("newTemplate")}
+           </button>
+         )}
+       </div>
+@@ -69,12 +71,12 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+           onSave={(data) => {
+             startTransition(async () => {
+               try {
+-                const t = await createChecklistTemplate(data);
+-                setTemplates((prev) => [...prev, t].sort((a, b) => a.name.localeCompare(b.name)));
++                const tmpl = await createChecklistTemplate(data);
++                setTemplates((prev) => [...prev, tmpl].sort((a, b) => a.name.localeCompare(b.name)));
+                 setCreating(false);
+-                toast.success("Template created");
++                toast.success(t("templateCreated"));
+               } catch (e: unknown) {
+-                toast.error(e instanceof Error ? e.message : "Failed to create template");
++                toast.error(e instanceof Error ? e.message : t("failedToCreate"));
+               }
+             });
+           }}
+@@ -87,7 +89,7 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+       {templates.length === 0 && !creating ? (
+         <div className="text-center py-8 text-gray-400">
+           <ClipboardList className="w-8 h-8 mx-auto mb-2" />
+-          <p className="text-sm">No templates yet. Create one to get started.</p>
++          <p className="text-sm">{t("noTemplatesYet")}</p>
+         </div>
+       ) : (
+         <div className="space-y-2">
+@@ -103,20 +105,20 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+                     onSave={(data) => {
+                       startTransition(async () => {
+                         try {
+-                          const t = await updateChecklistTemplate(template.id, data);
++                          const tmpl = await updateChecklistTemplate(template.id, data);
+                           setTemplates((prev) =>
+-                            prev.map((p) => (p.id === template.id ? t : p))
++                            prev.map((p) => (p.id === template.id ? tmpl : p))
+                           );
+                           setEditingId(null);
+-                          toast.success("Template updated");
++                          toast.success(t("templateUpdated"));
+                         } catch (e: unknown) {
+-                          toast.error(e instanceof Error ? e.message : "Failed to update");
++                          toast.error(e instanceof Error ? e.message : t("failedToUpdate"));
+                         }
+                       });
+                     }}
+                     onCancel={() => setEditingId(null)}
+                     isPending={isPending}
+-                    saveLabel="Save Changes"
++                    saveLabel={t("saveChanges")}
+                   />
+                 </div>
+               ) : (
+@@ -137,7 +139,7 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+                       {template.name}
+                     </span>
+                     <span className="text-xs text-gray-400">
+-                      {template.items.length} item{template.items.length !== 1 ? "s" : ""}
++                      {template.items.length} {template.items.length !== 1 ? "items" : "item"}
+                     </span>
+                     <div className="flex items-center gap-1 ml-2" onClick={(e) => e.stopPropagation()}>
+                       <button
+@@ -146,20 +148,20 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
+                           setExpandedId(null);
+                         }}
+                         className="p-1.5 text-gray-400 hover:text-gray-600 rounded"
+-                        title="Edit"
++                        title={t("saveChanges")}
+                       >
+                         <Pencil className="w-3.5 h-3.5" />
+                       </button>
+                       <button
+                         onClick={() => {
+-                          if (!confirm(`Delete "${template.name}"? This cannot be undone.`)) return;
++                          if (!confirm(t("deleteTemplateConfirm", { name: template.name }))) return;
+                           startTransition(async () => {
+                             try {
+                               await deleteChecklistTemplate(template.id);
+                               setTemplates((prev) => prev.filter((p) => p.id !== template.id));
+-                              toast.success("Template deleted");
++                              toast.success(t("templateDeleted"));
+                             } catch {
+-                              toast.error("Failed to delete template");
++                              toast.error(t("failedToDeleteTemplate"));
+                             }
+                           });
+                         }}
+@@ -206,7 +208,7 @@ function TemplateForm({
+   onSave,
+   onCancel,
+   isPending,
+-  saveLabel = "Create Template",
++  saveLabel,
+ }: {
+   initial?: { name: string; items: string[] };
+   onSave: (data: { name: string; items: string[] }) => void;
+@@ -214,6 +216,8 @@ function TemplateForm({
+   isPending: boolean;
+   saveLabel?: string;
+ }) {
++  const t = useTranslations("settings");
++  const tc = useTranslations("common");
+   const [name, setName] = useState(initial?.name || "");
+   const [items, setItems] = useState<string[]>(
+     initial?.items?.length ? initial.items : [""]
+@@ -233,7 +237,7 @@ function TemplateForm({
+ 
+   function handleSubmit(e: React.FormEvent) {
+     e.preventDefault();
+-    const validItems = items.filter((t) => t.trim());
++    const validItems = items.filter((item) => item.trim());
+     if (!name.trim() || validItems.length === 0) return;
+     onSave({ name, items: validItems });
+   }
+@@ -245,13 +249,13 @@ function TemplateForm({
+     >
+       <div className="mb-3">
+         <label className="block text-sm font-medium text-gray-700 mb-1">
+-          Template Name
++          {t("templateName")}
+         </label>
+         <input
+           type="text"
+           value={name}
+           onChange={(e) => setName(e.target.value)}
+-          placeholder="e.g. Site Work, Framing, Electrical…"
++          placeholder={t("templateNamePlaceholder")}
+           className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+           autoFocus
+         />
+@@ -259,7 +263,7 @@ function TemplateForm({
+ 
+       <div className="mb-3">
+         <label className="block text-sm font-medium text-gray-700 mb-1">
+-          Checklist Items
++          {t("checklistItems")}
+         </label>
+         <div className="space-y-1.5">
+           {items.map((item, i) => (
+@@ -271,7 +275,7 @@ function TemplateForm({
+                 type="text"
+                 value={item}
+                 onChange={(e) => updateItem(i, e.target.value)}
+-                placeholder="Enter item title…"
++                placeholder={t("enterItemTitle")}
+                 className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
+                 onKeyDown={(e) => {
+                   if (e.key === "Enter") {
+@@ -298,24 +302,24 @@ function TemplateForm({
+           className="mt-2 flex items-center gap-1 text-xs text-[var(--color-primary)] hover:underline"
+         >
+           <Plus className="w-3 h-3" />
+-          Add item
++          {t("addItem")}
+         </button>
+       </div>
+ 
+       <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
+         <button
+           type="submit"
+-          disabled={isPending || !name.trim() || items.every((t) => !t.trim())}
++          disabled={isPending || !name.trim() || items.every((item) => !item.trim())}
+           className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
+         >
+-          {isPending ? "Saving…" : saveLabel}
++          {isPending ? tc("saving") : (saveLabel ?? t("createTemplate"))}
+         </button>
+         <button
+           type="button"
+           onClick={onCancel}
+           className="px-4 py-1.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+         >
+-          Cancel
++          {tc("cancel")}
+         </button>
+       </div>
+     </form>
+diff --git a/src/components/settings/LogoUploader.tsx b/src/components/settings/LogoUploader.tsx
+index 43e4266..8d0a8ea 100644
+--- a/src/components/settings/LogoUploader.tsx
++++ b/src/components/settings/LogoUploader.tsx
+@@ -3,6 +3,7 @@
+ import { useState, useRef } from "react";
+ import { Upload, Trash2, HardHat, Loader2, AlertCircle } from "lucide-react";
+ import { uploadLogo, deleteLogo, updateCompanyName } from "@/actions/settings";
++import { useTranslations } from "next-intl";
+ 
+ interface LogoUploaderProps {
+   logoUrl: string | null;
+@@ -10,6 +11,8 @@ interface LogoUploaderProps {
+ }
+ 
+ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
++  const t = useTranslations("settings");
++  const tc = useTranslations("common");
+   const [currentLogo, setCurrentLogo] = useState(logoUrl);
+   const [currentName, setCurrentName] = useState(companyName || "");
+   const [uploading, setUploading] = useState(false);
+@@ -25,13 +28,13 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+ 
+     // Client-side validation
+     if (file.size > 2 * 1024 * 1024) {
+-      setError("File too large. Maximum size is 2MB.");
++      setError(t("fileTooLarge"));
+       return;
+     }
+ 
+     const allowed = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
+     if (!allowed.includes(file.type)) {
+-      setError("Invalid format. Use PNG, JPG, SVG, or WebP.");
++      setError(t("invalidFormat"));
+       return;
+     }
+ 
+@@ -44,20 +47,20 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+       const result = await uploadLogo(formData);
+       setCurrentLogo(result.url);
+     } catch (e) {
+-      setError(e instanceof Error ? e.message : "Upload failed");
++      setError(e instanceof Error ? e.message : t("uploadFailed"));
+     }
+     setUploading(false);
+     if (fileInputRef.current) fileInputRef.current.value = "";
+   }
+ 
+   async function handleDelete() {
+-    if (!confirm("Remove your company logo?")) return;
++    if (!confirm(t("removeLogoConfirm"))) return;
+     setDeleting(true);
+     try {
+       await deleteLogo();
+       setCurrentLogo(null);
+     } catch (e) {
+-      setError(e instanceof Error ? e.message : "Failed to delete");
++      setError(e instanceof Error ? e.message : t("failedToDelete"));
+     }
+     setDeleting(false);
+   }
+@@ -79,10 +82,10 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+   return (
+     <div>
+       <h3 className="text-sm font-semibold text-gray-900 mb-1">
+-        Company Branding
++        {t("companyBranding")}
+       </h3>
+       <p className="text-xs text-gray-500 mb-4">
+-        Upload your logo and set your company name. These appear in the sidebar.
++        {t("brandingDescription")}
+       </p>
+ 
+       {error && (
+@@ -115,7 +118,7 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+               disabled={uploading}
+               className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] disabled:opacity-50"
+             >
+-              {currentLogo ? "Replace" : "Upload"}
++              {currentLogo ? tc("replace") : tc("upload")}
+             </button>
+             {currentLogo && (
+               <button
+@@ -123,7 +126,7 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+                 disabled={deleting}
+                 className="text-xs font-medium text-red-600 hover:text-red-700 disabled:opacity-50"
+               >
+-                Remove
++                {tc("remove")}
+               </button>
+             )}
+           </div>
+@@ -139,31 +142,31 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+           <p className="text-[10px] text-gray-400 text-center">
+             PNG, JPG, SVG, WebP
+             <br />
+-            Max 2MB
++            {t("maxSize")}
+           </p>
+         </div>
+ 
+         {/* Company name */}
+         <div className="flex-1">
+           <label className="block text-sm font-medium text-gray-700 mb-1">
+-            Company Name
++            {t("companyName")}
+           </label>
+           <div className="relative">
+             <input
+               type="text"
+               value={currentName}
+               onChange={(e) => handleNameChange(e.target.value)}
+-              placeholder="Your Company Name"
++              placeholder={t("companyNamePlaceholder")}
+               className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+             />
+             {savingName && (
+               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
+-                Saving...
++                {tc("saving")}
+               </span>
+             )}
+           </div>
+           <p className="text-xs text-gray-400 mt-1">
+-            Displayed in the sidebar header. Leave blank to show &quot;Construction PM&quot;.
++            {t("companyNameHelp")}
+           </p>
+         </div>
+       </div>
+diff --git a/src/components/settings/ThemeSelector.tsx b/src/components/settings/ThemeSelector.tsx
+index b1ac3fd..ecb3e3c 100644
+--- a/src/components/settings/ThemeSelector.tsx
++++ b/src/components/settings/ThemeSelector.tsx
+@@ -5,12 +5,14 @@ import { Check } from "lucide-react";
+ import { THEME_PRESETS } from "@/lib/themes";
+ import { updateTheme } from "@/actions/settings";
+ import { cn } from "@/lib/utils";
++import { useTranslations } from "next-intl";
+ 
+ interface ThemeSelectorProps {
+   currentTheme: string;
+ }
+ 
+ export function ThemeSelector({ currentTheme }: ThemeSelectorProps) {
++  const t = useTranslations("settings");
+   const [selected, setSelected] = useState(currentTheme);
+   const [saving, setSaving] = useState(false);
+ 
+@@ -28,9 +30,9 @@ export function ThemeSelector({ currentTheme }: ThemeSelectorProps) {
+ 
+   return (
+     <div>
+-      <h3 className="text-sm font-semibold text-gray-900 mb-1">Color Theme</h3>
++      <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("colorTheme")}</h3>
+       <p className="text-xs text-gray-500 mb-4">
+-        Choose a color scheme for the entire application. Changes apply to all users.
++        {t("themeDescription")}
+       </p>
+ 
+       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+diff --git a/src/components/timeline/GanttChart.tsx b/src/components/timeline/GanttChart.tsx
+index 40b62ea..727f702 100644
+--- a/src/components/timeline/GanttChart.tsx
++++ b/src/components/timeline/GanttChart.tsx
+@@ -5,6 +5,7 @@ import { format, addMonths, startOfMonth, differenceInDays } from "date-fns";
+ import { PhaseRow } from "./PhaseRow";
+ import { updatePhaseDates } from "@/actions/phases";
+ import { cn } from "@/lib/utils";
++import { useTranslations } from "next-intl";
+ 
+ interface Phase {
+   id: string;
+@@ -41,6 +42,7 @@ interface GanttChartProps {
+ }
+ 
+ export function GanttChart({ projectId, phases: initialPhases, planApproval }: GanttChartProps) {
++  const t = useTranslations("gantt");
+   const [phases, setPhases] = useState(initialPhases);
+   const containerRef = useRef<HTMLDivElement>(null);
+ 
+@@ -130,18 +132,18 @@ const saveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
+       <div className="px-6 py-2 flex items-center gap-6 text-xs text-gray-500 bg-white border-b border-gray-100">
+         <span className="flex items-center gap-1.5">
+           <span className="w-3 h-3 bg-blue-500 rounded-sm" />
+-          Estimated
++          {t("estimated")}
+         </span>
+         <span className="flex items-center gap-1.5">
+           <span className="w-3 h-3 bg-red-400 rounded-sm" />
+-          Worst Case
++          {t("worstCase")}
+         </span>
+         <span className="flex items-center gap-1.5">
+           <span className="w-2 h-3 bg-green-500 rounded-sm" />
+-          Today
++          {t("today")}
+         </span>
+         <span className="ml-auto text-gray-400">
+-          Drag bars to slide &bull; Drag edges to resize
++          {t("dragHelp")}
+         </span>
+       </div>
+ 
