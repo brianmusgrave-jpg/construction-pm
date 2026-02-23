@@ -18,6 +18,8 @@ import {
   ExternalLink,
   BookOpen,
 } from "lucide-react";
+import { PlayCircle } from "lucide-react";
+import { resetTour } from "./OnboardingTour";
 import { cn } from "@/lib/utils";
 
 interface GuideSection {
@@ -287,7 +289,14 @@ export function HelpCenter({ userRole }: Props) {
 
       {/* Quick Links */}
       {!search && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+          <button
+            onClick={() => resetTour()}
+            className="flex items-center gap-2 p-3 bg-[var(--color-primary-bg)] rounded-lg border border-[var(--color-primary-light)]/30 hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all text-sm font-medium text-[var(--color-primary-dark)]"
+          >
+            <PlayCircle className="w-4 h-4" />
+            Replay Intro
+          </button>
           {[
             { label: "Create Project", icon: <FolderKanban className="w-4 h-4" />, section: "projects", article: "proj-overview" },
             { label: "Phase Status", icon: <HardHat className="w-4 h-4" />, section: "phases", article: "phase-lifecycle" },

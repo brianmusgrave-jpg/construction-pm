@@ -102,7 +102,13 @@ interface Props {
   userName?: string;
 }
 
-const TOUR_STORAGE_KEY = "construction-pm-tour-complete";
+export const TOUR_STORAGE_KEY = "construction-pm-tour-complete";
+
+/** Call this to clear the tour flag and trigger a page-level re-render */
+export function resetTour() {
+  localStorage.removeItem(TOUR_STORAGE_KEY);
+  window.dispatchEvent(new Event("replay-tour"));
+}
 
 export function OnboardingTour({ userRole, userName }: Props) {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,10 +121,17 @@ export function OnboardingTour({ userRole, userName }: Props) {
     // Check if user has completed the tour
     const tourComplete = localStorage.getItem(TOUR_STORAGE_KEY);
     if (!tourComplete) {
-      // Delay slightly so the page loads first
       const timer = setTimeout(() => setIsOpen(true), 1000);
       return () => clearTimeout(timer);
     }
+
+    // Listen for replay requests
+    function handleReplay() {
+      setStep(0);
+      setIsOpen(true);
+    }
+    window.addEventListener("replay-tour", handleReplay);
+    return () => window.removeEventListener("replay-tour", handleReplay);
   }, []);
 
   function completeTour() {
