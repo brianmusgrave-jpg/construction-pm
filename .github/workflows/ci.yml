@@ -20,7 +20,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx tsc --noEmit
+      - run: npx prisma generate
+      - run: npx tsc -p tsconfig.json
 
   lint:
     name: ESLint
@@ -32,7 +33,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run lint
+      - run: npx prisma generate
+      - run: npx eslint .
 
   unit-tests:
     name: Unit Tests (Vitest)
@@ -44,6 +46,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npx prisma generate
       - run: npm run test
 
   e2e-tests:
@@ -81,6 +84,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npx prisma generate
       - run: npx vitest run src/__tests__/architecture.test.ts
 
   i18n-sync-check:
@@ -93,4 +97,5 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npx prisma generate
       - run: npx vitest run src/__tests__/i18n-sync.test.ts
