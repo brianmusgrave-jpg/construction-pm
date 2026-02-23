@@ -585,5 +585,12 @@
     "deleteConfirm": "¿Eliminar {name}? Esto también eliminará todas sus asignaciones de fase.",
     "addContactBtn": "Agregar contacto",
     "saveChanges": "Guardar cambios"
+  },
+  "pwa": {
+    "installTitle": "Instalar Construction PM",
+    "installMessage": "Agrega a tu pantalla de inicio para acceso rápido y soporte sin conexión.",
+    "installButton": "Instalar",
+    "dismiss": "Ahora no",
+    "installedToast": "¡Aplicación instalada exitosamente!"
   }
 }

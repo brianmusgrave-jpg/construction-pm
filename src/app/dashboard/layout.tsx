@@ -5,6 +5,7 @@ import { getOrgSettings } from "@/actions/settings";
 import { getThemeCSS } from "@/lib/themes";
 import { getUnreadCount } from "@/actions/notifications";
 import { OnboardingTour } from "@/components/help/OnboardingTour";
+import { InstallPrompt } from "@/components/ui/InstallPrompt";
 
 export default async function DashboardLayout({
   children,
@@ -28,11 +29,14 @@ export default async function DashboardLayout({
         companyName={orgSettings.companyName}
         unreadCount={unreadCount}
       />
-      <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
+      <main className="flex-1 overflow-auto pt-14 pb-16 lg:pt-0 lg:pb-0">
+        {children}
+      </main>
       <OnboardingTour
         userRole={session.user.role || "VIEWER"}
         userName={session.user.name || undefined}
       />
+      <InstallPrompt />
     </div>
   );
 }

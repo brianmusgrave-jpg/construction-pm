@@ -585,5 +585,12 @@
     "deleteConfirm": "Delete {name}? This will also remove all their phase assignments.",
     "addContactBtn": "Add Contact",
     "saveChanges": "Save Changes"
+  },
+  "pwa": {
+    "installTitle": "Install Construction PM",
+    "installMessage": "Add to your home screen for faster access and offline support.",
+    "installButton": "Install",
+    "dismiss": "Not now",
+    "installedToast": "App installed successfully!"
   }
 }
