@@ -12,21 +12,9 @@ async function requireAuth() {
   return session.user.id;
 }
 
-export const WEBHOOK_EVENTS = [
-  "project.created",
-  "project.updated",
-  "phase.status_changed",
-  "inspection.scheduled",
-  "inspection.result",
-  "change_order.submitted",
-  "change_order.approved",
-  "change_order.rejected",
-  "daily_log.created",
-  "document.uploaded",
-  "photo.uploaded",
-] as const;
-
-export type WebhookEvent = typeof WEBHOOK_EVENTS[number];
+// WEBHOOK_EVENTS moved to @/lib/webhook-events to avoid "use server" export restriction
+import { WEBHOOK_EVENTS } from "@/lib/webhook-events";
+export type { WebhookEvent } from "@/lib/webhook-events";
 
 export async function getWebhooks(): Promise<Webhook[]> {
   await requireAuth();

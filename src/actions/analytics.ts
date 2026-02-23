@@ -3,14 +3,9 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
-export interface AnalyticsData {
-  projectStatusCounts: { status: string; count: number }[];
-  phaseStatusCounts: { status: string; count: number }[];
-  budgetSummary: { totalEstimated: number; totalActual: number };
-  monthlyActivity: { month: string; phases: number; documents: number }[];
-  teamWorkload: { name: string; assignedPhases: number }[];
-  phaseCompletionTrend: { week: string; completed: number }[];
-}
+// AnalyticsData type moved to @/lib/analytics-types to avoid "use server" export restriction
+import type { AnalyticsData } from "@/lib/analytics-types";
+export type { AnalyticsData } from "@/lib/analytics-types";
 
 export async function getAnalytics(): Promise<AnalyticsData> {
   const session = await auth();

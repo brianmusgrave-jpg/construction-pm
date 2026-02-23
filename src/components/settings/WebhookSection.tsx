@@ -14,7 +14,8 @@ import {
   CheckCircle2,
   XCircle,
 } from "lucide-react";
-import { createWebhook, toggleWebhook, deleteWebhook, WEBHOOK_EVENTS } from "@/actions/webhooks";
+import { createWebhook, toggleWebhook, deleteWebhook } from "@/actions/webhooks";
+import { WEBHOOK_EVENTS } from "@/lib/webhook-events";
 import type { Webhook } from "@/lib/db-types";
 
 interface WebhookSectionProps {

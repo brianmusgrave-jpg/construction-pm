@@ -3,13 +3,9 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 
-export type SearchResult = {
-  type: "project" | "phase" | "document" | "staff";
-  id: string;
-  title: string;
-  subtitle?: string;
-  href: string;
-};
+// SearchResult type moved to @/lib/search-types to avoid "use server" export restriction
+import type { SearchResult } from "@/lib/search-types";
+export type { SearchResult } from "@/lib/search-types";
 
 export async function globalSearch(query: string): Promise<SearchResult[]> {
   const session = await auth();
