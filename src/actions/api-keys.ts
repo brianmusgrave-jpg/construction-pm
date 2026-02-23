@@ -21,11 +21,12 @@ export async function createApiKey(name: string, expiresAt?: string): Promise<{ 
   await requireAuth();
   if (!name.trim()) throw new Error("Name is required");
 
-  // Generate key: prefix + random bytes
+  // Generate key: cpk_ prefix + 64 hex chars
   const rawKey = randomBytes(32).toString("hex");
-  const prefix = "cpk_" + rawKey.slice(0, 8);
-  const fullKey = prefix + "_" + rawKey.slice(8);
+  const fullKey = "cpk_" + rawKey;
   const keyHash = createHash("sha256").update(fullKey).digest("hex");
+  // Store only a safe display hint — last 4 chars, no key material exposed
+  const prefix = "cpk_..." + rawKey.slice(-4);
 
   const record = await db.apiKey.create({
     data: {

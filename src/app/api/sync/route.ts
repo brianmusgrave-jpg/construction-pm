@@ -176,7 +176,7 @@ async function dispatchAction(action: string, p: Record<string, unknown>): Promi
 export async function POST(request: NextRequest) {
   // Rate limit: 20 sync requests per minute per IP
   const ip = request.headers.get("x-forwarded-for") || "unknown";
-  const rl = rateLimitHeaders(`sync:${ip}`, 20, 60_000);
+  const rl = await rateLimitHeaders(`sync:${ip}`, 20, 60_000);
   if (rl.limited) {
     return NextResponse.json(
       { error: "Rate limit exceeded. Try again later." },
