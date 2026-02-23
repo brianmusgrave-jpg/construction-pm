@@ -237,7 +237,7 @@ export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionP
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {log.issues && (
-                    <AlertTriangle className="w-3.5 h-3.5 text-amber-500" title="Has issues" />
+                    <span title="Has issues"><AlertTriangle className="w-3.5 h-3.5 text-amber-500" /></span>
                   )}
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDelete(log.id); }}

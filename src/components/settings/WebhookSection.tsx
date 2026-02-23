@@ -146,8 +146,8 @@ export function WebhookSection({ webhooks }: WebhookSectionProps) {
                     {!wh.active && <span className="text-xs bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded">Paused</span>}
                     {wh.lastStatusCode != null && (
                       wh.lastStatusCode >= 200 && wh.lastStatusCode < 300
-                        ? <CheckCircle2 className="w-3.5 h-3.5 text-green-500" title={`Last: ${wh.lastStatusCode}`} />
-                        : <XCircle className="w-3.5 h-3.5 text-red-500" title={`Last: ${wh.lastStatusCode}`} />
+                        ? <span title={`Last: ${wh.lastStatusCode}`}><CheckCircle2 className="w-3.5 h-3.5 text-green-500" /></span>
+                        : <span title={`Last: ${wh.lastStatusCode}`}><XCircle className="w-3.5 h-3.5 text-red-500" /></span>
                     )}
                   </div>
                   <p className="text-xs text-gray-400 font-mono mt-0.5 truncate max-w-xs">{wh.url}</p>

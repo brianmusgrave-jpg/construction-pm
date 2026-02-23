@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 import {
   sendPhaseStatusEmail,
   sendReviewRequestEmail,
@@ -24,7 +23,12 @@ type NotificationType =
   | "TIMELINE_SHIFTED"
   | "MEMBER_INVITED"
   | "COMMENT_ADDED"
-  | "DEPENDENCY_CHANGED";
+  | "DEPENDENCY_CHANGED"
+  | "CHANGE_ORDER_SUBMITTED"
+  | "CHANGE_ORDER_APPROVED"
+  | "CHANGE_ORDER_REJECTED"
+  | "INSPECTION_SCHEDULED"
+  | "INSPECTION_RESULT";
 
 interface NotifyOptions {
   type: NotificationType;
@@ -89,7 +93,7 @@ export async function notify(options: NotifyOptions): Promise<void> {
           title,
           message,
           userId,
-          data: (data as Prisma.InputJsonValue) ?? Prisma.JsonNull,
+          data: (data ?? undefined) as any,
         })),
       });
     }
@@ -253,7 +257,7 @@ async function sendSMSNotifications(
 
   const phones = users
     .map((u: typeof users[number]) => u.phone)
-    .filter((p): p is string => !!p);
+    .filter((p: string | null): p is string => !!p);
   if (phones.length === 0) return;
 
   const { projectName, phaseName } = await resolveNames(data);
