@@ -61,6 +61,10 @@ export async function getProjectBudgetSummary(projectId: string) {
           status: true,
           estimatedCost: true,
           actualCost: true,
+          changeOrders: {
+            where: { status: "APPROVED" },
+            select: { id: true, amount: true, title: true, number: true },
+          },
         },
         orderBy: { sortOrder: "asc" },
       },
@@ -69,13 +73,28 @@ export async function getProjectBudgetSummary(projectId: string) {
 
   if (!project) throw new Error("Project not found");
 
-  const phases = (project as unknown as { phases: { id: string; name: string; status: string; estimatedCost: unknown; actualCost: unknown }[] }).phases;
+  type PhaseRow = {
+    id: string; name: string; status: string;
+    estimatedCost: unknown; actualCost: unknown;
+    changeOrders: { id: string; amount: unknown; title: string; number: string }[];
+  };
+  const phases = (project as unknown as { phases: PhaseRow[] }).phases;
+
   const totalEstimated = phases.reduce(
-    (sum: number, p: { estimatedCost: unknown }) => sum + (p.estimatedCost ? Number(p.estimatedCost) : 0),
+    (sum: number, p: PhaseRow) => sum + (p.estimatedCost ? Number(p.estimatedCost) : 0),
     0
   );
   const totalActual = phases.reduce(
-    (sum: number, p: { actualCost: unknown }) => sum + (p.actualCost ? Number(p.actualCost) : 0),
+    (sum: number, p: PhaseRow) => sum + (p.actualCost ? Number(p.actualCost) : 0),
+    0
+  );
+  const totalApprovedCOs = phases.reduce(
+    (sum: number, p: PhaseRow) =>
+      sum +
+      p.changeOrders.reduce(
+        (s: number, co) => s + (co.amount ? Number(co.amount) : 0),
+        0
+      ),
     0
   );
   const projectBudget = project.budget ? Number(project.budget) : null;
@@ -84,13 +103,23 @@ export async function getProjectBudgetSummary(projectId: string) {
     projectBudget,
     totalEstimated,
     totalActual,
+    totalApprovedCOs,
+    adjustedBudget: projectBudget !== null ? projectBudget + totalApprovedCOs : null,
     variance: totalEstimated > 0 ? totalActual - totalEstimated : 0,
-    phases: phases.map((p: typeof phases[number]) => ({
-      id: p.id,
-      name: p.name,
-      status: p.status,
-      estimatedCost: p.estimatedCost ? Number(p.estimatedCost) : null,
-      actualCost: p.actualCost ? Number(p.actualCost) : null,
-    })),
+    phases: phases.map((p: PhaseRow) => {
+      const phaseApprovedCOs = p.changeOrders.reduce(
+        (s: number, co) => s + (co.amount ? Number(co.amount) : 0),
+        0
+      );
+      return {
+        id: p.id,
+        name: p.name,
+        status: p.status,
+        estimatedCost: p.estimatedCost ? Number(p.estimatedCost) : null,
+        actualCost: p.actualCost ? Number(p.actualCost) : null,
+        approvedCOs: phaseApprovedCOs,
+        adjustedEstimate: (p.estimatedCost ? Number(p.estimatedCost) : 0) + phaseApprovedCOs,
+      };
+    }),
   };
 }

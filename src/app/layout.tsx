@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { ServiceWorkerRegister } from "@/components/ui/ServiceWorkerRegister";
+import { OfflineIndicator } from "@/components/ui/OfflineIndicator";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
@@ -55,6 +56,7 @@ export default async function RootLayout({
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
         <ServiceWorkerRegister />
+        <OfflineIndicator />
       </body>
     </html>
   );

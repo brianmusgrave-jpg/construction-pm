@@ -241,7 +241,10 @@
     "costsUpdated": "Custos da fase atualizados",
     "failedToUpdateCosts": "Erro ao atualizar custos",
     "estShort": "Est.",
-    "varShort": "Var."
+    "varShort": "Var.",
+    "approvedCOs": "Ordens de Alteração Aprovadas",
+    "adjustedBudget": "Orçamento Ajustado",
+    "cosShort": "OAs"
   },
   "documents": {
     "title": "Documentos ({count})",
@@ -591,6 +594,13 @@
     "installMessage": "Adicione à tela inicial para acesso mais rápido e suporte offline.",
     "installButton": "Instalar",
     "dismiss": "Agora não",
-    "installedToast": "App instalado com sucesso!"
+    "installedToast": "App instalado com sucesso!",
+    "offlineBanner": "Sem conexão — as alterações serão sincronizadas ao reconectar",
+    "syncing": "Sincronizando {count} alterações pendentes…",
+    "pendingSync": "{count} alterações aguardando sincronização",
+    "failedSync": "{count} alterações falharam ao sincronizar",
+    "retry": "Tentar novamente",
+    "syncComplete": "Todas as alterações sincronizadas com sucesso",
+    "queuedOffline": "Salvo offline — será sincronizado ao conectar"
   }
 }

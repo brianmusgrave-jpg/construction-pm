@@ -1,9 +1,10 @@
 // Construction PM — Service Worker
 // Cache-first strategy for static assets, network-first for API/pages
+// Offline mutation support via client messaging
 
-const CACHE_NAME = "construction-pm-v1";
-const STATIC_CACHE = "static-v1";
-const DATA_CACHE = "data-v1";
+const CACHE_VERSION = "v2";
+const STATIC_CACHE = "static-" + CACHE_VERSION;
+const DATA_CACHE = "data-" + CACHE_VERSION;
 
 // Static assets to pre-cache on install
 const PRECACHE_URLS = [
@@ -42,16 +43,41 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Listen for messages from the client
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 // Fetch strategy
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== "GET") return;
-
   // Skip browser extension and chrome-extension requests
   if (!url.protocol.startsWith("http")) return;
+
+  // Handle non-GET requests (mutations) — notify client when offline
+  if (request.method !== "GET") {
+    if (!self.navigator || self.navigator.onLine === false) {
+      // We're offline — respond with a special status so the client can queue it
+      event.respondWith(
+        new Response(
+          JSON.stringify({
+            offline: true,
+            message: "Request queued for offline sync",
+          }),
+          {
+            status: 503,
+            headers: { "Content-Type": "application/json" },
+          }
+        )
+      );
+    }
+    // If online, let the request pass through normally
+    return;
+  }
 
   // Skip Next.js API routes and server actions — always network
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/_next/data/")) {
@@ -139,7 +165,7 @@ function offlineHTML() {
   <div class="container">
     <div class="icon">🚧</div>
     <h1>You're offline</h1>
-    <p>Check your connection and try again. Some cached pages may still be available.</p>
+    <p>Check your connection and try again. Your pending changes will sync when you reconnect.</p>
     <button onclick="window.location.reload()">Retry</button>
   </div>
 </body>

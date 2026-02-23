@@ -241,7 +241,10 @@
     "costsUpdated": "Coûts des phases mis à jour",
     "failedToUpdateCosts": "Échec de la mise à jour des coûts",
     "estShort": "Est.",
-    "varShort": "Éc."
+    "varShort": "Éc.",
+    "approvedCOs": "Ordres de Modification Approuvés",
+    "adjustedBudget": "Budget Ajusté",
+    "cosShort": "OMs"
   },
   "documents": {
     "title": "Documents ({count})",
@@ -591,6 +594,13 @@
     "installMessage": "Ajoutez à votre écran d'accueil pour un accès plus rapide et le support hors ligne.",
     "installButton": "Installer",
     "dismiss": "Pas maintenant",
-    "installedToast": "Application installée avec succès !"
+    "installedToast": "Application installée avec succès !",
+    "offlineBanner": "Hors ligne — les modifications seront synchronisées à la reconnexion",
+    "syncing": "Synchronisation de {count} modifications en attente…",
+    "pendingSync": "{count} modifications en attente de synchronisation",
+    "failedSync": "{count} modifications n'ont pas pu être synchronisées",
+    "retry": "Réessayer",
+    "syncComplete": "Toutes les modifications ont été synchronisées",
+    "queuedOffline": "Enregistré hors ligne — sera synchronisé à la connexion"
   }
 }

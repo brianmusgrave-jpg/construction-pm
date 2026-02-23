@@ -12,6 +12,8 @@ interface PhaseBudget {
   status: string;
   estimatedCost: number | null;
   actualCost: number | null;
+  approvedCOs?: number;
+  adjustedEstimate?: number;
 }
 
 interface Props {
@@ -19,6 +21,8 @@ interface Props {
   projectBudget: number | null;
   phases: PhaseBudget[];
   canManage: boolean;
+  totalApprovedCOs?: number;
+  adjustedBudget?: number | null;
 }
 
 function fmt(n: number | null): string {
@@ -36,6 +40,8 @@ export function BudgetSection({
   projectBudget: initialBudget,
   phases: initialPhases,
   canManage,
+  totalApprovedCOs = 0,
+  adjustedBudget: initialAdjustedBudget,
 }: Props) {
   const t = useTranslations("budget");
   const [projectBudget, setProjectBudget] = useState(initialBudget);
@@ -154,6 +160,20 @@ export function BudgetSection({
               {t("totalBudget")} <span className="font-semibold text-gray-900">{fmt(projectBudget)}</span>
             </p>
           )
+        )}
+
+        {/* Change order impact on budget */}
+        {totalApprovedCOs > 0 && (
+          <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+            <span className="text-amber-600 font-medium">
+              {t("approvedCOs")}: {fmt(totalApprovedCOs)}
+            </span>
+            {initialAdjustedBudget !== null && initialAdjustedBudget !== undefined && (
+              <span className="text-gray-500">
+                {t("adjustedBudget")}: <span className="font-semibold text-gray-900">{fmt(initialAdjustedBudget)}</span>
+              </span>
+            )}
+          </div>
         )}
       </div>
 
@@ -286,6 +306,12 @@ export function BudgetSection({
                       <p className="text-gray-400">{t("actual")}</p>
                       <p className="text-gray-700 font-medium">{fmt(phase.actualCost)}</p>
                     </div>
+                    {phase.approvedCOs !== undefined && phase.approvedCOs > 0 && (
+                      <div className="text-right">
+                        <p className="text-gray-400">{t("cosShort")}</p>
+                        <p className="text-amber-600 font-medium">+{fmt(phase.approvedCOs)}</p>
+                      </div>
+                    )}
                     {phaseVariance !== null && (
                       <div className="text-right w-16">
                         <p className="text-gray-400">{t("varShort")}</p>

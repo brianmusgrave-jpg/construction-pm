@@ -241,7 +241,10 @@
     "costsUpdated": "Phase costs updated",
     "failedToUpdateCosts": "Failed to update costs",
     "estShort": "Est.",
-    "varShort": "Var."
+    "varShort": "Var.",
+    "approvedCOs": "Approved Change Orders",
+    "adjustedBudget": "Adjusted Budget",
+    "cosShort": "COs"
   },
   "documents": {
     "title": "Documents ({count})",
@@ -591,6 +594,13 @@
     "installMessage": "Add to your home screen for faster access and offline support.",
     "installButton": "Install",
     "dismiss": "Not now",
-    "installedToast": "App installed successfully!"
+    "installedToast": "App installed successfully!",
+    "offlineBanner": "You're offline — changes will sync when reconnected",
+    "syncing": "Syncing {count} pending changes…",
+    "pendingSync": "{count} changes waiting to sync",
+    "failedSync": "{count} changes failed to sync",
+    "retry": "Retry",
+    "syncComplete": "All changes synced successfully",
+    "queuedOffline": "Saved offline — will sync when connected"
   }
 }

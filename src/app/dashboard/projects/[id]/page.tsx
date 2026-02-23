@@ -56,6 +56,10 @@ export default async function ProjectOverviewPage({
                 items: { select: { id: true, completed: true } },
               },
             },
+            changeOrders: {
+              where: { status: "APPROVED" },
+              select: { id: true, amount: true },
+            },
             _count: { select: { documents: true, photos: true } },
           },
           orderBy: { sortOrder: "asc" },
@@ -147,13 +151,23 @@ export default async function ProjectOverviewPage({
     ? await (db as any).clientToken.findMany({ where: { projectId: id }, orderBy: { createdAt: "desc" } }).catch(() => [])
     : [];
 
-  const budgetPhases = phases.map((p: typeof phases[number]) => ({
-    id: p.id,
-    name: p.name,
-    status: p.status,
-    estimatedCost: p.estimatedCost ? Number(p.estimatedCost) : null,
-    actualCost: p.actualCost ? Number(p.actualCost) : null,
-  }));
+  const budgetPhases = phases.map((p: any) => {
+    const phaseApprovedCOs = (p.changeOrders || []).reduce(
+      (s: number, co: any) => s + (co.amount ? Number(co.amount) : 0),
+      0
+    );
+    return {
+      id: p.id,
+      name: p.name,
+      status: p.status,
+      estimatedCost: p.estimatedCost ? Number(p.estimatedCost) : null,
+      actualCost: p.actualCost ? Number(p.actualCost) : null,
+      approvedCOs: phaseApprovedCOs,
+      adjustedEstimate: (p.estimatedCost ? Number(p.estimatedCost) : 0) + phaseApprovedCOs,
+    };
+  });
+  const totalApprovedCOs = budgetPhases.reduce((s: number, p: any) => s + p.approvedCOs, 0);
+  const adjustedBudget = totalBudget > 0 ? totalBudget + totalApprovedCOs : null;
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
@@ -344,6 +358,8 @@ export default async function ProjectOverviewPage({
         projectBudget={project.budget ? Number(project.budget) : null}
         phases={budgetPhases}
         canManage={canManageBudget}
+        totalApprovedCOs={totalApprovedCOs}
+        adjustedBudget={adjustedBudget}
       />
 
       {/* Daily Logs */}
