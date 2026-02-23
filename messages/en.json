@@ -509,7 +509,13 @@
       "budgetForecastingContent": "Budget forecasting helps you predict final project costs based on current spending patterns.\n\nThe forecast section on the Budget page shows:\n• Projected final cost — Estimated total cost at project completion based on current burn rate\n• Cost Performance Index (CPI) — Ratio of budgeted to actual cost; above 1.0 means under budget\n• Estimate at Completion (EAC) — Projected total using earned value methodology\n• Variance at Completion (VAC) — Difference between budget and projected final cost\n\nForecasts update automatically as you enter actual costs and complete phases. A green indicator means the project is tracking under budget; red means it is trending over budget.\n\nUse forecasting to make proactive budget decisions before costs spiral.",
       "reportScheduling": "Scheduled Reports",
       "reportSchedulingContent": "Set up automatic report generation and delivery on a recurring schedule.\n\nTo schedule a report:\n1. Go to the Reports section\n2. Click \"Schedule Report\"\n3. Choose the report type (progress, budget, activity)\n4. Select frequency (daily, weekly, monthly)\n5. Add email recipients\n6. Save the schedule\n\nScheduled reports are generated automatically and delivered via email. You can pause, edit, or delete schedules at any time.\n\nOnly Admins and Project Managers can create scheduled reports."
-    }
+    },
+    "replayIntroDesc": "Walk through the app's key features step by step",
+    "quickLinkNotifications": "Notifications",
+    "quickLinkChangeOrders": "Change Orders",
+    "quickLinkOffline": "Offline Mode",
+    "quickLinkAnalytics": "Analytics",
+    "quickLinkAdvanced": "Integrations"
   },
   "tour": {
     "welcomeTitle": "Welcome to Construction PM!",
@@ -542,7 +548,21 @@
     "reviewTip": "Make sure all checklist items are done before requesting a review.",
     "welcomeUser": "Welcome, {name}!",
     "getStarted": "Get Started",
-    "skip": "Skip"
+    "skip": "Skip",
+    "changeOrdersTitle": "Change Orders & Budget",
+    "changeOrdersDesc": "Track scope changes with formal change orders. When approved, costs automatically roll into your project budget — no manual recalculation needed.",
+    "changeOrdersTip": "Each change order shows its cost impact before you approve it.",
+    "analyticsTitle": "Analytics & Forecasting",
+    "analyticsDesc": "Your dashboard shows real-time analytics: budget health, phase progress, and earned value forecasting with CPI metrics to predict if you'll finish under or over budget.",
+    "analyticsTip": "Check the Budget section for CPI and EAC projections on any project.",
+    "offlineTitle": "Works Offline",
+    "offlineDesc": "No signal on the job site? No problem. All your changes queue up automatically and sync when you're back online. A status indicator shows pending updates.",
+    "offlineTip": "Look for the sync indicator in the top bar when you're back online.",
+    "offlineContractorDesc": "Working without signal? Your uploads, checklist updates, and review requests are saved locally and sync automatically when connectivity returns.",
+    "advancedTitle": "Client Portal & Integrations",
+    "advancedDesc": "Share read-only project views with clients via secure token links. Connect your workflow with API webhooks, bulk CSV imports, GPS-tagged photos, and scheduled reports.",
+    "advancedTip": "Generate a client portal link from any project's Settings tab.",
+    "learnMore": "Learn more in the Help Center →"
   },
   "contractor": {
     "portal": "Contractor Portal",

@@ -232,12 +232,14 @@ function useGuides(t: (key: string) => string): GuideSection[] {
 
 interface Props {
   userRole: string;
+  initialSection?: string;
+  initialArticle?: string;
 }
 
-export function HelpCenter({ userRole }: Props) {
+export function HelpCenter({ userRole, initialSection, initialArticle }: Props) {
   const [search, setSearch] = useState("");
-  const [expandedSection, setExpandedSection] = useState<string | null>("getting-started");
-  const [expandedArticle, setExpandedArticle] = useState<string | null>("gs-overview");
+  const [expandedSection, setExpandedSection] = useState<string | null>(initialSection || "getting-started");
+  const [expandedArticle, setExpandedArticle] = useState<string | null>(initialArticle || "gs-overview");
   const t = useTranslations("help");
   const tc = useTranslations("common");
 
@@ -297,32 +299,48 @@ export function HelpCenter({ userRole }: Props) {
 
       {/* Quick Links */}
       {!search && (
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
+        <div className="space-y-3 mb-6">
+          {/* Primary: Replay Tour */}
           <button
             onClick={() => resetTour()}
-            className="flex items-center gap-2 p-3 bg-[var(--color-primary-bg)] rounded-lg border border-[var(--color-primary-light)]/30 hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all text-sm font-medium text-[var(--color-primary-dark)]"
+            className="w-full flex items-center gap-3 p-4 bg-[var(--color-primary-bg)] rounded-xl border border-[var(--color-primary-light)]/30 hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all text-left"
           >
-            <PlayCircle className="w-4 h-4" />
-            {t("replayIntro")}
+            <PlayCircle className="w-5 h-5 text-[var(--color-primary)]" />
+            <div>
+              <span className="text-sm font-semibold text-[var(--color-primary-dark)]">
+                {t("replayIntro")}
+              </span>
+              <p className="text-xs text-[var(--color-primary-dark)]/70 mt-0.5">
+                {t("replayIntroDesc")}
+              </p>
+            </div>
           </button>
-          {[
-            { label: t("createProject"), icon: <FolderKanban className="w-4 h-4" />, section: "projects", article: "proj-overview" },
-            { label: t("phaseStatus"), icon: <HardHat className="w-4 h-4" />, section: "phases", article: "phase-lifecycle" },
-            { label: t("inviteTeam"), icon: <Users className="w-4 h-4" />, section: "team", article: "team-invite" },
-            { label: tc("search"), icon: <Bell className="w-4 h-4" />, section: "notifications", article: "notif-channels" },
-          ].map((link) => (
-            <button
-              key={link.label}
-              onClick={() => {
-                setExpandedSection(link.section);
-                setExpandedArticle(link.article);
-              }}
-              className="flex items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all text-sm font-medium text-gray-700"
-            >
-              <span className="text-[var(--color-primary)]">{link.icon}</span>
-              {link.label}
-            </button>
-          ))}
+
+          {/* Quick jump links */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { label: t("createProject"), icon: <FolderKanban className="w-4 h-4" />, section: "projects", article: "proj-overview" },
+              { label: t("phaseStatus"), icon: <HardHat className="w-4 h-4" />, section: "phases", article: "phase-lifecycle" },
+              { label: t("inviteTeam"), icon: <Users className="w-4 h-4" />, section: "team", article: "team-invite" },
+              { label: t("quickLinkNotifications"), icon: <Bell className="w-4 h-4" />, section: "notifications", article: "notif-channels" },
+              { label: t("quickLinkChangeOrders"), icon: <Receipt className="w-4 h-4" />, section: "change-orders", article: "co-overview" },
+              { label: t("quickLinkOffline"), icon: <WifiOff className="w-4 h-4" />, section: "offline", article: "offline-mode" },
+              { label: t("quickLinkAnalytics"), icon: <BarChart3 className="w-4 h-4" />, section: "analytics", article: "analytics-dash" },
+              { label: t("quickLinkAdvanced"), icon: <Globe className="w-4 h-4" />, section: "advanced", article: "adv-client-portal" },
+            ].map((link) => (
+              <button
+                key={link.section}
+                onClick={() => {
+                  setExpandedSection(link.section);
+                  setExpandedArticle(link.article);
+                }}
+                className="flex items-center gap-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-[var(--color-primary-light)] hover:shadow-sm transition-all text-sm font-medium text-gray-700"
+              >
+                <span className="text-[var(--color-primary)]">{link.icon}</span>
+                {link.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

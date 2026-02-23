@@ -509,7 +509,13 @@
       "budgetForecastingContent": "La prévision budgétaire aide à prédire les coûts finaux basés sur les tendances actuelles.\n\nLa section prévision affiche :\n• Coût final projeté — Estimation du coût total à l'achèvement\n• Indice de Performance des Coûts (CPI) — Ratio coût budgété vs. réel ; supérieur à 1,0 signifie sous-budget\n• Estimation à l'Achèvement (EAC) — Total projeté avec la méthode de la valeur acquise\n• Écart à l'Achèvement (VAC) — Différence entre budget et coût final projeté\n\nLes prévisions se mettent à jour automatiquement. Vert indique sous-budget ; rouge indique dépassement.",
       "reportScheduling": "Rapports Programmés",
       "reportSchedulingContent": "Configurez la génération automatique et la livraison de rapports récurrents.\n\nPour programmer :\n1. Allez à la section Rapports\n2. Cliquez sur \"Programmer un Rapport\"\n3. Choisissez le type (progrès, budget, activité)\n4. Sélectionnez la fréquence (quotidien, hebdomadaire, mensuel)\n5. Ajoutez les destinataires par email\n6. Enregistrez la programmation\n\nLes rapports sont générés et livrés automatiquement. Seuls les Admins et Chefs de Projet peuvent programmer."
-    }
+    },
+    "replayIntroDesc": "Parcourez les fonctionnalités clés de l'application étape par étape",
+    "quickLinkNotifications": "Notifications",
+    "quickLinkChangeOrders": "Avenants",
+    "quickLinkOffline": "Mode Hors Ligne",
+    "quickLinkAnalytics": "Analyses",
+    "quickLinkAdvanced": "Intégrations"
   },
   "tour": {
     "welcomeTitle": "Bienvenue sur Construction PM !",
@@ -542,7 +548,21 @@
     "reviewTip": "Assurez-vous que tous les éléments de la liste sont faits avant de demander une révision.",
     "welcomeUser": "Bienvenue, {name} !",
     "getStarted": "Commencer",
-    "skip": "Passer"
+    "skip": "Passer",
+    "changeOrdersTitle": "Avenants et Budget",
+    "changeOrdersDesc": "Suivez les modifications de périmètre avec des avenants formels. Une fois approuvés, les coûts s'intègrent automatiquement dans le budget du projet — sans recalcul manuel.",
+    "changeOrdersTip": "Chaque avenant affiche son impact sur les coûts avant approbation.",
+    "analyticsTitle": "Analyses et Prévisions",
+    "analyticsDesc": "Votre tableau de bord affiche des analyses en temps réel : santé du budget, avancement des phases et prévisions de valeur acquise avec des métriques CPI pour prédire si vous terminerez en dessous ou au-dessus du budget.",
+    "analyticsTip": "Consultez la section Budget pour les projections CPI et EAC de n'importe quel projet.",
+    "offlineTitle": "Fonctionne Hors Ligne",
+    "offlineDesc": "Pas de signal sur le chantier ? Pas de problème. Toutes vos modifications sont mises en file d'attente automatiquement et synchronisées lorsque vous êtes de nouveau en ligne. Un indicateur d'état affiche les mises à jour en attente.",
+    "offlineTip": "Recherchez l'indicateur de synchronisation dans la barre supérieure lorsque vous êtes de nouveau en ligne.",
+    "offlineContractorDesc": "Vous travaillez sans signal ? Vos téléchargements, mises à jour de listes de contrôle et demandes de révision sont enregistrés localement et synchronisés automatiquement au retour de la connectivité.",
+    "advancedTitle": "Portail Client et Intégrations",
+    "advancedDesc": "Partagez des vues en lecture seule des projets avec vos clients via des liens à jeton sécurisés. Connectez votre flux de travail avec des webhooks API, des imports CSV en masse, des photos géolocalisées et des rapports programmés.",
+    "advancedTip": "Générez un lien de portail client depuis l'onglet Paramètres de n'importe quel projet.",
+    "learnMore": "En savoir plus dans le Centre d'aide →"
   },
   "contractor": {
     "portal": "Portail entrepreneur",

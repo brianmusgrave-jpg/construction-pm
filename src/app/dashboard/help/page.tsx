@@ -3,11 +3,16 @@ import { redirect } from "next/navigation";
 import { HelpCenter } from "@/components/help/HelpCenter";
 import { getTranslations } from "next-intl/server";
 
-export default async function HelpPage() {
+interface Props {
+  searchParams: Promise<{ section?: string; article?: string }>;
+}
+
+export default async function HelpPage({ searchParams }: Props) {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
   const t = await getTranslations("nav");
+  const params = await searchParams;
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -17,7 +22,11 @@ export default async function HelpPage() {
           Guides, tips, and answers to common questions
         </p>
       </div>
-      <HelpCenter userRole={session.user.role || "VIEWER"} />
+      <HelpCenter
+        userRole={session.user.role || "VIEWER"}
+        initialSection={params.section}
+        initialArticle={params.article}
+      />
     </div>
   );
 }

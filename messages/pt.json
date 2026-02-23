@@ -509,7 +509,13 @@
       "budgetForecastingContent": "A previsão de orçamento ajuda a prever custos finais com base nos padrões de gastos atuais.\n\nA seção de previsão mostra:\n• Custo final projetado — Estimativa do custo total na conclusão do projeto\n• Índice de Desempenho de Custo (CPI) — Razão entre custo orçado e real; acima de 1.0 significa abaixo do orçamento\n• Estimativa na Conclusão (EAC) — Total projetado usando metodologia de valor agregado\n• Variação na Conclusão (VAC) — Diferença entre orçamento e custo final projetado\n\nAs previsões se atualizam automaticamente. Verde indica abaixo do orçamento; vermelho indica acima.",
       "reportScheduling": "Relatórios Programados",
       "reportSchedulingContent": "Configure geração automática e entrega de relatórios de forma recorrente.\n\nPara programar:\n1. Vá à seção de Relatórios\n2. Clique em \"Programar Relatório\"\n3. Escolha o tipo (progresso, orçamento, atividade)\n4. Selecione a frequência (diário, semanal, mensal)\n5. Adicione destinatários de email\n6. Salve a programação\n\nRelatórios são gerados e entregues automaticamente por email. Apenas Admins e GPs podem criar relatórios programados."
-    }
+    },
+    "replayIntroDesc": "Conheça os principais recursos do aplicativo passo a passo",
+    "quickLinkNotifications": "Notificações",
+    "quickLinkChangeOrders": "Ordens de Mudança",
+    "quickLinkOffline": "Modo Offline",
+    "quickLinkAnalytics": "Análises",
+    "quickLinkAdvanced": "Integrações"
   },
   "tour": {
     "welcomeTitle": "Bem-vindo ao Construction PM!",
@@ -542,7 +548,21 @@
     "reviewTip": "Certifique-se de que todos os itens do checklist estão concluídos antes de solicitar uma revisão.",
     "welcomeUser": "Bem-vindo, {name}!",
     "getStarted": "Começar",
-    "skip": "Pular"
+    "skip": "Pular",
+    "changeOrdersTitle": "Ordens de Mudança e Orçamento",
+    "changeOrdersDesc": "Rastreie alterações de escopo com ordens de mudança formais. Quando aprovados, os custos são integrados automaticamente ao orçamento do projeto — sem recálculos manuais.",
+    "changeOrdersTip": "Cada ordem de mudança mostra seu impacto no custo antes da aprovação.",
+    "analyticsTitle": "Análises e Previsões",
+    "analyticsDesc": "Seu painel mostra análises em tempo real: saúde do orçamento, progresso das fases e previsões de valor agregado com métricas CPI para prever se você terminará abaixo ou acima do orçamento.",
+    "analyticsTip": "Verifique a seção de Orçamento para projeções CPI e EAC em qualquer projeto.",
+    "offlineTitle": "Funciona Offline",
+    "offlineDesc": "Sem sinal no canteiro de obras? Sem problema. Todas as suas alterações são enfileiradas automaticamente e sincronizadas quando você voltar a ficar online. Um indicador de status mostra as atualizações pendentes.",
+    "offlineTip": "Procure o indicador de sincronização na barra superior quando voltar a ficar online.",
+    "offlineContractorDesc": "Trabalhando sem sinal? Seus uploads, atualizações de checklists e solicitações de revisão são salvos localmente e sincronizam automaticamente quando a conectividade retorna.",
+    "advancedTitle": "Portal do Cliente e Integrações",
+    "advancedDesc": "Compartilhe visualizações somente leitura de projetos com clientes via links de token seguros. Conecte seu fluxo de trabalho com webhooks de API, importações CSV em massa, fotos com GPS e relatórios agendados.",
+    "advancedTip": "Gere um link do portal do cliente na aba Configurações de qualquer projeto.",
+    "learnMore": "Saiba mais no Centro de Ajuda →"
   },
   "contractor": {
     "portal": "Portal do empreiteiro",

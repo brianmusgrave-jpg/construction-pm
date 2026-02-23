@@ -12,6 +12,11 @@ import {
   Camera,
   Bell,
   Rocket,
+  Receipt,
+  WifiOff,
+  BarChart3,
+  Globe,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -21,22 +26,118 @@ interface TourStep {
   titleKey: string;
   descKey: string;
   tipKey?: string;
+  /** help center section + article to deep-link on "Learn More" */
+  learnMore?: { section: string; article: string };
 }
 
 const ADMIN_STEPS: TourStep[] = [
-  { icon: <Rocket className="w-8 h-8" />, titleKey: "welcomeTitle", descKey: "welcomeDesc", tipKey: "welcomeTip" },
-  { icon: <FolderKanban className="w-8 h-8" />, titleKey: "projectsTitle", descKey: "projectsDesc", tipKey: "projectsTip" },
-  { icon: <HardHat className="w-8 h-8" />, titleKey: "phasesTitle", descKey: "phasesDesc", tipKey: "phasesTip" },
-  { icon: <Users className="w-8 h-8" />, titleKey: "teamTitle", descKey: "teamDesc", tipKey: "teamTip" },
-  { icon: <ClipboardCheck className="w-8 h-8" />, titleKey: "checklistsTitle", descKey: "checklistsDesc", tipKey: "checklistsTip" },
-  { icon: <Bell className="w-8 h-8" />, titleKey: "notificationsTitle", descKey: "notificationsDesc", tipKey: "notificationsTip" },
+  {
+    icon: <Rocket className="w-8 h-8" />,
+    titleKey: "welcomeTitle",
+    descKey: "welcomeDesc",
+    tipKey: "welcomeTip",
+    learnMore: { section: "getting-started", article: "gs-overview" },
+  },
+  {
+    icon: <FolderKanban className="w-8 h-8" />,
+    titleKey: "projectsTitle",
+    descKey: "projectsDesc",
+    tipKey: "projectsTip",
+    learnMore: { section: "projects", article: "proj-overview" },
+  },
+  {
+    icon: <HardHat className="w-8 h-8" />,
+    titleKey: "phasesTitle",
+    descKey: "phasesDesc",
+    tipKey: "phasesTip",
+    learnMore: { section: "phases", article: "phase-lifecycle" },
+  },
+  {
+    icon: <Users className="w-8 h-8" />,
+    titleKey: "teamTitle",
+    descKey: "teamDesc",
+    tipKey: "teamTip",
+    learnMore: { section: "team", article: "team-invite" },
+  },
+  {
+    icon: <ClipboardCheck className="w-8 h-8" />,
+    titleKey: "checklistsTitle",
+    descKey: "checklistsDesc",
+    tipKey: "checklistsTip",
+    learnMore: { section: "checklists", article: "check-templates" },
+  },
+  {
+    icon: <Receipt className="w-8 h-8" />,
+    titleKey: "changeOrdersTitle",
+    descKey: "changeOrdersDesc",
+    tipKey: "changeOrdersTip",
+    learnMore: { section: "change-orders", article: "co-overview" },
+  },
+  {
+    icon: <BarChart3 className="w-8 h-8" />,
+    titleKey: "analyticsTitle",
+    descKey: "analyticsDesc",
+    tipKey: "analyticsTip",
+    learnMore: { section: "analytics", article: "analytics-dash" },
+  },
+  {
+    icon: <WifiOff className="w-8 h-8" />,
+    titleKey: "offlineTitle",
+    descKey: "offlineDesc",
+    tipKey: "offlineTip",
+    learnMore: { section: "offline", article: "offline-mode" },
+  },
+  {
+    icon: <Globe className="w-8 h-8" />,
+    titleKey: "advancedTitle",
+    descKey: "advancedDesc",
+    tipKey: "advancedTip",
+    learnMore: { section: "advanced", article: "adv-client-portal" },
+  },
+  {
+    icon: <Bell className="w-8 h-8" />,
+    titleKey: "notificationsTitle",
+    descKey: "notificationsDesc",
+    tipKey: "notificationsTip",
+    learnMore: { section: "notifications", article: "notif-channels" },
+  },
 ];
 
 const CONTRACTOR_STEPS: TourStep[] = [
-  { icon: <Rocket className="w-8 h-8" />, titleKey: "welcomeTitle", descKey: "contractorWelcomeDesc" },
-  { icon: <HardHat className="w-8 h-8" />, titleKey: "assignedTitle", descKey: "assignedDesc", tipKey: "assignedTip" },
-  { icon: <Camera className="w-8 h-8" />, titleKey: "uploadTitle", descKey: "uploadDesc", tipKey: "uploadTip" },
-  { icon: <ClipboardCheck className="w-8 h-8" />, titleKey: "reviewTitle", descKey: "reviewDesc", tipKey: "reviewTip" },
+  {
+    icon: <Rocket className="w-8 h-8" />,
+    titleKey: "welcomeTitle",
+    descKey: "contractorWelcomeDesc",
+    learnMore: { section: "getting-started", article: "gs-overview" },
+  },
+  {
+    icon: <HardHat className="w-8 h-8" />,
+    titleKey: "assignedTitle",
+    descKey: "assignedDesc",
+    tipKey: "assignedTip",
+    learnMore: { section: "phases", article: "phase-lifecycle" },
+  },
+  {
+    icon: <Camera className="w-8 h-8" />,
+    titleKey: "uploadTitle",
+    descKey: "uploadDesc",
+    tipKey: "uploadTip",
+    learnMore: { section: "photos", article: "photo-progress" },
+  },
+  {
+    icon: <ClipboardCheck className="w-8 h-8" />,
+    titleKey: "reviewTitle",
+    descKey: "reviewDesc",
+    tipKey: "reviewTip",
+    learnMore: { section: "checklists", article: "check-templates" },
+  },
+  {
+    icon: <WifiOff className="w-8 h-8" />,
+    titleKey: "offlineTitle",
+    descKey: "offlineContractorDesc",
+    tipKey: "offlineTip",
+    learnMore: { section: "offline", article: "offline-mode" },
+  },
 ];
 
 interface Props {
@@ -50,6 +151,14 @@ export const TOUR_STORAGE_KEY = "construction-pm-tour-complete";
 export function resetTour() {
   localStorage.removeItem(TOUR_STORAGE_KEY);
   window.dispatchEvent(new Event("replay-tour"));
+}
+
+/**
+ * Navigates to the help page with section + article params so the
+ * HelpCenter auto-expands the right article.
+ */
+function navigateToHelp(section: string, article: string) {
+  window.location.href = `/dashboard/help?section=${section}&article=${article}`;
 }
 
 export function OnboardingTour({ userRole, userName }: Props) {
@@ -91,6 +200,14 @@ export function OnboardingTour({ userRole, userName }: Props) {
 
   function handlePrev() {
     if (step > 0) setStep(step - 1);
+  }
+
+  function handleLearnMore() {
+    const lm = steps[step]?.learnMore;
+    if (lm) {
+      completeTour();
+      navigateToHelp(lm.section, lm.article);
+    }
   }
 
   if (!isOpen) return null;
@@ -163,11 +280,22 @@ export function OnboardingTour({ userRole, userName }: Props) {
 
           {/* Tip */}
           {currentStep.tipKey && (
-            <div className="bg-[var(--color-primary-bg)]/50 rounded-lg px-4 py-3 mb-6">
+            <div className="bg-[var(--color-primary-bg)]/50 rounded-lg px-4 py-3 mb-2">
               <p className="text-xs text-[var(--color-primary-dark)] font-medium">
                 💡 {t(currentStep.tipKey)}
               </p>
             </div>
+          )}
+
+          {/* Learn More link */}
+          {currentStep.learnMore && (
+            <button
+              onClick={handleLearnMore}
+              className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors mt-2"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              {t("learnMore")}
+            </button>
           )}
         </div>
 
