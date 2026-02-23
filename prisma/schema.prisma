@@ -430,7 +430,9 @@ enum ActivityType {
   MEMBER_JOINED
   MEMBER_REMOVED
   COMMENT_ADDED
+  COMMENT_DELETED
   DEPENDENCY_ADDED
+  DEPENDENCY_REMOVED
 }
 
 // ── Phase Comments & Dependencies ──
