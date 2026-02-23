@@ -4,10 +4,10 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 // AnalyticsData type moved to @/lib/analytics-types to avoid "use server" export restriction
-import type { AnalyticsData } from "@/lib/analytics-types";
-export type { AnalyticsData } from "@/lib/analytics-types";
+import type { AnalyticsData, AnalyticsDateRange } from "@/lib/analytics-types";
+export type { AnalyticsData, AnalyticsDateRange } from "@/lib/analytics-types";
 
-export async function getAnalytics(): Promise<AnalyticsData> {
+export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<AnalyticsData> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
 
@@ -20,10 +20,15 @@ export async function getAnalytics(): Promise<AnalyticsData> {
   });
   const projectIds = memberships.map((m: { projectId: string }) => m.projectId);
 
+  // Date range filter
+  const rangeMonths = range === "3m" ? 3 : range === "6m" ? 6 : range === "12m" ? 12 : 120;
+  const rangeStart = new Date();
+  rangeStart.setMonth(rangeStart.getMonth() - rangeMonths);
+
   // Project status distribution
   const projects = await db.project.findMany({
     where: { id: { in: projectIds } },
-    select: { status: true },
+    select: { status: true, name: true, budget: true, amountSpent: true },
   });
   const projectStatusMap = new Map<string, number>();
   for (const p of projects) {
@@ -33,10 +38,21 @@ export async function getAnalytics(): Promise<AnalyticsData> {
     ([status, count]) => ({ status, count })
   );
 
-  // Phase status distribution
+  // Per-project budget breakdown
+  const projectBudgets = projects
+    .filter((p: any) => Number(p.budget ?? 0) > 0)
+    .map((p: any) => ({
+      name: p.name.length > 20 ? p.name.slice(0, 20) + "…" : p.name,
+      estimated: Number(p.budget ?? 0),
+      actual: Number(p.amountSpent ?? 0),
+    }))
+    .sort((a: any, b: any) => b.estimated - a.estimated)
+    .slice(0, 8);
+
+  // Phase status distribution + budget totals
   const phases = await db.phase.findMany({
     where: { projectId: { in: projectIds } },
-    select: { status: true, estimatedCost: true, actualCost: true },
+    select: { status: true, estimatedCost: true, actualCost: true, createdAt: true },
   });
   const phaseStatusMap = new Map<string, number>();
   let totalEstimated = 0;
@@ -65,21 +81,18 @@ export async function getAnalytics(): Promise<AnalyticsData> {
     .slice(0, 8)
     .map(([name, assignedPhases]) => ({ name, assignedPhases }));
 
-  // Monthly activity: last 6 months
-  const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-
+  // Monthly activity: last N months
   const recentPhases = await db.phase.findMany({
     where: {
       projectId: { in: projectIds },
-      createdAt: { gte: sixMonthsAgo },
+      createdAt: { gte: rangeStart },
     },
     select: { createdAt: true },
   });
   const recentDocs = await db.document.findMany({
     where: {
       phase: { projectId: { in: projectIds } },
-      createdAt: { gte: sixMonthsAgo },
+      createdAt: { gte: rangeStart },
     },
     select: { createdAt: true },
   });
@@ -88,7 +101,7 @@ export async function getAnalytics(): Promise<AnalyticsData> {
   const getMonthKey = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 
-  for (let i = 5; i >= 0; i--) {
+  for (let i = rangeMonths - 1; i >= 0; i--) {
     const d = new Date();
     d.setMonth(d.getMonth() - i);
     monthlyMap.set(getMonthKey(d), { phases: 0, documents: 0 });
@@ -132,6 +145,40 @@ export async function getAnalytics(): Promise<AnalyticsData> {
     ([week, completed]) => ({ week, completed })
   );
 
+  // Budget S-curve: cumulative planned vs actual over time
+  // Distribute estimated cost evenly across project months, accumulate actual by phase creation
+  const budgetCurveMap = new Map<string, { planned: number; actual: number }>();
+  const curveMonths = Math.min(rangeMonths, 12);
+  for (let i = curveMonths - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setMonth(d.getMonth() - i);
+    budgetCurveMap.set(getMonthKey(d), { planned: 0, actual: 0 });
+  }
+
+  // Spread estimated cost evenly across months (simple linear plan)
+  const monthKeys = Array.from(budgetCurveMap.keys());
+  const monthlyPlanned = totalEstimated / Math.max(monthKeys.length, 1);
+  let cumulativePlanned = 0;
+  let cumulativeActual = 0;
+
+  // Accumulate actual costs by phase creation date
+  const actualByMonth = new Map<string, number>();
+  for (const ph of phases) {
+    const key = getMonthKey(new Date(ph.createdAt));
+    actualByMonth.set(key, (actualByMonth.get(key) ?? 0) + Number(ph.actualCost ?? 0));
+  }
+
+  const budgetCurve: { month: string; planned: number; actual: number }[] = [];
+  for (const mk of monthKeys) {
+    cumulativePlanned += monthlyPlanned;
+    cumulativeActual += actualByMonth.get(mk) ?? 0;
+    budgetCurve.push({
+      month: mk,
+      planned: Math.round(cumulativePlanned),
+      actual: Math.round(cumulativeActual),
+    });
+  }
+
   return {
     projectStatusCounts,
     phaseStatusCounts,
@@ -139,5 +186,7 @@ export async function getAnalytics(): Promise<AnalyticsData> {
     monthlyActivity,
     teamWorkload,
     phaseCompletionTrend,
+    budgetCurve,
+    projectBudgets,
   };
 }

@@ -665,5 +665,31 @@
     "retry": "Réessayer",
     "syncComplete": "Toutes les modifications ont été synchronisées",
     "queuedOffline": "Enregistré hors ligne — sera synchronisé à la connexion"
+  },
+  "analytics": {
+    "title": "Analytique",
+    "export": "Exporter CSV",
+    "estimatedBudget": "Budget Estimé",
+    "actualSpend": "Dépenses Réelles",
+    "ofEstimate": "de l'estimation",
+    "variance": "Écart",
+    "overBudget": "au-dessus du budget",
+    "underBudget": "en dessous du budget",
+    "onBudget": "dans le budget",
+    "budgetCurve": "Courbe S du Budget (Prévu vs Réel)",
+    "projectBudgets": "Budget par Projet",
+    "monthlyActivity": "Activité Mensuelle",
+    "completionTrend": "Phases Terminées (8 semaines)",
+    "projectStatus": "Statut du Projet",
+    "phaseStatus": "Statut des Phases",
+    "teamWorkload": "Charge de Travail",
+    "noData": "Aucune donnée",
+    "noAssignments": "Aucune attribution",
+    "phases": "Phases",
+    "documents": "Documents",
+    "completed": "Terminées",
+    "planned": "Prévu",
+    "actual": "Réel",
+    "estimated": "Estimé"
   }
 }
