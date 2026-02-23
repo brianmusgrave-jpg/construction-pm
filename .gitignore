@@ -50,3 +50,8 @@ next-env.d.ts
 /blob-report/
 /playwright/.cache/
 e2e/.auth/
+
+# capacitor native projects
+/ios/
+/android/
+.capacitor/

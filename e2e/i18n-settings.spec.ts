@@ -1,19 +1,17 @@
 import { test, expect } from "@playwright/test";
+import { gotoAuthenticated } from "./helpers";
 
 test.describe("Settings & i18n", () => {
   test("settings page loads with language picker", async ({ page }) => {
-    await page.goto("/dashboard/settings");
-    await page.waitForLoadState("networkidle");
-    // Settings should have language-related UI
-    await expect(page.locator("body")).toBeVisible();
-    // Look for language selector or locale-related elements
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
     const content = await page.textContent("body");
     expect(content!.length).toBeGreaterThan(100);
   });
 
   test("switching to Spanish updates UI text", async ({ page }) => {
-    await page.goto("/dashboard/settings");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     // Find and click Spanish language option
     const esButton = page.locator(
@@ -49,8 +47,8 @@ test.describe("Settings & i18n", () => {
   });
 
   test("switching to Portuguese updates UI text", async ({ page }) => {
-    await page.goto("/dashboard/settings");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     const ptButton = page.locator(
       'button:has-text("Português"), [data-locale="pt"], label:has-text("Português")'
@@ -80,8 +78,8 @@ test.describe("Settings & i18n", () => {
   });
 
   test("switching to French updates UI text", async ({ page }) => {
-    await page.goto("/dashboard/settings");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     const frButton = page.locator(
       'button:has-text("Français"), [data-locale="fr"], label:has-text("Français")'
@@ -113,17 +111,15 @@ test.describe("Settings & i18n", () => {
 
 test.describe("Help Center", () => {
   test("help center loads with sections and articles", async ({ page }) => {
-    await page.goto("/dashboard/help");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard/help");
+    if (!authed) { test.skip(true, "No auth session"); return; }
     const content = await page.textContent("body");
-    // Help center should have substantial content (58+ articles)
     expect(content!.length).toBeGreaterThan(500);
   });
 
   test("help center supports deep-link via query params", async ({ page }) => {
-    // Deep-link to a specific section
-    await page.goto("/dashboard/help?section=getting-started");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard/help?section=getting-started");
+    if (!authed) { test.skip(true, "No auth session"); return; }
     await expect(page.locator("body")).toBeVisible();
   });
 });

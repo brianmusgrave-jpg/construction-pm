@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { gotoAuthenticated } from "./helpers";
 
 /**
  * Offline/online transition tests.
@@ -13,8 +14,8 @@ test.describe("Offline Mode", () => {
     page,
     context,
   }) => {
-    await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     // Go offline
     await context.setOffline(true);
@@ -47,8 +48,8 @@ test.describe("Offline Mode", () => {
     page,
     context,
   }) => {
-    await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     // Go offline
     await context.setOffline(true);
@@ -69,8 +70,8 @@ test.describe("Offline Mode", () => {
     page,
     context,
   }) => {
-    await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     // Go offline then online
     await context.setOffline(true);
@@ -85,8 +86,8 @@ test.describe("Offline Mode", () => {
   });
 
   test("service worker is registered", async ({ page }) => {
-    await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard");
+    if (!authed) { test.skip(true, "No auth session"); return; }
 
     // Check if service worker is registered
     const swRegistered = await page.evaluate(async () => {
@@ -104,8 +105,8 @@ test.describe("Offline Mode", () => {
     context,
   }) => {
     // First visit — populate cache
-    await page.goto("/dashboard");
-    await page.waitForLoadState("networkidle");
+    const authed = await gotoAuthenticated(page, "/dashboard");
+    if (!authed) { test.skip(true, "No auth session"); return; }
     await page.waitForTimeout(2000); // Let SW cache populate
 
     // Go offline
