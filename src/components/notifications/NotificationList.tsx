@@ -23,6 +23,7 @@ import {
 } from "@/actions/notifications";
 import { toast } from "sonner";
 import { formatDistanceToNow, isToday, isYesterday, subDays, isAfter } from "date-fns";
+import { useTranslations } from "next-intl";
 
 interface Notification {
   id: string;
@@ -78,14 +79,14 @@ function getNotificationLink(data: Record<string, unknown> | null): string {
   return "/dashboard";
 }
 
-type DateGroup = "Today" | "Yesterday" | "This Week" | "Older";
+type DateGroup = "today" | "yesterday" | "thisWeek" | "older";
 
 function groupByDate(notifications: Notification[]): Record<DateGroup, Notification[]> {
   const groups: Record<DateGroup, Notification[]> = {
-    Today: [],
-    Yesterday: [],
-    "This Week": [],
-    Older: [],
+    today: [],
+    yesterday: [],
+    thisWeek: [],
+    older: [],
   };
 
   const weekAgo = subDays(new Date(), 7);
@@ -93,13 +94,13 @@ function groupByDate(notifications: Notification[]): Record<DateGroup, Notificat
   for (const n of notifications) {
     const d = new Date(n.createdAt);
     if (isToday(d)) {
-      groups.Today.push(n);
+      groups.today.push(n);
     } else if (isYesterday(d)) {
-      groups.Yesterday.push(n);
+      groups.yesterday.push(n);
     } else if (isAfter(d, weekAgo)) {
-      groups["This Week"].push(n);
+      groups.thisWeek.push(n);
     } else {
-      groups.Older.push(n);
+      groups.older.push(n);
     }
   }
 
@@ -119,13 +120,15 @@ export function NotificationList({
   const [unread, setUnread] = useState(initialUnreadCount);
   const [isPending, startTransition] = useTransition();
   const [loadingMore, setLoadingMore] = useState(false);
+  const t = useTranslations("notifications");
+  const tc = useTranslations("common");
 
   async function handleMarkAllRead() {
     startTransition(async () => {
       const result = await markAllAsRead();
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnread(0);
-      toast.success(`Marked ${result.updated} notifications as read`);
+      toast.success(t("markAllRead"));
     });
   }
 
@@ -147,7 +150,7 @@ export function NotificationList({
     setNotifications((prev) => prev.filter((n) => n.id !== id));
     if (n && !n.read) setUnread((prev) => Math.max(0, prev - 1));
     deleteNotification(id); // fire-and-forget
-    toast.success("Notification deleted");
+    toast.success(t("deleted"));
   }
 
   async function handleLoadMore() {
@@ -164,7 +167,7 @@ export function NotificationList({
   }
 
   const groups = groupByDate(notifications);
-  const groupOrder: DateGroup[] = ["Today", "Yesterday", "This Week", "Older"];
+  const groupOrder: DateGroup[] = ["today", "yesterday", "thisWeek", "older"];
   const hasAny = notifications.length > 0;
 
   return (
@@ -178,7 +181,7 @@ export function NotificationList({
             className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary-bg)] rounded-lg transition-colors disabled:opacity-50"
           >
             <CheckCheck className="w-4 h-4" />
-            Mark all as read
+            {t("markAllRead")}
           </button>
         </div>
       )}
@@ -188,10 +191,10 @@ export function NotificationList({
         <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
           <Bell className="w-12 h-12 text-gray-300 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-1">
-            No notifications yet
+            {t("noNotificationsYet")}
           </h3>
           <p className="text-sm text-gray-500">
-            You&apos;ll be notified when there are updates to your projects.
+            {t("emptyMessage")}
           </p>
         </div>
       )}
@@ -203,7 +206,7 @@ export function NotificationList({
         return (
           <div key={groupName} className="mb-6">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 px-1">
-              {groupName}
+              {tc(groupName)}
             </h3>
             <div className="bg-white rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
               {items.map((notification) => (
@@ -255,7 +258,7 @@ export function NotificationList({
                   <button
                     onClick={(e) => handleDelete(e, notification.id)}
                     className="mt-1 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all shrink-0"
-                    title="Delete notification"
+                    title={tc("delete")}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -274,7 +277,7 @@ export function NotificationList({
             disabled={loadingMore}
             className="px-4 py-2 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary-bg)] rounded-lg transition-colors disabled:opacity-50"
           >
-            {loadingMore ? "Loading..." : "Load more"}
+            {loadingMore ? tc("loading") : tc("loadMore")}
           </button>
         </div>
       )}

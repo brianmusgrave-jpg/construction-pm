@@ -14,87 +14,29 @@ import {
   Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface TourStep {
   icon: React.ReactNode;
-  title: string;
-  description: string;
-  tip?: string;
+  titleKey: string;
+  descKey: string;
+  tipKey?: string;
 }
 
 const ADMIN_STEPS: TourStep[] = [
-  {
-    icon: <Rocket className="w-8 h-8" />,
-    title: "Welcome to Construction PM!",
-    description:
-      "Your all-in-one platform for managing construction projects. Let's take a quick tour of the key features.",
-    tip: "This tour takes about 1 minute. You can skip it anytime.",
-  },
-  {
-    icon: <FolderKanban className="w-8 h-8" />,
-    title: "Projects & Timeline",
-    description:
-      "Create projects, set budgets, and break work into phases. The Timeline view gives you a Gantt chart showing how everything connects.",
-    tip: "Start by creating your first project from the Projects page.",
-  },
-  {
-    icon: <HardHat className="w-8 h-8" />,
-    title: "Phase Management",
-    description:
-      "Each phase tracks status, costs, checklists, documents, and photos. Phases flow from Pending → In Progress → Review → Complete.",
-    tip: "Use dependencies to link phases that must happen in sequence.",
-  },
-  {
-    icon: <Users className="w-8 h-8" />,
-    title: "Team Collaboration",
-    description:
-      "Invite team members via email with specific roles. Contractors get their own simplified portal for uploading work and requesting reviews.",
-    tip: "Invite your first team member from any project's Team section.",
-  },
-  {
-    icon: <ClipboardCheck className="w-8 h-8" />,
-    title: "Checklists & Documents",
-    description:
-      "Create reusable checklist templates in Settings and apply them to phases. Upload documents for approval tracking and photos for progress documentation.",
-    tip: "Check Settings > Checklist Templates to set up your first template.",
-  },
-  {
-    icon: <Bell className="w-8 h-8" />,
-    title: "Notifications & Alerts",
-    description:
-      "Get notified about phase changes, review requests, and completed checklists via in-app, email, or SMS. Customize your preferences in Settings.",
-    tip: "Set up quiet hours to avoid late-night notifications.",
-  },
+  { icon: <Rocket className="w-8 h-8" />, titleKey: "welcomeTitle", descKey: "welcomeDesc", tipKey: "welcomeTip" },
+  { icon: <FolderKanban className="w-8 h-8" />, titleKey: "projectsTitle", descKey: "projectsDesc", tipKey: "projectsTip" },
+  { icon: <HardHat className="w-8 h-8" />, titleKey: "phasesTitle", descKey: "phasesDesc", tipKey: "phasesTip" },
+  { icon: <Users className="w-8 h-8" />, titleKey: "teamTitle", descKey: "teamDesc", tipKey: "teamTip" },
+  { icon: <ClipboardCheck className="w-8 h-8" />, titleKey: "checklistsTitle", descKey: "checklistsDesc", tipKey: "checklistsTip" },
+  { icon: <Bell className="w-8 h-8" />, titleKey: "notificationsTitle", descKey: "notificationsDesc", tipKey: "notificationsTip" },
 ];
 
 const CONTRACTOR_STEPS: TourStep[] = [
-  {
-    icon: <Rocket className="w-8 h-8" />,
-    title: "Welcome to Construction PM!",
-    description:
-      "This is your Contractor Portal — a focused view of the phases you're assigned to. Let's walk through the basics.",
-  },
-  {
-    icon: <HardHat className="w-8 h-8" />,
-    title: "Your Assigned Phases",
-    description:
-      "Your dashboard shows all phases you're assigned to, grouped by status. Click any phase to see its details, checklist, and documents.",
-    tip: "Complete checklist items as you finish each task.",
-  },
-  {
-    icon: <Camera className="w-8 h-8" />,
-    title: "Upload Photos & Documents",
-    description:
-      "Document your progress by uploading photos and relevant documents to each phase. This creates a clear record for your team.",
-    tip: "Take photos regularly — they help during inspections and reviews.",
-  },
-  {
-    icon: <ClipboardCheck className="w-8 h-8" />,
-    title: "Request Reviews",
-    description:
-      "When you've completed work on a phase, click 'Request Review' to notify the project manager. They'll review and either approve or ask for changes.",
-    tip: "Make sure all checklist items are done before requesting a review.",
-  },
+  { icon: <Rocket className="w-8 h-8" />, titleKey: "welcomeTitle", descKey: "contractorWelcomeDesc" },
+  { icon: <HardHat className="w-8 h-8" />, titleKey: "assignedTitle", descKey: "assignedDesc", tipKey: "assignedTip" },
+  { icon: <Camera className="w-8 h-8" />, titleKey: "uploadTitle", descKey: "uploadDesc", tipKey: "uploadTip" },
+  { icon: <ClipboardCheck className="w-8 h-8" />, titleKey: "reviewTitle", descKey: "reviewDesc", tipKey: "reviewTip" },
 ];
 
 interface Props {
@@ -113,19 +55,19 @@ export function resetTour() {
 export function OnboardingTour({ userRole, userName }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState(0);
+  const t = useTranslations("tour");
+  const tc = useTranslations("common");
 
   const isContractor = userRole === "CONTRACTOR";
   const steps = isContractor ? CONTRACTOR_STEPS : ADMIN_STEPS;
 
   useEffect(() => {
-    // Check if user has completed the tour
     const tourComplete = localStorage.getItem(TOUR_STORAGE_KEY);
     if (!tourComplete) {
       const timer = setTimeout(() => setIsOpen(true), 1000);
       return () => clearTimeout(timer);
     }
 
-    // Listen for replay requests
     function handleReplay() {
       setStep(0);
       setIsOpen(true);
@@ -210,20 +152,20 @@ export function OnboardingTour({ userRole, userName }: Props) {
           {/* Title */}
           <h2 className="text-xl font-bold text-gray-900 mb-3">
             {step === 0 && userName
-              ? `Welcome, ${userName}!`
-              : currentStep.title}
+              ? t("welcomeUser", { name: userName })
+              : t(currentStep.titleKey)}
           </h2>
 
           {/* Description */}
           <p className="text-sm text-gray-600 leading-relaxed mb-4">
-            {currentStep.description}
+            {t(currentStep.descKey)}
           </p>
 
           {/* Tip */}
-          {currentStep.tip && (
+          {currentStep.tipKey && (
             <div className="bg-[var(--color-primary-bg)]/50 rounded-lg px-4 py-3 mb-6">
               <p className="text-xs text-[var(--color-primary-dark)] font-medium">
-                💡 {currentStep.tip}
+                💡 {t(currentStep.tipKey)}
               </p>
             </div>
           )}
@@ -242,7 +184,7 @@ export function OnboardingTour({ userRole, userName }: Props) {
             )}
           >
             <ChevronLeft className="w-4 h-4" />
-            Back
+            {tc("back")}
           </button>
 
           <div className="flex items-center gap-2">
@@ -251,14 +193,14 @@ export function OnboardingTour({ userRole, userName }: Props) {
                 onClick={completeTour}
                 className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700"
               >
-                Skip
+                {t("skip")}
               </button>
             )}
             <button
               onClick={handleNext}
               className="inline-flex items-center gap-1.5 px-5 py-2.5 text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-lg transition-colors"
             >
-              {isLast ? "Get Started" : "Next"}
+              {isLast ? t("getStarted") : tc("next")}
               {!isLast && <ChevronRight className="w-4 h-4" />}
             </button>
           </div>

@@ -11,19 +11,13 @@ import {
   FileText,
   Users,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const typeIcons: Record<string, typeof FolderKanban> = {
   project: FolderKanban,
   phase: Layers,
   document: FileText,
   staff: Users,
-};
-
-const typeLabels: Record<string, string> = {
-  project: "Project",
-  phase: "Phase",
-  document: "Document",
-  staff: "Staff",
 };
 
 export function SearchPalette() {
@@ -35,6 +29,15 @@ export function SearchPalette() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const t = useTranslations("search");
+  const tc = useTranslations("common");
+
+  const typeLabels: Record<string, string> = {
+    project: t("project"),
+    phase: t("phase"),
+    document: t("document"),
+    staff: t("staff"),
+  };
 
   // Keyboard shortcut: Cmd+K / Ctrl+K
   useEffect(() => {
@@ -125,7 +128,7 @@ export function SearchPalette() {
               value={query}
               onChange={(e) => handleInputChange(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Search projects, phases, documents, staff…"
+              placeholder={t("placeholder")}
               className="flex-1 text-sm text-gray-900 placeholder-gray-400 outline-none bg-transparent"
             />
             {query && (
@@ -149,13 +152,13 @@ export function SearchPalette() {
           <div className="max-h-[50vh] overflow-y-auto">
             {loading && (
               <div className="px-4 py-6 text-center text-sm text-gray-400">
-                Searching…
+                {t("searching")}
               </div>
             )}
 
             {!loading && query.length >= 2 && results.length === 0 && (
               <div className="px-4 py-6 text-center text-sm text-gray-400">
-                No results for &ldquo;{query}&rdquo;
+                {t("noResultsFor", { query })}
               </div>
             )}
 
@@ -205,7 +208,7 @@ export function SearchPalette() {
 
             {!loading && query.length < 2 && (
               <div className="px-4 py-6 text-center text-sm text-gray-400">
-                Type at least 2 characters to search
+                {t("typeAtLeast")}
               </div>
             )}
           </div>
@@ -214,15 +217,15 @@ export function SearchPalette() {
           <div className="px-4 py-2 border-t border-gray-100 flex items-center gap-4 text-[10px] text-gray-400">
             <span className="flex items-center gap-1">
               <kbd className="px-1 py-0.5 bg-gray-100 rounded border border-gray-200 text-[10px]">↑↓</kbd>
-              Navigate
+              {t("navigate")}
             </span>
             <span className="flex items-center gap-1">
               <kbd className="px-1 py-0.5 bg-gray-100 rounded border border-gray-200 text-[10px]">↵</kbd>
-              Open
+              {tc("open")}
             </span>
             <span className="flex items-center gap-1">
               <kbd className="px-1 py-0.5 bg-gray-100 rounded border border-gray-200 text-[10px]">esc</kbd>
-              Close
+              {tc("close")}
             </span>
           </div>
         </div>
@@ -233,6 +236,7 @@ export function SearchPalette() {
 
 /** Small trigger button for the sidebar */
 export function SearchButton() {
+  const t = useTranslations("search");
   return (
     <button
       onClick={() => {
@@ -243,7 +247,7 @@ export function SearchButton() {
       className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
     >
       <Search className="w-5 h-5" />
-      <span className="flex-1 text-left">Search…</span>
+      <span className="flex-1 text-left">{t("buttonLabel")}</span>
       <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-medium text-gray-400 bg-gray-100 rounded border border-gray-200">
         ⌘K
       </kbd>

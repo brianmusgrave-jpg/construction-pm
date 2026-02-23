@@ -13,6 +13,7 @@ import {
   Bell,
   BarChart3,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ContractorNavProps {
   user: {
@@ -26,14 +27,6 @@ interface ContractorNavProps {
   unreadCount?: number;
 }
 
-const navigation = [
-  { name: "My Work", href: "/contractor", icon: LayoutDashboard },
-  { name: "Documents", href: "/contractor/documents", icon: FileText },
-  { name: "Photos", href: "/contractor/photos", icon: Camera },
-  { name: "Reports", href: "/contractor/reports", icon: BarChart3 },
-  { name: "Notifications", href: "/contractor/notifications", icon: Bell },
-];
-
 export function ContractorNav({
   user,
   logoUrl,
@@ -41,6 +34,17 @@ export function ContractorNav({
   unreadCount = 0,
 }: ContractorNavProps) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const tc = useTranslations("common");
+  const tcon = useTranslations("contractor");
+
+  const navigation = [
+    { name: t("myWork"), href: "/contractor", icon: LayoutDashboard },
+    { name: t("documents"), href: "/contractor/documents", icon: FileText },
+    { name: t("photos"), href: "/contractor/photos", icon: Camera },
+    { name: t("reports"), href: "/contractor/reports", icon: BarChart3 },
+    { name: t("notifications"), href: "/contractor/notifications", icon: Bell },
+  ];
 
   function isActive(href: string) {
     return (
@@ -70,7 +74,7 @@ export function ContractorNav({
                 <HardHat className="w-6 h-6 text-[var(--color-primary)]" />
               )}
               <span className="text-base font-bold text-gray-900">
-                {companyName || "Contractor Portal"}
+                {companyName || t("contractorPortal")}
               </span>
             </Link>
 
@@ -89,7 +93,7 @@ export function ContractorNav({
                 >
                   <item.icon className="w-4 h-4" />
                   {item.name}
-                  {item.name === "Notifications" && unreadCount > 0 && (
+                  {item.href === "/contractor/notifications" && unreadCount > 0 && (
                     <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-semibold rounded-full bg-[var(--color-primary)] text-white">
                       {unreadCount > 99 ? "99+" : unreadCount}
                     </span>
@@ -105,7 +109,7 @@ export function ContractorNav({
                   {user.name || user.email}
                 </p>
                 <p className="text-xs text-[var(--color-primary)]">
-                  Contractor
+                  {tcon("role")}
                 </p>
               </div>
               <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] text-sm font-medium">
@@ -114,7 +118,7 @@ export function ContractorNav({
               <button
                 onClick={() => signOut({ callbackUrl: "/login" })}
                 className="p-1.5 text-gray-400 hover:text-gray-600 rounded"
-                title="Sign out"
+                title={tc("signOut")}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -140,7 +144,7 @@ export function ContractorNav({
               <HardHat className="w-5 h-5 text-[var(--color-primary)]" />
             )}
             <span className="text-sm font-bold text-gray-900">
-              {companyName || "Construction PM"}
+              {companyName || tc("appName")}
             </span>
           </Link>
           <div className="flex items-center gap-2">
@@ -150,7 +154,7 @@ export function ContractorNav({
             <button
               onClick={() => signOut({ callbackUrl: "/login" })}
               className="p-1 text-gray-400 hover:text-gray-600"
-              title="Sign out"
+              title={tc("signOut")}
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -174,7 +178,7 @@ export function ContractorNav({
             >
               <item.icon className="w-5 h-5" />
               <span className="text-[10px] font-medium">{item.name}</span>
-              {item.name === "Notifications" && unreadCount > 0 && (
+              {item.href === "/contractor/notifications" && unreadCount > 0 && (
                 <span className="absolute -top-0.5 right-0 w-4 h-4 bg-[var(--color-primary)] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>

@@ -19,6 +19,7 @@ import {
   HelpCircle,
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
+import { useTranslations } from "next-intl";
 
 interface SidebarProps {
   user: {
@@ -32,35 +33,36 @@ interface SidebarProps {
   unreadCount?: number;
 }
 
-function getNavigation(role: string) {
+function getNavigation(role: string, t: (key: string) => string) {
   const base = [
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "Projects", href: "/dashboard/projects", icon: FolderKanban },
-    { name: "Reports", href: "/dashboard/reports", icon: BarChart3 },
+    { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
+    { name: t("projects"), href: "/dashboard/projects", icon: FolderKanban },
+    { name: t("reports"), href: "/dashboard/reports", icon: BarChart3 },
   ];
 
-  // Stakeholders & viewers get a simpler nav
   if (role === "STAKEHOLDER" || role === "VIEWER") {
     return [
       ...base,
-      { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
-      { name: "Help", href: "/dashboard/help", icon: HelpCircle },
+      { name: t("notifications"), href: "/dashboard/notifications", icon: Bell },
+      { name: t("help"), href: "/dashboard/help", icon: HelpCircle },
     ];
   }
 
   return [
     ...base,
-    { name: "Directory", href: "/dashboard/directory", icon: Users },
-    { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
-    { name: "Settings", href: "/dashboard/settings", icon: Settings },
-    { name: "Help", href: "/dashboard/help", icon: HelpCircle },
+    { name: t("directory"), href: "/dashboard/directory", icon: Users },
+    { name: t("notifications"), href: "/dashboard/notifications", icon: Bell },
+    { name: t("settings"), href: "/dashboard/settings", icon: Settings },
+    { name: t("help"), href: "/dashboard/help", icon: HelpCircle },
   ];
 }
 
 export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const navigation = getNavigation(user.role);
+  const t = useTranslations("nav");
+  const tc = useTranslations("common");
+  const navigation = getNavigation(user.role, t);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -129,7 +131,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: Sidebar
             >
               <item.icon className="w-5 h-5" />
               {item.name}
-              {item.name === "Notifications" && unreadCount > 0 && (
+              {item.href === "/dashboard/notifications" && unreadCount > 0 && (
                 <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full bg-[var(--color-primary)] text-white">
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
@@ -156,7 +158,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: Sidebar
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
             className="p-1.5 text-gray-400 hover:text-gray-600 rounded"
-            title="Sign out"
+            title={tc("signOut")}
           >
             <LogOut className="w-4 h-4" />
           </button>

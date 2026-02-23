@@ -8,6 +8,7 @@ import {
   updatePhoneNumber,
 } from "@/actions/notification-preferences";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface NotificationPreferences {
   emailEnabled: boolean;
@@ -69,6 +70,8 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
   const [prefs, setPrefs] = useState(initial);
   const [phone, setPhone] = useState(initialPhone || "");
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations("notifPrefs");
+  const tc = useTranslations("common");
 
   function update<K extends keyof NotificationPreferences>(
     key: K,
@@ -88,9 +91,9 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
           await updatePhoneNumber(phone);
         }
 
-        toast.success("Notification preferences saved");
+        toast.success(t("saved"));
       } catch (error: unknown) {
-        const msg = error instanceof Error ? error.message : "Failed to save";
+        const msg = error instanceof Error ? error.message : t("failedToSave");
         toast.error(msg);
       }
     });
@@ -101,10 +104,10 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">
-            Notification Preferences
+            {t("title")}
           </h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            Control how you receive notifications
+            {t("subtitle")}
           </p>
         </div>
         <button
@@ -113,22 +116,22 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-lg transition-colors disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
-          {isPending ? "Saving..." : "Save"}
+          {isPending ? tc("saving") : tc("save")}
         </button>
       </div>
 
       {/* Channel Toggles */}
       <div className="space-y-4 mb-8">
         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Channels
+          {t("channels")}
         </h3>
 
         <div className="flex items-center justify-between py-2">
           <div className="flex items-center gap-3">
             <Bell className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-sm font-medium text-gray-900">In-app notifications</p>
-              <p className="text-xs text-gray-500">Show notifications in the sidebar and notification center</p>
+              <p className="text-sm font-medium text-gray-900">{t("inApp")}</p>
+              <p className="text-xs text-gray-500">{t("inAppDesc")}</p>
             </div>
           </div>
           <Toggle checked={prefs.inAppEnabled} onChange={(v) => update("inAppEnabled", v)} />
@@ -138,8 +141,8 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
           <div className="flex items-center gap-3">
             <Mail className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-sm font-medium text-gray-900">Email notifications</p>
-              <p className="text-xs text-gray-500">Receive email alerts for important updates</p>
+              <p className="text-sm font-medium text-gray-900">{t("emailNotifs")}</p>
+              <p className="text-xs text-gray-500">{t("emailNotifsDesc")}</p>
             </div>
           </div>
           <Toggle checked={prefs.emailEnabled} onChange={(v) => update("emailEnabled", v)} />
@@ -149,8 +152,8 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-gray-400" />
             <div>
-              <p className="text-sm font-medium text-gray-900">SMS notifications</p>
-              <p className="text-xs text-gray-500">Get text messages for critical updates</p>
+              <p className="text-sm font-medium text-gray-900">{t("smsNotifs")}</p>
+              <p className="text-xs text-gray-500">{t("smsNotifsDesc")}</p>
             </div>
           </div>
           <Toggle checked={prefs.smsEnabled} onChange={(v) => update("smsEnabled", v)} />
@@ -160,17 +163,17 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
         {prefs.smsEnabled && (
           <div className="ml-8 pl-3 border-l-2 border-gray-100">
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Phone number
+              {t("phoneNumber")}
             </label>
             <input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="+1234567890"
+              placeholder={t("phonePlaceholder")}
               className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Use international format (e.g., +1 for US)
+              {t("phoneHelp")}
             </p>
           </div>
         )}
@@ -181,36 +184,36 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
         <div className="space-y-3 mb-8">
           <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
             <Mail className="w-4 h-4 text-gray-400" />
-            Email alerts
+            {t("emailAlerts")}
           </h3>
           <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <PreferenceRow
-              label="Phase status changes"
-              description="When a phase moves to a new status"
+              label={t("phaseStatusChanges")}
+              description={t("phaseStatusDesc")}
               checked={prefs.emailPhaseStatus}
               onChange={(v) => update("emailPhaseStatus", v)}
             />
             <PreferenceRow
-              label="Review requests"
-              description="When a contractor requests a review"
+              label={t("reviewRequests")}
+              description={t("reviewRequestsDesc")}
               checked={prefs.emailReview}
               onChange={(v) => update("emailReview", v)}
             />
             <PreferenceRow
-              label="Checklist completion"
-              description="When all checklist items are completed"
+              label={t("checklistCompletion")}
+              description={t("checklistDesc")}
               checked={prefs.emailChecklist}
               onChange={(v) => update("emailChecklist", v)}
             />
             <PreferenceRow
-              label="Document updates"
-              description="When documents are uploaded or reviewed"
+              label={t("documentUpdates")}
+              description={t("documentDesc")}
               checked={prefs.emailDocuments}
               onChange={(v) => update("emailDocuments", v)}
             />
             <PreferenceRow
-              label="Comments"
-              description="When someone comments on a phase"
+              label={t("commentsLabel")}
+              description={t("commentsDesc")}
               checked={prefs.emailComments}
               onChange={(v) => update("emailComments", v)}
             />
@@ -223,30 +226,30 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
         <div className="space-y-3 mb-8">
           <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
             <MessageSquare className="w-4 h-4 text-gray-400" />
-            SMS alerts
+            {t("smsAlerts")}
           </h3>
           <div className="bg-gray-50 rounded-lg p-4 space-y-3">
             <PreferenceRow
-              label="Phase status changes"
-              description="Text when phases change status"
+              label={t("phaseStatusChanges")}
+              description={t("phaseStatusSmsDesc")}
               checked={prefs.smsPhaseStatus}
               onChange={(v) => update("smsPhaseStatus", v)}
             />
             <PreferenceRow
-              label="Review requests"
-              description="Text when reviews are requested"
+              label={t("reviewRequests")}
+              description={t("reviewRequestsSmsDesc")}
               checked={prefs.smsReview}
               onChange={(v) => update("smsReview", v)}
             />
             <PreferenceRow
-              label="Checklist completion"
-              description="Text when checklists are completed"
+              label={t("checklistCompletion")}
+              description={t("checklistSmsDesc")}
               checked={prefs.smsChecklist}
               onChange={(v) => update("smsChecklist", v)}
             />
             <PreferenceRow
-              label="Document updates"
-              description="Text for document status changes"
+              label={t("documentUpdates")}
+              description={t("documentSmsDesc")}
               checked={prefs.smsDocuments}
               onChange={(v) => update("smsDocuments", v)}
             />
@@ -258,14 +261,14 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
       <div className="space-y-3">
         <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
           <Moon className="w-4 h-4 text-gray-400" />
-          Quiet hours
+          {t("quietHours")}
         </h3>
         <p className="text-xs text-gray-500">
-          Pause email and SMS notifications during these hours (in-app still works)
+          {t("quietHoursDesc")}
         </p>
         <div className="flex items-center gap-3">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">From</label>
+            <label className="block text-xs text-gray-500 mb-1">{tc("from")}</label>
             <input
               type="time"
               value={prefs.quietStart || ""}
@@ -275,7 +278,7 @@ export function NotificationSettings({ preferences: initial, phone: initialPhone
           </div>
           <span className="mt-5 text-gray-400">—</span>
           <div>
-            <label className="block text-xs text-gray-500 mb-1">To</label>
+            <label className="block text-xs text-gray-500 mb-1">{tc("to")}</label>
             <input
               type="time"
               value={prefs.quietEnd || ""}
