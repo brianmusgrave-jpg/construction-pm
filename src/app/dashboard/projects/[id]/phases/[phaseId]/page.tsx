@@ -8,6 +8,8 @@ import { AssignmentSection } from "@/components/phase/AssignmentSection";
 import { ChecklistSection } from "@/components/phase/ChecklistSection";
 import { DocumentSection } from "@/components/phase/DocumentSection";
 import { PhotoSection } from "@/components/phase/PhotoSection";
+import { CommentSection } from "@/components/phase/CommentSection";
+import { getPhaseComments } from "@/actions/comments";
 
 export default async function PhaseDetailPage({
   params,
@@ -56,6 +58,8 @@ export default async function PhaseDetailPage({
   });
 
   if (!phase || phase.project.id !== projectId) notFound();
+
+  const comments = await getPhaseComments(phaseId);
 
   // Get all staff for assignment modal
   const allStaff = await db.staff.findMany({
@@ -113,6 +117,13 @@ export default async function PhaseDetailPage({
           canUpload={can(userRole, "create", "photo")}
           canDelete={can(userRole, "delete", "photo")}
           canFlag={canManage}
+        />
+
+        <CommentSection
+          phaseId={phaseId}
+          comments={comments}
+          currentUserId={session.user.id}
+          isAdmin={(session.user as any).role === "ADMIN"}
         />
       </div>
     </div>

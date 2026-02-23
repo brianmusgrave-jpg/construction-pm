@@ -19,6 +19,8 @@ import {
   Activity,
   Eye,
   TrendingUp,
+  Edit,
+  Plus,
 } from "lucide-react";
 import { cn, statusColor, statusLabel, fmtShort, fmtLong, fmtRelative } from "@/lib/utils";
 import { can } from "@/lib/permissions";
@@ -70,7 +72,7 @@ export default async function ProjectOverviewPage({
           user: { select: { name: true, email: true } },
         },
         orderBy: { createdAt: "desc" },
-        take: 10,
+        take: 5,
       })
       .catch(() => [] as never[]),
   ]);
@@ -113,14 +115,19 @@ export default async function ProjectOverviewPage({
   const totalDocs = phases.reduce((sum: number, p: typeof phases[0]) => sum + p._count.documents, 0);
   const totalPhotos = phases.reduce((sum: number, p: typeof phases[0]) => sum + p._count.photos, 0);
 
-  // Budget formatting
-  const budgetStr = project.budget
-    ? `$${Number(project.budget).toLocaleString()}`
-    : null;
+  // Budget calculations
+  const totalBudget = project.budget ? Number(project.budget) : 0;
+  const totalSpent = phases.reduce((sum: number, p: typeof phases[0]) => {
+    const cost = p.actualCost ? Number(p.actualCost) : 0;
+    return sum + cost;
+  }, 0);
+  const totalRemaining = totalBudget - totalSpent;
+  const budgetPercent = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
 
   const userRole = session.user.role || "VIEWER";
   const canManageBudget = can(userRole, "manage", "phase");
   const canInvite = can(userRole, "create", "member");
+  const canEditProject = can(userRole, "update", "project");
 
   // Fetch pending invitations for the team section
   const invitations = canInvite
@@ -136,91 +143,149 @@ export default async function ProjectOverviewPage({
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-4 sm:space-y-6">
-      {/* Header */}
-      <div>
-        <Link
-          href="/dashboard"
-          className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-2"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Dashboard
-        </Link>
+      {/* Navigation Breadcrumb */}
+      <Link
+        href="/dashboard"
+        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back to Dashboard
+      </Link>
+
+      {/* Project Header */}
+      <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{project.name}</h1>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-gray-500">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{project.name}</h1>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-sm text-gray-600">
               {project.address && (
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3.5 h-3.5" />
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-gray-400" />
                   {project.address}
                 </span>
               )}
-              {budgetStr && (
-                <span className="flex items-center gap-1">
-                  <DollarSign className="w-3.5 h-3.5" />
-                  {budgetStr}
-                </span>
-              )}
               {project.estCompletion && (
-                <span className="flex items-center gap-1">
-                  <Calendar className="w-3.5 h-3.5" />
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-gray-400" />
                   Est. {fmtLong(project.estCompletion)}
                 </span>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             <span
               className={cn(
-                "text-xs font-medium px-3 py-1 rounded-full",
+                "text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap",
                 statusColor(project.status)
               )}
             >
               {statusLabel(project.status)}
             </span>
+            {canEditProject && (
+              <Link
+                href={`/dashboard/projects/${id}/edit`}
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium transition-colors"
+              >
+                <Edit className="w-4 h-4" />
+                <span className="hidden sm:inline">Edit</span>
+              </Link>
+            )}
             <Link
               href={`/dashboard/projects/${id}/timeline`}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
             >
               <Calendar className="w-4 h-4" />
-              Timeline
+              <span className="hidden sm:inline">Timeline</span>
             </Link>
           </div>
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">
-            Overall Progress
-          </span>
-          <span className="text-sm font-bold text-gray-900">
-            {overallProgress}%
-          </span>
+      {/* Budget Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <BudgetCard
+          label="Total Budget"
+          value={totalBudget}
+          icon={<DollarSign className="w-5 h-5" />}
+          color="blue"
+        />
+        <BudgetCard
+          label="Total Spent"
+          value={totalSpent}
+          icon={<TrendingUp className="w-5 h-5" />}
+          color={budgetPercent > 80 ? "red" : "amber"}
+        />
+        <BudgetCard
+          label="Remaining"
+          value={totalRemaining}
+          icon={<CheckCircle2 className="w-5 h-5" />}
+          color={totalRemaining < 0 ? "red" : "green"}
+        />
+        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-5">
+          <div className="flex items-start justify-between mb-3">
+            <span className="text-xs font-semibold uppercase text-gray-600 tracking-wide">Budget Used</span>
+            <span className="text-2xl font-bold text-gray-900">{budgetPercent}%</span>
+          </div>
+          <div className="w-full bg-gray-100 rounded-full h-2.5">
+            <div
+              className="h-2.5 rounded-full transition-all"
+              style={{
+                width: `${Math.min(budgetPercent, 100)}%`,
+                backgroundColor:
+                  budgetPercent > 100 ? "#dc2626" :
+                  budgetPercent > 80 ? "#ea580c" :
+                  budgetPercent > 50 ? "#f59e0b" :
+                  "var(--color-primary)",
+              }}
+            />
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            {budgetPercent > 100
+              ? `Over budget by $${Math.abs(totalRemaining).toLocaleString()}`
+              : `$${totalRemaining.toLocaleString()} remaining`
+            }
+          </p>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-3">
-          <div
-            className="h-3 rounded-full transition-all"
-            style={{
-              width: `${overallProgress}%`,
-              backgroundColor:
-                overallProgress === 100 ? "#16a34a" : "var(--color-primary)",
-            }}
-          />
+      </div>
+
+      {/* Timeline Preview */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+            Project Progress
+          </h2>
+          <Link
+            href={`/dashboard/projects/${id}/timeline`}
+            className="text-xs text-[var(--color-primary)] hover:underline font-medium"
+          >
+            View full timeline
+          </Link>
         </div>
-        <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
-          <span>
-            {completedPhases.length} of {phases.length} phases complete
-          </span>
-          {project.estCompletion && (
-            <span>Target: {fmtShort(project.estCompletion)}</span>
-          )}
+        <div className="space-y-3">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">Phases Completed</span>
+              <span className="text-sm font-bold text-gray-900">{overallProgress}%</span>
+            </div>
+            <div className="w-full bg-gray-100 rounded-full h-3">
+              <div
+                className="h-3 rounded-full transition-all"
+                style={{
+                  width: `${overallProgress}%`,
+                  backgroundColor:
+                    overallProgress === 100 ? "#16a34a" : "var(--color-primary)",
+                }}
+              />
+            </div>
+            <p className="text-xs text-gray-500 mt-1.5">
+              {completedPhases.length} of {phases.length} phases complete
+            </p>
+          </div>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <StatCard
           icon={<HardHat className="w-4 h-4" />}
           label="Active"
@@ -268,12 +333,23 @@ export default async function ProjectOverviewPage({
       />
 
       {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Phase list */}
         <div className="lg:col-span-2 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-            Phases
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+              All Phases
+            </h2>
+            {canEditProject && (
+              <Link
+                href={`/dashboard/projects/${id}/phases/new`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-[var(--color-primary)] hover:bg-[var(--color-primary-bg)] rounded-lg transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span className="hidden sm:inline">Add Phase</span>
+              </Link>
+            )}
+          </div>
           <div className="space-y-2">
             {phases.map((phase: typeof phases[0]) => {
               const isOverdue =
@@ -389,7 +465,7 @@ export default async function ProjectOverviewPage({
             canInvite={canInvite}
           />
 
-          {/* Activity */}
+          {/* Recent Activity */}
           <div>
             <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
               Recent Activity
@@ -402,18 +478,18 @@ export default async function ProjectOverviewPage({
                 </div>
               ) : (
                 <div className="divide-y divide-gray-100">
-                  {recentActivity.map(
+                  {recentActivity.slice(0, 5).map(
                     (entry: { id: string; action: string; message: string; createdAt: Date; user: { name: string | null; email: string } }) => (
-                      <div key={entry.id} className="px-4 py-3">
-                        <div className="flex items-start gap-2">
+                      <div key={entry.id} className="px-4 py-3 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start gap-3">
                           <div className="mt-0.5 shrink-0">
                             {getActivityIcon(entry.action)}
                           </div>
-                          <div className="min-w-0">
-                            <p className="text-sm text-gray-900">
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-medium text-gray-900">
                               {entry.message}
                             </p>
-                            <div className="flex items-center gap-2 mt-0.5">
+                            <div className="flex items-center gap-2 mt-1">
                               <span className="text-xs text-gray-500">
                                 {entry.user.name || entry.user.email}
                               </span>
@@ -437,7 +513,49 @@ export default async function ProjectOverviewPage({
   );
 }
 
-// ── Helpers ──
+// ── Helper Components ──
+
+function BudgetCard({
+  label,
+  value,
+  icon,
+  color,
+}: {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+  color: "blue" | "red" | "green" | "amber";
+}): React.ReactNode {
+  const colorMap: Record<string, string> = {
+    blue: "bg-[var(--color-primary-bg)] text-[var(--color-primary)] border-[var(--color-primary-bg)]",
+    red: "bg-red-50 text-red-600 border-red-100",
+    green: "bg-green-50 text-green-600 border-green-100",
+    amber: "bg-amber-50 text-amber-600 border-amber-100",
+  };
+
+  const iconBg: Record<string, string> = {
+    blue: "bg-[var(--color-primary-bg)] text-[var(--color-primary)]",
+    red: "bg-red-100 text-red-600",
+    green: "bg-green-100 text-green-600",
+    amber: "bg-amber-100 text-amber-600",
+  };
+
+  return (
+    <div className={cn("rounded-xl border p-4 sm:p-5", colorMap[color])}>
+      <div className="flex items-start justify-between mb-3">
+        <div className={cn("p-2 rounded-lg", iconBg[color])}>
+          {icon}
+        </div>
+        <span className="text-xs font-semibold uppercase text-current opacity-70">
+          {label}
+        </span>
+      </div>
+      <p className="text-2xl font-bold text-current">
+        ${value.toLocaleString()}
+      </p>
+    </div>
+  );
+}
 
 function StatCard({
   icon,
@@ -449,8 +567,8 @@ function StatCard({
   label: string;
   value: number | string;
   color: "blue" | "red" | "green" | "purple" | "amber";
-}) {
-  const colors = {
+}): React.ReactNode {
+  const colors: Record<string, string> = {
     blue: "bg-[var(--color-primary-bg)] text-[var(--color-primary)]",
     red: "bg-red-50 text-red-600",
     green: "bg-green-50 text-green-600",
@@ -468,24 +586,24 @@ function StatCard({
 }
 
 function getActivityIcon(action: string): React.ReactNode {
-  const c = "w-4 h-4";
+  const iconClass = "w-4 h-4";
   switch (action) {
     case "PHASE_STATUS_CHANGED":
-      return <HardHat className={cn(c, "text-[var(--color-primary)]")} />;
+      return <HardHat className={cn(iconClass, "text-[var(--color-primary)]")} />;
     case "PHASE_CREATED":
-      return <TrendingUp className={cn(c, "text-green-500")} />;
+      return <TrendingUp className={cn(iconClass, "text-green-500")} />;
     case "STAFF_ASSIGNED":
     case "STAFF_UNASSIGNED":
-      return <Users className={cn(c, "text-purple-500")} />;
+      return <Users className={cn(iconClass, "text-purple-500")} />;
     case "CHECKLIST_APPLIED":
     case "CHECKLIST_ITEM_TOGGLED":
-      return <ClipboardCheck className={cn(c, "text-green-500")} />;
+      return <ClipboardCheck className={cn(iconClass, "text-green-500")} />;
     case "DOCUMENT_UPLOADED":
     case "DOCUMENT_STATUS_CHANGED":
-      return <FileText className={cn(c, "text-amber-500")} />;
+      return <FileText className={cn(iconClass, "text-amber-500")} />;
     case "PHOTO_UPLOADED":
-      return <Camera className={cn(c, "text-pink-500")} />;
+      return <Camera className={cn(iconClass, "text-pink-500")} />;
     default:
-      return <Activity className={cn(c, "text-gray-400")} />;
+      return <Activity className={cn(iconClass, "text-gray-400")} />;
   }
 }

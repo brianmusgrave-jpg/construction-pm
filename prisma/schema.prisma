@@ -74,6 +74,7 @@ model User {
   checklistItems ChecklistItem[]  @relation("completed_by")
   staffCreated   Staff[]          @relation("staff_created_by")
   activityLogs   ActivityLog[]
+  phaseComments  PhaseComment[]   @relation("phase_comments")
 
   @@map("users")
 }
@@ -161,10 +162,13 @@ model Phase {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String  @map("project_id")
 
-  assignments PhaseAssignment[]
-  checklist   Checklist?
-  documents   Document[]
-  photos      Photo[]
+  assignments   PhaseAssignment[]
+  checklist     Checklist?
+  documents     Document[]
+  photos        Photo[]
+  comments      PhaseComment[]
+  dependencies  PhaseDependency[] @relation("phase_dependencies")
+  dependents    PhaseDependency[] @relation("phase_dependents")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -384,6 +388,8 @@ enum NotificationType {
   REVIEW_COMPLETED
   TIMELINE_SHIFTED
   MEMBER_INVITED
+  COMMENT_ADDED
+  DEPENDENCY_CHANGED
 }
 
 // ── Activity Log ──
@@ -423,6 +429,37 @@ enum ActivityType {
   MEMBER_INVITED
   MEMBER_JOINED
   MEMBER_REMOVED
+  COMMENT_ADDED
+  DEPENDENCY_ADDED
+}
+
+// ── Phase Comments & Dependencies ──
+
+model PhaseComment {
+  id        String   @id @default(cuid())
+  phaseId   String   @map("phase_id")
+  userId    String   @map("user_id")
+  content   String   @db.Text
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  phase Phase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  user  User  @relation("phase_comments", fields: [userId], references: [id])
+
+  @@map("phase_comments")
+}
+
+model PhaseDependency {
+  id          String @id @default(cuid())
+  phaseId     String @map("phase_id")
+  dependsOnId String @map("depends_on_id")
+  lagDays     Int    @default(0) @map("lag_days")
+
+  phase     Phase @relation("phase_dependencies", fields: [phaseId], references: [id], onDelete: Cascade)
+  dependsOn Phase @relation("phase_dependents", fields: [dependsOnId], references: [id], onDelete: Cascade)
+
+  @@unique([phaseId, dependsOnId])
+  @@map("phase_dependencies")
 }
 
 // ── Organization Settings (Theming) ──
