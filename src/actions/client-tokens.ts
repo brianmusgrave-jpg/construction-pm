@@ -20,6 +20,7 @@ function hashToken(token: string): string {
 async function requirePM(projectId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthenticated");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const member = await (db as any).projectMember.findFirst({
     where: { projectId, userId: session.user.id, role: { in: ["PM", "ADMIN"] } },
   });
@@ -30,6 +31,7 @@ async function requirePM(projectId: string) {
 export async function getClientTokens(projectId: string): Promise<ClientToken[]> {
   const session = await auth();
   if (!session?.user?.id) return [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const member = await (db as any).projectMember.findFirst({
     where: { projectId, userId: session.user.id },
   });

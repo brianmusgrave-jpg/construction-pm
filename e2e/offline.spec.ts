@@ -49,7 +49,6 @@ test.describe("Offline Mode", () => {
   }) => {
     await page.goto("/dashboard");
     await page.waitForLoadState("networkidle");
-    const contentBefore = await page.textContent("body");
 
     // Go offline
     await context.setOffline(true);

@@ -45,11 +45,12 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
   );
 
   // Per-project budget breakdown (amountSpent derived from phase actualCost sums)
+  type ProjectWithPhases = (typeof projects)[number];
   const projectBudgets = projects
-    .filter((p: any) => Number(p.budget ?? 0) > 0)
-    .map((p: any) => {
+    .filter((p: ProjectWithPhases) => Number(p.budget ?? 0) > 0)
+    .map((p: ProjectWithPhases) => {
       const spent = (p.phases ?? []).reduce(
-        (sum: number, ph: any) => sum + Number(ph.actualCost ?? 0),
+        (sum: number, ph: { actualCost: number | null }) => sum + Number(ph.actualCost ?? 0),
         0
       );
       return {
@@ -58,7 +59,7 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
         actual: spent,
       };
     })
-    .sort((a: any, b: any) => b.estimated - a.estimated)
+    .sort((a: { estimated: number }, b: { estimated: number }) => b.estimated - a.estimated)
     .slice(0, 8);
 
   // Phase status distribution + budget totals

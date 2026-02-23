@@ -37,18 +37,18 @@ export async function createInspection(data: {
   const validated = CreateInspectionSchema.parse(data);
 
   const phase = await db.phase.findUnique({
-    where: { id: data.phaseId },
+    where: { id: validated.phaseId },
     select: { id: true, name: true, projectId: true },
   });
   if (!phase) throw new Error("Phase not found");
 
   const inspection = await db.inspection.create({
     data: {
-      title: data.title,
-      inspectorName: data.inspectorName ?? null,
-      scheduledAt: new Date(data.scheduledAt),
-      notifyOnResult: data.notifyOnResult ?? true,
-      phaseId: data.phaseId,
+      title: validated.title,
+      inspectorName: validated.inspectorName ?? null,
+      scheduledAt: new Date(validated.scheduledAt),
+      notifyOnResult: validated.notifyOnResult ?? true,
+      phaseId: validated.phaseId,
     },
   });
 
@@ -56,8 +56,8 @@ export async function createInspection(data: {
   const memberIds = await getProjectMemberIds(phase.projectId);
   notify({
     type: "INSPECTION_SCHEDULED",
-    title: `Inspection Scheduled: ${data.title}`,
-    message: `Inspection scheduled for ${phase.name} on ${new Date(data.scheduledAt).toLocaleDateString()}`,
+    title: `Inspection Scheduled: ${validated.title}`,
+    message: `Inspection scheduled for ${phase.name} on ${new Date(validated.scheduledAt).toLocaleDateString()}`,
     recipientIds: memberIds,
     actorId: session.user.id,
     data: { projectId: phase.projectId, phaseId: phase.id, inspectionId: inspection.id },

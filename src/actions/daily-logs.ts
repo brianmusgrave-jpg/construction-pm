@@ -48,21 +48,21 @@ export async function createDailyLog(data: {
 
   const log = await db.dailyLog.create({
     data: {
-      projectId: data.projectId,
-      date: new Date(data.date),
-      weather: data.weather ?? null,
-      tempHigh: data.tempHigh ?? null,
-      tempLow: data.tempLow ?? null,
-      crewCount: data.crewCount ?? null,
-      equipment: data.equipment ?? null,
-      workSummary: data.workSummary,
-      issues: data.issues ?? null,
-      notes: data.notes ?? null,
+      projectId: validated.projectId,
+      date: new Date(validated.date),
+      weather: validated.weather ?? null,
+      tempHigh: validated.tempHigh ?? null,
+      tempLow: validated.tempLow ?? null,
+      crewCount: validated.crewCount ?? null,
+      equipment: validated.equipment ?? null,
+      workSummary: validated.workSummary,
+      issues: validated.issues ?? null,
+      notes: validated.notes ?? null,
       authorId: session.user.id,
     },
   });
 
-  revalidatePath(`/dashboard/projects/${data.projectId}`);
+  revalidatePath(`/dashboard/projects/${validated.projectId}`);
   return log;
 }
 
