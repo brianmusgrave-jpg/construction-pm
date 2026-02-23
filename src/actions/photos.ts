@@ -17,6 +17,8 @@ export async function createPhoto(data: {
   phaseId: string;
   url: string;
   caption?: string;
+  latitude?: number;
+  longitude?: number;
 }) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -36,6 +38,8 @@ export async function createPhoto(data: {
       caption: data.caption || null,
       phaseId: data.phaseId,
       uploadedById: session.user.id,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
     },
   });
 
@@ -57,6 +61,8 @@ export async function createPhoto(data: {
 export async function createPhotoBatch(data: {
   phaseId: string;
   photos: { url: string; caption?: string }[];
+  latitude?: number;
+  longitude?: number;
 }) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -76,6 +82,8 @@ export async function createPhotoBatch(data: {
       caption: p.caption || null,
       phaseId: data.phaseId,
       uploadedById: session.user.id,
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
     })),
   });
 
@@ -234,6 +242,28 @@ export async function clearPhotoFlag(photoId: string) {
       flaggedById: null,
       flaggedAt: null,
     },
+  });
+
+  revalidatePath(`/dashboard/projects/${photo.phase.projectId}`);
+  return updated;
+}
+export async function updatePhotoGps(
+  photoId: string,
+  latitude: number,
+  longitude: number
+) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const photo = await db.photo.findUnique({
+    where: { id: photoId },
+    include: { phase: { select: { projectId: true } } },
+  });
+  if (!photo) throw new Error("Photo not found");
+
+  const updated = await db.photo.update({
+    where: { id: photoId },
+    data: { latitude, longitude },
   });
 
   revalidatePath(`/dashboard/projects/${photo.phase.projectId}`);

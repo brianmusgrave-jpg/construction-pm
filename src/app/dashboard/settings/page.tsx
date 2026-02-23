@@ -12,6 +12,14 @@ import {
   getUserPhone,
 } from "@/actions/notification-preferences";
 import { LanguagePicker } from "@/components/settings/LanguagePicker";
+import { TotpSection } from "@/components/settings/TotpSection";
+import { ApiKeySection } from "@/components/settings/ApiKeySection";
+import { WebhookSection } from "@/components/settings/WebhookSection";
+import { ReportScheduleSection } from "@/components/settings/ReportScheduleSection";
+import { getTotpStatus } from "@/actions/totp";
+import { getApiKeys } from "@/actions/api-keys";
+import { getWebhooks } from "@/actions/webhooks";
+import { getReportSchedules } from "@/actions/report-schedules";
 import { getLocale } from "@/i18n/locale";
 import { getTranslations } from "next-intl/server";
 
@@ -29,6 +37,14 @@ export default async function SettingsPage() {
   const userRole = session.user.role || "VIEWER";
   const canManage = can(userRole, "manage", "phase");
   const templates = canManage ? await getChecklistTemplates() : [];
+
+  // Sprint H — security & integrations (fetched in parallel, fall back gracefully)
+  const [totpStatus, apiKeys, webhooks, reportSchedules] = await Promise.all([
+    getTotpStatus().catch(() => ({ enabled: false, verified: false })),
+    getApiKeys().catch(() => []),
+    getWebhooks().catch(() => []),
+    getReportSchedules().catch(() => []),
+  ]);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -68,6 +84,11 @@ export default async function SettingsPage() {
         </div>
       </div>
 
+      {/* Two-Factor Authentication */}
+      <div className="mt-6">
+        <TotpSection enabled={totpStatus.enabled} verified={totpStatus.verified} />
+      </div>
+
       {/* Language section */}
       <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
         <h2 className="text-lg font-semibold text-gray-900 mb-1">{t("language")}</h2>
@@ -102,6 +123,23 @@ export default async function SettingsPage() {
       <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
         <NotificationSettings preferences={notifPrefs} phone={userPhone} />
       </div>
+
+      {/* API Keys */}
+      <div className="mt-6">
+        <ApiKeySection apiKeys={apiKeys} />
+      </div>
+
+      {/* Webhooks */}
+      <div className="mt-6">
+        <WebhookSection webhooks={webhooks} />
+      </div>
+
+      {/* Automated Report Schedules (admin/PM only) */}
+      {canManage && (
+        <div className="mt-6">
+          <ReportScheduleSection schedules={reportSchedules} />
+        </div>
+      )}
     </div>
   );
 }

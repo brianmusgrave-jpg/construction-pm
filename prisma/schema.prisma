@@ -76,6 +76,10 @@ model User {
   activityLogs   ActivityLog[]
   phaseComments  PhaseComment[]   @relation("phase_comments")
   notificationPreference NotificationPreference?
+  changeOrderRequests  ChangeOrder[] @relation("change_order_requests")
+  changeOrderApprovals ChangeOrder[] @relation("change_order_approvals")
+  dailyLogs      DailyLog[]       @relation("daily_log_author")
+  totpSecret     TotpSecret?
 
   @@map("users")
 }
@@ -104,6 +108,7 @@ model Project {
   phases       Phase[]
   invitations  Invitation[]
   activityLogs ActivityLog[]
+  dailyLogs    DailyLog[]
 
   @@map("projects")
 }
@@ -168,8 +173,12 @@ model Phase {
   documents     Document[]
   photos        Photo[]
   comments      PhaseComment[]
-  dependencies  PhaseDependency[] @relation("phase_dependencies")
-  dependents    PhaseDependency[] @relation("phase_dependents")
+  dependencies  PhaseDependency[]  @relation("phase_dependencies")
+  dependents    PhaseDependency[]  @relation("phase_dependents")
+  changeOrders  ChangeOrder[]
+  inspections   Inspection[]
+  bids          SubcontractorBid[]
+  materials     Material[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -336,6 +345,10 @@ model Photo {
   caption String?
   takenAt DateTime @default(now()) @map("taken_at")
 
+  // GPS (Sprint H #32)
+  latitude    Float?
+  longitude   Float?
+
   // Flagging for followup
   flagType    PhotoFlagType? @map("flag_type")
   flagNote    String?        @map("flag_note") @db.Text
@@ -391,6 +404,11 @@ enum NotificationType {
   MEMBER_INVITED
   COMMENT_ADDED
   DEPENDENCY_CHANGED
+  CHANGE_ORDER_SUBMITTED
+  CHANGE_ORDER_APPROVED
+  CHANGE_ORDER_REJECTED
+  INSPECTION_SCHEDULED
+  INSPECTION_RESULT
 }
 
 // ── Notification Preferences ──
@@ -527,4 +545,240 @@ model Invitation {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("invitations")
+}
+
+// ── GPS on Photos (Sprint H #32) ──
+// latitude and longitude added to Photo model (see Photo model above)
+// NOTE: These fields are added via ALTER TABLE - see migration note in session log
+
+// ── Change Orders (Sprint H #34) ──
+
+model ChangeOrder {
+  id          String            @id @default(cuid())
+  number      String
+  title       String
+  description String?           @db.Text
+  status      ChangeOrderStatus @default(PENDING)
+  amount      Decimal?          @db.Decimal(12, 2)
+  reason      String?           @db.Text
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  requestedBy   User   @relation("change_order_requests", fields: [requestedById], references: [id])
+  requestedById String @map("requested_by_id")
+
+  approvedBy   User?     @relation("change_order_approvals", fields: [approvedById], references: [id])
+  approvedById String?   @map("approved_by_id")
+  approvedAt   DateTime? @map("approved_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId])
+  @@map("change_orders")
+}
+
+enum ChangeOrderStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ── Daily Logs (Sprint H #35) ──
+
+model DailyLog {
+  id          String   @id @default(cuid())
+  date        DateTime @db.Date
+  weather     String?
+  tempHigh    Int?     @map("temp_high")
+  tempLow     Int?     @map("temp_low")
+  crewCount   Int?     @map("crew_count")
+  equipment   String?  @db.Text
+  workSummary String   @map("work_summary") @db.Text
+  issues      String?  @db.Text
+  notes       String?  @db.Text
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String  @map("project_id")
+
+  author   User   @relation("daily_log_author", fields: [authorId], references: [id])
+  authorId String @map("author_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([projectId, date])
+  @@index([projectId, date])
+  @@map("daily_logs")
+}
+
+// ── Inspections (Sprint H #36) ──
+
+model Inspection {
+  id            String            @id @default(cuid())
+  title         String
+  inspectorName String?           @map("inspector_name")
+  scheduledAt   DateTime          @map("scheduled_at")
+  completedAt   DateTime?         @map("completed_at")
+  result        InspectionResult?
+  notes         String?           @db.Text
+  notifyOnResult Boolean          @default(true) @map("notify_on_result")
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, scheduledAt])
+  @@map("inspections")
+}
+
+enum InspectionResult {
+  PASS
+  FAIL
+  CONDITIONAL
+}
+
+// ── Subcontractor Bids (Sprint H #37) ──
+
+model SubcontractorBid {
+  id          String    @id @default(cuid())
+  companyName String    @map("company_name")
+  contactName String?   @map("contact_name")
+  email       String?
+  phone       String?
+  amount      Decimal   @db.Decimal(12, 2)
+  notes       String?   @db.Text
+  awarded     Boolean   @default(false)
+  submittedAt DateTime  @default(now()) @map("submitted_at")
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId])
+  @@map("subcontractor_bids")
+}
+
+// ── Materials / Inventory (Sprint H #38) ──
+
+model Material {
+  id          String         @id @default(cuid())
+  name        String
+  quantity    Float
+  unit        String
+  status      MaterialStatus @default(ORDERED)
+  cost        Decimal?       @db.Decimal(12, 2)
+  supplier    String?
+  orderedAt   DateTime?      @map("ordered_at")
+  deliveredAt DateTime?      @map("delivered_at")
+  installedAt DateTime?      @map("installed_at")
+  notes       String?        @db.Text
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId])
+  @@map("materials")
+}
+
+enum MaterialStatus {
+  ORDERED
+  DELIVERED
+  INSTALLED
+  RETURNED
+}
+
+// ── API Keys & Webhooks (Sprint H #43) ──
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  name       String
+  keyHash    String    @unique @map("key_hash")
+  prefix     String
+  lastUsedAt DateTime? @map("last_used_at")
+  expiresAt  DateTime? @map("expires_at")
+  active     Boolean   @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("api_keys")
+}
+
+model Webhook {
+  id     String   @id @default(cuid())
+  name   String
+  url    String
+  secret String
+  events String[]
+  active Boolean  @default(true)
+
+  lastTriggeredAt DateTime? @map("last_triggered_at")
+  lastStatusCode  Int?      @map("last_status_code")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("webhooks")
+}
+
+// ── 2FA / TOTP (Sprint H #41) ──
+
+model TotpSecret {
+  id       String  @id @default(cuid())
+  userId   String  @unique @map("user_id")
+  secret   String
+  verified Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("totp_secrets")
+}
+
+// ── Report Schedule (Sprint H #40) ──
+
+model ReportSchedule {
+  id        String         @id @default(cuid())
+  frequency ReportFrequency
+  dayOfWeek Int?           @map("day_of_week") // 0=Sun..6=Sat (weekly)
+  dayOfMonth Int?          @map("day_of_month") // 1-28 (monthly)
+  sendHour  Int            @default(8) @map("send_hour") // 0-23 UTC
+  recipients String[]
+  includeProjects String[] @map("include_projects") // empty = all
+  lastSentAt DateTime?     @map("last_sent_at")
+  active    Boolean        @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("report_schedules")
+}
+
+enum ReportFrequency {
+  WEEKLY
+  MONTHLY
+}
+
+// ── Client Portal Tokens (Sprint H #39) ──
+
+model ClientToken {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  label     String
+  projectId String?   @map("project_id") // null = all projects (org-level)
+  expiresAt DateTime? @map("expires_at")
+  active    Boolean   @default(true)
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("client_tokens")
 }

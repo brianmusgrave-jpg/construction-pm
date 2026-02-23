@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus, FolderKanban, Calendar, Users } from "lucide-react";
 import { cn, statusColor, statusLabel, fmtShort } from "@/lib/utils";
+import { BulkImportButton } from "@/components/dashboard/BulkImportButton";
 
 export default async function ProjectsPage() {
   const session = await auth();
@@ -36,13 +37,16 @@ export default async function ProjectsPage() {
           </p>
         </div>
         {showCreate && (
-          <Link
-            href="/dashboard/projects/new"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            New Project
-          </Link>
+          <div className="flex items-center gap-2">
+            <BulkImportButton />
+            <Link
+              href="/dashboard/projects/new"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              New Project
+            </Link>
+          </div>
         )}
       </div>
 
@@ -56,13 +60,16 @@ export default async function ProjectsPage() {
             Create your first project to get started.
           </p>
           {showCreate && (
-            <Link
-              href="/dashboard/projects/new"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)]"
-            >
-              <Plus className="w-4 h-4" />
-              New Project
-            </Link>
+            <div className="flex items-center justify-center gap-3">
+              <BulkImportButton />
+              <Link
+                href="/dashboard/projects/new"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)]"
+              >
+                <Plus className="w-4 h-4" />
+                New Project
+              </Link>
+            </div>
           )}
         </div>
       ) : (

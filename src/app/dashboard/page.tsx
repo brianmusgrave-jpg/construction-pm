@@ -26,16 +26,19 @@ import {
 import { cn, statusColor, statusLabel, fmtShort, fmtRelative } from "@/lib/utils";
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/i18n/locale";
+import { getAnalytics } from "@/actions/analytics";
+import { AnalyticsWidgets } from "@/components/dashboard/AnalyticsWidgets";
 
 export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [t, tc, tn, locale] = await Promise.all([
+  const [t, tc, tn, locale, analytics] = await Promise.all([
     getTranslations("dashboard"),
     getTranslations("common"),
     getTranslations("nav"),
     getLocale(),
+    getAnalytics().catch(() => null),
   ]);
 
   // Fetch all data in parallel
@@ -521,6 +524,9 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Analytics Charts */}
+      {analytics && <AnalyticsWidgets data={analytics} />}
     </div>
   );
 }

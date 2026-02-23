@@ -9,6 +9,10 @@ import { ChecklistSection } from "@/components/phase/ChecklistSection";
 import { DocumentSection } from "@/components/phase/DocumentSection";
 import { PhotoSection } from "@/components/phase/PhotoSection";
 import { CommentSection } from "@/components/phase/CommentSection";
+import { InspectionSection } from "@/components/phase/InspectionSection";
+import { SubcontractorBidSection } from "@/components/phase/SubcontractorBidSection";
+import { MaterialSection } from "@/components/phase/MaterialSection";
+import { ChangeOrderSection } from "@/components/phase/ChangeOrderSection";
 import { getPhaseComments } from "@/actions/comments";
 
 export default async function PhaseDetailPage({
@@ -59,18 +63,36 @@ export default async function PhaseDetailPage({
 
   if (!phase || phase.project.id !== projectId) notFound();
 
-  const comments = await getPhaseComments(phaseId);
+  const dbc = db as any;
 
-  // Get all staff for assignment modal
-  const allStaff = await db.staff.findMany({
-    orderBy: { name: "asc" },
-  });
-
-  // Get checklist templates for template picker
-  const templates = await db.checklistTemplate.findMany({
-    include: { items: { orderBy: { order: "asc" } } },
-    orderBy: { name: "asc" },
-  });
+  const [comments, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
+    getPhaseComments(phaseId),
+    db.staff.findMany({ orderBy: { name: "asc" } }),
+    db.checklistTemplate.findMany({
+      include: { items: { orderBy: { order: "asc" } } },
+      orderBy: { name: "asc" },
+    }),
+    dbc.inspection.findMany({
+      where: { phaseId },
+      orderBy: { scheduledDate: "asc" },
+    }).catch(() => []),
+    dbc.subcontractorBid.findMany({
+      where: { phaseId },
+      orderBy: { createdAt: "asc" },
+    }).catch(() => []),
+    dbc.material.findMany({
+      where: { phaseId },
+      orderBy: { createdAt: "asc" },
+    }).then((mats: any[]) =>
+      mats.map((m: any) => ({ ...m, cost: m.cost ? Number(m.cost) : null }))
+    ).catch(() => []),
+    dbc.changeOrder.findMany({
+      where: { phaseId },
+      orderBy: { createdAt: "desc" },
+    }).then((cos: any[]) =>
+      cos.map((co: any) => ({ ...co, amount: co.amount ? Number(co.amount) : null }))
+    ).catch(() => []),
+  ]);
 
   const userRole = session.user.role || "VIEWER";
   const canEdit = can(userRole, "update", "phase");
@@ -102,6 +124,32 @@ export default async function PhaseDetailPage({
           templates={templates}
           canEdit={canEdit}
           canManage={canManage}
+        />
+
+        <InspectionSection
+          phaseId={phaseId}
+          inspections={inspections}
+          canCreate={canEdit}
+          canRecord={canEdit}
+        />
+
+        <SubcontractorBidSection
+          phaseId={phaseId}
+          bids={bids}
+          canManage={canManage}
+        />
+
+        <MaterialSection
+          phaseId={phaseId}
+          materials={materials}
+          canManage={canManage}
+        />
+
+        <ChangeOrderSection
+          phaseId={phaseId}
+          changeOrders={changeOrders}
+          canCreate={canEdit}
+          canApprove={canManage}
         />
 
         <DocumentSection

@@ -22,6 +22,7 @@ import {
   deleteDocument,
 } from "@/actions/documents";
 import { useTranslations } from "next-intl";
+import { DocumentAIPanel } from "./DocumentAIPanel";
 
 interface Document {
   id: string;
@@ -35,6 +36,8 @@ interface Document {
   notes: string | null;
   createdAt: Date;
   uploadedBy: { id: string; name: string | null; email: string };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extractedData?: any;
 }
 
 interface DocumentSectionProps {
@@ -407,8 +410,9 @@ export function DocumentSection({
             return (
               <div
                 key={doc.id}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg group"
+                className="p-3 bg-gray-50 rounded-lg group"
               >
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 min-w-0">
                   <Icon className="w-5 h-5 text-gray-400 shrink-0" />
                   <div className="min-w-0">
@@ -518,6 +522,12 @@ export function DocumentSection({
                     </button>
                   )}
                 </div>
+              </div>
+              {/* AI Extraction panel */}
+              <DocumentAIPanel
+                documentId={doc.id}
+                initialData={doc.extractedData ?? null}
+              />
               </div>
             );
           })}

@@ -16,10 +16,12 @@ import {
   RotateCw,
   HelpCircle,
   Eye,
+  MapPin,
 } from "lucide-react";
 import { upload } from "@vercel/blob/client";
 import { createPhoto, createPhotoBatch, deletePhoto, flagPhoto, clearPhotoFlag } from "@/actions/photos";
 import { useTranslations } from "next-intl";
+import { PhotoMapView } from "./PhotoMapView";
 
 interface Photo {
   id: string;
@@ -30,6 +32,8 @@ interface Photo {
   flagType?: string | null;
   flagNote?: string | null;
   flaggedBy?: { name: string | null } | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface PhotoSectionProps {
@@ -102,8 +106,26 @@ export function PhotoSection({
   const [flagNoteId, setFlagNoteId] = useState<string | null>(null);
   const [flagNoteText, setFlagNoteText] = useState("");
   const [pendingFlag, setPendingFlag] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Try to get current GPS position before uploading
+  const captureGps = (): Promise<{ latitude: number; longitude: number } | null> => {
+    return new Promise((resolve) => {
+      if (!navigator.geolocation) return resolve(null);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+        () => resolve(null),
+        { timeout: 5000, maximumAge: 60000 }
+      );
+    });
+  };
+
+  const geoPhotos = photos.filter(
+    (p): p is Photo & { latitude: number; longitude: number } =>
+      typeof p.latitude === "number" && typeof p.longitude === "number"
+  );
 
   const handleDragOver = useCallback(
     (e: React.DragEvent) => {
@@ -145,6 +167,9 @@ export function PhotoSection({
     setError(null);
 
     try {
+      // Attempt GPS capture in parallel with first blob upload
+      const gpsPromise = captureGps();
+
       const uploadedUrls: { url: string }[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -161,16 +186,22 @@ export function PhotoSection({
         uploadedUrls.push({ url: blob.url });
       }
 
+      const gps = await gpsPromise;
+
       if (uploadedUrls.length > 1) {
         setUploadProgress(t("savingPhotos"));
         await createPhotoBatch({
           phaseId,
           photos: uploadedUrls,
+          latitude: gps?.latitude,
+          longitude: gps?.longitude,
         });
       } else if (uploadedUrls.length === 1) {
         await createPhoto({
           phaseId,
           url: uploadedUrls[0].url,
+          latitude: gps?.latitude,
+          longitude: gps?.longitude,
         });
       }
     } catch (err) {
@@ -241,6 +272,17 @@ export function PhotoSection({
               </span>
             )}
           </h2>
+          <div className="flex items-center gap-2">
+            {geoPhotos.length > 0 && (
+              <button
+                onClick={() => setShowMap(true)}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-green-600 hover:text-green-700"
+                title={`View ${geoPhotos.length} geotagged photo${geoPhotos.length !== 1 ? "s" : ""} on map`}
+              >
+                <MapPin className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Map ({geoPhotos.length})</span>
+              </button>
+            )}
           {canUpload && (
             <div className="flex items-center gap-2">
               {isUploading ? (
@@ -271,6 +313,7 @@ export function PhotoSection({
               )}
             </div>
           )}
+          </div>
           {/* Camera capture input (rear camera) */}
           <input
             ref={cameraInputRef}
@@ -392,6 +435,18 @@ export function PhotoSection({
                       alt={photo.caption || t("phasePhoto")}
                       className="w-full h-full object-cover"
                     />
+
+                    {/* GPS badge */}
+                    {photo.latitude != null && photo.longitude != null && (
+                      <div className="absolute top-2 right-2 z-10">
+                        <div
+                          className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-500/90 text-white"
+                          title={`GPS: ${photo.latitude.toFixed(5)}, ${photo.longitude.toFixed(5)}`}
+                        >
+                          <MapPin className="w-3 h-3" />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Flag badge — always visible when flagged */}
                     {flag && (
@@ -518,6 +573,14 @@ export function PhotoSection({
           </div>
         )}
       </div>
+
+      {/* Photo Map */}
+      {showMap && geoPhotos.length > 0 && (
+        <PhotoMapView
+          photos={geoPhotos}
+          onClose={() => setShowMap(false)}
+        />
+      )}
 
       {/* Lightbox */}
       {lightboxUrl && (

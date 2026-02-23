@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 import { useTranslations } from "next-intl";
+import { useNotificationSSE } from "@/hooks/useNotificationSSE";
 
 interface SidebarProps {
   user: {
@@ -57,12 +58,16 @@ function getNavigation(role: string, t: (key: string) => string) {
   ];
 }
 
-export function Sidebar({ user, logoUrl, companyName, unreadCount = 0 }: SidebarProps) {
+export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread = 0 }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(initialUnread);
   const t = useTranslations("nav");
   const tc = useTranslations("common");
   const navigation = getNavigation(user.role, t);
+
+  // Live unread count via SSE (#30)
+  useNotificationSSE(setUnreadCount);
 
   // Close mobile sidebar on route change
   useEffect(() => {

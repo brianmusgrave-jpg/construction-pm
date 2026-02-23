@@ -26,6 +26,8 @@ import { cn, statusColor, statusLabel, fmtShort, fmtLong, fmtRelative } from "@/
 import { can } from "@/lib/permissions";
 import { BudgetSection } from "@/components/project/BudgetSection";
 import { TeamSection } from "@/components/project/TeamSection";
+import { ClientTokenSection } from "@/components/project/ClientTokenSection";
+import { DailyLogSection } from "@/components/project/DailyLogSection";
 import { getProjectInvitations } from "@/actions/invitations";
 
 export default async function ProjectOverviewPage({
@@ -133,6 +135,18 @@ export default async function ProjectOverviewPage({
   const invitations = canInvite
     ? await getProjectInvitations(id).catch(() => [])
     : [];
+  // Fetch daily logs
+  const dailyLogs = await (db as any).dailyLog.findMany({
+    where: { projectId: id },
+    orderBy: { date: "desc" },
+    take: 20,
+  }).catch(() => []);
+
+  // Fetch client portal tokens (PM/Admin only)
+  const clientTokens = canManageBudget
+    ? await (db as any).clientToken.findMany({ where: { projectId: id }, orderBy: { createdAt: "desc" } }).catch(() => [])
+    : [];
+
   const budgetPhases = phases.map((p: typeof phases[number]) => ({
     id: p.id,
     name: p.name,
@@ -332,6 +346,13 @@ export default async function ProjectOverviewPage({
         canManage={canManageBudget}
       />
 
+      {/* Daily Logs */}
+      <DailyLogSection
+        projectId={id}
+        logs={dailyLogs}
+        canCreate={can(userRole, "create", "document")}
+      />
+
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Phase list */}
@@ -464,6 +485,11 @@ export default async function ProjectOverviewPage({
             }))}
             canInvite={canInvite}
           />
+
+          {/* Client Portal Links */}
+          {canManageBudget && clientTokens.length >= 0 && (
+            <ClientTokenSection projectId={id} tokens={clientTokens} />
+          )}
 
           {/* Recent Activity */}
           <div>
