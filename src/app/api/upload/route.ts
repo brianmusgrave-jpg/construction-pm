@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname) => {
+      onBeforeGenerateToken: async (_pathname) => {
         // Auth check before generating upload token
         const session = await auth();
         if (!session?.user) {
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
           }),
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
+      onUploadCompleted: async ({ blob }) => {
         // This runs after the file is uploaded to Vercel Blob
         // We don't create the Document record here — that's done
         // via the server action so we have the phase/category info

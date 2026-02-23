@@ -13,6 +13,7 @@ async function requireAuth() {
 }
 
 // WEBHOOK_EVENTS moved to @/lib/webhook-events to avoid "use server" export restriction
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { WEBHOOK_EVENTS } from "@/lib/webhook-events";
 export type { WebhookEvent } from "@/lib/webhook-events";
 

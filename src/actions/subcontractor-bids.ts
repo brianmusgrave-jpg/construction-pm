@@ -8,6 +8,7 @@ import type { SubcontractorBid } from "@/lib/db-types";
 async function requireMember(phaseId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthenticated");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const phase = await (db as any).phase.findUnique({
     where: { id: phaseId },
     include: { project: { include: { members: { where: { userId: session.user.id } } } } },
@@ -25,6 +26,7 @@ export async function getSubcontractorBids(phaseId: string): Promise<Subcontract
     where: { phaseId },
     orderBy: { submittedAt: "desc" },
   });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return bids.map((b: any) => ({ ...b, amount: Number(b.amount) }));
 }
 

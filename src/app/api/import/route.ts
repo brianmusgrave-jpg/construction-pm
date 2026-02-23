@@ -2,16 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db-types";
 
-interface CsvProject {
-  name: string;
-  description?: string;
-  status?: string;
-  location?: string;
-  startDate?: string;
-  endDate?: string;
-  budget?: string;
-  phases?: string; // comma-separated phase names
-}
+// CsvProject interface documented here for reference but not used at runtime
+// (CSV rows are parsed as Record<string, string> for flexible header matching)
 
 function parseCsv(text: string): Record<string, string>[] {
   const lines = text.trim().split(/\r?\n/);
@@ -71,6 +63,7 @@ export async function POST(req: NextRequest) {
     const budget = budgetRaw ? parseFloat(budgetRaw.replace(/[^0-9.]/g, "")) : null;
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const project = await (db as any).project.create({
         data: {
           name,
@@ -91,6 +84,7 @@ export async function POST(req: NextRequest) {
       if (phasesRaw.trim()) {
         const phaseNames = phasesRaw.split(";").map((p: string) => p.trim()).filter(Boolean);
         for (let pi = 0; pi < phaseNames.length; pi++) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           await (db as any).phase.create({
             data: {
               name: phaseNames[pi],

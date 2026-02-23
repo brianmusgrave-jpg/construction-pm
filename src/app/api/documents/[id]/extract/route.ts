@@ -65,7 +65,6 @@ function heuristicExtract(doc: {
   notes: string | null;
 }) {
   const text = [doc.name, doc.notes ?? ""].join(" ");
-  const name = doc.name;
 
   // Detect file extension
   const extMatch = doc.url.split("?")[0].match(/\.([a-zA-Z0-9]+)$/);

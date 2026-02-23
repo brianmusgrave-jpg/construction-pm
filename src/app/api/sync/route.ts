@@ -130,6 +130,7 @@ async function dispatchAction(action: string, p: Record<string, unknown>): Promi
       );
       break;
     case "createChangeOrder":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await createChangeOrder(p as any);
       break;
     case "updateChangeOrderStatus":
@@ -164,6 +165,7 @@ async function dispatchAction(action: string, p: Record<string, unknown>): Promi
       await removePhaseDependency({ dependencyId: p.dependencyId as string });
       break;
     case "submitBid":
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await createSubcontractorBid(p as any);
       break;
     default:
