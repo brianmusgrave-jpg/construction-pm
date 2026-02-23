@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   BarChart3,
+  HelpCircle,
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 
@@ -43,6 +44,7 @@ function getNavigation(role: string) {
     return [
       ...base,
       { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
+      { name: "Help", href: "/dashboard/help", icon: HelpCircle },
     ];
   }
 
@@ -51,6 +53,7 @@ function getNavigation(role: string) {
     { name: "Directory", href: "/dashboard/directory", icon: Users },
     { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
+    { name: "Help", href: "/dashboard/help", icon: HelpCircle },
   ];
 }
 

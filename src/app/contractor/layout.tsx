@@ -4,6 +4,7 @@ import { ContractorNav } from "@/components/contractor/ContractorNav";
 import { getOrgSettings } from "@/actions/settings";
 import { getThemeCSS } from "@/lib/themes";
 import { getUnreadCount } from "@/actions/notifications";
+import { OnboardingTour } from "@/components/help/OnboardingTour";
 
 export default async function ContractorLayout({
   children,
@@ -31,6 +32,10 @@ export default async function ContractorLayout({
         unreadCount={unreadCount}
       />
       <main className="max-w-5xl mx-auto px-4 py-6 pb-20 sm:pb-6">{children}</main>
+      <OnboardingTour
+        userRole={session.user.role || "CONTRACTOR"}
+        userName={session.user.name || undefined}
+      />
     </div>
   );
 }

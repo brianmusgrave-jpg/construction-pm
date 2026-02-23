@@ -4,6 +4,7 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { getOrgSettings } from "@/actions/settings";
 import { getThemeCSS } from "@/lib/themes";
 import { getUnreadCount } from "@/actions/notifications";
+import { OnboardingTour } from "@/components/help/OnboardingTour";
 
 export default async function DashboardLayout({
   children,
@@ -28,6 +29,10 @@ export default async function DashboardLayout({
         unreadCount={unreadCount}
       />
       <main className="flex-1 overflow-auto pt-14 lg:pt-0">{children}</main>
+      <OnboardingTour
+        userRole={session.user.role || "VIEWER"}
+        userName={session.user.name || undefined}
+      />
     </div>
   );
 }

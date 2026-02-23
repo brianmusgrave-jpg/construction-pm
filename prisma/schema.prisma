@@ -75,6 +75,7 @@ model User {
   staffCreated   Staff[]          @relation("staff_created_by")
   activityLogs   ActivityLog[]
   phaseComments  PhaseComment[]   @relation("phase_comments")
+  notificationPreference NotificationPreference?
 
   @@map("users")
 }
@@ -390,6 +391,39 @@ enum NotificationType {
   MEMBER_INVITED
   COMMENT_ADDED
   DEPENDENCY_CHANGED
+}
+
+// ── Notification Preferences ──
+
+model NotificationPreference {
+  id     String @id @default(cuid())
+  userId String @unique @map("user_id")
+
+  // Channel toggles
+  emailEnabled Boolean @default(true)  @map("email_enabled")
+  smsEnabled   Boolean @default(false) @map("sms_enabled")
+  inAppEnabled Boolean @default(true)  @map("in_app_enabled")
+
+  // Per-type toggles (email)
+  emailPhaseStatus   Boolean @default(true) @map("email_phase_status")
+  emailReview        Boolean @default(true) @map("email_review")
+  emailChecklist     Boolean @default(true) @map("email_checklist")
+  emailDocuments     Boolean @default(true) @map("email_documents")
+  emailComments      Boolean @default(false) @map("email_comments")
+
+  // Per-type toggles (SMS)
+  smsPhaseStatus Boolean @default(true)  @map("sms_phase_status")
+  smsReview      Boolean @default(true)  @map("sms_review")
+  smsChecklist   Boolean @default(false) @map("sms_checklist")
+  smsDocuments   Boolean @default(false) @map("sms_documents")
+
+  // Quiet hours
+  quietStart String? @map("quiet_start") // e.g. "22:00"
+  quietEnd   String? @map("quiet_end")   // e.g. "07:00"
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification_preferences")
 }
 
 // ── Activity Log ──

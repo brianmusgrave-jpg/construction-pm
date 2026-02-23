@@ -6,12 +6,21 @@ import { getChecklistTemplates } from "@/actions/templates";
 import { ThemeSelector } from "@/components/settings/ThemeSelector";
 import { LogoUploader } from "@/components/settings/LogoUploader";
 import { ChecklistTemplateManager } from "@/components/settings/ChecklistTemplateManager";
+import { NotificationSettings } from "@/components/settings/NotificationSettings";
+import {
+  getNotificationPreferences,
+  getUserPhone,
+} from "@/actions/notification-preferences";
 
 export default async function SettingsPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const orgSettings = await getOrgSettings();
+  const [orgSettings, notifPrefs, userPhone] = await Promise.all([
+    getOrgSettings(),
+    getNotificationPreferences(),
+    getUserPhone(),
+  ]);
   const userRole = session.user.role || "VIEWER";
   const canManage = can(userRole, "manage", "phase");
   const templates = canManage ? await getChecklistTemplates() : [];
@@ -77,14 +86,9 @@ export default async function SettingsPage() {
         </div>
       )}
 
-      {/* Notifications placeholder */}
+      {/* Notification Preferences */}
       <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-2">
-          Notification Preferences
-        </h2>
-        <p className="text-sm text-gray-500">
-          Email and SMS notification settings coming soon.
-        </p>
+        <NotificationSettings preferences={notifPrefs} phone={userPhone} />
       </div>
     </div>
   );
