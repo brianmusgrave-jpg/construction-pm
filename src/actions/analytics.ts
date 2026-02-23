@@ -28,7 +28,13 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
   // Project status distribution
   const projects = await db.project.findMany({
     where: { id: { in: projectIds } },
-    select: { status: true, name: true, budget: true, amountSpent: true },
+    select: {
+      id: true,
+      status: true,
+      name: true,
+      budget: true,
+      phases: { select: { actualCost: true } },
+    },
   });
   const projectStatusMap = new Map<string, number>();
   for (const p of projects) {
@@ -38,14 +44,20 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
     ([status, count]) => ({ status, count })
   );
 
-  // Per-project budget breakdown
+  // Per-project budget breakdown (amountSpent derived from phase actualCost sums)
   const projectBudgets = projects
     .filter((p: any) => Number(p.budget ?? 0) > 0)
-    .map((p: any) => ({
-      name: p.name.length > 20 ? p.name.slice(0, 20) + "…" : p.name,
-      estimated: Number(p.budget ?? 0),
-      actual: Number(p.amountSpent ?? 0),
-    }))
+    .map((p: any) => {
+      const spent = (p.phases ?? []).reduce(
+        (sum: number, ph: any) => sum + Number(ph.actualCost ?? 0),
+        0
+      );
+      return {
+        name: p.name.length > 20 ? p.name.slice(0, 20) + "…" : p.name,
+        estimated: Number(p.budget ?? 0),
+        actual: spent,
+      };
+    })
     .sort((a: any, b: any) => b.estimated - a.estimated)
     .slice(0, 8);
 
