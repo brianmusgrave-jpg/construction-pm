@@ -2,6 +2,7 @@
 
 import { fmtLong, daysBetween } from "@/lib/utils";
 import { Calendar, Clock } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface PhaseInfoProps {
   phase: {
@@ -20,6 +21,7 @@ interface PhaseInfoProps {
 }
 
 export function PhaseInfoSection({ phase }: PhaseInfoProps) {
+  const t = useTranslations("phases");
   const estDays = daysBetween(phase.estStart, phase.estEnd);
   const worstDays =
     phase.worstStart && phase.worstEnd
@@ -29,7 +31,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-4">
-        Phase Details
+        {t("phaseDetails")}
       </h2>
 
       {phase.detail && (
@@ -39,7 +41,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
       {/* Progress bar */}
       <div className="mb-4">
         <div className="flex justify-between text-xs text-gray-500 mb-1">
-          <span>Progress</span>
+          <span>{t("progress")}</span>
           <span>{phase.progress}%</span>
         </div>
         <div className="w-full bg-gray-100 rounded-full h-2">
@@ -55,7 +57,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-2 text-sm font-medium text-[var(--color-primary-dark)]">
             <Calendar className="w-4 h-4" />
-            Estimated Timeline
+            {t("estimatedTimeline")}
           </div>
           <div className="text-sm text-gray-600 pl-6">
             <p>{fmtLong(phase.estStart)} — {fmtLong(phase.estEnd)}</p>
@@ -69,7 +71,7 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium text-red-600">
               <Clock className="w-4 h-4" />
-              Worst Case
+              {t("worstCase")}
             </div>
             <div className="text-sm text-gray-600 pl-6">
               <p>{fmtLong(phase.worstStart)} — {fmtLong(phase.worstEnd)}</p>
@@ -84,12 +86,12 @@ export function PhaseInfoSection({ phase }: PhaseInfoProps) {
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium text-green-700">
               <Calendar className="w-4 h-4" />
-              Actual
+              {t("actual")}
             </div>
             <div className="text-sm text-gray-600 pl-6">
               <p>
-                Started {fmtLong(phase.actualStart)}
-                {phase.actualEnd && ` — Completed ${fmtLong(phase.actualEnd)}`}
+                {t("started")} {fmtLong(phase.actualStart)}
+                {phase.actualEnd && <> {t("completedDash")} {fmtLong(phase.actualEnd)}</>}
               </p>
             </div>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Users, Plus, X, Crown, Building2 } from "lucide-react";
 import { assignStaffToPhase, unassignStaffFromPhase } from "@/actions/phases";
+import { useTranslations } from "next-intl";
 
 interface Assignment {
   id: string;
@@ -37,6 +38,8 @@ export function AssignmentSection({
   allStaff,
   canEdit,
 }: AssignmentSectionProps) {
+  const t = useTranslations("team");
+  const tc = useTranslations("common");
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
@@ -69,7 +72,7 @@ export function AssignmentSection({
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Team ({assignments.length})
+          {t("title", { count: assignments.length })}
         </h2>
         {canEdit && (
           <button
@@ -77,7 +80,7 @@ export function AssignmentSection({
             className="inline-flex items-center gap-1 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium"
           >
             <Plus className="w-4 h-4" />
-            Assign
+            {t("assign")}
           </button>
         )}
       </div>
@@ -85,78 +88,45 @@ export function AssignmentSection({
       {assignments.length === 0 ? (
         <div className="text-center py-6">
           <Users className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500">No one assigned yet</p>
+          <p className="text-sm text-gray-500">{t("noOneAssigned")}</p>
         </div>
       ) : (
         <div className="space-y-2">
-          {owner && (
-            <StaffCard
-              assignment={owner}
-              canEdit={canEdit}
-              onUnassign={handleUnassign}
-            />
-          )}
+          {owner && <StaffCard assignment={owner} canEdit={canEdit} onUnassign={handleUnassign} removeLabel={tc("remove")} />}
           {others.map((a) => (
-            <StaffCard
-              key={a.id}
-              assignment={a}
-              canEdit={canEdit}
-              onUnassign={handleUnassign}
-            />
+            <StaffCard key={a.id} assignment={a} canEdit={canEdit} onUnassign={handleUnassign} removeLabel={tc("remove")} />
           ))}
         </div>
       )}
 
-      {/* Assignment Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[70vh] flex flex-col">
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">
-                Assign to Phase
-              </h3>
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  setSearch("");
-                }}
-                className="text-gray-400 hover:text-gray-600"
-              >
+              <h3 className="font-semibold text-gray-900">{t("assignToPhase")}</h3>
+              <button onClick={() => { setShowModal(false); setSearch(""); }} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="p-4 border-b border-gray-100">
               <input
                 type="text"
-                placeholder="Search by name, company, or role..."
+                placeholder={t("searchPlaceholder")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                 autoFocus
               />
             </div>
-
             <div className="flex-1 overflow-auto p-2">
               {available.length === 0 ? (
-                <p className="text-sm text-gray-500 text-center py-4">
-                  No matching contacts found
-                </p>
+                <p className="text-sm text-gray-500 text-center py-4">{t("noMatchingContacts")}</p>
               ) : (
                 available.map((staff) => (
-                  <div
-                    key={staff.id}
-                    className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg"
-                  >
+                  <div key={staff.id} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg">
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {staff.name}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {[staff.role, staff.company]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
+                      <p className="text-sm font-medium text-gray-900">{staff.name}</p>
+                      <p className="text-xs text-gray-500">{[staff.role, staff.company].filter(Boolean).join(" · ")}</p>
                     </div>
                     <div className="flex gap-1.5">
                       <button
@@ -164,7 +134,7 @@ export function AssignmentSection({
                         disabled={loading}
                         className="px-2.5 py-1 text-xs font-medium bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)] rounded-lg hover:bg-[var(--color-primary-bg)] disabled:opacity-50"
                       >
-                        Add
+                        {tc("add")}
                       </button>
                       {!owner && (
                         <button
@@ -172,7 +142,7 @@ export function AssignmentSection({
                           disabled={loading}
                           className="px-2.5 py-1 text-xs font-medium bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 disabled:opacity-50"
                         >
-                          Add as Owner
+                          {t("addAsOwner")}
                         </button>
                       )}
                     </div>
@@ -191,10 +161,12 @@ function StaffCard({
   assignment,
   canEdit,
   onUnassign,
+  removeLabel,
 }: {
   assignment: Assignment;
   canEdit: boolean;
   onUnassign: (id: string) => void;
+  removeLabel: string;
 }) {
   return (
     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
@@ -204,12 +176,8 @@ function StaffCard({
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <span className="text-sm font-medium text-gray-900">
-              {assignment.staff.name}
-            </span>
-            {assignment.isOwner && (
-              <Crown className="w-3.5 h-3.5 text-yellow-500" />
-            )}
+            <span className="text-sm font-medium text-gray-900">{assignment.staff.name}</span>
+            {assignment.isOwner && <Crown className="w-3.5 h-3.5 text-yellow-500" />}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             {assignment.staff.role && <span>{assignment.staff.role}</span>}
@@ -226,11 +194,7 @@ function StaffCard({
         </div>
       </div>
       {canEdit && (
-        <button
-          onClick={() => onUnassign(assignment.id)}
-          className="text-gray-400 hover:text-red-500 p-1"
-          title="Remove"
-        >
+        <button onClick={() => onUnassign(assignment.id)} className="text-gray-400 hover:text-red-500 p-1" title={removeLabel}>
           <X className="w-4 h-4" />
         </button>
       )}

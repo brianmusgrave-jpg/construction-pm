@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { acceptInvitation } from "@/actions/invitations";
 import { CheckCircle2, XCircle, Loader2, HardHat } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface InviteDetails {
   id: string;
@@ -22,6 +23,8 @@ interface Props {
 }
 
 export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
+  const t = useTranslations("invitations");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<{
@@ -38,43 +41,37 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
           <XCircle className="w-8 h-8 text-red-500" />
         </div>
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Invitation Expired</h1>
-        <p className="text-sm text-gray-500 mb-6">
-          This invitation has expired. Please ask the project owner to send a new one.
-        </p>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">{t("expired")}</h1>
+        <p className="text-sm text-gray-500 mb-6">{t("expiredMessage")}</p>
         <a
           href="/login"
           className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
         >
-          Go to Login
+          {t("goToLogin")}
         </a>
       </div>
     );
   }
 
   if (result?.success) {
-    const dest = result.alreadyMember
-      ? `/dashboard/projects/${result.projectId}`
-      : `/dashboard/projects/${result.projectId}`;
-
     return (
       <div className="text-center">
         <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
           <CheckCircle2 className="w-8 h-8 text-green-500" />
         </div>
         <h1 className="text-xl font-bold text-gray-900 mb-2">
-          {result.alreadyMember ? "Already a Member" : "Welcome to the Team!"}
+          {result.alreadyMember ? t("alreadyMember") : t("welcomeToTeam")}
         </h1>
         <p className="text-sm text-gray-500 mb-6">
           {result.alreadyMember
-            ? `You're already a member of ${result.projectName}.`
-            : `You've joined ${result.projectName} successfully.`}
+            ? t("alreadyMemberMessage", { project: result.projectName ?? "" })
+            : t("joinedMessage", { project: result.projectName ?? "" })}
         </p>
         <button
-          onClick={() => router.push(dest)}
+          onClick={() => router.push(`/dashboard/projects/${result.projectId}`)}
           className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
         >
-          Go to Project
+          {t("goToProject")}
         </button>
       </div>
     );
@@ -86,13 +83,13 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
         <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
           <XCircle className="w-8 h-8 text-red-500" />
         </div>
-        <h1 className="text-xl font-bold text-gray-900 mb-2">Something Went Wrong</h1>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">{t("somethingWentWrong")}</h1>
         <p className="text-sm text-gray-500 mb-6">{result.error}</p>
         <a
           href="/login"
           className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
         >
-          Go to Login
+          {t("goToLogin")}
         </a>
       </div>
     );
@@ -115,11 +112,10 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
       <div className="w-16 h-16 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center mx-auto mb-4">
         <HardHat className="w-8 h-8 text-[var(--color-primary)]" />
       </div>
-      <h1 className="text-xl font-bold text-gray-900 mb-1">
-        You&apos;re Invited
-      </h1>
+      <h1 className="text-xl font-bold text-gray-900 mb-1">{t("youreInvited")}</h1>
       <p className="text-sm text-gray-500 mb-6">
-        You&apos;ve been invited to join <span className="font-semibold text-gray-700">{invite.projectName}</span>
+        {t("invitedToJoin")}{" "}
+        <span className="font-semibold text-gray-700">{invite.projectName}</span>
         {invite.projectAddress && (
           <span className="block text-xs text-gray-400 mt-1">{invite.projectAddress}</span>
         )}
@@ -127,17 +123,17 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
 
       <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-500">Role</span>
+          <span className="text-gray-500">{t("role")}</span>
           <span className="font-medium text-gray-900">
             {invite.role.charAt(0) + invite.role.slice(1).toLowerCase()}
           </span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-500">Invited as</span>
+          <span className="text-gray-500">{t("invitedAs")}</span>
           <span className="font-medium text-gray-900">{invite.email}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-500">Expires</span>
+          <span className="text-gray-500">{tc("expires")}</span>
           <span className="font-medium text-gray-900">
             {new Date(invite.expiresAt).toLocaleDateString("en-US", {
               month: "short",
@@ -157,10 +153,10 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
           {isPending ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              Joining...
+              {t("joining")}
             </>
           ) : (
-            "Accept Invitation"
+            t("acceptInvitation")
           )}
         </button>
       ) : (
@@ -168,7 +164,7 @@ export function AcceptInvitation({ token, invite, isLoggedIn }: Props) {
           href={`/login?callbackUrl=/invite/${token}`}
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
         >
-          Sign In to Accept
+          {t("signInToAccept")}
         </a>
       )}
     </div>

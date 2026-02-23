@@ -158,7 +158,12 @@
     "worstEnd": "Worst End",
     "creating": "Creating...",
     "createProject": "Create Project",
-    "phaseCount": "{count} phase{count, plural, one {} other {s}}"
+    "phaseCount": "{count} phase{count, plural, one {} other {s}}",
+    "phasesStep": "Phases",
+    "untitledPhase": "Untitled Phase",
+    "nameRequired": "Project name is required",
+    "phaseNeedsName": "Phase {n} needs a name",
+    "phaseNeedsDates": "\"{name}\" needs estimated start and end dates"
   },
   "phases": {
     "phaseDetails": "Phase Details",
@@ -169,6 +174,7 @@
     "started": "Started",
     "completedDash": "— Completed",
     "timeline": "Timeline",
+    "milestone": "Milestone",
     "startPhase": "Start Phase",
     "requestReview": "Request Review",
     "beginReview": "Begin Review",
@@ -216,7 +222,11 @@
     "invitedAs": "Invited as",
     "joining": "Joining...",
     "acceptInvitation": "Accept Invitation",
-    "signInToAccept": "Sign In to Accept"
+    "signInToAccept": "Sign In to Accept",
+    "sent": "Invitation sent to {email}",
+    "linkCopied": "Invite link copied to clipboard",
+    "cancelled": "Invitation cancelled",
+    "failedToCancel": "Failed to cancel invitation"
   },
   "budget": {
     "title": "Budget",
@@ -225,7 +235,13 @@
     "estimated": "Estimated",
     "actual": "Actual",
     "variance": "Variance",
-    "budgetUsed": "Budget Used"
+    "budgetUsed": "Budget Used",
+    "updated": "Budget updated",
+    "failedToUpdate": "Failed to update budget",
+    "costsUpdated": "Phase costs updated",
+    "failedToUpdateCosts": "Failed to update costs",
+    "estShort": "Est.",
+    "varShort": "Var."
   },
   "documents": {
     "title": "Documents ({count})",
@@ -245,7 +261,10 @@
     "failedToDelete": "Failed to delete",
     "approve": "Approve",
     "reject": "Reject",
-    "resetToPending": "Reset to Pending"
+    "resetToPending": "Reset to Pending",
+    "filesSelected": "{count} file{count, plural, one {} other {s}} selected",
+    "failedToUpdateStatus": "Failed to update status",
+    "dropHere": "Drop files here"
   },
   "photos": {
     "title": "Photos ({count})",
@@ -270,7 +289,11 @@
     "flagForFollowup": "Flag for followup",
     "changeFlag": "Change flag",
     "clearFlag": "Clear flag",
-    "viewFullSize": "View full size"
+    "viewFullSize": "View full size",
+    "flagPhotoBtn": "Flag Photo",
+    "addNote": "add a note? (optional)",
+    "deleteConfirm": "Delete this photo? This cannot be undone.",
+    "dropHere": "Drop images here"
   },
   "checklist": {
     "title": "Checklist",
@@ -480,7 +503,10 @@
     "role": "Contractor",
     "reviewRequested": "Review requested — your PM will be notified",
     "requesting": "Requesting...",
-    "requestReview": "Request Review"
+    "requestReview": "Request Review",
+    "noActivePhases": "No active phases right now",
+    "daysLeft": "{days}d left",
+    "dueToday": "Due today"
   },
   "reports": {
     "export": "Export",
@@ -500,12 +526,64 @@
     "unassigned": "Unassigned",
     "name": "Name",
     "assignedPhases": "Assigned Phases",
-    "active": "Active"
+    "active": "Active",
+    "organizationOverview": "Organization-wide overview",
+    "yourPortfolio": "Your project portfolio",
+    "projectOverview": "Project overview",
+    "overallProgress": "Overall Progress",
+    "onTrack": "on track",
+    "allOnSchedule": "All on schedule",
+    "actionsThisMonth": "Actions this month"
   },
   "gantt": {
     "estimated": "Estimated",
     "worstCase": "Worst Case",
     "today": "Today",
     "dragHelp": "Drag bars to slide • Drag edges to resize"
+  },
+  "directory": {
+    "title": "Directory",
+    "contactCount": "{count} contact{count, plural, one {} other {s}} across {groups} categor{groups, plural, one {y} other {ies}}",
+    "addContact": "Add Contact",
+    "addFirstContact": "Add Your First Contact",
+    "noContactsYet": "No contacts yet",
+    "noContactsMessage": "Add team members, subcontractors, vendors, and inspectors to your directory.",
+    "editContact": "Edit contact",
+    "assignedTo": "Assigned to",
+    "teamLabel": "Team",
+    "teamDesc": "Your employees and core team",
+    "subcontractorLabel": "Subcontractors",
+    "subcontractorDesc": "Trades and specialty contractors",
+    "vendorLabel": "Vendors",
+    "vendorDesc": "Suppliers and material providers",
+    "inspectorLabel": "Inspectors",
+    "inspectorDesc": "City inspectors, engineers, and consultants",
+    "addContactModal": "Add Contact",
+    "editContactModal": "Edit Contact",
+    "type": "Type",
+    "nameField": "Name *",
+    "company": "Company",
+    "roleTrade": "Role / Trade",
+    "email": "Email",
+    "phone": "Phone",
+    "notes": "Notes",
+    "teamMember": "Team Member",
+    "subcontractor": "Subcontractor",
+    "vendorSupplier": "Vendor / Supplier",
+    "inspector": "Inspector",
+    "namePlaceholder": "John Smith",
+    "companyPlaceholder": "ABC Electric",
+    "rolePlaceholder": "Electrician",
+    "emailPlaceholder": "john@company.com",
+    "phonePlaceholder": "(555) 123-4567",
+    "notesPlaceholder": "License #, specialties, availability...",
+    "deleteContact": "Delete Contact",
+    "deleting": "Deleting...",
+    "nameRequired": "Name is required",
+    "somethingWentWrong": "Something went wrong",
+    "failedToDelete": "Failed to delete",
+    "deleteConfirm": "Delete {name}? This will also remove all their phase assignments.",
+    "addContactBtn": "Add Contact",
+    "saveChanges": "Save Changes"
   }
 }

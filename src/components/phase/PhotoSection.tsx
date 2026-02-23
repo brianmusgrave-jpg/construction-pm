@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { upload } from "@vercel/blob/client";
 import { createPhoto, createPhotoBatch, deletePhoto, flagPhoto, clearPhotoFlag } from "@/actions/photos";
+import { useTranslations } from "next-intl";
 
 interface Photo {
   id: string;
@@ -39,42 +40,8 @@ interface PhotoSectionProps {
   canFlag?: boolean;
 }
 
-const FLAG_OPTIONS = [
-  {
-    value: "REPLACEMENT_NEEDED",
-    label: "Replacement needed",
-    icon: RotateCw,
-    color: "text-red-600",
-  },
-  {
-    value: "ADDITIONAL_ANGLES",
-    label: "Additional angles",
-    icon: Eye,
-    color: "text-amber-600",
-  },
-  {
-    value: "ADDITIONAL_PHOTOS",
-    label: "More photos needed",
-    icon: ImagePlus,
-    color: "text-blue-600",
-  },
-  {
-    value: "CLARIFICATION_NEEDED",
-    label: "Clarification needed",
-    icon: HelpCircle,
-    color: "text-purple-600",
-  },
-];
-
-const FLAG_BADGE: Record<string, { bg: string; text: string; label: string }> = {
-  REPLACEMENT_NEEDED: { bg: "bg-red-100", text: "text-red-700", label: "Replace" },
-  ADDITIONAL_ANGLES: { bg: "bg-amber-100", text: "text-amber-700", label: "Angles" },
-  ADDITIONAL_PHOTOS: { bg: "bg-blue-100", text: "text-blue-700", label: "More" },
-  CLARIFICATION_NEEDED: { bg: "bg-purple-100", text: "text-purple-700", label: "Clarify" },
-};
-
 function formatDate(date: Date): string {
-  return new Date(date).toLocaleDateString("en-US", {
+  return new Date(date).toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
   });
@@ -87,6 +54,44 @@ export function PhotoSection({
   canDelete,
   canFlag = false,
 }: PhotoSectionProps) {
+  const t = useTranslations("photos");
+  const tc = useTranslations("common");
+  const td = useTranslations("documents");
+
+  const FLAG_OPTIONS = [
+    {
+      value: "REPLACEMENT_NEEDED",
+      label: t("replacementNeeded"),
+      icon: RotateCw,
+      color: "text-red-600",
+    },
+    {
+      value: "ADDITIONAL_ANGLES",
+      label: t("additionalAngles"),
+      icon: Eye,
+      color: "text-amber-600",
+    },
+    {
+      value: "ADDITIONAL_PHOTOS",
+      label: t("morePhotosNeeded"),
+      icon: ImagePlus,
+      color: "text-blue-600",
+    },
+    {
+      value: "CLARIFICATION_NEEDED",
+      label: t("clarificationNeeded"),
+      icon: HelpCircle,
+      color: "text-purple-600",
+    },
+  ];
+
+  const FLAG_BADGE: Record<string, { bg: string; text: string; label: string }> = {
+    REPLACEMENT_NEEDED: { bg: "bg-red-100", text: "text-red-700", label: t("replaceShort") },
+    ADDITIONAL_ANGLES: { bg: "bg-amber-100", text: "text-amber-700", label: t("anglesShort") },
+    ADDITIONAL_PHOTOS: { bg: "bg-blue-100", text: "text-blue-700", label: t("moreShort") },
+    CLARIFICATION_NEEDED: { bg: "bg-purple-100", text: "text-purple-700", label: t("clarifyShort") },
+  };
+
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<string | null>(null);
@@ -140,14 +145,13 @@ export function PhotoSection({
     setError(null);
 
     try {
-      // Upload all files to blob storage first
       const uploadedUrls: { url: string }[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         setUploadProgress(
           files.length > 1
-            ? `Uploading ${i + 1} of ${files.length}...`
-            : `Uploading ${file.name}...`
+            ? td("uploading", { current: i + 1, total: files.length })
+            : td("uploadingFile", { name: file.name })
         );
 
         const blob = await upload(file.name, file, {
@@ -157,9 +161,8 @@ export function PhotoSection({
         uploadedUrls.push({ url: blob.url });
       }
 
-      // Create all photo records in one batch
       if (uploadedUrls.length > 1) {
-        setUploadProgress("Saving photos...");
+        setUploadProgress(t("savingPhotos"));
         await createPhotoBatch({
           phaseId,
           photos: uploadedUrls,
@@ -173,7 +176,7 @@ export function PhotoSection({
     } catch (err) {
       console.error("Photo upload error:", err);
       setError(
-        err instanceof Error ? err.message : "Upload failed. Please try again."
+        err instanceof Error ? err.message : t("uploadFailed")
       );
     } finally {
       setIsUploading(false);
@@ -182,7 +185,7 @@ export function PhotoSection({
   };
 
   const handleDelete = async (photoId: string) => {
-    if (!confirm("Delete this photo? This cannot be undone.")) return;
+    if (!confirm(t("deleteConfirm"))) return;
     setDeletingId(photoId);
     try {
       await deletePhoto(photoId);
@@ -195,7 +198,6 @@ export function PhotoSection({
 
   const handleFlag = async (photoId: string, flagType: string) => {
     setFlagMenuId(null);
-    // Show note input
     setFlagNoteId(photoId);
     setPendingFlag(flagType);
   };
@@ -232,10 +234,10 @@ export function PhotoSection({
       <div className="bg-white rounded-xl border border-gray-200 p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-            Photos ({photos.length})
+            {t("title", { count: photos.length })}
             {flaggedCount > 0 && (
               <span className="ml-2 text-xs font-medium text-amber-600 normal-case">
-                · {flaggedCount} flagged
+                {t("flagged", { count: flaggedCount })}
               </span>
             )}
           </h2>
@@ -244,26 +246,26 @@ export function PhotoSection({
               {isUploading ? (
                 <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)]">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  {uploadProgress || "Uploading..."}
+                  {uploadProgress || tc("loading")}
                 </span>
               ) : (
                 <>
                   <button
                     onClick={() => cameraInputRef.current?.click()}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] sm:hidden"
-                    title="Take photo"
+                    title={t("camera")}
                   >
                     <Camera className="w-4 h-4" />
-                    Camera
+                    {t("camera")}
                   </button>
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
-                    title="Upload photos"
+                    title={t("addPhotos")}
                   >
                     <Upload className="w-4 h-4" />
-                    <span className="hidden sm:inline">Add Photos</span>
-                    <span className="sm:hidden">Gallery</span>
+                    <span className="hidden sm:inline">{t("addPhotos")}</span>
+                    <span className="sm:hidden">{t("gallery")}</span>
                   </button>
                 </>
               )}
@@ -304,13 +306,13 @@ export function PhotoSection({
         {flagNoteId && (
           <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
             <p className="text-sm font-medium text-amber-800 mb-2">
-              {FLAG_OPTIONS.find((o) => o.value === pendingFlag)?.label || "Flag"} — add a note? (optional)
+              {FLAG_OPTIONS.find((o) => o.value === pendingFlag)?.label || "Flag"} — {t("addNote")}
             </p>
             <input
               type="text"
               value={flagNoteText}
               onChange={(e) => setFlagNoteText(e.target.value)}
-              placeholder="e.g., Need wider angle showing foundation connection"
+              placeholder="e.g. Need wider angle showing foundation connection"
               className="w-full text-sm border border-amber-300 rounded-md px-3 py-1.5 bg-white focus:ring-1 focus:ring-amber-400 focus:border-amber-400 mb-2"
               onKeyDown={(e) => e.key === "Enter" && submitFlag()}
               autoFocus
@@ -324,13 +326,13 @@ export function PhotoSection({
                 }}
                 className="px-3 py-1 text-xs text-gray-600 hover:bg-gray-100 rounded"
               >
-                Cancel
+                {tc("cancel")}
               </button>
               <button
                 onClick={submitFlag}
                 className="px-3 py-1 text-xs font-medium text-white bg-amber-600 hover:bg-amber-700 rounded"
               >
-                Flag Photo
+                {t("flagPhotoBtn")}
               </button>
             </div>
           </div>
@@ -354,11 +356,11 @@ export function PhotoSection({
               }`}
             />
             <p className="text-sm text-gray-500">
-              {isDragging ? "Drop images here" : "No photos yet"}
+              {isDragging ? t("dropHere") : t("noPhotosYet")}
             </p>
             {canUpload && !isDragging && (
               <p className="text-xs text-gray-400 mt-1">
-                Drag & drop images or click Add Photos above
+                {t("dragDropPhotos")}
               </p>
             )}
           </div>
@@ -371,7 +373,7 @@ export function PhotoSection({
           >
             {isDragging && (
               <div className="mb-3 p-4 border-2 border-dashed border-[var(--color-primary-light)] bg-[var(--color-primary-bg)] rounded-lg text-center text-sm text-[var(--color-primary)]">
-                Drop images to upload
+                {t("dropImages")}
               </div>
             )}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -387,7 +389,7 @@ export function PhotoSection({
                   >
                     <img
                       src={photo.url}
-                      alt={photo.caption || "Phase photo"}
+                      alt={photo.caption || t("phasePhoto")}
                       className="w-full h-full object-cover"
                     />
 
@@ -414,7 +416,7 @@ export function PhotoSection({
                       <div className="w-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className="flex items-center justify-between">
                           <div className="text-xs text-white">
-                            <span>{photo.uploadedBy.name || "Unknown"}</span>
+                            <span>{photo.uploadedBy.name || "—"}</span>
                             <span className="mx-1">·</span>
                             <span>{formatDate(photo.takenAt)}</span>
                           </div>
@@ -434,7 +436,7 @@ export function PhotoSection({
                                       ? "text-amber-400 hover:text-amber-300"
                                       : "text-white/80 hover:text-white"
                                   }`}
-                                  title={photo.flagType ? "Change flag" : "Flag for followup"}
+                                  title={photo.flagType ? t("changeFlag") : t("flagForFollowup")}
                                 >
                                   <Flag className="w-3.5 h-3.5" />
                                 </button>
@@ -471,7 +473,7 @@ export function PhotoSection({
                                           className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-green-600 hover:bg-green-50"
                                         >
                                           <CheckCircle2 className="w-3 h-3" />
-                                          Clear flag
+                                          {t("clearFlag")}
                                         </button>
                                       </>
                                     )}
@@ -482,7 +484,7 @@ export function PhotoSection({
                             <button
                               onClick={() => setLightboxUrl(photo.url)}
                               className="p-1 text-white/80 hover:text-white"
-                              title="View full size"
+                              title={t("viewFullSize")}
                             >
                               <Maximize2 className="w-3.5 h-3.5" />
                             </button>
@@ -491,7 +493,7 @@ export function PhotoSection({
                                 onClick={() => handleDelete(photo.id)}
                                 disabled={deletingId === photo.id}
                                 className="p-1 text-white/80 hover:text-red-400"
-                                title="Delete"
+                                title={tc("delete")}
                               >
                                 {deletingId === photo.id ? (
                                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -531,7 +533,7 @@ export function PhotoSection({
           </button>
           <img
             src={lightboxUrl}
-            alt="Full size"
+            alt={t("phasePhoto")}
             className="max-w-full max-h-full object-contain rounded"
             onClick={(e) => e.stopPropagation()}
           />

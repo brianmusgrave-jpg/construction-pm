@@ -158,7 +158,12 @@
     "worstEnd": "Fin peor caso",
     "creating": "Creando...",
     "createProject": "Crear proyecto",
-    "phaseCount": "{count} fase{count, plural, one {} other {s}}"
+    "phaseCount": "{count} fase{count, plural, one {} other {s}}",
+    "phasesStep": "Fases",
+    "untitledPhase": "Fase sin título",
+    "nameRequired": "El nombre del proyecto es requerido",
+    "phaseNeedsName": "La fase {n} necesita un nombre",
+    "phaseNeedsDates": "\"{name}\" necesita fechas de inicio y fin estimadas"
   },
   "phases": {
     "phaseDetails": "Detalles de la fase",
@@ -169,6 +174,7 @@
     "started": "Iniciada",
     "completedDash": "— Completada",
     "timeline": "Cronograma",
+    "milestone": "Hito",
     "startPhase": "Iniciar fase",
     "requestReview": "Solicitar revisión",
     "beginReview": "Comenzar revisión",
@@ -216,7 +222,11 @@
     "invitedAs": "Invitado como",
     "joining": "Uniéndose...",
     "acceptInvitation": "Aceptar invitación",
-    "signInToAccept": "Inicia sesión para aceptar"
+    "signInToAccept": "Inicia sesión para aceptar",
+    "sent": "Invitación enviada a {email}",
+    "linkCopied": "Enlace de invitación copiado al portapapeles",
+    "cancelled": "Invitación cancelada",
+    "failedToCancel": "Error al cancelar la invitación"
   },
   "budget": {
     "title": "Presupuesto",
@@ -225,7 +235,13 @@
     "estimated": "Estimado",
     "actual": "Real",
     "variance": "Variación",
-    "budgetUsed": "Presupuesto utilizado"
+    "budgetUsed": "Presupuesto utilizado",
+    "updated": "Presupuesto actualizado",
+    "failedToUpdate": "Error al actualizar el presupuesto",
+    "costsUpdated": "Costos de fase actualizados",
+    "failedToUpdateCosts": "Error al actualizar los costos",
+    "estShort": "Est.",
+    "varShort": "Var."
   },
   "documents": {
     "title": "Documentos ({count})",
@@ -245,7 +261,10 @@
     "failedToDelete": "Error al eliminar",
     "approve": "Aprobar",
     "reject": "Rechazar",
-    "resetToPending": "Restablecer a pendiente"
+    "resetToPending": "Restablecer a pendiente",
+    "filesSelected": "{count} archivo{count, plural, one {} other {s}} seleccionado{count, plural, one {} other {s}}",
+    "failedToUpdateStatus": "Error al actualizar el estado",
+    "dropHere": "Suelta los archivos aquí"
   },
   "photos": {
     "title": "Fotos ({count})",
@@ -270,7 +289,11 @@
     "flagForFollowup": "Marcar para seguimiento",
     "changeFlag": "Cambiar marca",
     "clearFlag": "Quitar marca",
-    "viewFullSize": "Ver tamaño completo"
+    "viewFullSize": "Ver tamaño completo",
+    "flagPhotoBtn": "Marcar foto",
+    "addNote": "¿agregar una nota? (opcional)",
+    "deleteConfirm": "¿Eliminar esta foto? Esta acción no se puede deshacer.",
+    "dropHere": "Suelta las imágenes aquí"
   },
   "checklist": {
     "title": "Lista de verificación",
@@ -480,7 +503,10 @@
     "role": "Contratista",
     "reviewRequested": "Revisión solicitada — tu PM será notificado",
     "requesting": "Solicitando...",
-    "requestReview": "Solicitar revisión"
+    "requestReview": "Solicitar revisión",
+    "noActivePhases": "No hay fases activas en este momento",
+    "daysLeft": "{days}d restantes",
+    "dueToday": "Vence hoy"
   },
   "reports": {
     "export": "Exportar",
@@ -500,12 +526,64 @@
     "unassigned": "Sin asignar",
     "name": "Nombre",
     "assignedPhases": "Fases asignadas",
-    "active": "Activas"
+    "active": "Activas",
+    "organizationOverview": "Resumen de toda la organización",
+    "yourPortfolio": "Tu portafolio de proyectos",
+    "projectOverview": "Resumen del proyecto",
+    "overallProgress": "Progreso general",
+    "onTrack": "en horario",
+    "allOnSchedule": "Todo en horario",
+    "actionsThisMonth": "Acciones este mes"
   },
   "gantt": {
     "estimated": "Estimado",
     "worstCase": "Peor caso",
     "today": "Hoy",
     "dragHelp": "Arrastra las barras para deslizar • Arrastra los bordes para redimensionar"
+  },
+  "directory": {
+    "title": "Directorio",
+    "contactCount": "{count} contacto{count, plural, one {} other {s}} en {groups} categorí{groups, plural, one {a} other {as}}",
+    "addContact": "Agregar contacto",
+    "addFirstContact": "Agregar tu primer contacto",
+    "noContactsYet": "Sin contactos aún",
+    "noContactsMessage": "Agrega miembros del equipo, subcontratistas, proveedores e inspectores a tu directorio.",
+    "editContact": "Editar contacto",
+    "assignedTo": "Asignado a",
+    "teamLabel": "Equipo",
+    "teamDesc": "Tus empleados y equipo principal",
+    "subcontractorLabel": "Subcontratistas",
+    "subcontractorDesc": "Contratistas de gremios y especialidades",
+    "vendorLabel": "Proveedores",
+    "vendorDesc": "Suministradores y proveedores de materiales",
+    "inspectorLabel": "Inspectores",
+    "inspectorDesc": "Inspectores municipales, ingenieros y consultores",
+    "addContactModal": "Agregar contacto",
+    "editContactModal": "Editar contacto",
+    "type": "Tipo",
+    "nameField": "Nombre *",
+    "company": "Empresa",
+    "roleTrade": "Cargo / Gremio",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "notes": "Notas",
+    "teamMember": "Miembro del equipo",
+    "subcontractor": "Subcontratista",
+    "vendorSupplier": "Proveedor",
+    "inspector": "Inspector",
+    "namePlaceholder": "Juan García",
+    "companyPlaceholder": "ABC Electric",
+    "rolePlaceholder": "Electricista",
+    "emailPlaceholder": "juan@empresa.com",
+    "phonePlaceholder": "(555) 123-4567",
+    "notesPlaceholder": "No. de licencia, especialidades, disponibilidad...",
+    "deleteContact": "Eliminar contacto",
+    "deleting": "Eliminando...",
+    "nameRequired": "El nombre es obligatorio",
+    "somethingWentWrong": "Algo salió mal",
+    "failedToDelete": "Error al eliminar",
+    "deleteConfirm": "¿Eliminar {name}? Esto también eliminará todas sus asignaciones de fase.",
+    "addContactBtn": "Agregar contacto",
+    "saveChanges": "Guardar cambios"
   }
 }

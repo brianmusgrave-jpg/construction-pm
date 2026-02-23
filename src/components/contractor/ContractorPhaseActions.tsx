@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updatePhaseStatus } from "@/actions/phases";
 import { Eye, Loader2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface ContractorPhaseActionsProps {
   phaseId: string;
@@ -13,6 +14,7 @@ export function ContractorPhaseActions({
   phaseId,
   status,
 }: ContractorPhaseActionsProps) {
+  const t = useTranslations("contractor");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -31,7 +33,7 @@ export function ContractorPhaseActions({
     return (
       <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 px-4 py-2.5 rounded-lg">
         <Eye className="w-4 h-4" />
-        Review requested — your PM will be notified
+        {t("reviewRequested")}
       </div>
     );
   }
@@ -47,12 +49,12 @@ export function ContractorPhaseActions({
       {loading ? (
         <>
           <Loader2 className="w-4 h-4 animate-spin" />
-          Requesting...
+          {t("requesting")}
         </>
       ) : (
         <>
           <Eye className="w-4 h-4" />
-          Request Review
+          {t("requestReview")}
         </>
       )}
     </button>

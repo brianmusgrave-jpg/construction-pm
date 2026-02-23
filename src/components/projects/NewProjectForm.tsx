@@ -29,6 +29,7 @@ import {
   TRADE_TEMPLATES,
 } from "@/lib/phase-templates";
 import type { TradeTemplate } from "@/lib/phase-templates";
+import { useTranslations } from "next-intl";
 
 interface PhaseInput {
   id: string;
@@ -79,6 +80,9 @@ type TemplateChoice =
   | null;
 
 export function NewProjectForm() {
+  const t = useTranslations("projects");
+  const tc = useTranslations("common");
+
   const [step, setStep] = useState<0 | 1 | 2>(0);
   const [templateChoice, setTemplateChoice] = useState<TemplateChoice>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -123,8 +127,8 @@ export function NewProjectForm() {
     templatePhases: { name: string; detail: string; isMilestone: boolean }[]
   ) {
     setPhases(
-      templatePhases.map((t) => ({
-        ...t,
+      templatePhases.map((tp) => ({
+        ...tp,
         id: crypto.randomUUID(),
         estStart: "",
         estEnd: "",
@@ -156,17 +160,17 @@ export function NewProjectForm() {
 
   async function handleSubmit() {
     if (!name.trim()) {
-      setError("Project name is required");
+      setError(t("nameRequired"));
       return;
     }
 
     for (const phase of phases) {
       if (!phase.name.trim()) {
-        setError(`Phase ${phases.indexOf(phase) + 1} needs a name`);
+        setError(t("phaseNeedsName", { n: phases.indexOf(phase) + 1 }));
         return;
       }
       if (!phase.estStart || !phase.estEnd) {
-        setError(`"${phase.name}" needs estimated start and end dates`);
+        setError(t("phaseNeedsDates", { name: phase.name }));
         return;
       }
     }
@@ -192,7 +196,7 @@ export function NewProjectForm() {
         })),
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : tc("somethingWentWrong"));
       setSubmitting(false);
     }
   }
@@ -213,7 +217,7 @@ export function NewProjectForm() {
           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
             1
           </span>
-          Template
+          {t("template")}
         </button>
         <div className="w-8 h-px bg-gray-300" />
         <button
@@ -229,7 +233,7 @@ export function NewProjectForm() {
           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
             2
           </span>
-          Details
+          {t("details")}
         </button>
         <div className="w-8 h-px bg-gray-300" />
         <button
@@ -245,7 +249,7 @@ export function NewProjectForm() {
           <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-xs">
             3
           </span>
-          Phases
+          {t("phasesStep")}
         </button>
       </div>
 
@@ -262,7 +266,7 @@ export function NewProjectForm() {
           {/* Main project types */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
-              Project Type
+              {t("projectType")}
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <button
@@ -276,10 +280,10 @@ export function NewProjectForm() {
               >
                 <HardHat className="w-8 h-8 text-[var(--color-primary)]" />
                 <span className="text-sm font-semibold text-gray-900">
-                  Residential
+                  {t("residential")}
                 </span>
                 <span className="text-xs text-gray-500">
-                  9 phases · permitting to CO
+                  {t("residentialDesc")}
                 </span>
               </button>
 
@@ -294,10 +298,10 @@ export function NewProjectForm() {
               >
                 <Building2 className="w-8 h-8 text-indigo-600" />
                 <span className="text-sm font-semibold text-gray-900">
-                  Commercial
+                  {t("commercial")}
                 </span>
                 <span className="text-xs text-gray-500">
-                  12 phases · steel to commissioning
+                  {t("commercialDesc")}
                 </span>
               </button>
 
@@ -312,10 +316,10 @@ export function NewProjectForm() {
               >
                 <Plus className="w-8 h-8 text-gray-400" />
                 <span className="text-sm font-semibold text-gray-900">
-                  Blank
+                  {t("blank")}
                 </span>
                 <span className="text-xs text-gray-500">
-                  Start from scratch
+                  {t("blankDesc")}
                 </span>
               </button>
             </div>
@@ -324,7 +328,7 @@ export function NewProjectForm() {
           {/* Trade templates */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-3">
-              Trade-Specific
+              {t("tradeSpecific")}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {TRADE_TEMPLATES.map((trade) => {
@@ -351,7 +355,7 @@ export function NewProjectForm() {
                       {trade.name}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {trade.phases.length} phases
+                      {t("phaseCount", { count: trade.phases.length })}
                     </span>
                   </button>
                 );
@@ -366,39 +370,39 @@ export function NewProjectForm() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Project Name *
+              {t("projectName")}
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Smith Residence Build"
+              placeholder={t("projectNamePlaceholder")}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              {t("description")}
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              placeholder="Project scope, notes, special requirements..."
+              placeholder={t("descriptionPlaceholder")}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Site Address
+              {t("siteAddress")}
             </label>
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="123 Main St, City, State"
+              placeholder={t("addressPlaceholder")}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
             />
           </div>
@@ -406,7 +410,7 @@ export function NewProjectForm() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Plan Approval Date
+                {t("planApproval")}
               </label>
               <input
                 type="date"
@@ -417,7 +421,7 @@ export function NewProjectForm() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Budget ($)
+                {t("budget")}
               </label>
               <input
                 type="number"
@@ -437,12 +441,12 @@ export function NewProjectForm() {
               className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4" />
-              Template
+              {t("template")}
             </button>
             <button
               onClick={() => {
                 if (!name.trim()) {
-                  setError("Project name is required");
+                  setError(t("nameRequired"));
                   return;
                 }
                 setError(null);
@@ -450,7 +454,7 @@ export function NewProjectForm() {
               }}
               className="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-dark)] transition-colors"
             >
-              Next: Review Phases
+              {t("nextReviewPhases")}
             </button>
           </div>
         </div>
@@ -467,7 +471,7 @@ export function NewProjectForm() {
                 className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
               >
                 <Plus className="w-4 h-4" />
-                Add Phase
+                {t("addPhase")}
               </button>
             </div>
             {phases.length > 1 && (
@@ -476,14 +480,14 @@ export function NewProjectForm() {
                   onClick={() => toggleAllExpand(true)}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  Expand all
+                  {t("expandAll")}
                 </button>
                 <span className="text-gray-300">|</span>
                 <button
                   onClick={() => toggleAllExpand(false)}
                   className="text-gray-500 hover:text-gray-700"
                 >
-                  Collapse all
+                  {t("collapseAll")}
                 </button>
               </div>
             )}
@@ -493,9 +497,9 @@ export function NewProjectForm() {
           {phases.length === 0 && (
             <div className="text-center py-12 bg-white rounded-xl border border-gray-200 border-dashed">
               <HardHat className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-              <p className="text-sm text-gray-500 mb-1">No phases yet</p>
+              <p className="text-sm text-gray-500 mb-1">{t("noPhasesYet")}</p>
               <p className="text-xs text-gray-400">
-                Add phases manually or go back to choose a template
+                {t("addPhasesHelp")}
               </p>
             </div>
           )}
@@ -551,7 +555,7 @@ export function NewProjectForm() {
                     phase.name ? "text-gray-900" : "text-gray-400 italic"
                   )}
                 >
-                  {phase.name || "Untitled Phase"}
+                  {phase.name || t("untitledPhase")}
                 </span>
 
                 {phase.estStart && phase.estEnd && (
@@ -577,7 +581,7 @@ export function NewProjectForm() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="col-span-2 sm:col-span-1">
                       <label className="block text-xs font-medium text-gray-600 mb-1">
-                        Phase Name *
+                        {t("phaseName")}
                       </label>
                       <input
                         type="text"
@@ -585,7 +589,7 @@ export function NewProjectForm() {
                         onChange={(e) =>
                           updatePhase(phase.id, { name: e.target.value })
                         }
-                        placeholder="e.g. Framing"
+                        placeholder={t("phaseNamePlaceholder")}
                         className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                       />
                     </div>
@@ -602,7 +606,7 @@ export function NewProjectForm() {
                           className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
                         />
                         <span className="text-sm text-gray-700">
-                          Milestone (single date)
+                          {t("milestone")}
                         </span>
                       </label>
                     </div>
@@ -610,7 +614,7 @@ export function NewProjectForm() {
 
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Details
+                      {t("details")}
                     </label>
                     <input
                       type="text"
@@ -618,7 +622,7 @@ export function NewProjectForm() {
                       onChange={(e) =>
                         updatePhase(phase.id, { detail: e.target.value })
                       }
-                      placeholder="Scope, notes, trade involved..."
+                      placeholder={t("scope")}
                       className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
                     />
                   </div>
@@ -627,7 +631,7 @@ export function NewProjectForm() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-[var(--color-primary)] mb-1">
-                        Est. Start *
+                        {t("estStart")}
                       </label>
                       <input
                         type="date"
@@ -641,7 +645,7 @@ export function NewProjectForm() {
                     {!phase.isMilestone && (
                       <div>
                         <label className="block text-xs font-medium text-[var(--color-primary)] mb-1">
-                          Est. End *
+                          {t("estEnd")}
                         </label>
                         <input
                           type="date"
@@ -659,7 +663,7 @@ export function NewProjectForm() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-medium text-red-500 mb-1">
-                          Worst Start
+                          {t("worstStart")}
                         </label>
                         <input
                           type="date"
@@ -674,7 +678,7 @@ export function NewProjectForm() {
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-red-500 mb-1">
-                          Worst End
+                          {t("worstEnd")}
                         </label>
                         <input
                           type="date"
@@ -699,11 +703,11 @@ export function NewProjectForm() {
               className="px-4 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-1.5"
             >
               <ArrowLeft className="w-4 h-4" />
-              Details
+              {t("details")}
             </button>
             <div className="flex items-center gap-3">
               <span className="text-sm text-gray-500">
-                {phases.length} phase{phases.length !== 1 ? "s" : ""}
+                {t("phaseCount", { count: phases.length })}
               </span>
               <button
                 onClick={handleSubmit}
@@ -711,11 +715,11 @@ export function NewProjectForm() {
                 className="px-6 py-2.5 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50 inline-flex items-center gap-1.5"
               >
                 {submitting ? (
-                  "Creating..."
+                  t("creating")
                 ) : (
                   <>
                     <Check className="w-4 h-4" />
-                    Create Project
+                    {t("createProject")}
                   </>
                 )}
               </button>

@@ -17,6 +17,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface TemplateItem {
   id: string;
@@ -35,6 +36,7 @@ interface Props {
 }
 
 export function ChecklistTemplateManager({ templates: initial }: Props) {
+  const t = useTranslations("settings");
   const [templates, setTemplates] = useState(initial);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -46,10 +48,10 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">
-            Checklist Templates
+            {t("checklistTemplates")}
           </h2>
           <p className="text-sm text-gray-500 mt-0.5">
-            Create reusable checklists that can be applied to project phases.
+            {t("templatesDescription")}
           </p>
         </div>
         {!creating && !editingId && (
@@ -58,7 +60,7 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 transition-opacity"
           >
             <Plus className="w-4 h-4" />
-            New Template
+            {t("newTemplate")}
           </button>
         )}
       </div>
@@ -69,12 +71,12 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
           onSave={(data) => {
             startTransition(async () => {
               try {
-                const t = await createChecklistTemplate(data);
-                setTemplates((prev) => [...prev, t].sort((a, b) => a.name.localeCompare(b.name)));
+                const tmpl = await createChecklistTemplate(data);
+                setTemplates((prev) => [...prev, tmpl].sort((a, b) => a.name.localeCompare(b.name)));
                 setCreating(false);
-                toast.success("Template created");
+                toast.success(t("templateCreated"));
               } catch (e: unknown) {
-                toast.error(e instanceof Error ? e.message : "Failed to create template");
+                toast.error(e instanceof Error ? e.message : t("failedToCreate"));
               }
             });
           }}
@@ -87,7 +89,7 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
       {templates.length === 0 && !creating ? (
         <div className="text-center py-8 text-gray-400">
           <ClipboardList className="w-8 h-8 mx-auto mb-2" />
-          <p className="text-sm">No templates yet. Create one to get started.</p>
+          <p className="text-sm">{t("noTemplatesYet")}</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -103,20 +105,20 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
                     onSave={(data) => {
                       startTransition(async () => {
                         try {
-                          const t = await updateChecklistTemplate(template.id, data);
+                          const tmpl = await updateChecklistTemplate(template.id, data);
                           setTemplates((prev) =>
-                            prev.map((p) => (p.id === template.id ? t : p))
+                            prev.map((p) => (p.id === template.id ? tmpl : p))
                           );
                           setEditingId(null);
-                          toast.success("Template updated");
+                          toast.success(t("templateUpdated"));
                         } catch (e: unknown) {
-                          toast.error(e instanceof Error ? e.message : "Failed to update");
+                          toast.error(e instanceof Error ? e.message : t("failedToUpdate"));
                         }
                       });
                     }}
                     onCancel={() => setEditingId(null)}
                     isPending={isPending}
-                    saveLabel="Save Changes"
+                    saveLabel={t("saveChanges")}
                   />
                 </div>
               ) : (
@@ -137,7 +139,7 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
                       {template.name}
                     </span>
                     <span className="text-xs text-gray-400">
-                      {template.items.length} item{template.items.length !== 1 ? "s" : ""}
+                      {template.items.length} {template.items.length !== 1 ? "items" : "item"}
                     </span>
                     <div className="flex items-center gap-1 ml-2" onClick={(e) => e.stopPropagation()}>
                       <button
@@ -146,20 +148,20 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
                           setExpandedId(null);
                         }}
                         className="p-1.5 text-gray-400 hover:text-gray-600 rounded"
-                        title="Edit"
+                        title={t("saveChanges")}
                       >
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => {
-                          if (!confirm(`Delete "${template.name}"? This cannot be undone.`)) return;
+                          if (!confirm(t("deleteTemplateConfirm", { name: template.name }))) return;
                           startTransition(async () => {
                             try {
                               await deleteChecklistTemplate(template.id);
                               setTemplates((prev) => prev.filter((p) => p.id !== template.id));
-                              toast.success("Template deleted");
+                              toast.success(t("templateDeleted"));
                             } catch {
-                              toast.error("Failed to delete template");
+                              toast.error(t("failedToDeleteTemplate"));
                             }
                           });
                         }}
@@ -206,7 +208,7 @@ function TemplateForm({
   onSave,
   onCancel,
   isPending,
-  saveLabel = "Create Template",
+  saveLabel,
 }: {
   initial?: { name: string; items: string[] };
   onSave: (data: { name: string; items: string[] }) => void;
@@ -214,6 +216,8 @@ function TemplateForm({
   isPending: boolean;
   saveLabel?: string;
 }) {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const [name, setName] = useState(initial?.name || "");
   const [items, setItems] = useState<string[]>(
     initial?.items?.length ? initial.items : [""]
@@ -233,7 +237,7 @@ function TemplateForm({
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const validItems = items.filter((t) => t.trim());
+    const validItems = items.filter((item) => item.trim());
     if (!name.trim() || validItems.length === 0) return;
     onSave({ name, items: validItems });
   }
@@ -245,13 +249,13 @@ function TemplateForm({
     >
       <div className="mb-3">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Template Name
+          {t("templateName")}
         </label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g. Site Work, Framing, Electrical…"
+          placeholder={t("templateNamePlaceholder")}
           className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
           autoFocus
         />
@@ -259,7 +263,7 @@ function TemplateForm({
 
       <div className="mb-3">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Checklist Items
+          {t("checklistItems")}
         </label>
         <div className="space-y-1.5">
           {items.map((item, i) => (
@@ -271,7 +275,7 @@ function TemplateForm({
                 type="text"
                 value={item}
                 onChange={(e) => updateItem(i, e.target.value)}
-                placeholder="Enter item title…"
+                placeholder={t("enterItemTitle")}
                 className="flex-1 text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/30 focus:border-[var(--color-primary)]"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -298,24 +302,24 @@ function TemplateForm({
           className="mt-2 flex items-center gap-1 text-xs text-[var(--color-primary)] hover:underline"
         >
           <Plus className="w-3 h-3" />
-          Add item
+          {t("addItem")}
         </button>
       </div>
 
       <div className="flex items-center gap-2 pt-2 border-t border-gray-200">
         <button
           type="submit"
-          disabled={isPending || !name.trim() || items.every((t) => !t.trim())}
+          disabled={isPending || !name.trim() || items.every((item) => !item.trim())}
           className="px-4 py-1.5 text-sm font-medium rounded-lg bg-[var(--color-primary)] text-white hover:opacity-90 disabled:opacity-50 transition-opacity"
         >
-          {isPending ? "Saving…" : saveLabel}
+          {isPending ? tc("saving") : (saveLabel ?? t("createTemplate"))}
         </button>
         <button
           type="button"
           onClick={onCancel}
           className="px-4 py-1.5 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
         >
-          Cancel
+          {tc("cancel")}
         </button>
       </div>
     </form>

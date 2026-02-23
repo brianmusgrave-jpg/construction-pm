@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { UserPlus, Users } from "lucide-react";
 import { InviteModal } from "./InviteModal";
+import { useTranslations } from "next-intl";
 
 interface Member {
   id: string;
@@ -32,13 +33,15 @@ interface Props {
 }
 
 export function TeamSection({ projectId, members, invitations, canInvite }: Props) {
+  const t = useTranslations("team");
+  const ti = useTranslations("common");
   const [showInvite, setShowInvite] = useState(false);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Team ({members.length})
+          {t("title", { count: members.length })}
         </h2>
         {canInvite && (
           <button
@@ -46,7 +49,7 @@ export function TeamSection({ projectId, members, invitations, canInvite }: Prop
             className="inline-flex items-center gap-1 text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] transition-colors"
           >
             <UserPlus className="w-3.5 h-3.5" />
-            Invite
+            {ti("invite")}
           </button>
         )}
       </div>
@@ -54,14 +57,11 @@ export function TeamSection({ projectId, members, invitations, canInvite }: Prop
         {members.length === 0 ? (
           <div className="p-6 text-center">
             <Users className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm text-gray-500">No team members yet</p>
+            <p className="text-sm text-gray-500">{t("noTeamMembers")}</p>
           </div>
         ) : (
           members.map((member) => (
-            <div
-              key={member.id}
-              className="flex items-center gap-3 px-4 py-3"
-            >
+            <div key={member.id} className="flex items-center gap-3 px-4 py-3">
               <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] text-[var(--color-primary)] flex items-center justify-center text-sm font-semibold shrink-0">
                 {(member.user.name || member.user.email)[0].toUpperCase()}
               </div>

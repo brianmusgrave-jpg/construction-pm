@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { updateProjectBudget, updatePhaseCosts } from "@/actions/budget";
 import { DollarSign, TrendingUp, TrendingDown, Minus, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface PhaseBudget {
   id: string;
@@ -22,7 +23,7 @@ interface Props {
 
 function fmt(n: number | null): string {
   if (n === null || n === 0) return "—";
-  return `$${n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  return `$${n.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
 
 function pct(actual: number, estimated: number): number {
@@ -36,6 +37,7 @@ export function BudgetSection({
   phases: initialPhases,
   canManage,
 }: Props) {
+  const t = useTranslations("budget");
   const [projectBudget, setProjectBudget] = useState(initialBudget);
   const [phases, setPhases] = useState(initialPhases);
   const [editingBudget, setEditingBudget] = useState(false);
@@ -58,9 +60,9 @@ export function BudgetSection({
         await updateProjectBudget(projectId, num);
         setProjectBudget(num);
         setEditingBudget(false);
-        toast.success("Budget updated");
+        toast.success(t("updated"));
       } catch {
-        toast.error("Failed to update budget");
+        toast.error(t("failedToUpdate"));
       }
     });
   }
@@ -83,9 +85,9 @@ export function BudgetSection({
           )
         );
         setEditingPhaseId(null);
-        toast.success("Phase costs updated");
+        toast.success(t("costsUpdated"));
       } catch {
-        toast.error("Failed to update costs");
+        toast.error(t("failedToUpdateCosts"));
       }
     });
   }
@@ -97,7 +99,7 @@ export function BudgetSection({
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
             <DollarSign className="w-4 h-4 text-green-600" />
-            Budget
+            {t("title")}
           </h2>
           {canManage && !editingBudget && (
             <button
@@ -108,7 +110,7 @@ export function BudgetSection({
               className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1"
             >
               <Pencil className="w-3 h-3" />
-              Edit Total
+              {t("editTotal")}
             </button>
           )}
         </div>
@@ -116,7 +118,7 @@ export function BudgetSection({
         {/* Project budget inline edit */}
         {editingBudget ? (
           <div className="flex items-center gap-2 mt-2">
-            <span className="text-sm text-gray-500">Total Budget:</span>
+            <span className="text-sm text-gray-500">{t("totalBudget")}</span>
             <div className="flex items-center gap-1">
               <span className="text-sm text-gray-400">$</span>
               <input
@@ -149,7 +151,7 @@ export function BudgetSection({
         ) : (
           projectBudget && (
             <p className="text-sm text-gray-500 mt-1">
-              Total Budget: <span className="font-semibold text-gray-900">{fmt(projectBudget)}</span>
+              {t("totalBudget")} <span className="font-semibold text-gray-900">{fmt(projectBudget)}</span>
             </p>
           )
         )}
@@ -158,15 +160,15 @@ export function BudgetSection({
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-0 border-b border-gray-100">
         <div className="px-4 py-3 text-center border-r border-gray-100">
-          <p className="text-xs text-gray-500 mb-0.5">Estimated</p>
+          <p className="text-xs text-gray-500 mb-0.5">{t("estimated")}</p>
           <p className="text-base font-bold text-gray-900">{fmt(totalEstimated)}</p>
         </div>
         <div className="px-4 py-3 text-center border-r border-gray-100">
-          <p className="text-xs text-gray-500 mb-0.5">Actual</p>
+          <p className="text-xs text-gray-500 mb-0.5">{t("actual")}</p>
           <p className="text-base font-bold text-gray-900">{fmt(totalActual)}</p>
         </div>
         <div className="px-4 py-3 text-center">
-          <p className="text-xs text-gray-500 mb-0.5">Variance</p>
+          <p className="text-xs text-gray-500 mb-0.5">{t("variance")}</p>
           <p
             className={`text-base font-bold flex items-center justify-center gap-1 ${
               variance > 0 ? "text-red-600" : variance < 0 ? "text-green-600" : "text-gray-900"
@@ -188,7 +190,7 @@ export function BudgetSection({
       {budgetUsed !== null && (
         <div className="px-4 sm:px-5 py-3 border-b border-gray-100">
           <div className="flex items-center justify-between text-xs text-gray-500 mb-1">
-            <span>Budget Used</span>
+            <span>{t("budgetUsed")}</span>
             <span className={budgetUsed > 100 ? "text-red-600 font-semibold" : ""}>
               {budgetUsed}%
             </span>
@@ -224,7 +226,7 @@ export function BudgetSection({
                   <p className="text-sm font-medium text-gray-900 mb-2">{phase.name}</p>
                   <div className="flex flex-wrap items-center gap-3">
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500 w-16">Estimated:</span>
+                      <span className="text-xs text-gray-500 w-16">{t("estimated")}:</span>
                       <span className="text-xs text-gray-400">$</span>
                       <input
                         type="text"
@@ -236,7 +238,7 @@ export function BudgetSection({
                       />
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500 w-16">Actual:</span>
+                      <span className="text-xs text-gray-500 w-16">{t("actual")}:</span>
                       <span className="text-xs text-gray-400">$</span>
                       <input
                         type="text"
@@ -277,16 +279,16 @@ export function BudgetSection({
                   </div>
                   <div className="flex items-center gap-4 text-xs shrink-0">
                     <div className="text-right">
-                      <p className="text-gray-400">Est.</p>
+                      <p className="text-gray-400">{t("estShort")}</p>
                       <p className="text-gray-700 font-medium">{fmt(phase.estimatedCost)}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-gray-400">Actual</p>
+                      <p className="text-gray-400">{t("actual")}</p>
                       <p className="text-gray-700 font-medium">{fmt(phase.actualCost)}</p>
                     </div>
                     {phaseVariance !== null && (
                       <div className="text-right w-16">
-                        <p className="text-gray-400">Var.</p>
+                        <p className="text-gray-400">{t("varShort")}</p>
                         <p
                           className={`font-medium ${
                             phaseVariance > 0 ? "text-red-600" : phaseVariance < 0 ? "text-green-600" : "text-gray-500"

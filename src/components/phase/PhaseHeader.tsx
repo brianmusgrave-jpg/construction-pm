@@ -1,20 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { cn, statusColor, statusLabel } from "@/lib/utils";
+import { cn, statusColor } from "@/lib/utils";
 import { updatePhaseStatus } from "@/actions/phases";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
-const STATUS_TRANSITIONS: Record<string, { label: string; next: string }[]> = {
-  PENDING: [{ label: "Start Phase", next: "IN_PROGRESS" }],
-  IN_PROGRESS: [{ label: "Request Review", next: "REVIEW_REQUESTED" }],
-  REVIEW_REQUESTED: [{ label: "Begin Review", next: "UNDER_REVIEW" }],
+interface StatusTransition {
+  labelKey: string;
+  next: string;
+}
+
+const STATUS_TRANSITION_KEYS: Record<string, StatusTransition[]> = {
+  PENDING: [{ labelKey: "startPhase", next: "IN_PROGRESS" }],
+  IN_PROGRESS: [{ labelKey: "requestReview", next: "REVIEW_REQUESTED" }],
+  REVIEW_REQUESTED: [{ labelKey: "beginReview", next: "UNDER_REVIEW" }],
   UNDER_REVIEW: [
-    { label: "Approve & Complete", next: "COMPLETE" },
-    { label: "Send Back", next: "IN_PROGRESS" },
+    { labelKey: "approveComplete", next: "COMPLETE" },
+    { labelKey: "sendBack", next: "IN_PROGRESS" },
   ],
   COMPLETE: [],
+};
+
+const STATUS_LABEL_KEYS: Record<string, string> = {
+  PENDING: "pending",
+  IN_PROGRESS: "inProgress",
+  REVIEW_REQUESTED: "reviewRequested",
+  UNDER_REVIEW: "underReview",
+  COMPLETE: "complete",
 };
 
 interface PhaseHeaderProps {
@@ -38,9 +51,11 @@ export function PhaseHeader({
   canEdit,
   canManage,
 }: PhaseHeaderProps) {
+  const t = useTranslations("phases");
+  const ts = useTranslations("status");
   const [loading, setLoading] = useState<string | null>(null);
 
-  const transitions = STATUS_TRANSITIONS[phase.status] || [];
+  const transitions = STATUS_TRANSITION_KEYS[phase.status] || [];
   const reviewActions = ["UNDER_REVIEW", "COMPLETE"];
 
   async function handleTransition(nextStatus: string) {
@@ -48,7 +63,7 @@ export function PhaseHeader({
     try {
       await updatePhaseStatus(phase.id, nextStatus);
     } catch {
-      // Error handling — toast would go here
+      // Error handling
     }
     setLoading(null);
   }
@@ -68,7 +83,7 @@ export function PhaseHeader({
             href={`/dashboard/projects/${projectId}/timeline`}
             className="hover:text-gray-700 shrink-0"
           >
-            Timeline
+            {t("timeline")}
           </Link>
           <span className="shrink-0">/</span>
           <span className="text-gray-400 truncate">{phase.name}</span>
@@ -83,36 +98,36 @@ export function PhaseHeader({
                 statusColor(phase.status)
               )}
             >
-              {statusLabel(phase.status)}
+              {ts(STATUS_LABEL_KEYS[phase.status] || "pending")}
             </span>
             {phase.isMilestone && (
               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700">
-                Milestone
+                {t("milestone")}
               </span>
             )}
           </div>
 
           {canEdit && transitions.length > 0 && (
             <div className="flex gap-2">
-              {transitions.map((t) => {
-                const needsManage = reviewActions.includes(t.next);
+              {transitions.map((tr) => {
+                const needsManage = reviewActions.includes(tr.next);
                 if (needsManage && !canManage) return null;
 
                 return (
                   <button
-                    key={t.next}
-                    onClick={() => handleTransition(t.next)}
+                    key={tr.next}
+                    onClick={() => handleTransition(tr.next)}
                     disabled={loading !== null}
                     className={cn(
                       "px-3 py-1.5 text-sm font-medium rounded-lg transition-colors disabled:opacity-50",
-                      t.next === "COMPLETE"
+                      tr.next === "COMPLETE"
                         ? "bg-green-600 text-white hover:bg-green-700"
-                        : t.next === "IN_PROGRESS" && phase.status === "UNDER_REVIEW"
+                        : tr.next === "IN_PROGRESS" && phase.status === "UNDER_REVIEW"
                           ? "border border-gray-300 text-gray-700 hover:bg-gray-50"
                           : "bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
                     )}
                   >
-                    {loading === t.next ? "..." : t.label}
+                    {loading === tr.next ? "..." : t(tr.labelKey)}
                   </button>
                 );
               })}

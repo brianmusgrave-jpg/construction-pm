@@ -5,12 +5,14 @@ import { Check } from "lucide-react";
 import { THEME_PRESETS } from "@/lib/themes";
 import { updateTheme } from "@/actions/settings";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface ThemeSelectorProps {
   currentTheme: string;
 }
 
 export function ThemeSelector({ currentTheme }: ThemeSelectorProps) {
+  const t = useTranslations("settings");
   const [selected, setSelected] = useState(currentTheme);
   const [saving, setSaving] = useState(false);
 
@@ -28,9 +30,9 @@ export function ThemeSelector({ currentTheme }: ThemeSelectorProps) {
 
   return (
     <div>
-      <h3 className="text-sm font-semibold text-gray-900 mb-1">Color Theme</h3>
+      <h3 className="text-sm font-semibold text-gray-900 mb-1">{t("colorTheme")}</h3>
       <p className="text-xs text-gray-500 mb-4">
-        Choose a color scheme for the entire application. Changes apply to all users.
+        {t("themeDescription")}
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

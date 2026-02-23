@@ -4,6 +4,7 @@ import { useState } from "react";
 import { X } from "lucide-react";
 import { createStaff, updateStaff, deleteStaff } from "@/actions/staff";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 type ContactType = "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR";
 
@@ -24,18 +25,17 @@ interface ContactFormModalProps {
   onClose: () => void;
 }
 
-const CONTACT_TYPES: { value: ContactType; label: string }[] = [
-  { value: "TEAM", label: "Team Member" },
-  { value: "SUBCONTRACTOR", label: "Subcontractor" },
-  { value: "VENDOR", label: "Vendor / Supplier" },
-  { value: "INSPECTOR", label: "Inspector" },
-];
+export function ContactFormModal({ mode, contact, onClose }: ContactFormModalProps) {
+  const t = useTranslations("directory");
+  const tc = useTranslations("common");
 
-export function ContactFormModal({
-  mode,
-  contact,
-  onClose,
-}: ContactFormModalProps) {
+  const CONTACT_TYPES: { value: ContactType; label: string }[] = [
+    { value: "TEAM", label: t("teamMember") },
+    { value: "SUBCONTRACTOR", label: t("subcontractor") },
+    { value: "VENDOR", label: t("vendorSupplier") },
+    { value: "INSPECTOR", label: t("inspector") },
+  ];
+
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +53,7 @@ export function ContactFormModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) {
-      setError("Name is required");
+      setError(t("nameRequired"));
       return;
     }
 
@@ -85,50 +85,39 @@ export function ContactFormModal({
       }
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : t("somethingWentWrong"));
       setSaving(false);
     }
   }
 
   async function handleDelete() {
     if (!contact) return;
-    if (!confirm(`Delete ${contact.name}? This will also remove all their phase assignments.`))
-      return;
+    if (!confirm(t("deleteConfirm", { name: contact.name }))) return;
 
     setDeleting(true);
     try {
       await deleteStaff(contact.id);
       onClose();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to delete");
+      setError(e instanceof Error ? e.message : t("failedToDelete"));
       setDeleting(false);
     }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/40"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-      {/* Modal */}
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-auto">
-        {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900">
-            {mode === "add" ? "Add Contact" : "Edit Contact"}
+            {mode === "add" ? t("addContactModal") : t("editContactModal")}
           </h2>
-          <button
-            onClick={onClose}
-            className="p-1 text-gray-400 hover:text-gray-600 rounded"
-          >
+          <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -136,11 +125,8 @@ export function ContactFormModal({
             </div>
           )}
 
-          {/* Contact type */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Type
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t("type")}</label>
             <div className="grid grid-cols-2 gap-2">
               {CONTACT_TYPES.map((ct) => (
                 <button
@@ -160,92 +146,75 @@ export function ContactFormModal({
             </div>
           </div>
 
-          {/* Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Name *
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("nameField")}</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="John Smith"
+              placeholder={t("namePlaceholder")}
               className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               autoFocus
             />
           </div>
 
-          {/* Company + Role */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Company
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("company")}</label>
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                placeholder="ABC Electric"
+                placeholder={t("companyPlaceholder")}
                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Role / Trade
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("roleTrade")}</label>
               <input
                 type="text"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                placeholder="Electrician"
+                placeholder={t("rolePlaceholder")}
                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
           </div>
 
-          {/* Email + Phone */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("email")}</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="john@company.com"
+                placeholder={t("emailPlaceholder")}
                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("phone")}</label>
               <input
                 type="tel"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="(555) 123-4567"
+                placeholder={t("phonePlaceholder")}
                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
           </div>
 
-          {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Notes
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("notes")}</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={2}
-              placeholder="License #, specialties, availability..."
+              placeholder={t("notesPlaceholder")}
               className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none resize-none"
             />
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-between pt-2">
             <div>
               {mode === "edit" && contact && (
@@ -255,7 +224,7 @@ export function ContactFormModal({
                   disabled={deleting}
                   className="text-sm text-red-600 hover:text-red-700 font-medium disabled:opacity-50"
                 >
-                  {deleting ? "Deleting..." : "Delete Contact"}
+                  {deleting ? t("deleting") : t("deleteContact")}
                 </button>
               )}
             </div>
@@ -265,7 +234,7 @@ export function ContactFormModal({
                 onClick={onClose}
                 className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
-                Cancel
+                {tc("cancel")}
               </button>
               <button
                 type="submit"
@@ -273,10 +242,10 @@ export function ContactFormModal({
                 className="px-4 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors disabled:opacity-50"
               >
                 {saving
-                  ? "Saving..."
+                  ? tc("saving")
                   : mode === "add"
-                    ? "Add Contact"
-                    : "Save Changes"}
+                    ? t("addContactBtn")
+                    : t("saveChanges")}
               </button>
             </div>
           </div>

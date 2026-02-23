@@ -3,6 +3,7 @@
 import { useState, useRef } from "react";
 import { Upload, Trash2, HardHat, Loader2, AlertCircle } from "lucide-react";
 import { uploadLogo, deleteLogo, updateCompanyName } from "@/actions/settings";
+import { useTranslations } from "next-intl";
 
 interface LogoUploaderProps {
   logoUrl: string | null;
@@ -10,6 +11,8 @@ interface LogoUploaderProps {
 }
 
 export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const [currentLogo, setCurrentLogo] = useState(logoUrl);
   const [currentName, setCurrentName] = useState(companyName || "");
   const [uploading, setUploading] = useState(false);
@@ -25,13 +28,13 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
 
     // Client-side validation
     if (file.size > 2 * 1024 * 1024) {
-      setError("File too large. Maximum size is 2MB.");
+      setError(t("fileTooLarge"));
       return;
     }
 
     const allowed = ["image/png", "image/jpeg", "image/svg+xml", "image/webp"];
     if (!allowed.includes(file.type)) {
-      setError("Invalid format. Use PNG, JPG, SVG, or WebP.");
+      setError(t("invalidFormat"));
       return;
     }
 
@@ -44,20 +47,20 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
       const result = await uploadLogo(formData);
       setCurrentLogo(result.url);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Upload failed");
+      setError(e instanceof Error ? e.message : t("uploadFailed"));
     }
     setUploading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
 
   async function handleDelete() {
-    if (!confirm("Remove your company logo?")) return;
+    if (!confirm(t("removeLogoConfirm"))) return;
     setDeleting(true);
     try {
       await deleteLogo();
       setCurrentLogo(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to delete");
+      setError(e instanceof Error ? e.message : t("failedToDelete"));
     }
     setDeleting(false);
   }
@@ -79,10 +82,10 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
   return (
     <div>
       <h3 className="text-sm font-semibold text-gray-900 mb-1">
-        Company Branding
+        {t("companyBranding")}
       </h3>
       <p className="text-xs text-gray-500 mb-4">
-        Upload your logo and set your company name. These appear in the sidebar.
+        {t("brandingDescription")}
       </p>
 
       {error && (
@@ -115,7 +118,7 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
               disabled={uploading}
               className="text-xs font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] disabled:opacity-50"
             >
-              {currentLogo ? "Replace" : "Upload"}
+              {currentLogo ? tc("replace") : tc("upload")}
             </button>
             {currentLogo && (
               <button
@@ -123,7 +126,7 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
                 disabled={deleting}
                 className="text-xs font-medium text-red-600 hover:text-red-700 disabled:opacity-50"
               >
-                Remove
+                {tc("remove")}
               </button>
             )}
           </div>
@@ -139,31 +142,31 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
           <p className="text-[10px] text-gray-400 text-center">
             PNG, JPG, SVG, WebP
             <br />
-            Max 2MB
+            {t("maxSize")}
           </p>
         </div>
 
         {/* Company name */}
         <div className="flex-1">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Company Name
+            {t("companyName")}
           </label>
           <div className="relative">
             <input
               type="text"
               value={currentName}
               onChange={(e) => handleNameChange(e.target.value)}
-              placeholder="Your Company Name"
+              placeholder={t("companyNamePlaceholder")}
               className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
             />
             {savingName && (
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">
-                Saving...
+                {tc("saving")}
               </span>
             )}
           </div>
           <p className="text-xs text-gray-400 mt-1">
-            Displayed in the sidebar header. Leave blank to show &quot;Construction PM&quot;.
+            {t("companyNameHelp")}
           </p>
         </div>
       </div>

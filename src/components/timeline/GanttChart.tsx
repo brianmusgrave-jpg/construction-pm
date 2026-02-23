@@ -5,6 +5,7 @@ import { format, addMonths, startOfMonth, differenceInDays } from "date-fns";
 import { PhaseRow } from "./PhaseRow";
 import { updatePhaseDates } from "@/actions/phases";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 interface Phase {
   id: string;
@@ -41,6 +42,7 @@ interface GanttChartProps {
 }
 
 export function GanttChart({ projectId, phases: initialPhases, planApproval }: GanttChartProps) {
+  const t = useTranslations("gantt");
   const [phases, setPhases] = useState(initialPhases);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -130,18 +132,18 @@ const saveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
       <div className="px-6 py-2 flex items-center gap-6 text-xs text-gray-500 bg-white border-b border-gray-100">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 bg-blue-500 rounded-sm" />
-          Estimated
+          {t("estimated")}
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 bg-red-400 rounded-sm" />
-          Worst Case
+          {t("worstCase")}
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-3 bg-green-500 rounded-sm" />
-          Today
+          {t("today")}
         </span>
         <span className="ml-auto text-gray-400">
-          Drag bars to slide &bull; Drag edges to resize
+          {t("dragHelp")}
         </span>
       </div>
 

@@ -16,6 +16,7 @@ import {
   addCustomChecklistItem,
   deleteChecklistItem,
 } from "@/actions/checklists";
+import { useTranslations } from "next-intl";
 
 interface ChecklistItem {
   id: string;
@@ -52,6 +53,8 @@ export function ChecklistSection({
   canEdit,
   canManage,
 }: ChecklistSectionProps) {
+  const t = useTranslations("checklist");
+  const tc = useTranslations("common");
   const [showTemplatePicker, setShowTemplatePicker] = useState(false);
   const [showAddItem, setShowAddItem] = useState(false);
   const [newItemTitle, setNewItemTitle] = useState("");
@@ -109,7 +112,7 @@ export function ChecklistSection({
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
-          Checklist
+          {t("title")}
           {total > 0 && (
             <span className="ml-2 text-gray-500 normal-case font-normal">
               {completed}/{total}
@@ -122,7 +125,7 @@ export function ChecklistSection({
             className="inline-flex items-center gap-1 text-sm text-[var(--color-primary)] hover:text-[var(--color-primary-dark)] font-medium"
           >
             <Plus className="w-4 h-4" />
-            Add Item
+            {t("addItem")}
           </button>
         )}
       </div>
@@ -130,20 +133,19 @@ export function ChecklistSection({
       {!checklist ? (
         <div className="text-center py-6">
           <ClipboardList className="w-8 h-8 text-gray-300 mx-auto mb-2" />
-          <p className="text-sm text-gray-500 mb-3">No checklist yet</p>
+          <p className="text-sm text-gray-500 mb-3">{t("noChecklistYet")}</p>
           {canEdit && templates.length > 0 && (
             <button
               onClick={() => setShowTemplatePicker(true)}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)]"
             >
               <ListChecks className="w-4 h-4" />
-              Apply Template
+              {t("applyTemplate")}
             </button>
           )}
         </div>
       ) : (
         <>
-          {/* Progress bar */}
           {total > 0 && (
             <div className="mb-4">
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -151,22 +153,17 @@ export function ChecklistSection({
                   className="h-full rounded-full transition-all duration-300"
                   style={{
                     width: `${progressPct}%`,
-                    backgroundColor:
-                      progressPct === 100 ? "#16a34a" : "var(--color-primary)",
+                    backgroundColor: progressPct === 100 ? "#16a34a" : "var(--color-primary)",
                   }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1">{progressPct}% complete</p>
+              <p className="text-xs text-gray-500 mt-1">{progressPct}{t("percentComplete")}</p>
             </div>
           )}
 
-          {/* Items */}
           <div className="space-y-1">
             {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 group"
-              >
+              <div key={item.id} className="flex items-start gap-3 p-2 rounded-lg hover:bg-gray-50 group">
                 <button
                   onClick={() => canEdit && handleToggle(item.id)}
                   disabled={!canEdit || togglingId === item.id}
@@ -179,20 +176,13 @@ export function ChecklistSection({
                   )}
                 </button>
                 <div className="flex-1 min-w-0">
-                  <span
-                    className={`text-sm ${
-                      item.completed
-                        ? "text-gray-400 line-through"
-                        : "text-gray-900"
-                    }`}
-                  >
+                  <span className={`text-sm ${item.completed ? "text-gray-400 line-through" : "text-gray-900"}`}>
                     {item.title}
                   </span>
                   {item.completed && item.completedBy && (
                     <p className="text-xs text-gray-400 mt-0.5">
                       {item.completedBy.name || item.completedBy.email}
-                      {item.completedAt &&
-                        ` · ${new Date(item.completedAt).toLocaleDateString()}`}
+                      {item.completedAt && ` · ${new Date(item.completedAt).toLocaleDateString()}`}
                     </p>
                   )}
                 </div>
@@ -200,7 +190,7 @@ export function ChecklistSection({
                   <button
                     onClick={() => handleDeleteItem(item.id)}
                     className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 shrink-0"
-                    title="Delete item"
+                    title={tc("delete")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -209,12 +199,11 @@ export function ChecklistSection({
             ))}
           </div>
 
-          {/* Add item inline */}
           {showAddItem && (
             <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
               <input
                 type="text"
-                placeholder="New checklist item..."
+                placeholder={t("newItemPlaceholder")}
                 value={newItemTitle}
                 onChange={(e) => setNewItemTitle(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAddItem()}
@@ -226,15 +215,9 @@ export function ChecklistSection({
                 disabled={loading || !newItemTitle.trim()}
                 className="px-3 py-2 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] disabled:opacity-50"
               >
-                Add
+                {tc("add")}
               </button>
-              <button
-                onClick={() => {
-                  setShowAddItem(false);
-                  setNewItemTitle("");
-                }}
-                className="p-2 text-gray-400 hover:text-gray-600"
-              >
+              <button onClick={() => { setShowAddItem(false); setNewItemTitle(""); }} className="p-2 text-gray-400 hover:text-gray-600">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -242,36 +225,25 @@ export function ChecklistSection({
         </>
       )}
 
-      {/* Template Picker Modal */}
       {showTemplatePicker && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h3 className="font-semibold text-gray-900">
-                Choose a Template
-              </h3>
-              <button
-                onClick={() => setShowTemplatePicker(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
+              <h3 className="font-semibold text-gray-900">{t("chooseTemplate")}</h3>
+              <button onClick={() => setShowTemplatePicker(false)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
-
             <div className="p-2">
-              {templates.map((t) => (
+              {templates.map((tmpl) => (
                 <button
-                  key={t.id}
-                  onClick={() => handleApplyTemplate(t.id)}
+                  key={tmpl.id}
+                  onClick={() => handleApplyTemplate(tmpl.id)}
                   disabled={loading}
                   className="w-full text-left p-3 hover:bg-gray-50 rounded-lg disabled:opacity-50"
                 >
-                  <p className="text-sm font-medium text-gray-900">
-                    {t.name}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    {t.items.length} items
-                  </p>
+                  <p className="text-sm font-medium text-gray-900">{tmpl.name}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{t("itemCount", { count: tmpl.items.length })}</p>
                 </button>
               ))}
             </div>
