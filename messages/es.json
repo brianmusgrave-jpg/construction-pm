@@ -448,7 +448,8 @@
       "bids": "Licitaciones de Subcontratistas",
       "offline": "Modo Sin Conexión",
       "analytics": "Análisis e Informes",
-      "advanced": "Funciones Avanzadas"
+      "advanced": "Funciones Avanzadas",
+      "quickbooks": "QuickBooks"
     },
     "articles": {
       "appOverview": "Descripción general de la app",
@@ -508,14 +509,19 @@
       "budgetForecasting": "Pronóstico de Presupuesto",
       "budgetForecastingContent": "El pronóstico de presupuesto ayuda a predecir los costos finales basándose en patrones de gasto actuales.\n\nLa sección de pronóstico muestra:\n• Costo final proyectado — Estimación del costo total al completar el proyecto\n• Índice de Rendimiento de Costo (CPI) — Ratio de costo presupuestado vs. real; mayor a 1.0 significa bajo presupuesto\n• Estimación al Completar (EAC) — Total proyectado usando metodología de valor ganado\n• Variación al Completar (VAC) — Diferencia entre presupuesto y costo final proyectado\n\nLos pronósticos se actualizan automáticamente al ingresar costos reales. Verde indica bajo presupuesto; rojo indica sobre presupuesto.",
       "reportScheduling": "Informes Programados",
-      "reportSchedulingContent": "Configure generación y entrega automática de informes de forma recurrente.\n\nPara programar un informe:\n1. Vaya a la sección de Informes\n2. Haga clic en \"Programar Informe\"\n3. Elija el tipo (progreso, presupuesto, actividad)\n4. Seleccione la frecuencia (diario, semanal, mensual)\n5. Agregue destinatarios de correo\n6. Guarde la programación\n\nLos informes se generan automáticamente y se entregan por correo. Solo Admins y Gerentes de Proyecto pueden crear informes programados."
+      "reportSchedulingContent": "Configure generación y entrega automática de informes de forma recurrente.\n\nPara programar un informe:\n1. Vaya a la sección de Informes\n2. Haga clic en \"Programar Informe\"\n3. Elija el tipo (progreso, presupuesto, actividad)\n4. Seleccione la frecuencia (diario, semanal, mensual)\n5. Agregue destinatarios de correo\n6. Guarde la programación\n\nLos informes se generan automáticamente y se entregan por correo. Solo Admins y Gerentes de Proyecto pueden crear informes programados.",
+      "qbOverview": "Descripción general de la integración con QuickBooks",
+      "qbConnect": "Conectar su cuenta de QuickBooks",
+      "qbSync": "Sincronizar datos entre QuickBooks y proyectos",
+      "qbTroubleshoot": "Solución de problemas de sincronización de QuickBooks"
     },
     "replayIntroDesc": "Recorra las funciones clave de la aplicación paso a paso",
     "quickLinkNotifications": "Notificaciones",
     "quickLinkChangeOrders": "Órdenes de Cambio",
     "quickLinkOffline": "Modo Sin Conexión",
     "quickLinkAnalytics": "Analíticas",
-    "quickLinkAdvanced": "Integraciones"
+    "quickLinkAdvanced": "Integraciones",
+    "quickLinkQuickBooks": "QuickBooks"
   },
   "tour": {
     "welcomeTitle": "¡Bienvenido a Construction PM!",
@@ -691,5 +697,36 @@
     "planned": "Planificado",
     "actual": "Real",
     "estimated": "Estimado"
+  },
+  "quickbooks": {
+    "title": "Integración con QuickBooks",
+    "description": "Conecte su cuenta de QuickBooks Online para sincronizar automáticamente facturas, gastos y datos de proveedores con sus proyectos de construcción.",
+    "connected": "Conectado",
+    "notConnected": "No conectado",
+    "notConnectedDesc": "Vincule su cuenta de QuickBooks Online para sincronizar datos financieros con sus proyectos.",
+    "connectButton": "Conectar QuickBooks",
+    "connectError": "Error al iniciar la conexión con QuickBooks",
+    "disconnect": "Desconectar",
+    "disconnectConfirm": "¿Está seguro de que desea desconectar QuickBooks? Los datos sincronizados se conservarán.",
+    "disconnected": "QuickBooks desconectado",
+    "disconnectError": "Error al desconectar QuickBooks",
+    "unknownCompany": "Empresa QuickBooks",
+    "companyId": "ID de empresa",
+    "lastSync": "Última sincronización",
+    "neverSynced": "Nunca sincronizado",
+    "syncNow": "Sincronizar ahora",
+    "syncStarted": "Sincronización iniciada",
+    "syncError": "Error de sincronización",
+    "invoices": "Facturas",
+    "expenses": "Gastos",
+    "vendors": "Proveedores",
+    "customers": "Clientes",
+    "autoSync": "Sincronización automática",
+    "autoSyncDesc": "Sincronizar datos automáticamente cuando se detecten cambios",
+    "syncHistory": "Historial de sincronización",
+    "synced": "sincronizados",
+    "failed": "fallidos",
+    "settingsSaved": "Configuración de sincronización actualizada",
+    "settingsError": "Error al actualizar la configuración"
   }
 }

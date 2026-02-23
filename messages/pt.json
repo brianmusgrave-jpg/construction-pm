@@ -448,7 +448,8 @@
       "bids": "Licitações de Subempreiteiros",
       "offline": "Modo Offline",
       "analytics": "Análises e Relatórios",
-      "advanced": "Funcionalidades Avançadas"
+      "advanced": "Funcionalidades Avançadas",
+      "quickbooks": "QuickBooks"
     },
     "articles": {
       "appOverview": "Visão geral do app",
@@ -508,14 +509,19 @@
       "budgetForecasting": "Previsão de Orçamento",
       "budgetForecastingContent": "A previsão de orçamento ajuda a prever custos finais com base nos padrões de gastos atuais.\n\nA seção de previsão mostra:\n• Custo final projetado — Estimativa do custo total na conclusão do projeto\n• Índice de Desempenho de Custo (CPI) — Razão entre custo orçado e real; acima de 1.0 significa abaixo do orçamento\n• Estimativa na Conclusão (EAC) — Total projetado usando metodologia de valor agregado\n• Variação na Conclusão (VAC) — Diferença entre orçamento e custo final projetado\n\nAs previsões se atualizam automaticamente. Verde indica abaixo do orçamento; vermelho indica acima.",
       "reportScheduling": "Relatórios Programados",
-      "reportSchedulingContent": "Configure geração automática e entrega de relatórios de forma recorrente.\n\nPara programar:\n1. Vá à seção de Relatórios\n2. Clique em \"Programar Relatório\"\n3. Escolha o tipo (progresso, orçamento, atividade)\n4. Selecione a frequência (diário, semanal, mensal)\n5. Adicione destinatários de email\n6. Salve a programação\n\nRelatórios são gerados e entregues automaticamente por email. Apenas Admins e GPs podem criar relatórios programados."
+      "reportSchedulingContent": "Configure geração automática e entrega de relatórios de forma recorrente.\n\nPara programar:\n1. Vá à seção de Relatórios\n2. Clique em \"Programar Relatório\"\n3. Escolha o tipo (progresso, orçamento, atividade)\n4. Selecione a frequência (diário, semanal, mensal)\n5. Adicione destinatários de email\n6. Salve a programação\n\nRelatórios são gerados e entregues automaticamente por email. Apenas Admins e GPs podem criar relatórios programados.",
+      "qbOverview": "Visão geral da integração com QuickBooks",
+      "qbConnect": "Conectando sua conta QuickBooks",
+      "qbSync": "Sincronizando dados entre QuickBooks e projetos",
+      "qbTroubleshoot": "Solução de problemas de sincronização do QuickBooks"
     },
     "replayIntroDesc": "Conheça os principais recursos do aplicativo passo a passo",
     "quickLinkNotifications": "Notificações",
     "quickLinkChangeOrders": "Ordens de Mudança",
     "quickLinkOffline": "Modo Offline",
     "quickLinkAnalytics": "Análises",
-    "quickLinkAdvanced": "Integrações"
+    "quickLinkAdvanced": "Integrações",
+    "quickLinkQuickBooks": "QuickBooks"
   },
   "tour": {
     "welcomeTitle": "Bem-vindo ao Construction PM!",
@@ -691,5 +697,36 @@
     "planned": "Planejado",
     "actual": "Real",
     "estimated": "Estimado"
+  },
+  "quickbooks": {
+    "title": "Integração com QuickBooks",
+    "description": "Conecte sua conta QuickBooks Online para sincronizar automaticamente faturas, despesas e dados de fornecedores com seus projetos de construção.",
+    "connected": "Conectado",
+    "notConnected": "Não conectado",
+    "notConnectedDesc": "Vincule sua conta QuickBooks Online para sincronizar dados financeiros com seus projetos.",
+    "connectButton": "Conectar QuickBooks",
+    "connectError": "Falha ao iniciar conexão com QuickBooks",
+    "disconnect": "Desconectar",
+    "disconnectConfirm": "Tem certeza de que deseja desconectar o QuickBooks? Os dados sincronizados serão preservados.",
+    "disconnected": "QuickBooks desconectado",
+    "disconnectError": "Falha ao desconectar o QuickBooks",
+    "unknownCompany": "Empresa QuickBooks",
+    "companyId": "ID da empresa",
+    "lastSync": "Última sincronização",
+    "neverSynced": "Nunca sincronizado",
+    "syncNow": "Sincronizar agora",
+    "syncStarted": "Sincronização iniciada",
+    "syncError": "Falha na sincronização",
+    "invoices": "Faturas",
+    "expenses": "Despesas",
+    "vendors": "Fornecedores",
+    "customers": "Clientes",
+    "autoSync": "Sincronização automática",
+    "autoSyncDesc": "Sincronizar dados automaticamente quando alterações forem detectadas",
+    "syncHistory": "Histórico de sincronização",
+    "synced": "sincronizados",
+    "failed": "falharam",
+    "settingsSaved": "Configurações de sincronização atualizadas",
+    "settingsError": "Falha ao atualizar configurações"
   }
 }

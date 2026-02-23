@@ -768,6 +768,52 @@ enum ReportFrequency {
   MONTHLY
 }
 
+// ── QuickBooks Integration (Sprint N) ──
+
+model QuickBooksConnection {
+  id           String   @id @default(cuid())
+  companyId    String   @unique @map("company_id") // QB company/realm ID
+  companyName  String?  @map("company_name")
+  accessToken  String   @map("access_token") @db.Text
+  refreshToken String   @map("refresh_token") @db.Text
+  tokenExpiry  DateTime @map("token_expiry")
+  scope        String?
+  syncEnabled  Boolean  @default(true) @map("sync_enabled")
+  lastSyncAt   DateTime? @map("last_sync_at")
+  lastSyncStatus String? @map("last_sync_status") // "success", "error", "partial"
+  lastSyncMessage String? @map("last_sync_message") @db.Text
+
+  // Sync configuration
+  syncInvoices   Boolean @default(true) @map("sync_invoices")
+  syncExpenses   Boolean @default(true) @map("sync_expenses")
+  syncVendors    Boolean @default(true) @map("sync_vendors")
+  syncCustomers  Boolean @default(false) @map("sync_customers")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  syncLogs QuickBooksSyncLog[]
+
+  @@map("quickbooks_connections")
+}
+
+model QuickBooksSyncLog {
+  id           String   @id @default(cuid())
+  connectionId String   @map("connection_id")
+  syncType     String   @map("sync_type") // "invoices", "expenses", "vendors", "customers", "full"
+  status       String   // "started", "success", "error", "partial"
+  itemsSynced  Int      @default(0) @map("items_synced")
+  itemsFailed  Int      @default(0) @map("items_failed")
+  errorMessage String?  @map("error_message") @db.Text
+  startedAt    DateTime @default(now()) @map("started_at")
+  completedAt  DateTime? @map("completed_at")
+
+  connection QuickBooksConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+
+  @@index([connectionId, startedAt])
+  @@map("quickbooks_sync_logs")
+}
+
 // ── Client Portal Tokens (Sprint H #39) ──
 
 model ClientToken {

@@ -20,6 +20,8 @@ import { getTotpStatus } from "@/actions/totp";
 import { getApiKeys } from "@/actions/api-keys";
 import { getWebhooks } from "@/actions/webhooks";
 import { getReportSchedules } from "@/actions/report-schedules";
+import { QuickBooksSection } from "@/components/settings/QuickBooksSection";
+import { getQuickBooksConnection, getQuickBooksSyncLogs } from "@/actions/quickbooks";
 import { getLocale } from "@/i18n/locale";
 import { getTranslations } from "next-intl/server";
 
@@ -44,6 +46,12 @@ export default async function SettingsPage() {
     getApiKeys().catch(() => []),
     getWebhooks().catch(() => []),
     getReportSchedules().catch(() => []),
+  ]);
+
+  // Sprint N — QuickBooks integration
+  const [qbConnection, qbSyncLogs] = await Promise.all([
+    getQuickBooksConnection().catch(() => null),
+    getQuickBooksSyncLogs().catch(() => []),
   ]);
 
   return (
@@ -128,6 +136,13 @@ export default async function SettingsPage() {
       <div className="mt-6">
         <ApiKeySection apiKeys={apiKeys} />
       </div>
+
+      {/* QuickBooks Integration */}
+      {canManage && (
+        <div className="mt-6">
+          <QuickBooksSection connection={qbConnection} syncLogs={qbSyncLogs} />
+        </div>
+      )}
 
       {/* Webhooks */}
       <div className="mt-6">

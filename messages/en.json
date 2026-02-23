@@ -448,7 +448,8 @@
       "bids": "Subcontractor Bids",
       "offline": "Offline Mode",
       "analytics": "Analytics & Reports",
-      "advanced": "Advanced Features"
+      "advanced": "Advanced Features",
+      "quickbooks": "QuickBooks"
     },
     "articles": {
       "appOverview": "App Overview",
@@ -508,14 +509,19 @@
       "budgetForecasting": "Budget Forecasting",
       "budgetForecastingContent": "Budget forecasting helps you predict final project costs based on current spending patterns.\n\nThe forecast section on the Budget page shows:\n• Projected final cost — Estimated total cost at project completion based on current burn rate\n• Cost Performance Index (CPI) — Ratio of budgeted to actual cost; above 1.0 means under budget\n• Estimate at Completion (EAC) — Projected total using earned value methodology\n• Variance at Completion (VAC) — Difference between budget and projected final cost\n\nForecasts update automatically as you enter actual costs and complete phases. A green indicator means the project is tracking under budget; red means it is trending over budget.\n\nUse forecasting to make proactive budget decisions before costs spiral.",
       "reportScheduling": "Scheduled Reports",
-      "reportSchedulingContent": "Set up automatic report generation and delivery on a recurring schedule.\n\nTo schedule a report:\n1. Go to the Reports section\n2. Click \"Schedule Report\"\n3. Choose the report type (progress, budget, activity)\n4. Select frequency (daily, weekly, monthly)\n5. Add email recipients\n6. Save the schedule\n\nScheduled reports are generated automatically and delivered via email. You can pause, edit, or delete schedules at any time.\n\nOnly Admins and Project Managers can create scheduled reports."
+      "reportSchedulingContent": "Set up automatic report generation and delivery on a recurring schedule.\n\nTo schedule a report:\n1. Go to the Reports section\n2. Click \"Schedule Report\"\n3. Choose the report type (progress, budget, activity)\n4. Select frequency (daily, weekly, monthly)\n5. Add email recipients\n6. Save the schedule\n\nScheduled reports are generated automatically and delivered via email. You can pause, edit, or delete schedules at any time.\n\nOnly Admins and Project Managers can create scheduled reports.",
+      "qbOverview": "QuickBooks Integration Overview",
+      "qbConnect": "Connecting Your QuickBooks Account",
+      "qbSync": "Syncing Data Between QuickBooks and Projects",
+      "qbTroubleshoot": "Troubleshooting QuickBooks Sync Issues"
     },
     "replayIntroDesc": "Walk through the app's key features step by step",
     "quickLinkNotifications": "Notifications",
     "quickLinkChangeOrders": "Change Orders",
     "quickLinkOffline": "Offline Mode",
     "quickLinkAnalytics": "Analytics",
-    "quickLinkAdvanced": "Integrations"
+    "quickLinkAdvanced": "Integrations",
+    "quickLinkQuickBooks": "QuickBooks"
   },
   "tour": {
     "welcomeTitle": "Welcome to Construction PM!",
@@ -691,5 +697,36 @@
     "planned": "Planned",
     "actual": "Actual",
     "estimated": "Estimated"
+  },
+  "quickbooks": {
+    "title": "QuickBooks Integration",
+    "description": "Connect your QuickBooks Online account to automatically sync invoices, expenses, and vendor data with your construction projects.",
+    "connected": "Connected",
+    "notConnected": "Not Connected",
+    "notConnectedDesc": "Link your QuickBooks Online account to sync financial data with your projects.",
+    "connectButton": "Connect QuickBooks",
+    "connectError": "Failed to start QuickBooks connection",
+    "disconnect": "Disconnect",
+    "disconnectConfirm": "Are you sure you want to disconnect QuickBooks? Sync data will be preserved.",
+    "disconnected": "QuickBooks disconnected",
+    "disconnectError": "Failed to disconnect QuickBooks",
+    "unknownCompany": "QuickBooks Company",
+    "companyId": "Company ID",
+    "lastSync": "Last synced",
+    "neverSynced": "Never synced",
+    "syncNow": "Sync Now",
+    "syncStarted": "Sync started",
+    "syncError": "Sync failed",
+    "invoices": "Invoices",
+    "expenses": "Expenses",
+    "vendors": "Vendors",
+    "customers": "Customers",
+    "autoSync": "Automatic Sync",
+    "autoSyncDesc": "Automatically sync data when changes are detected",
+    "syncHistory": "Sync History",
+    "synced": "synced",
+    "failed": "failed",
+    "settingsSaved": "Sync settings updated",
+    "settingsError": "Failed to update settings"
   }
 }

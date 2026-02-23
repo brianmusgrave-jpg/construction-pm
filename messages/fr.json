@@ -448,7 +448,8 @@
       "bids": "Appels d'Offres",
       "offline": "Mode Hors Ligne",
       "analytics": "Analyses et Rapports",
-      "advanced": "Fonctionnalités Avancées"
+      "advanced": "Fonctionnalités Avancées",
+      "quickbooks": "QuickBooks"
     },
     "articles": {
       "appOverview": "Vue d'ensemble de l'application",
@@ -508,14 +509,19 @@
       "budgetForecasting": "Prévision Budgétaire",
       "budgetForecastingContent": "La prévision budgétaire aide à prédire les coûts finaux basés sur les tendances actuelles.\n\nLa section prévision affiche :\n• Coût final projeté — Estimation du coût total à l'achèvement\n• Indice de Performance des Coûts (CPI) — Ratio coût budgété vs. réel ; supérieur à 1,0 signifie sous-budget\n• Estimation à l'Achèvement (EAC) — Total projeté avec la méthode de la valeur acquise\n• Écart à l'Achèvement (VAC) — Différence entre budget et coût final projeté\n\nLes prévisions se mettent à jour automatiquement. Vert indique sous-budget ; rouge indique dépassement.",
       "reportScheduling": "Rapports Programmés",
-      "reportSchedulingContent": "Configurez la génération automatique et la livraison de rapports récurrents.\n\nPour programmer :\n1. Allez à la section Rapports\n2. Cliquez sur \"Programmer un Rapport\"\n3. Choisissez le type (progrès, budget, activité)\n4. Sélectionnez la fréquence (quotidien, hebdomadaire, mensuel)\n5. Ajoutez les destinataires par email\n6. Enregistrez la programmation\n\nLes rapports sont générés et livrés automatiquement. Seuls les Admins et Chefs de Projet peuvent programmer."
+      "reportSchedulingContent": "Configurez la génération automatique et la livraison de rapports récurrents.\n\nPour programmer :\n1. Allez à la section Rapports\n2. Cliquez sur \"Programmer un Rapport\"\n3. Choisissez le type (progrès, budget, activité)\n4. Sélectionnez la fréquence (quotidien, hebdomadaire, mensuel)\n5. Ajoutez les destinataires par email\n6. Enregistrez la programmation\n\nLes rapports sont générés et livrés automatiquement. Seuls les Admins et Chefs de Projet peuvent programmer.",
+      "qbOverview": "Aperçu de l'intégration QuickBooks",
+      "qbConnect": "Connecter votre compte QuickBooks",
+      "qbSync": "Synchroniser les données entre QuickBooks et les projets",
+      "qbTroubleshoot": "Résolution des problèmes de synchronisation QuickBooks"
     },
     "replayIntroDesc": "Parcourez les fonctionnalités clés de l'application étape par étape",
     "quickLinkNotifications": "Notifications",
     "quickLinkChangeOrders": "Avenants",
     "quickLinkOffline": "Mode Hors Ligne",
     "quickLinkAnalytics": "Analyses",
-    "quickLinkAdvanced": "Intégrations"
+    "quickLinkAdvanced": "Intégrations",
+    "quickLinkQuickBooks": "QuickBooks"
   },
   "tour": {
     "welcomeTitle": "Bienvenue sur Construction PM !",
@@ -691,5 +697,36 @@
     "planned": "Prévu",
     "actual": "Réel",
     "estimated": "Estimé"
+  },
+  "quickbooks": {
+    "title": "Intégration QuickBooks",
+    "description": "Connectez votre compte QuickBooks Online pour synchroniser automatiquement les factures, dépenses et données fournisseurs avec vos projets de construction.",
+    "connected": "Connecté",
+    "notConnected": "Non connecté",
+    "notConnectedDesc": "Associez votre compte QuickBooks Online pour synchroniser les données financières avec vos projets.",
+    "connectButton": "Connecter QuickBooks",
+    "connectError": "Échec du démarrage de la connexion QuickBooks",
+    "disconnect": "Déconnecter",
+    "disconnectConfirm": "Êtes-vous sûr de vouloir déconnecter QuickBooks ? Les données synchronisées seront conservées.",
+    "disconnected": "QuickBooks déconnecté",
+    "disconnectError": "Échec de la déconnexion de QuickBooks",
+    "unknownCompany": "Entreprise QuickBooks",
+    "companyId": "ID entreprise",
+    "lastSync": "Dernière synchronisation",
+    "neverSynced": "Jamais synchronisé",
+    "syncNow": "Synchroniser maintenant",
+    "syncStarted": "Synchronisation lancée",
+    "syncError": "Échec de la synchronisation",
+    "invoices": "Factures",
+    "expenses": "Dépenses",
+    "vendors": "Fournisseurs",
+    "customers": "Clients",
+    "autoSync": "Synchronisation automatique",
+    "autoSyncDesc": "Synchroniser automatiquement les données lorsque des modifications sont détectées",
+    "syncHistory": "Historique de synchronisation",
+    "synced": "synchronisés",
+    "failed": "échoués",
+    "settingsSaved": "Paramètres de synchronisation mis à jour",
+    "settingsError": "Échec de la mise à jour des paramètres"
   }
 }
