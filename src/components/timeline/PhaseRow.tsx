@@ -134,7 +134,7 @@ export function PhaseRow({
   return (
     <div className="flex border-b border-gray-100 hover:bg-gray-50/50 group">
       {/* Label column */}
-      <div className="w-52 min-w-52 px-4 py-3 flex flex-col justify-center border-r border-gray-100">
+      <div className="w-32 min-w-32 sm:w-44 sm:min-w-44 lg:w-52 lg:min-w-52 px-2 sm:px-4 py-3 flex flex-col justify-center border-r border-gray-100">
         <div className="flex items-center gap-2">
           <Link
             href={`/dashboard/projects/${projectId}/phases/${phase.id}`}

@@ -179,18 +179,18 @@ export function BudgetSection({
 
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-0 border-b border-gray-100">
-        <div className="px-4 py-3 text-center border-r border-gray-100">
-          <p className="text-xs text-gray-500 mb-0.5">{t("estimated")}</p>
-          <p className="text-base font-bold text-gray-900">{fmt(totalEstimated)}</p>
+        <div className="px-2 sm:px-4 py-3 text-center border-r border-gray-100">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5">{t("estimated")}</p>
+          <p className="text-sm sm:text-base font-bold text-gray-900">{fmt(totalEstimated)}</p>
         </div>
-        <div className="px-4 py-3 text-center border-r border-gray-100">
-          <p className="text-xs text-gray-500 mb-0.5">{t("actual")}</p>
-          <p className="text-base font-bold text-gray-900">{fmt(totalActual)}</p>
+        <div className="px-2 sm:px-4 py-3 text-center border-r border-gray-100">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5">{t("actual")}</p>
+          <p className="text-sm sm:text-base font-bold text-gray-900">{fmt(totalActual)}</p>
         </div>
-        <div className="px-4 py-3 text-center">
-          <p className="text-xs text-gray-500 mb-0.5">{t("variance")}</p>
+        <div className="px-2 sm:px-4 py-3 text-center">
+          <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5">{t("variance")}</p>
           <p
-            className={`text-base font-bold flex items-center justify-center gap-1 ${
+            className={`text-sm sm:text-base font-bold flex items-center justify-center gap-1 ${
               variance > 0 ? "text-red-600" : variance < 0 ? "text-green-600" : "text-gray-900"
             }`}
           >
@@ -291,29 +291,32 @@ export function BudgetSection({
                 </div>
               ) : (
                 <div
-                  className={`flex items-center gap-3 ${canManage ? "cursor-pointer hover:bg-gray-50 -mx-4 -my-3 px-4 py-3 sm:-mx-5 sm:px-5 rounded" : ""}`}
+                  className={`flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 ${canManage ? "cursor-pointer hover:bg-gray-50 -mx-4 -my-3 px-4 py-3 sm:-mx-5 sm:px-5 rounded" : ""}`}
                   onClick={() => canManage && startEditPhase(phase)}
                 >
-                  <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between sm:flex-1 sm:min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">{phase.name}</p>
+                    {canManage && (
+                      <Pencil className="w-3 h-3 text-gray-300 shrink-0 sm:hidden" />
+                    )}
                   </div>
-                  <div className="flex items-center gap-4 text-xs shrink-0">
-                    <div className="text-right">
+                  <div className="flex items-center gap-3 sm:gap-4 text-xs shrink-0 overflow-x-auto">
+                    <div className="text-right min-w-[3.5rem]">
                       <p className="text-gray-400">{t("estShort")}</p>
                       <p className="text-gray-700 font-medium">{fmt(phase.estimatedCost)}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-right min-w-[3.5rem]">
                       <p className="text-gray-400">{t("actual")}</p>
                       <p className="text-gray-700 font-medium">{fmt(phase.actualCost)}</p>
                     </div>
                     {phase.approvedCOs !== undefined && phase.approvedCOs > 0 && (
-                      <div className="text-right">
+                      <div className="text-right min-w-[3rem]">
                         <p className="text-gray-400">{t("cosShort")}</p>
                         <p className="text-amber-600 font-medium">+{fmt(phase.approvedCOs)}</p>
                       </div>
                     )}
                     {phaseVariance !== null && (
-                      <div className="text-right w-16">
+                      <div className="text-right min-w-[3.5rem]">
                         <p className="text-gray-400">{t("varShort")}</p>
                         <p
                           className={`font-medium ${
@@ -327,7 +330,7 @@ export function BudgetSection({
                     )}
                   </div>
                   {canManage && (
-                    <Pencil className="w-3 h-3 text-gray-300 shrink-0" />
+                    <Pencil className="w-3 h-3 text-gray-300 shrink-0 hidden sm:block" />
                   )}
                 </div>
               )}

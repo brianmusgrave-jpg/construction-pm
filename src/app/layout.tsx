@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { ServiceWorkerRegister } from "@/components/ui/ServiceWorkerRegister";
 import { OfflineIndicator } from "@/components/ui/OfflineIndicator";
+import { OfflineSyncProvider } from "@/components/ui/OfflineSyncProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 
@@ -53,7 +54,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages}>
-          <Providers>{children}</Providers>
+          <Providers>
+            <OfflineSyncProvider>{children}</OfflineSyncProvider>
+          </Providers>
         </NextIntlClientProvider>
         <ServiceWorkerRegister />
         <OfflineIndicator />
