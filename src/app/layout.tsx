@@ -57,9 +57,9 @@ export default async function RootLayout({
           <Providers>
             <OfflineSyncProvider>{children}</OfflineSyncProvider>
           </Providers>
+          <OfflineIndicator />
         </NextIntlClientProvider>
         <ServiceWorkerRegister />
-        <OfflineIndicator />
       </body>
     </html>
   );
