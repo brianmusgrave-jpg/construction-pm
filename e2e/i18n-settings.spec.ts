@@ -22,8 +22,8 @@ test.describe("Settings & i18n", () => {
     if (esExists) {
       await esButton.first().click();
       await page.waitForTimeout(2000); // Wait for locale cookie + reload
-      await page.goto("/dashboard/settings");
-      await page.waitForLoadState("networkidle");
+      await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+      await page.waitForTimeout(1000);
 
       // Verify some Spanish text appears
       const content = await page.textContent("body");
@@ -56,8 +56,8 @@ test.describe("Settings & i18n", () => {
     if ((await ptButton.count()) > 0) {
       await ptButton.first().click();
       await page.waitForTimeout(2000);
-      await page.goto("/dashboard/settings");
-      await page.waitForLoadState("networkidle");
+      await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+      await page.waitForTimeout(1000);
 
       const content = await page.textContent("body");
       const hasPortuguese =
@@ -87,8 +87,8 @@ test.describe("Settings & i18n", () => {
     if ((await frButton.count()) > 0) {
       await frButton.first().click();
       await page.waitForTimeout(2000);
-      await page.goto("/dashboard/settings");
-      await page.waitForLoadState("networkidle");
+      await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+      await page.waitForTimeout(1000);
 
       const content = await page.textContent("body");
       const hasFrench =

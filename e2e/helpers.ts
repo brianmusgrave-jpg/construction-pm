@@ -12,14 +12,19 @@ export async function isAuthRedirected(page: Page): Promise<boolean> {
 
 /**
  * Navigate to a route and return true if the user is authenticated
- * (page did NOT redirect to /login).  Waits for network idle.
+ * (page did NOT redirect to /login).
+ *
+ * Uses "domcontentloaded" instead of "networkidle" because the production
+ * login page has persistent connections (SSE, analytics) that prevent
+ * networkidle from ever resolving, causing 30s timeouts per test in CI.
  */
 export async function gotoAuthenticated(
   page: Page,
   path: string
 ): Promise<boolean> {
-  await page.goto(path);
-  await page.waitForLoadState("networkidle");
+  await page.goto(path, { waitUntil: "domcontentloaded" });
+  // Brief wait for any client-side redirects to settle
+  await page.waitForTimeout(2000);
   return !isAuthRedirectedSync(page.url());
 }
 

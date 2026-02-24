@@ -80,8 +80,8 @@ test.describe("Offline Mode", () => {
     await page.waitForTimeout(1000);
 
     // Should be able to navigate to another page
-    await page.goto("/dashboard/settings");
-    await page.waitForLoadState("networkidle");
+    await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1000);
     await expect(page.locator("body")).toBeVisible();
   });
 

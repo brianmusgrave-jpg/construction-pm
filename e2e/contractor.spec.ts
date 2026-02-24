@@ -17,7 +17,7 @@ test.describe("Contractor Portal", () => {
     const count = await phaseLinks.count();
     if (count > 0) {
       await phaseLinks.first().click();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
       await expect(page.locator("body")).toBeVisible();
     }
   });
