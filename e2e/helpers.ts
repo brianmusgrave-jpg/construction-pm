@@ -22,6 +22,13 @@ export async function gotoAuthenticated(
   page: Page,
   path: string
 ): Promise<boolean> {
+  // Dismiss the onboarding tour overlay before React mounts.
+  // The OnboardingTour component checks localStorage on mount and shows a
+  // full-screen z-[100] modal that blocks all pointer events for 1s+ delay.
+  // addInitScript runs before any page JS, so the flag is set before React checks it.
+  await page.addInitScript(() => {
+    localStorage.setItem("construction-pm-tour-complete", "true");
+  });
   await page.goto(path, { waitUntil: "domcontentloaded" });
   // Brief wait for any client-side redirects to settle
   await page.waitForTimeout(2000);

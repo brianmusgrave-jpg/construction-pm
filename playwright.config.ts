@@ -36,7 +36,7 @@ export default defineConfig({
     // ── Desktop Chrome (authenticated admin — excludes unauth & contractor specs) ──
     {
       name: "chromium",
-      testIgnore: /auth\.spec\.ts|auth\.setup\.ts|client-portal\.spec\.ts|contractor\.spec\.ts/,
+      testIgnore: /auth\.spec\.ts|auth\.setup\.ts|client-portal\.spec\.ts|contractor\.spec\.ts|mobile\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "e2e/.auth/admin.json",
