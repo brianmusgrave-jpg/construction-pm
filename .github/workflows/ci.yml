@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx prisma generate
       - run: npx tsc -p tsconfig.json
 
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx prisma generate
       - run: npx eslint .
 
@@ -45,7 +45,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx prisma generate
       - run: npm run test
 
@@ -61,7 +61,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx playwright install --with-deps chromium
       - name: Create auth directory
         run: mkdir -p e2e/.auth
@@ -85,7 +85,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx prisma generate
       - run: npx vitest run src/__tests__/architecture.test.ts
 
@@ -98,6 +98,6 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx prisma generate
       - run: npx vitest run src/__tests__/i18n-sync.test.ts
