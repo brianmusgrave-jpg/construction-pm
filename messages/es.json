@@ -458,7 +458,8 @@
       "offline": "Modo Sin Conexión",
       "analytics": "Análisis e Informes",
       "advanced": "Funciones Avanzadas",
-      "quickbooks": "QuickBooks"
+      "quickbooks": "QuickBooks",
+      "activityAdmin": "Actividad y Administración"
     },
     "articles": {
       "appOverview": "Descripción general de la app",
@@ -522,7 +523,15 @@
       "qbOverview": "Descripción general de la integración con QuickBooks",
       "qbConnect": "Conectar su cuenta de QuickBooks",
       "qbSync": "Sincronizar datos entre QuickBooks y proyectos",
-      "qbTroubleshoot": "Solución de problemas de sincronización de QuickBooks"
+      "qbTroubleshoot": "Solución de problemas de sincronización de QuickBooks",
+      "activityLog": "Registro de Actividad",
+      "activityLogContent": "El Registro de Actividad rastrea todos los cambios en sus proyectos en un solo lugar.\n\nAcceda desde la barra lateral (solo Admins y Gerentes de Proyecto). Cada entrada muestra:\n• Quién realizó el cambio\n• Qué acción se tomó (cambio de estado de fase, carga de documento, actualización de miembro, etc.)\n• Qué proyecto fue afectado\n• Cuándo ocurrió el cambio\n\nFiltrado:\n• Filtrar por proyecto para ver actividad en un trabajo específico\n• Filtrar por tipo de acción para enfocarse en cambios específicos\n• Paginación para navegar historiales extensos\n\nDeshacer (solo Admins):\nCiertas acciones se pueden revertir directamente desde el registro:\n• Cambios de estado de fase\n• Cambios de estado de proyecto\n• Eliminaciones de miembros y cambios de rol\n• Alternancia de elementos de lista de verificación\n\nPase el cursor sobre una entrada para ver el botón Deshacer. Deshacer crea una nueva entrada registrando la reversión.",
+      "profileEditing": "Editar su Perfil",
+      "profileEditingContent": "Actualice su información personal desde la página de Configuración.\n\nCampos editables:\n• Nombre Completo — Su nombre de visualización en la aplicación\n• Número de Teléfono — Usado para notificaciones SMS\n• Empresa — El nombre de su organización\n\nPara actualizar su perfil:\n1. Vaya a Configuración desde la barra lateral\n2. Edite los campos en la sección 'Mi Perfil'\n3. Haga clic en 'Guardar Cambios'\n\nTodos los cambios de perfil se registran en el Registro de Actividad para revisión del administrador. Su correo electrónico y rol no se pueden editar — contacte a un Admin para esos cambios.",
+      "directoryBulkOps": "Operaciones Masivas del Directorio",
+      "directoryBulkOpsContent": "Gestione múltiples contactos del directorio a la vez con operaciones masivas.\n\nModo de Selección Masiva:\n1. Vaya a la página del Directorio\n2. Haga clic en el botón 'Seleccionar' en el encabezado\n3. Haga clic en contactos para seleccionarlos (o use Seleccionar Todo)\n4. Aparece una barra de acciones flotante con sus opciones\n\nAcciones masivas disponibles:\n• Mover A — Reasignar contactos seleccionados a una categoría diferente\n• Eliminar — Eliminar todos los contactos seleccionados (requiere confirmación)\n\nExportar CSV:\nHaga clic en 'Exportar CSV' para descargar todo su directorio como hoja de cálculo.",
+      "projectArchive": "Archivar y Restaurar Proyectos",
+      "projectArchiveContent": "Archive proyectos completados o inactivos para mantener su panel limpio.\n\nPara archivar un proyecto:\n1. Abra la página de detalle del proyecto\n2. Haga clic en el botón 'Archivar' en el encabezado\n3. Confirme la acción de archivado\n\nLos proyectos archivados se ocultan de la lista principal y el panel. Siguen existiendo y se pueden restaurar en cualquier momento.\n\nPara restaurar un proyecto archivado:\n1. Navegue al proyecto archivado\n2. Haga clic en el botón 'Restaurar'\n3. El proyecto regresa al estado activo\n\nSolo Admins y Gerentes de Proyecto pueden archivar o restaurar proyectos."
     },
     "replayIntroDesc": "Recorra las funciones clave de la aplicación paso a paso",
     "quickLinkNotifications": "Notificaciones",

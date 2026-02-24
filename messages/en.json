@@ -458,7 +458,8 @@
       "offline": "Offline Mode",
       "analytics": "Analytics & Reports",
       "advanced": "Advanced Features",
-      "quickbooks": "QuickBooks"
+      "quickbooks": "QuickBooks",
+      "activityAdmin": "Activity & Administration"
     },
     "articles": {
       "appOverview": "App Overview",
@@ -522,7 +523,15 @@
       "qbOverview": "QuickBooks Integration Overview",
       "qbConnect": "Connecting Your QuickBooks Account",
       "qbSync": "Syncing Data Between QuickBooks and Projects",
-      "qbTroubleshoot": "Troubleshooting QuickBooks Sync Issues"
+      "qbTroubleshoot": "Troubleshooting QuickBooks Sync Issues",
+      "activityLog": "Activity Log",
+      "activityLogContent": "The Activity Log tracks all changes across your projects in one place.\n\nAccess it from the sidebar (Admins and Project Managers only). Each entry shows:\n• Who made the change\n• What action was taken (phase status change, document upload, member update, etc.)\n• Which project was affected\n• When the change occurred\n\nFiltering:\n• Filter by project to see activity on a specific job\n• Filter by action type to focus on specific changes\n• Pagination for browsing through large histories\n\nUndo (Admins only):\nCertain actions can be reversed directly from the log:\n• Phase status changes\n• Project status changes\n• Member removals and role changes\n• Checklist item toggles\n\nHover over a log entry to see the Undo button. Undo creates a new log entry recording the reversal.",
+      "profileEditing": "Editing Your Profile",
+      "profileEditingContent": "Update your personal information from the Settings page.\n\nEditable fields:\n• Full Name — Your display name across the app\n• Phone Number — Used for SMS notifications\n• Company — Your organization name\n\nTo update your profile:\n1. Go to Settings from the sidebar\n2. Edit the fields in the 'My Profile' section\n3. Click 'Save Changes'\n\nAll profile changes are logged in the Activity Log for admin review. Your email address and role cannot be self-edited — contact an Admin for those changes.",
+      "directoryBulkOps": "Directory Bulk Operations",
+      "directoryBulkOpsContent": "Manage multiple directory contacts at once with bulk operations.\n\nBulk Select Mode:\n1. Go to the Directory page\n2. Click the 'Select' button in the header\n3. Click contacts to select them (or use Select All)\n4. A floating action bar appears with your options\n\nAvailable bulk actions:\n• Move To — Reassign selected contacts to a different category (Team, Subcontractor, Vendor, Inspector)\n• Delete — Remove all selected contacts (requires confirmation)\n\nCSV Export:\nClick 'Export CSV' to download your entire directory as a spreadsheet. The export includes name, company, role, type, email, phone, and notes for all contacts.",
+      "projectArchive": "Archiving & Restoring Projects",
+      "projectArchiveContent": "Archive completed or inactive projects to keep your dashboard clean.\n\nTo archive a project:\n1. Open the project detail page\n2. Click the 'Archive' button in the header\n3. Confirm the archive action\n\nArchived projects are hidden from the main project list and dashboard. They still exist in the database and can be restored at any time.\n\nTo restore an archived project:\n1. Navigate to the archived project (via direct link or search)\n2. Click the 'Restore' button\n3. The project returns to active status\n\nOnly Admins and Project Managers can archive or restore projects."
     },
     "replayIntroDesc": "Walk through the app's key features step by step",
     "quickLinkNotifications": "Notifications",

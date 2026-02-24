@@ -458,7 +458,8 @@
       "offline": "Modo Offline",
       "analytics": "Análises e Relatórios",
       "advanced": "Funcionalidades Avançadas",
-      "quickbooks": "QuickBooks"
+      "quickbooks": "QuickBooks",
+      "activityAdmin": "Atividade e Administração"
     },
     "articles": {
       "appOverview": "Visão geral do app",
@@ -522,7 +523,15 @@
       "qbOverview": "Visão geral da integração com QuickBooks",
       "qbConnect": "Conectando sua conta QuickBooks",
       "qbSync": "Sincronizando dados entre QuickBooks e projetos",
-      "qbTroubleshoot": "Solução de problemas de sincronização do QuickBooks"
+      "qbTroubleshoot": "Solução de problemas de sincronização do QuickBooks",
+      "activityLog": "Registro de Atividade",
+      "activityLogContent": "O Registro de Atividade rastreia todas as alterações em seus projetos em um só lugar.\n\nAcesse pela barra lateral (apenas Admins e Gerentes de Projeto). Cada entrada mostra:\n• Quem fez a alteração\n• Qual ação foi realizada\n• Qual projeto foi afetado\n• Quando a alteração ocorreu\n\nFiltragem:\n• Filtrar por projeto para ver atividade em um trabalho específico\n• Filtrar por tipo de ação para focar em mudanças específicas\n• Paginação para navegar históricos extensos\n\nDesfazer (apenas Admins):\nCertas ações podem ser revertidas diretamente do registro:\n• Mudanças de status de fase\n• Mudanças de status de projeto\n• Remoções de membros e mudanças de função\n• Alternância de itens de checklist\n\nPasse o mouse sobre uma entrada para ver o botão Desfazer.",
+      "profileEditing": "Editar seu Perfil",
+      "profileEditingContent": "Atualize suas informações pessoais na página de Configurações.\n\nCampos editáveis:\n• Nome Completo — Seu nome de exibição no aplicativo\n• Número de Telefone — Usado para notificações SMS\n• Empresa — Nome da sua organização\n\nPara atualizar seu perfil:\n1. Vá para Configurações na barra lateral\n2. Edite os campos na seção 'Meu Perfil'\n3. Clique em 'Salvar Alterações'\n\nTodas as alterações de perfil são registradas no Registro de Atividade para revisão do administrador.",
+      "directoryBulkOps": "Operações em Massa do Diretório",
+      "directoryBulkOpsContent": "Gerencie múltiplos contatos do diretório de uma vez com operações em massa.\n\nModo de Seleção em Massa:\n1. Vá para a página do Diretório\n2. Clique no botão 'Selecionar' no cabeçalho\n3. Clique nos contatos para selecioná-los (ou use Selecionar Todos)\n4. Uma barra de ações flutuante aparece com suas opções\n\nAções em massa disponíveis:\n• Mover Para — Reatribuir contatos para uma categoria diferente\n• Excluir — Remover todos os contatos selecionados (requer confirmação)\n\nExportar CSV:\nClique em 'Exportar CSV' para baixar todo o seu diretório como planilha.",
+      "projectArchive": "Arquivar e Restaurar Projetos",
+      "projectArchiveContent": "Arquive projetos concluídos ou inativos para manter seu painel limpo.\n\nPara arquivar um projeto:\n1. Abra a página de detalhes do projeto\n2. Clique no botão 'Arquivar' no cabeçalho\n3. Confirme a ação\n\nProjetos arquivados são ocultados da lista principal. Eles ainda existem e podem ser restaurados a qualquer momento.\n\nPara restaurar:\n1. Navegue até o projeto arquivado\n2. Clique em 'Restaurar'\n3. O projeto volta ao status ativo\n\nApenas Admins e Gerentes de Projeto podem arquivar ou restaurar projetos."
     },
     "replayIntroDesc": "Conheça os principais recursos do aplicativo passo a passo",
     "quickLinkNotifications": "Notificações",

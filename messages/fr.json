@@ -458,7 +458,8 @@
       "offline": "Mode Hors Ligne",
       "analytics": "Analyses et Rapports",
       "advanced": "Fonctionnalités Avancées",
-      "quickbooks": "QuickBooks"
+      "quickbooks": "QuickBooks",
+      "activityAdmin": "Activité et Administration"
     },
     "articles": {
       "appOverview": "Vue d'ensemble de l'application",
@@ -522,7 +523,15 @@
       "qbOverview": "Aperçu de l'intégration QuickBooks",
       "qbConnect": "Connecter votre compte QuickBooks",
       "qbSync": "Synchroniser les données entre QuickBooks et les projets",
-      "qbTroubleshoot": "Résolution des problèmes de synchronisation QuickBooks"
+      "qbTroubleshoot": "Résolution des problèmes de synchronisation QuickBooks",
+      "activityLog": "Journal d'Activité",
+      "activityLogContent": "Le Journal d'Activité suit toutes les modifications de vos projets en un seul endroit.\n\nAccédez-y depuis la barre latérale (Admins et Chefs de Projet uniquement). Chaque entrée affiche :\n• Qui a effectué le changement\n• Quelle action a été entreprise\n• Quel projet a été affecté\n• Quand le changement a eu lieu\n\nFiltrage :\n• Filtrer par projet pour voir l'activité sur un chantier spécifique\n• Filtrer par type d'action pour se concentrer sur des changements spécifiques\n• Pagination pour parcourir les historiques volumineux\n\nAnnuler (Admins uniquement) :\nCertaines actions peuvent être inversées directement depuis le journal :\n• Changements de statut de phase\n• Changements de statut de projet\n• Suppressions de membres et changements de rôle\n• Basculement d'éléments de checklist\n\nSurvol sur une entrée pour voir le bouton Annuler.",
+      "profileEditing": "Modifier votre Profil",
+      "profileEditingContent": "Mettez à jour vos informations personnelles depuis la page Paramètres.\n\nChamps modifiables :\n• Nom Complet — Votre nom d'affichage dans l'application\n• Numéro de Téléphone — Utilisé pour les notifications SMS\n• Entreprise — Le nom de votre organisation\n\nPour mettre à jour votre profil :\n1. Allez dans Paramètres depuis la barre latérale\n2. Modifiez les champs dans la section 'Mon Profil'\n3. Cliquez sur 'Enregistrer les Modifications'\n\nToutes les modifications de profil sont enregistrées dans le Journal d'Activité pour examen par l'administrateur.",
+      "directoryBulkOps": "Opérations en Masse du Répertoire",
+      "directoryBulkOpsContent": "Gérez plusieurs contacts du répertoire à la fois avec des opérations en masse.\n\nMode de Sélection en Masse :\n1. Allez à la page du Répertoire\n2. Cliquez sur le bouton 'Sélectionner' dans l'en-tête\n3. Cliquez sur les contacts pour les sélectionner (ou utilisez Tout Sélectionner)\n4. Une barre d'actions flottante apparaît avec vos options\n\nActions en masse disponibles :\n• Déplacer Vers — Réaffecter les contacts sélectionnés à une catégorie différente\n• Supprimer — Supprimer tous les contacts sélectionnés (confirmation requise)\n\nExporter CSV :\nCliquez sur 'Exporter CSV' pour télécharger tout votre répertoire en tableur.",
+      "projectArchive": "Archiver et Restaurer des Projets",
+      "projectArchiveContent": "Archivez les projets terminés ou inactifs pour garder votre tableau de bord propre.\n\nPour archiver un projet :\n1. Ouvrez la page de détail du projet\n2. Cliquez sur le bouton 'Archiver' dans l'en-tête\n3. Confirmez l'action d'archivage\n\nLes projets archivés sont masqués de la liste principale. Ils existent toujours et peuvent être restaurés à tout moment.\n\nPour restaurer :\n1. Naviguez vers le projet archivé\n2. Cliquez sur 'Restaurer'\n3. Le projet revient à l'état actif\n\nSeuls les Admins et Chefs de Projet peuvent archiver ou restaurer des projets."
     },
     "replayIntroDesc": "Parcourez les fonctionnalités clés de l'application étape par étape",
     "quickLinkNotifications": "Notifications",
