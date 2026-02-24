@@ -8,17 +8,26 @@
  *   import { isNative, takePhoto, getCurrentPosition, vibrate } from "@/lib/capacitor";
  */
 
-import { Capacitor } from "@capacitor/core";
+// Safe import: @capacitor/core is an optional dependency that may not be
+// installed in server-only environments (e.g. Vercel builds).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let Cap: any = null;
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  Cap = require("@capacitor/core").Capacitor;
+} catch {
+  // Not installed — running on server or web-only build
+}
 
 // ──────────────────────────────────────────────
 // Platform Detection
 // ──────────────────────────────────────────────
 
 /** True when running inside a Capacitor native shell (iOS / Android). */
-export const isNative = Capacitor.isNativePlatform();
+export const isNative: boolean = Cap?.isNativePlatform?.() ?? false;
 
 /** Returns "ios" | "android" | "web" */
-export const platform = Capacitor.getPlatform();
+export const platform: string = Cap?.getPlatform?.() ?? "web";
 
 // ──────────────────────────────────────────────
 // Camera
@@ -36,7 +45,7 @@ export interface PhotoResult {
  * Returns null if the plugin is unavailable or the user cancels.
  */
 export async function takePhoto(): Promise<PhotoResult | null> {
-  if (!Capacitor.isPluginAvailable("Camera")) return null;
+  if (!Cap?.isPluginAvailable("Camera")) return null;
 
   try {
     const { Camera, CameraResultType, CameraSource } = await import(
@@ -77,7 +86,7 @@ export interface Position {
  * Returns null if unavailable or denied.
  */
 export async function getCurrentPosition(): Promise<Position | null> {
-  if (!Capacitor.isPluginAvailable("Geolocation")) {
+  if (!Cap?.isPluginAvailable("Geolocation")) {
     // Web fallback via browser API
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       return new Promise((resolve) => {
@@ -124,7 +133,7 @@ export async function getCurrentPosition(): Promise<Position | null> {
 export async function vibrate(
   style: "light" | "medium" | "heavy" = "light"
 ): Promise<void> {
-  if (!Capacitor.isPluginAvailable("Haptics")) return;
+  if (!Cap?.isPluginAvailable("Haptics")) return;
 
   try {
     const { Haptics, ImpactStyle } = await import("@capacitor/haptics");
@@ -148,7 +157,7 @@ export async function vibrate(
  * Returns the FCM/APNS token or null if unavailable/denied.
  */
 export async function registerPushNotifications(): Promise<string | null> {
-  if (!Capacitor.isPluginAvailable("PushNotifications")) return null;
+  if (!Cap?.isPluginAvailable("PushNotifications")) return null;
 
   try {
     const { PushNotifications } = await import(
@@ -182,7 +191,7 @@ export async function registerPushNotifications(): Promise<string | null> {
  * Set the device status bar style. No-op on web.
  */
 export async function setStatusBarDark(dark: boolean): Promise<void> {
-  if (!Capacitor.isPluginAvailable("StatusBar")) return;
+  if (!Cap?.isPluginAvailable("StatusBar")) return;
 
   try {
     const { StatusBar, Style } = await import("@capacitor/status-bar");
