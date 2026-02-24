@@ -112,7 +112,7 @@ export async function bulkDeleteStaff(ids: string[]) {
 export async function bulkUpdateStaffType(ids: string[], contactType: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
-  if (!can(session.user.role || "VIEWER", "edit", "staff"))
+  if (!can(session.user.role || "VIEWER", "update", "staff"))
     throw new Error("Forbidden");
   if (ids.length === 0) return { updated: 0 };
 
