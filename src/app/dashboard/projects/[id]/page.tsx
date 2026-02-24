@@ -500,6 +500,7 @@ export default async function ProjectOverviewPage({
               createdAt: inv.createdAt,
             }))}
             canInvite={canInvite}
+            currentUserId={session.user.id}
           />
 
           {/* Client Portal Links */}

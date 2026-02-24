@@ -226,6 +226,52 @@ export async function getInvitationByToken(token: string) {
   };
 }
 
+// ── Update member role ──
+
+export async function updateMemberRole(
+  memberId: string,
+  projectId: string,
+  newRole: "OWNER" | "MANAGER" | "CONTRACTOR" | "STAKEHOLDER" | "VIEWER"
+) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!can(session.user.role, "update", "member")) throw new Error("Forbidden");
+
+  const member = await db.projectMember.findUnique({
+    where: { id: memberId },
+    include: { user: { select: { name: true, email: true } } },
+  });
+
+  if (!member) throw new Error("Member not found");
+  if (member.projectId !== projectId) throw new Error("Member not in this project");
+
+  // Prevent demoting the last owner
+  if (member.role === "OWNER" && newRole !== "OWNER") {
+    const ownerCount = await db.projectMember.count({
+      where: { projectId, role: "OWNER" },
+    });
+    if (ownerCount <= 1) throw new Error("Cannot change role of the only project owner");
+  }
+
+  await db.projectMember.update({
+    where: { id: memberId },
+    data: { role: newRole as never },
+  });
+
+  db.activityLog.create({
+    data: {
+      action: "MEMBER_UPDATED",
+      message: `Changed ${member.user.name || member.user.email} role to ${newRole.toLowerCase()}`,
+      projectId,
+      userId: session.user.id,
+      data: { memberId, oldRole: member.role, newRole },
+    },
+  }).catch(() => {});
+
+  revalidatePath(`/dashboard/projects/${projectId}`);
+  return { success: true };
+}
+
 // ── Remove member from project ──
 
 export async function removeMember(memberId: string, projectId: string) {

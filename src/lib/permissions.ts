@@ -29,7 +29,7 @@ const permissions: PermissionMap = {
     photo: ["view", "create"],
     staff: ["view", "create", "update"],
     checklist: ["view", "create", "update"],
-    member: ["view", "create"],
+    member: ["view", "create", "update"],
     notification: ["view", "update"],
   },
   CONTRACTOR: {

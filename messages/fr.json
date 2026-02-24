@@ -190,7 +190,12 @@
     "searchPlaceholder": "Rechercher par nom, entreprise ou rôle...",
     "noMatchingContacts": "Aucun contact trouvé",
     "addAsOwner": "Ajouter comme propriétaire",
-    "noTeamMembers": "Aucun membre d'équipe pour le moment"
+    "noTeamMembers": "Aucun membre d'équipe pour le moment",
+    "roleUpdated": "Rôle mis à jour avec succès",
+    "confirmRemove": "Retirer {name} de ce projet ?",
+    "memberRemoved": "Membre retiré",
+    "removeMember": "Retirer le membre",
+    "you": "vous"
   },
   "invitations": {
     "inviteTeamMember": "Inviter un membre d'équipe",
@@ -226,7 +231,8 @@
     "sent": "Invitation envoyée à {email}",
     "linkCopied": "Lien d'invitation copié dans le presse-papiers",
     "cancelled": "Invitation annulée",
-    "failedToCancel": "Échec de l'annulation de l'invitation"
+    "failedToCancel": "Échec de l'annulation de l'invitation",
+    "owner": "Propriétaire"
   },
   "budget": {
     "title": "Budget",

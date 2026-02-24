@@ -190,13 +190,19 @@
     "searchPlaceholder": "Search by name, company, or role...",
     "noMatchingContacts": "No matching contacts found",
     "addAsOwner": "Add as Owner",
-    "noTeamMembers": "No team members yet"
+    "noTeamMembers": "No team members yet",
+    "roleUpdated": "Role updated successfully",
+    "confirmRemove": "Remove {name} from this project?",
+    "memberRemoved": "Member removed",
+    "removeMember": "Remove member",
+    "you": "you"
   },
   "invitations": {
     "inviteTeamMember": "Invite Team Member",
     "emailAddress": "Email address",
     "emailPlaceholder": "colleague@example.com",
     "role": "Role",
+    "owner": "Owner",
     "manager": "Manager",
     "managerDesc": "Can manage phases, team, and settings",
     "contractor": "Contractor",

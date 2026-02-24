@@ -190,7 +190,12 @@
     "searchPlaceholder": "Buscar por nome, empresa ou função...",
     "noMatchingContacts": "Nenhum contato encontrado",
     "addAsOwner": "Adicionar como responsável",
-    "noTeamMembers": "Nenhum membro da equipe ainda"
+    "noTeamMembers": "Nenhum membro da equipe ainda",
+    "roleUpdated": "Função atualizada com sucesso",
+    "confirmRemove": "Remover {name} deste projeto?",
+    "memberRemoved": "Membro removido",
+    "removeMember": "Remover membro",
+    "you": "você"
   },
   "invitations": {
     "inviteTeamMember": "Convidar membro da equipe",
@@ -226,7 +231,8 @@
     "sent": "Convite enviado para {email}",
     "linkCopied": "Link do convite copiado para a área de transferência",
     "cancelled": "Convite cancelado",
-    "failedToCancel": "Erro ao cancelar convite"
+    "failedToCancel": "Erro ao cancelar convite",
+    "owner": "Proprietário"
   },
   "budget": {
     "title": "Orçamento",

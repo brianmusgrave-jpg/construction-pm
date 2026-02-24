@@ -149,7 +149,7 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
                       {canManage && (
                         <button
                           onClick={() => setModalState({ mode: "edit", contact: person })}
-                          className="absolute top-3 right-3 p-1.5 text-gray-300 hover:text-[var(--color-primary)] rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-[var(--color-primary)] rounded transition-colors"
                           title={t("editContact")}
                         >
                           <Pencil className="w-3.5 h-3.5" />
