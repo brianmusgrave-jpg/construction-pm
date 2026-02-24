@@ -184,6 +184,7 @@ model Phase {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([projectId, sortOrder])
+  @@index([projectId, status])
   @@map("phases")
 }
 
@@ -215,6 +216,7 @@ model Staff {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@index([createdById])
   @@map("staff")
 }
 
@@ -389,6 +391,7 @@ model Notification {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@index([userId, read])
+  @@index([userId, createdAt])
   @@map("notifications")
 }
 
@@ -500,6 +503,7 @@ model PhaseComment {
   phase Phase @relation(fields: [phaseId], references: [id], onDelete: Cascade)
   user  User  @relation("phase_comments", fields: [userId], references: [id])
 
+  @@index([phaseId, createdAt])
   @@map("phase_comments")
 }
 
@@ -544,6 +548,7 @@ model Invitation {
 
   createdAt DateTime @default(now()) @map("created_at")
 
+  @@index([projectId])
   @@map("invitations")
 }
 
