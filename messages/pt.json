@@ -43,7 +43,8 @@
     "older": "Anteriores",
     "loadMore": "Carregar mais",
     "send": "Enviar",
-    "required": "Obrigatório"
+    "required": "Obrigatório",
+    "all": "Todos"
   },
   "status": {
     "pending": "Pendente",

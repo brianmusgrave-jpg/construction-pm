@@ -43,7 +43,8 @@
     "older": "Older",
     "loadMore": "Load more",
     "send": "Send",
-    "required": "Required"
+    "required": "Required",
+    "all": "All"
   },
   "status": {
     "pending": "Pending",
