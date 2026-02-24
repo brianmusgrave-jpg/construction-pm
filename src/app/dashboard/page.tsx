@@ -27,7 +27,12 @@ import { cn, statusColor, statusLabel, fmtShort, fmtRelative } from "@/lib/utils
 import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/i18n/locale";
 import { getAnalytics } from "@/actions/analytics";
-import { AnalyticsWidgets } from "@/components/dashboard/AnalyticsWidgets";
+import dynamic from "next/dynamic";
+
+const AnalyticsWidgets = dynamic(
+  () => import("@/components/dashboard/AnalyticsWidgets").then((m) => m.AnalyticsWidgets),
+  { ssr: false, loading: () => <div className="h-48 bg-gray-50 rounded-xl animate-pulse" /> }
+);
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -67,6 +72,7 @@ export default async function DashboardPage() {
     db.phase.findMany({
       where: {
         project: { members: { some: { userId: session.user.id } } },
+        status: { not: "COMPLETE" },
       },
       include: {
         project: { select: { id: true, name: true } },
@@ -77,6 +83,7 @@ export default async function DashboardPage() {
         },
       },
       orderBy: { estEnd: "asc" },
+      take: 200,
     }),
     db.notification
       .findMany({
@@ -143,6 +150,10 @@ export default async function DashboardPage() {
   const now = new Date();
   const [completedItems, totalItems] = checklistStats;
 
+  // allPhases already excludes COMPLETE (filtered in query for performance)
+  const totalPhaseCount = projects.reduce(
+    (sum: number, p: (typeof projects)[number]) => sum + p._count.phases, 0
+  );
   const activePhases = allPhases.filter(
     (p: { status: string }) =>
       p.status === "IN_PROGRESS" || p.status === "REVIEW_REQUESTED" || p.status === "UNDER_REVIEW"
@@ -151,7 +162,7 @@ export default async function DashboardPage() {
     (p: { status: string }) => p.status === "REVIEW_REQUESTED"
   );
   const overduePhases = allPhases.filter(
-    (p: { status: string; estEnd: Date | string }) => p.status !== "COMPLETE" && new Date(p.estEnd) < now
+    (p: { status: string; estEnd: Date | string }) => new Date(p.estEnd) < now
   );
   const upcomingPhases = allPhases
     .filter(
@@ -207,7 +218,7 @@ export default async function DashboardPage() {
           label={t("activePhases")}
           value={activePhases.length}
           color="blue"
-          detail={`${allPhases.length} ${tc("total")}`}
+          detail={`${totalPhaseCount} ${tc("total")}`}
         />
         <WidgetCard
           icon={<Eye className="w-5 h-5" />}

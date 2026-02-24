@@ -24,18 +24,63 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
   const rangeMonths = range === "3m" ? 3 : range === "6m" ? 6 : range === "12m" ? 12 : 120;
   const rangeStart = new Date();
   rangeStart.setMonth(rangeStart.getMonth() - rangeMonths);
+  const eightWeeksAgo = new Date();
+  eightWeeksAgo.setDate(eightWeeksAgo.getDate() - 56);
+
+  // ── Batch all independent DB queries with Promise.all ──
+  const [projects, phases, assignments, recentPhases, recentDocs, completedPhases] =
+    await Promise.all([
+      // Project status distribution + budgets
+      db.project.findMany({
+        where: { id: { in: projectIds } },
+        select: {
+          id: true,
+          status: true,
+          name: true,
+          budget: true,
+          phases: { select: { actualCost: true } },
+        },
+      }),
+      // Phase status distribution + budget totals
+      db.phase.findMany({
+        where: { projectId: { in: projectIds } },
+        select: { status: true, estimatedCost: true, actualCost: true, createdAt: true },
+      }),
+      // Team workload
+      db.phaseAssignment.findMany({
+        where: { phase: { projectId: { in: projectIds } } },
+        select: { staff: { select: { name: true } } },
+      }),
+      // Monthly activity: recent phases
+      db.phase.findMany({
+        where: {
+          projectId: { in: projectIds },
+          createdAt: { gte: rangeStart },
+        },
+        select: { createdAt: true },
+      }),
+      // Monthly activity: recent documents
+      db.document.findMany({
+        where: {
+          phase: { projectId: { in: projectIds } },
+          createdAt: { gte: rangeStart },
+        },
+        select: { createdAt: true },
+      }),
+      // Phase completion trend: last 8 weeks
+      db.phase.findMany({
+        where: {
+          projectId: { in: projectIds },
+          status: "COMPLETE",
+          updatedAt: { gte: eightWeeksAgo },
+        },
+        select: { updatedAt: true },
+      }),
+    ]);
+
+  // ── Process results ──
 
   // Project status distribution
-  const projects = await db.project.findMany({
-    where: { id: { in: projectIds } },
-    select: {
-      id: true,
-      status: true,
-      name: true,
-      budget: true,
-      phases: { select: { actualCost: true } },
-    },
-  });
   const projectStatusMap = new Map<string, number>();
   for (const p of projects) {
     projectStatusMap.set(p.status, (projectStatusMap.get(p.status) ?? 0) + 1);
@@ -44,7 +89,7 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
     ([status, count]) => ({ status, count })
   );
 
-  // Per-project budget breakdown (amountSpent derived from phase actualCost sums)
+  // Per-project budget breakdown
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const projectBudgets = (projects as any[])
     .filter((p) => Number(p.budget ?? 0) > 0)
@@ -62,11 +107,7 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
     .sort((a: { estimated: number }, b: { estimated: number }) => b.estimated - a.estimated)
     .slice(0, 8);
 
-  // Phase status distribution + budget totals
-  const phases = await db.phase.findMany({
-    where: { projectId: { in: projectIds } },
-    select: { status: true, estimatedCost: true, actualCost: true, createdAt: true },
-  });
+  // Phase status + budget totals
   const phaseStatusMap = new Map<string, number>();
   let totalEstimated = 0;
   let totalActual = 0;
@@ -80,10 +121,6 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
   );
 
   // Team workload: top 8 staff by assignment count
-  const assignments = await db.phaseAssignment.findMany({
-    where: { phase: { projectId: { in: projectIds } } },
-    select: { staff: { select: { name: true } } },
-  });
   const workloadMap = new Map<string, number>();
   for (const a of assignments) {
     const name = a.staff.name;
@@ -94,22 +131,7 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
     .slice(0, 8)
     .map(([name, assignedPhases]) => ({ name, assignedPhases }));
 
-  // Monthly activity: last N months
-  const recentPhases = await db.phase.findMany({
-    where: {
-      projectId: { in: projectIds },
-      createdAt: { gte: rangeStart },
-    },
-    select: { createdAt: true },
-  });
-  const recentDocs = await db.document.findMany({
-    where: {
-      phase: { projectId: { in: projectIds } },
-      createdAt: { gte: rangeStart },
-    },
-    select: { createdAt: true },
-  });
-
+  // Monthly activity
   const monthlyMap = new Map<string, { phases: number; documents: number }>();
   const getMonthKey = (d: Date) =>
     `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -130,18 +152,6 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
   const monthlyActivity = Array.from(monthlyMap.entries()).map(
     ([month, data]) => ({ month, ...data })
   );
-
-  // Phase completion trend: last 8 weeks
-  const eightWeeksAgo = new Date();
-  eightWeeksAgo.setDate(eightWeeksAgo.getDate() - 56);
-  const completedPhases = await db.phase.findMany({
-    where: {
-      projectId: { in: projectIds },
-      status: "COMPLETE",
-      updatedAt: { gte: eightWeeksAgo },
-    },
-    select: { updatedAt: true },
-  });
   const weekMap = new Map<string, number>();
   for (let i = 7; i >= 0; i--) {
     const d = new Date();

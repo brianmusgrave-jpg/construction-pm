@@ -10,5 +10,8 @@ export async function GET() {
   const count = await db.notification.count({
     where: { userId: session.user.id, read: false },
   });
-  return NextResponse.json({ count });
+  return NextResponse.json(
+    { count },
+    { headers: { "Cache-Control": "private, max-age=10, stale-while-revalidate=20" } }
+  );
 }

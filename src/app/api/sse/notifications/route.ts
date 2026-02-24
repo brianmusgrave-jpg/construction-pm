@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
           clearInterval(interval);
           closed = true;
         }
-      }, 15_000);
+      }, 30_000);
 
       // Clean up if client disconnects
       req.signal.addEventListener("abort", () => {
