@@ -17,12 +17,23 @@ export default async function DirectoryPage() {
           },
         },
       },
+      certificates: {
+        orderBy: { expiryDate: "asc" },
+      },
+      umbrellaPolicy: true,
     },
     orderBy: { name: "asc" },
   });
 
   const userRole = session.user.role || "VIEWER";
   const canManage = can(userRole, "create", "staff");
+  const isPM = userRole === "ADMIN" || userRole === "PROJECT_MANAGER";
 
-  return <DirectoryClient contacts={contacts} canManage={canManage} />;
+  return (
+    <DirectoryClient
+      contacts={contacts as never}
+      canManage={canManage}
+      isPM={isPM}
+    />
+  );
 }

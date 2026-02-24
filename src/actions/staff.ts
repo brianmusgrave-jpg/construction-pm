@@ -13,6 +13,7 @@ const CreateStaffSchema = z.object({
   contactType: z.enum(["TEAM", "SUBCONTRACTOR", "VENDOR", "INSPECTOR"]),
   email: z.string().email("Invalid email").max(200).optional().or(z.literal("")),
   phone: z.string().max(30).optional(),
+  location: z.string().max(200).optional(),
   notes: z.string().max(2000).optional(),
 });
 
@@ -27,6 +28,7 @@ export async function createStaff(data: {
   contactType: "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR";
   email?: string;
   phone?: string;
+  location?: string;
   notes?: string;
 }) {
   const session = await auth();
@@ -44,6 +46,7 @@ export async function createStaff(data: {
       contactType: parsed.contactType,
       email: parsed.email || null,
       phone: parsed.phone || null,
+      location: parsed.location || null,
       notes: parsed.notes || null,
       createdById: session.user.id,
     },
@@ -61,6 +64,7 @@ export async function updateStaff(data: {
   contactType?: "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR";
   email?: string;
   phone?: string;
+  location?: string;
   notes?: string;
 }) {
   const session = await auth();
@@ -135,9 +139,9 @@ export async function exportStaffCsv() {
     orderBy: [{ contactType: "asc" }, { name: "asc" }],
   });
 
-  const header = "Name,Company,Role,Type,Email,Phone,Notes";
+  const header = "Name,Company,Role,Type,Email,Phone,Location,Notes";
   const rows = staff.map((s) =>
-    [s.name, s.company, s.role, s.contactType, s.email, s.phone, s.notes]
+    [s.name, s.company, s.role, s.contactType, s.email, s.phone, (s as Record<string, unknown>).location as string || "", s.notes]
       .map((v) => `"${(v || "").replace(/"/g, '""')}"`)
       .join(",")
   );

@@ -267,6 +267,109 @@ export async function getOverdueReport() {
   });
 }
 
+// ── Job P&L Report (Sprint Y #54) ──
+
+export interface JobPLRow {
+  projectId: string;
+  projectName: string;
+  status: string;
+  budget: number;
+  totalEstimatedCost: number;
+  totalActualCost: number;
+  changeOrderTotal: number;
+  adjustedBudget: number;
+  grossProfit: number;
+  profitMargin: number;
+  phaseCount: number;
+  completedPhases: number;
+}
+
+export async function getJobPLReport(): Promise<JobPLRow[]> {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const projects = await db.project.findMany({
+    where: { status: { not: "ARCHIVED" } },
+    include: {
+      phases: {
+        select: {
+          id: true,
+          status: true,
+          estimatedCost: true,
+          actualCost: true,
+          changeOrders: {
+            where: { status: "APPROVED" },
+            select: { amount: true },
+          },
+        },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  return projects.map((project: typeof projects[number]) => {
+    const budget = Number(project.budget || 0);
+    const totalEstimatedCost = project.phases.reduce(
+      (sum: number, p: typeof project.phases[number]) => sum + Number(p.estimatedCost || 0),
+      0
+    );
+    const totalActualCost = project.phases.reduce(
+      (sum: number, p: typeof project.phases[number]) => sum + Number(p.actualCost || 0),
+      0
+    );
+    const changeOrderTotal = project.phases.reduce(
+      (sum: number, p: typeof project.phases[number]) =>
+        sum + p.changeOrders.reduce((s: number, co: typeof p.changeOrders[number]) => s + Number(co.amount || 0), 0),
+      0
+    );
+    const adjustedBudget = budget + changeOrderTotal;
+    const grossProfit = adjustedBudget - totalActualCost;
+    const profitMargin = adjustedBudget > 0 ? (grossProfit / adjustedBudget) * 100 : 0;
+    const completedPhases = project.phases.filter((p: typeof project.phases[number]) => p.status === "COMPLETE").length;
+
+    return {
+      projectId: project.id,
+      projectName: project.name,
+      status: project.status,
+      budget,
+      totalEstimatedCost,
+      totalActualCost,
+      changeOrderTotal,
+      adjustedBudget,
+      grossProfit,
+      profitMargin,
+      phaseCount: project.phases.length,
+      completedPhases,
+    };
+  });
+}
+
+export async function exportJobPLCsv(): Promise<string> {
+  const rows = await getJobPLReport();
+
+  const header =
+    "Project,Status,Budget,Estimated Cost,Actual Cost,Change Orders,Adjusted Budget,Gross Profit,Profit Margin %,Phases,Completed";
+  const csvRows = rows.map((r: JobPLRow) =>
+    [
+      r.projectName,
+      r.status,
+      r.budget.toFixed(2),
+      r.totalEstimatedCost.toFixed(2),
+      r.totalActualCost.toFixed(2),
+      r.changeOrderTotal.toFixed(2),
+      r.adjustedBudget.toFixed(2),
+      r.grossProfit.toFixed(2),
+      r.profitMargin.toFixed(1),
+      r.phaseCount,
+      r.completedPhases,
+    ]
+      .map((v) => `"${v.toString().replace(/"/g, '""')}"`)
+      .join(",")
+  );
+
+  return [header, ...csvRows].join("\n");
+}
+
 // ── Contractor Reports ──
 
 export async function getContractorPerformance() {

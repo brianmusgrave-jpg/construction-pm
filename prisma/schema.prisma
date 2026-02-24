@@ -206,17 +206,26 @@ model Staff {
   contactType ContactType @default(SUBCONTRACTOR) @map("contact_type")
   email       String?
   phone       String?
+  location    String?     // City/region for search filtering
+  rating      Int?        // 1-5, PM-only visibility
   notes       String?     @db.Text
+
+  // Insurance override
+  uninsuredOverride Boolean @default(false) @map("uninsured_override")
+  umbrellaPolicy    InsuranceCertificate? @relation("umbrella_coverage", fields: [umbrellaPolicyId], references: [id])
+  umbrellaPolicyId  String? @map("umbrella_policy_id")
 
   createdBy   User?   @relation("staff_created_by", fields: [createdById], references: [id])
   createdById String? @map("created_by_id")
 
-  assignments PhaseAssignment[]
+  assignments  PhaseAssignment[]
+  certificates InsuranceCertificate[] @relation("staff_certificates")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([createdById])
+  @@index([contactType])
   @@map("staff")
 }
 
@@ -225,6 +234,55 @@ enum ContactType {
   SUBCONTRACTOR
   VENDOR
   INSPECTOR
+}
+
+// ── Insurance / COI Tracking (Sprint Y) ──
+
+model InsuranceCertificate {
+  id            String          @id @default(cuid())
+  carrier       String          // Insurance company name
+  policyNumber  String?         @map("policy_number")
+  coverageType  CoverageType
+  effectiveDate DateTime        @map("effective_date") @db.Date
+  expiryDate    DateTime        @map("expiry_date") @db.Date
+  coverageAmount Decimal?       @map("coverage_amount") @db.Decimal(12, 2)
+  documentUrl   String?         @map("document_url") // Uploaded COI file
+  notes         String?         @db.Text
+  status        InsuranceStatus @default(ACTIVE)
+
+  // Reminder tracking
+  reminder30Sent Boolean   @default(false) @map("reminder_30_sent")
+  expiredSent    Boolean   @default(false) @map("expired_sent")
+
+  staff   Staff  @relation("staff_certificates", fields: [staffId], references: [id], onDelete: Cascade)
+  staffId String @map("staff_id")
+
+  // Umbrella coverage (staff covered by this policy)
+  coveredStaff Staff[] @relation("umbrella_coverage")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([staffId, coverageType])
+  @@index([expiryDate])
+  @@map("insurance_certificates")
+}
+
+enum CoverageType {
+  GENERAL_LIABILITY
+  WORKERS_COMP
+  AUTO
+  UMBRELLA
+  PROFESSIONAL
+  BUILDERS_RISK
+  OTHER
+}
+
+enum InsuranceStatus {
+  ACTIVE
+  EXPIRING_SOON
+  EXPIRED
+  CANCELLED
 }
 
 model PhaseAssignment {
@@ -412,6 +470,8 @@ enum NotificationType {
   CHANGE_ORDER_REJECTED
   INSPECTION_SCHEDULED
   INSPECTION_RESULT
+  INSURANCE_EXPIRING_SOON
+  INSURANCE_EXPIRED
 }
 
 // ── Notification Preferences ──

@@ -16,6 +16,7 @@ interface Contact {
   contactType: string;
   email: string | null;
   phone: string | null;
+  location: string | null;
   notes: string | null;
 }
 
@@ -48,6 +49,7 @@ export function ContactFormModal({ mode, contact, onClose }: ContactFormModalPro
   );
   const [email, setEmail] = useState(contact?.email ?? "");
   const [phone, setPhone] = useState(contact?.phone ?? "");
+  const [location, setLocation] = useState(contact?.location ?? "");
   const [notes, setNotes] = useState(contact?.notes ?? "");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -69,6 +71,7 @@ export function ContactFormModal({ mode, contact, onClose }: ContactFormModalPro
           contactType,
           email: email.trim() || undefined,
           phone: phone.trim() || undefined,
+          location: location.trim() || undefined,
           notes: notes.trim() || undefined,
         });
       } else if (contact) {
@@ -80,6 +83,7 @@ export function ContactFormModal({ mode, contact, onClose }: ContactFormModalPro
           contactType,
           email: email.trim() || undefined,
           phone: phone.trim() || undefined,
+          location: location.trim() || undefined,
           notes: notes.trim() || undefined,
         });
       }
@@ -202,6 +206,17 @@ export function ContactFormModal({ mode, contact, onClose }: ContactFormModalPro
                 className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t("location")}</label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder={t("locationPlaceholder")}
+              className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+            />
           </div>
 
           <div>
