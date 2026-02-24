@@ -8,6 +8,7 @@ import {
   getActivityTimeline,
   getTeamPerformance,
   getOverdueReport,
+  getJobPLReport,
 } from "@/actions/reports";
 import { cn, statusColor, statusLabel, fmtShort } from "@/lib/utils";
 import { ExportButton } from "@/components/reports/ExportButton";
@@ -17,16 +18,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
-  FileText,
   Users,
   Activity,
   ChevronRight,
   Shield,
   HardHat,
-  Camera,
-  ArrowUpRight,
-  ArrowDownRight,
-  Minus,
+  DollarSign,
 } from "lucide-react";
 
 export default async function ReportsPage() {
@@ -47,6 +44,7 @@ export default async function ReportsPage() {
     activityTimeline,
     teamPerformance,
     overdueReport,
+    jobPL,
   ] = await Promise.all([
     getProjectHealthReport(),
     getPhaseStatusBreakdown(),
@@ -54,6 +52,7 @@ export default async function ReportsPage() {
     getActivityTimeline(30),
     canManage ? getTeamPerformance() : Promise.resolve([]),
     getOverdueReport(),
+    canManage ? getJobPLReport() : Promise.resolve([]),
   ]);
 
   const totalPhases = phaseBreakdown.reduce((s, p) => s + p.count, 0);
@@ -454,6 +453,70 @@ export default async function ReportsPage() {
       </div>
 
       {/* Team Performance — admin/PM only */}
+      {/* Job P&L Report — admin/PM only */}
+      {canManage && (jobPL as Awaited<ReturnType<typeof getJobPLReport>>).length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100">
+            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-gray-500" />
+              Job P&amp;L Report
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 text-left">
+                  <th className="px-5 py-2.5 font-medium text-gray-600">Project</th>
+                  <th className="px-3 py-2.5 font-medium text-gray-600 text-right">Budget</th>
+                  <th className="px-3 py-2.5 font-medium text-gray-600 text-right hidden sm:table-cell">Est. Cost</th>
+                  <th className="px-3 py-2.5 font-medium text-gray-600 text-right">Actual Cost</th>
+                  <th className="px-3 py-2.5 font-medium text-gray-600 text-right hidden sm:table-cell">Change Orders</th>
+                  <th className="px-3 py-2.5 font-medium text-gray-600 text-right">Gross Profit</th>
+                  <th className="px-3 py-2.5 font-medium text-gray-600 text-center">Margin</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {(jobPL as Awaited<ReturnType<typeof getJobPLReport>>).map((row) => (
+                  <tr key={row.projectId} className="hover:bg-gray-50">
+                    <td className="px-5 py-3">
+                      <Link
+                        href={`/dashboard/projects/${row.projectId}`}
+                        className="font-medium text-gray-900 hover:text-[var(--color-primary)]"
+                      >
+                        {row.projectName}
+                      </Link>
+                      <p className="text-xs text-gray-500">{row.completedPhases}/{row.phaseCount} phases complete</p>
+                    </td>
+                    <td className="px-3 py-3 text-right text-gray-700">${fmtNum(row.budget)}</td>
+                    <td className="px-3 py-3 text-right text-gray-700 hidden sm:table-cell">${fmtNum(row.totalEstimatedCost)}</td>
+                    <td className="px-3 py-3 text-right text-gray-700">${fmtNum(row.totalActualCost)}</td>
+                    <td className="px-3 py-3 text-right text-gray-700 hidden sm:table-cell">
+                      {row.changeOrderTotal > 0 ? `+$${fmtNum(row.changeOrderTotal)}` : "—"}
+                    </td>
+                    <td className="px-3 py-3 text-right">
+                      <span className={row.grossProfit >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                        {row.grossProfit >= 0 ? "" : "-"}${fmtNum(Math.abs(row.grossProfit))}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3 text-center">
+                      <span className={cn(
+                        "text-xs font-medium px-2 py-0.5 rounded-full",
+                        row.profitMargin >= 20 ? "bg-green-50 text-green-700" :
+                        row.profitMargin >= 10 ? "bg-yellow-50 text-yellow-700" :
+                        row.profitMargin >= 0 ? "bg-orange-50 text-orange-700" :
+                        "bg-red-50 text-red-700"
+                      )}>
+                        {row.profitMargin.toFixed(1)}%
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
       {canManage && (teamPerformance as ReturnType<typeof Array>).length > 0 && (
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-5 py-4 border-b border-gray-100">
@@ -623,6 +686,10 @@ function barColor(status: string): string {
     default:
       return "bg-gray-400";
   }
+}
+
+function fmtNum(n: number): string {
+  return n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
 function formatAction(action: string): string {
