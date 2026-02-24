@@ -33,18 +33,20 @@ export default defineConfig({
       name: "auth-setup",
       testMatch: /auth\.setup\.ts/,
     },
-    // ── Desktop Chrome ──
+    // ── Desktop Chrome (authenticated admin — excludes unauth & contractor specs) ──
     {
       name: "chromium",
+      testIgnore: /auth\.spec\.ts|auth\.setup\.ts|client-portal\.spec\.ts|contractor\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "e2e/.auth/admin.json",
       },
       dependencies: ["auth-setup"],
     },
-    // ── Mobile Safari ──
+    // ── Mobile Safari (authenticated admin — excludes unauth & contractor specs) ──
     {
       name: "mobile",
+      testIgnore: /auth\.spec\.ts|auth\.setup\.ts|client-portal\.spec\.ts|contractor\.spec\.ts/,
       use: {
         ...devices["iPhone 14"],
         storageState: "e2e/.auth/admin.json",
