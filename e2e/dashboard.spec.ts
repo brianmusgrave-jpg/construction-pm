@@ -13,8 +13,11 @@ test.describe("Dashboard", () => {
   test("dashboard has navigation sidebar with key links", async ({ page }) => {
     const authed = await gotoAuthenticated(page, "/dashboard");
     if (!authed) { test.skip(true, "No auth session"); return; }
-    const nav = page.locator("nav, aside, [role='navigation']").first();
-    await expect(nav).toBeVisible({ timeout: 10_000 });
+    // The layout renders two <nav> elements (mobile + desktop sidebar).
+    // The mobile nav has 0 width on Desktop Chrome, so .first() picks
+    // the hidden one.  Filter to only visible navs before asserting.
+    const nav = page.locator("nav").filter({ hasText: /Dashboard|Projects/ });
+    await expect(nav.last()).toBeVisible({ timeout: 10_000 });
   });
 
   test("dashboard displays activity feed", async ({ page }) => {
@@ -35,8 +38,11 @@ test.describe("Dashboard", () => {
   test("can navigate to new project form", async ({ page }) => {
     const authed = await gotoAuthenticated(page, "/dashboard/projects/new");
     if (!authed) { test.skip(true, "No auth session"); return; }
-    const inputs = page.locator("input, textarea, select");
-    await expect(inputs.first()).toBeVisible({ timeout: 10_000 });
+    // The new-project page is a multi-step wizard.  Step 1 shows template
+    // cards (Residential, Commercial, Blank, etc.) — no <input> elements.
+    // Verify the wizard heading and at least one template card are visible.
+    await expect(page.getByText("Create New Project")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText("Residential").first()).toBeVisible({ timeout: 10_000 });
   });
 
   test("can navigate to help center", async ({ page }) => {
