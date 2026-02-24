@@ -189,7 +189,7 @@ export function ChecklistSection({
                 {canManage && (
                   <button
                     onClick={() => handleDeleteItem(item.id)}
-                    className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 p-1 shrink-0"
+                    className="text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 hover:text-red-500 p-1 shrink-0 transition-all"
                     title={tc("delete")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />

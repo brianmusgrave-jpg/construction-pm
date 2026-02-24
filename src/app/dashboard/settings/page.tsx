@@ -22,6 +22,8 @@ import { getWebhooks } from "@/actions/webhooks";
 import { getReportSchedules } from "@/actions/report-schedules";
 import { QuickBooksSection } from "@/components/settings/QuickBooksSection";
 import { getQuickBooksConnection, getQuickBooksSyncLogs } from "@/actions/quickbooks";
+import { ProfileEditor } from "@/components/settings/ProfileEditor";
+import { getProfile } from "@/actions/profile";
 import { getLocale } from "@/i18n/locale";
 import { getTranslations } from "next-intl/server";
 
@@ -54,6 +56,9 @@ export default async function SettingsPage() {
     getQuickBooksSyncLogs().catch(() => []),
   ]);
 
+  // Profile data for self-service editing
+  const profile = await getProfile().catch(() => null);
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="mb-6">
@@ -63,34 +68,10 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      {/* Profile section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("profile")}</h2>
-        <div className="space-y-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-0.5">
-              {t("name")}
-            </label>
-            <p className="text-base text-gray-900">
-              {session.user.name || t("notSet")}
-            </p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-0.5">
-              {t("email")}
-            </label>
-            <p className="text-base text-gray-900">{session.user.email}</p>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-500 mb-0.5">
-              {t("role")}
-            </label>
-            <p className="text-base text-gray-900 capitalize">
-              {(session.user.role || "viewer").replace("_", " ").toLowerCase()}
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Profile section — self-service editing with change logging */}
+      {profile && (
+        <ProfileEditor user={profile} />
+      )}
 
       {/* Two-Factor Authentication */}
       <div className="mt-6">

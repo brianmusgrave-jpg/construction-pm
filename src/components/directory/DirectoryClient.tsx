@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import {
   Users,
   Mail,
@@ -11,9 +11,16 @@ import {
   ClipboardCheck,
   Plus,
   Pencil,
+  Trash2,
+  Download,
+  X,
+  Loader2,
+  CheckSquare,
 } from "lucide-react";
 import { ContactFormModal } from "./ContactFormModal";
+import { bulkDeleteStaff, bulkUpdateStaffType, exportStaffCsv } from "@/actions/staff";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 type ContactType = "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR";
 
@@ -86,11 +93,82 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
     | null
   >(null);
 
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkMode, setBulkMode] = useState(false);
+  const [isPending, startTransition] = useTransition();
+
   const grouped = TYPE_ORDER.map((type) => ({
     type,
     config: TYPE_CONFIG[type],
     contacts: contacts.filter((c) => c.contactType === type),
   })).filter((g) => g.contacts.length > 0);
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function selectAll() {
+    if (selected.size === contacts.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(contacts.map((c) => c.id)));
+    }
+  }
+
+  function exitBulkMode() {
+    setBulkMode(false);
+    setSelected(new Set());
+  }
+
+  function handleBulkDelete() {
+    if (selected.size === 0) return;
+    if (!confirm(t("confirmBulkDelete", { count: selected.size }))) return;
+    startTransition(async () => {
+      try {
+        const result = await bulkDeleteStaff(Array.from(selected));
+        toast.success(t("bulkDeleted", { count: result.deleted }));
+        exitBulkMode();
+      } catch (e) {
+        toast.error((e as Error).message);
+      }
+    });
+  }
+
+  function handleBulkRetype(newType: string) {
+    if (selected.size === 0) return;
+    startTransition(async () => {
+      try {
+        const result = await bulkUpdateStaffType(Array.from(selected), newType);
+        toast.success(t("bulkUpdated", { count: result.updated }));
+        exitBulkMode();
+      } catch (e) {
+        toast.error((e as Error).message);
+      }
+    });
+  }
+
+  function handleExport() {
+    startTransition(async () => {
+      try {
+        const csv = await exportStaffCsv();
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "directory.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success(t("exported"));
+      } catch (e) {
+        toast.error((e as Error).message);
+      }
+    });
+  }
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
@@ -101,16 +179,77 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
             {t("contactCount", { count: contacts.length, groups: grouped.length })}
           </p>
         </div>
-        {canManage && (
-          <button
-            onClick={() => setModalState({ mode: "add" })}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            {t("addContact")}
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {canManage && contacts.length > 0 && (
+            <>
+              <button
+                onClick={handleExport}
+                disabled={isPending}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                title={t("exportCsv")}
+              >
+                <Download className="w-4 h-4" />
+                <span className="hidden sm:inline">{t("exportCsv")}</span>
+              </button>
+              <button
+                onClick={() => bulkMode ? exitBulkMode() : setBulkMode(true)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors ${
+                  bulkMode ? "bg-gray-100 border-gray-300" : "hover:bg-gray-50"
+                }`}
+              >
+                <CheckSquare className="w-4 h-4" />
+                <span className="hidden sm:inline">{bulkMode ? tc("done") : t("bulkSelect")}</span>
+              </button>
+            </>
+          )}
+          {canManage && (
+            <button
+              onClick={() => setModalState({ mode: "add" })}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              {t("addContact")}
+            </button>
+          )}
+        </div>
       </div>
+
+      {/* Bulk action bar */}
+      {bulkMode && selected.size > 0 && (
+        <div className="sticky top-0 z-10 mb-4 p-3 bg-white border rounded-xl shadow-lg flex items-center gap-3 flex-wrap">
+          <button onClick={selectAll} className="text-sm text-[var(--color-primary)] hover:underline">
+            {selected.size === contacts.length ? t("deselectAll") : t("selectAll")}
+          </button>
+          <span className="text-sm text-gray-500">
+            {t("selectedCount", { count: selected.size })}
+          </span>
+          <div className="flex-1" />
+          <select
+            onChange={(e) => {
+              if (e.target.value) handleBulkRetype(e.target.value);
+              e.target.value = "";
+            }}
+            className="px-3 py-1.5 text-sm border rounded-lg bg-white"
+            defaultValue=""
+          >
+            <option value="" disabled>{t("moveTo")}</option>
+            {TYPE_ORDER.map((t2) => (
+              <option key={t2} value={t2}>{TYPE_CONFIG[t2].label}</option>
+            ))}
+          </select>
+          <button
+            onClick={handleBulkDelete}
+            disabled={isPending}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+          >
+            {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+            {tc("delete")}
+          </button>
+          <button onClick={exitBulkMode} className="p-1.5 text-gray-400 hover:text-gray-600">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       {contacts.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
@@ -144,19 +283,32 @@ export function DirectoryClient({ contacts, canManage }: DirectoryClientProps) {
                   {groupContacts.map((person) => (
                     <div
                       key={person.id}
-                      className="bg-white rounded-xl border border-gray-200 p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group relative"
+                      onClick={bulkMode ? () => toggleSelect(person.id) : undefined}
+                      className={`bg-white rounded-xl border p-5 hover:border-[var(--color-primary-light)] hover:shadow-md transition-all group relative ${
+                        bulkMode ? "cursor-pointer" : ""
+                      } ${selected.has(person.id) ? "border-[var(--color-primary)] ring-2 ring-[var(--color-primary-bg)]" : "border-gray-200"}`}
                     >
-                      {canManage && (
+                      {bulkMode && (
+                        <div className="absolute top-3 left-3">
+                          <input
+                            type="checkbox"
+                            checked={selected.has(person.id)}
+                            onChange={() => toggleSelect(person.id)}
+                            className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                          />
+                        </div>
+                      )}
+                      {canManage && !bulkMode && (
                         <button
                           onClick={() => setModalState({ mode: "edit", contact: person })}
-                          className="absolute top-3 right-3 p-1.5 text-gray-400 hover:text-[var(--color-primary)] rounded transition-colors"
+                          className="absolute top-3 right-3 p-2 text-gray-300 opacity-0 group-hover:opacity-100 hover:text-[var(--color-primary)] hover:bg-gray-100 rounded-lg transition-all"
                           title={t("editContact")}
                         >
-                          <Pencil className="w-3.5 h-3.5" />
+                          <Pencil className="w-5 h-5" />
                         </button>
                       )}
 
-                      <div className="flex items-start gap-3 mb-3">
+                      <div className={`flex items-start gap-3 mb-3 ${bulkMode ? "ml-6" : ""}`}>
                         <div className="w-10 h-10 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] font-medium text-sm shrink-0">
                           {person.name[0]}
                         </div>

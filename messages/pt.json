@@ -73,7 +73,8 @@
     "documents": "Documentos",
     "photos": "Fotos",
     "contractorPortal": "Portal do empreiteiro",
-    "openMenu": "Abrir menu"
+    "openMenu": "Abrir menu",
+    "activityLog": "Registro de Atividade"
   },
   "auth": {
     "signIn": "Entrar",
@@ -119,7 +120,9 @@
     "notificationsWillAppear": "Mudanças de status, revisões e uploads aparecerão aqui",
     "activity": "Atividade",
     "noActivityYet": "Sem atividade",
-    "activityWillAppear": "Mudanças de status e uploads aparecerão aqui"
+    "activityWillAppear": "Mudanças de status e uploads aparecerão aqui",
+    "analyticsComingSoon": "As análises aparecerão aqui",
+    "analyticsDescription": "À medida que seus projetos gerarem dados, gráficos de orçamento e métricas de desempenho aparecerão aqui."
   },
   "projects": {
     "title": "Projetos",
@@ -662,7 +665,17 @@
     "failedToDelete": "Erro ao excluir",
     "deleteConfirm": "Excluir {name}? Isso também removerá todas as atribuições de fase.",
     "addContactBtn": "Adicionar contato",
-    "saveChanges": "Salvar alterações"
+    "saveChanges": "Salvar alterações",
+    "bulkSelect": "Selecionar",
+    "selectAll": "Selecionar Tudo",
+    "deselectAll": "Desmarcar Tudo",
+    "selectedCount": "{count} selecionados",
+    "moveTo": "Mover para categoria...",
+    "confirmBulkDelete": "Excluir {count} contatos? Isso não pode ser desfeito.",
+    "bulkDeleted": "{count} contatos excluídos",
+    "bulkUpdated": "{count} contatos atualizados",
+    "exportCsv": "Exportar CSV",
+    "exported": "Diretório exportado"
   },
   "pwa": {
     "installTitle": "Instalar Construction PM",
@@ -734,5 +747,35 @@
     "failed": "falharam",
     "settingsSaved": "Configurações de sincronização atualizadas",
     "settingsError": "Falha ao atualizar configurações"
+  },
+  "project": {
+    "confirmArchive": "Tem certeza de que deseja arquivar este projeto? Ele será ocultado do painel principal.",
+    "projectArchived": "Projeto arquivado com sucesso",
+    "projectRestored": "Projeto restaurado com sucesso",
+    "archive": "Arquivar",
+    "restore": "Restaurar"
+  },
+  "activity": {
+    "title": "Registro de Atividade",
+    "subtitle": "Acompanhe todas as alterações nos seus projetos. Administradores podem desfazer ações reversíveis.",
+    "totalEntries": "{count} entradas",
+    "filter": "Filtrar",
+    "allProjects": "Todos os Projetos",
+    "allActions": "Todas as Ações",
+    "apply": "Aplicar",
+    "noEntries": "Nenhuma entrada de atividade encontrada",
+    "undo": "Desfazer esta ação",
+    "undoSuccess": "Ação desfeita com sucesso",
+    "pageOf": "Página {current} de {total}"
+  },
+  "profile": {
+    "title": "Meu Perfil",
+    "name": "Nome Completo",
+    "phone": "Número de Telefone",
+    "company": "Empresa",
+    "save": "Salvar Alterações",
+    "saved": "Perfil atualizado com sucesso",
+    "noChanges": "Nenhuma alteração para salvar",
+    "changesLogged": "Todas as alterações de perfil são registradas para revisão do administrador"
   }
 }

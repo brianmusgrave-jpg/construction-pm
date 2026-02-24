@@ -125,7 +125,7 @@ export function CommentSection({
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
                   disabled={deletingId === comment.id || isPending}
-                  className="opacity-0 group-hover:opacity-100 flex-shrink-0 text-gray-400 hover:text-red-500 p-1 disabled:opacity-50"
+                  className="text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 flex-shrink-0 hover:text-red-500 p-1 disabled:opacity-50 transition-all"
                   title={t("deleteComment")}
                 >
                   {deletingId === comment.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}

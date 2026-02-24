@@ -28,6 +28,7 @@ import { BudgetSection } from "@/components/project/BudgetSection";
 import { TeamSection } from "@/components/project/TeamSection";
 import { ClientTokenSection } from "@/components/project/ClientTokenSection";
 import { DailyLogSection } from "@/components/project/DailyLogSection";
+import { ProjectActions } from "@/components/project/ProjectActions";
 import { getProjectInvitations } from "@/actions/invitations";
 
 export default async function ProjectOverviewPage({
@@ -218,6 +219,7 @@ export default async function ProjectOverviewPage({
                 <span className="hidden sm:inline">Edit</span>
               </Link>
             )}
+            <ProjectActions projectId={id} status={project.status} canManage={canEditProject} />
             <Link
               href={`/dashboard/projects/${id}/timeline`}
               className="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-colors"

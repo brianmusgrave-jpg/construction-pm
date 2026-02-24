@@ -96,3 +96,50 @@ export async function deleteStaff(id: string) {
   await db.staff.delete({ where: { id } });
   revalidatePath("/dashboard/directory");
 }
+
+export async function bulkDeleteStaff(ids: string[]) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!can(session.user.role || "VIEWER", "delete", "staff"))
+    throw new Error("Forbidden");
+  if (ids.length === 0) return { deleted: 0 };
+
+  const result = await db.staff.deleteMany({ where: { id: { in: ids } } });
+  revalidatePath("/dashboard/directory");
+  return { deleted: result.count };
+}
+
+export async function bulkUpdateStaffType(ids: string[], contactType: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!can(session.user.role || "VIEWER", "edit", "staff"))
+    throw new Error("Forbidden");
+  if (ids.length === 0) return { updated: 0 };
+
+  const validTypes = ["TEAM", "SUBCONTRACTOR", "VENDOR", "INSPECTOR"];
+  if (!validTypes.includes(contactType)) throw new Error("Invalid type");
+
+  const result = await db.staff.updateMany({
+    where: { id: { in: ids } },
+    data: { contactType: contactType as never },
+  });
+  revalidatePath("/dashboard/directory");
+  return { updated: result.count };
+}
+
+export async function exportStaffCsv() {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const staff = await db.staff.findMany({
+    orderBy: [{ contactType: "asc" }, { name: "asc" }],
+  });
+
+  const header = "Name,Company,Role,Type,Email,Phone,Notes";
+  const rows = staff.map((s) =>
+    [s.name, s.company, s.role, s.contactType, s.email, s.phone, s.notes]
+      .map((v) => `"${(v || "").replace(/"/g, '""')}"`)
+      .join(",")
+  );
+  return [header, ...rows].join("\n");
+}

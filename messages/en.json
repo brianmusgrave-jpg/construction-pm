@@ -73,7 +73,8 @@
     "documents": "Documents",
     "photos": "Photos",
     "contractorPortal": "Contractor Portal",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "activityLog": "Activity Log"
   },
   "auth": {
     "signIn": "Sign In",
@@ -119,7 +120,9 @@
     "notificationsWillAppear": "Status changes, reviews, and uploads will appear here",
     "activity": "Activity",
     "noActivityYet": "No activity yet",
-    "activityWillAppear": "Status changes and uploads will appear here"
+    "activityWillAppear": "Status changes and uploads will appear here",
+    "analyticsComingSoon": "Analytics will appear here",
+    "analyticsDescription": "As your projects generate data, budget charts, status breakdowns, and performance metrics will show up here."
   },
   "projects": {
     "title": "Projects",
@@ -662,7 +665,17 @@
     "failedToDelete": "Failed to delete",
     "deleteConfirm": "Delete {name}? This will also remove all their phase assignments.",
     "addContactBtn": "Add Contact",
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "bulkSelect": "Select",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "selectedCount": "{count} selected",
+    "moveTo": "Move to category...",
+    "confirmBulkDelete": "Delete {count} contacts? This cannot be undone.",
+    "bulkDeleted": "{count} contacts deleted",
+    "bulkUpdated": "{count} contacts updated",
+    "exportCsv": "Export CSV",
+    "exported": "Directory exported"
   },
   "pwa": {
     "installTitle": "Install Construction PM",
@@ -734,5 +747,35 @@
     "failed": "failed",
     "settingsSaved": "Sync settings updated",
     "settingsError": "Failed to update settings"
+  },
+  "project": {
+    "confirmArchive": "Are you sure you want to archive this project? It will be hidden from the main dashboard.",
+    "projectArchived": "Project archived successfully",
+    "projectRestored": "Project restored successfully",
+    "archive": "Archive",
+    "restore": "Restore"
+  },
+  "activity": {
+    "title": "Activity Log",
+    "subtitle": "Track all changes across your projects. Admins can undo reversible actions.",
+    "totalEntries": "{count} entries",
+    "filter": "Filter",
+    "allProjects": "All Projects",
+    "allActions": "All Actions",
+    "apply": "Apply",
+    "noEntries": "No activity entries found",
+    "undo": "Undo this action",
+    "undoSuccess": "Action undone successfully",
+    "pageOf": "Page {current} of {total}"
+  },
+  "profile": {
+    "title": "My Profile",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "company": "Company",
+    "save": "Save Changes",
+    "saved": "Profile updated successfully",
+    "noChanges": "No changes to save",
+    "changesLogged": "All profile changes are logged for admin review"
   }
 }

@@ -298,7 +298,7 @@ export function MaterialSection({ phaseId, materials, canManage }: MaterialSecti
                     <button
                       onClick={() => handleDelete(mat.id)}
                       disabled={actionId === mat.id}
-                      className="p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="p-1 text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 hover:text-red-500 transition-all"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>

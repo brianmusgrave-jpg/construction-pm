@@ -511,7 +511,7 @@ export function DocumentSection({
                     <button
                       onClick={() => handleDelete(doc.id)}
                       disabled={deletingId === doc.id}
-                      className="p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="p-1 text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 hover:text-red-500 transition-all"
                       title={tc("delete")}
                     >
                       {deletingId === doc.id ? (

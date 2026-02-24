@@ -305,7 +305,7 @@ export function ChangeOrderSection({
                         onClick={() => handleDelete(co.id)}
                         disabled={actionId === co.id}
                         title="Delete"
-                        className="p-1.5 text-gray-300 hover:text-red-500 rounded transition-colors opacity-0 group-hover:opacity-100"
+                        className="p-1.5 text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 hover:text-red-500 rounded transition-colors"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>

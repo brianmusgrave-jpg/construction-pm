@@ -183,6 +183,67 @@ export async function deleteProject(projectId: string) {
   redirect("/dashboard");
 }
 
+export async function archiveProject(projectId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  // Only ADMIN or PROJECT_MANAGER can archive
+  const member = await db.projectMember.findUnique({
+    where: { userId_projectId: { userId: session.user.id, projectId } },
+  });
+  if (!member || !["OWNER", "MANAGER"].includes(member.role)) {
+    throw new Error("Forbidden");
+  }
+
+  await db.project.update({
+    where: { id: projectId },
+    data: { status: "ARCHIVED" as never },
+  });
+
+  await db.activityLog.create({
+    data: {
+      action: "PROJECT_STATUS_CHANGED" as never,
+      message: `Project archived`,
+      data: { oldStatus: "ACTIVE", newStatus: "ARCHIVED" },
+      projectId,
+      userId: session.user.id,
+    },
+  });
+
+  revalidatePath(`/dashboard/projects/${projectId}`);
+  revalidatePath("/dashboard");
+}
+
+export async function restoreProject(projectId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+
+  const member = await db.projectMember.findUnique({
+    where: { userId_projectId: { userId: session.user.id, projectId } },
+  });
+  if (!member || !["OWNER", "MANAGER"].includes(member.role)) {
+    throw new Error("Forbidden");
+  }
+
+  await db.project.update({
+    where: { id: projectId },
+    data: { status: "ACTIVE" as never },
+  });
+
+  await db.activityLog.create({
+    data: {
+      action: "PROJECT_STATUS_CHANGED" as never,
+      message: `Project restored from archive`,
+      data: { oldStatus: "ARCHIVED", newStatus: "ACTIVE" },
+      projectId,
+      userId: session.user.id,
+    },
+  });
+
+  revalidatePath(`/dashboard/projects/${projectId}`);
+  revalidatePath("/dashboard");
+}
+
 export async function getProjects() {
   const session = await auth();
   if (!session?.user) return [];

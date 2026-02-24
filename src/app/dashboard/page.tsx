@@ -14,12 +14,10 @@ import {
   Clock,
   ClipboardCheck,
   FileText,
-  ArrowRight,
   Activity,
   Bell,
   Eye,
   ChevronRight,
-  Building2,
   TrendingUp,
   CircleDot,
 } from "lucide-react";
@@ -345,10 +343,13 @@ export default async function DashboardPage() {
                 {tn("projects")}
               </h2>
               <span className="text-xs text-gray-500">
-                {projects.filter((p: { status: string }) => p.status === "ACTIVE").length} {tc("active").toLowerCase()} · {projects.length} {tc("total")}
+                {projects.filter((p: { status: string }) => p.status !== "ARCHIVED").length} {tc("active").toLowerCase()} · {projects.length} {tc("total")}
+                {projects.some((p: { status: string }) => p.status === "ARCHIVED") && (
+                  <span className="text-gray-400"> · {projects.filter((p: { status: string }) => p.status === "ARCHIVED").length} archived</span>
+                )}
               </span>
             </div>
-            {projects.length === 0 ? (
+            {projects.filter((p: { status: string }) => p.status !== "ARCHIVED").length === 0 && projects.length === 0 ? (
               <div className="text-center py-12 bg-white rounded-xl border border-gray-200">
                 <FolderKanban className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-1">{t("noProjectsYet")}</h3>
@@ -365,7 +366,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {projects.map((project: (typeof projects)[number]) => {
+                {projects.filter((p: { status: string }) => p.status !== "ARCHIVED").map((project: (typeof projects)[number]) => {
                   const phases = project.phases;
                   const completed = phases.filter((p: { status: string }) => p.status === "COMPLETE").length;
                   const total = project._count.phases;
@@ -506,33 +507,19 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Link
-              href="/dashboard/directory"
-              className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-[var(--color-primary-light)] transition-colors"
-            >
-              <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                <Users className="w-4 h-4 text-gray-400" />
-                {tn("directory")}
-              </span>
-              <ArrowRight className="w-4 h-4 text-gray-400" />
-            </Link>
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200 hover:border-[var(--color-primary-light)] transition-colors"
-            >
-              <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                <Building2 className="w-4 h-4 text-gray-400" />
-                {tn("settings")}
-              </span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
         </div>
       </div>
 
       {/* Analytics Charts */}
-      {analytics && <AnalyticsWidgets data={analytics} />}
+      {analytics ? (
+        <AnalyticsWidgets data={analytics} />
+      ) : projects.length > 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center">
+          <TrendingUp className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-sm font-semibold text-gray-700 mb-1">{t("analyticsComingSoon")}</h3>
+          <p className="text-xs text-gray-400">{t("analyticsDescription")}</p>
+        </div>
+      ) : null}
     </div>
   );
 }

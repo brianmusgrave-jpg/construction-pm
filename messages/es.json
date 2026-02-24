@@ -73,7 +73,8 @@
     "documents": "Documentos",
     "photos": "Fotos",
     "contractorPortal": "Portal del contratista",
-    "openMenu": "Abrir menú"
+    "openMenu": "Abrir menú",
+    "activityLog": "Registro de Actividad"
   },
   "auth": {
     "signIn": "Iniciar sesión",
@@ -119,7 +120,9 @@
     "notificationsWillAppear": "Los cambios de estado, revisiones y cargas aparecerán aquí",
     "activity": "Actividad",
     "noActivityYet": "Sin actividad",
-    "activityWillAppear": "Los cambios de estado y cargas aparecerán aquí"
+    "activityWillAppear": "Los cambios de estado y cargas aparecerán aquí",
+    "analyticsComingSoon": "Los análisis aparecerán aquí",
+    "analyticsDescription": "A medida que sus proyectos generen datos, los gráficos de presupuesto y métricas de rendimiento aparecerán aquí."
   },
   "projects": {
     "title": "Proyectos",
@@ -662,7 +665,17 @@
     "failedToDelete": "Error al eliminar",
     "deleteConfirm": "¿Eliminar {name}? Esto también eliminará todas sus asignaciones de fase.",
     "addContactBtn": "Agregar contacto",
-    "saveChanges": "Guardar cambios"
+    "saveChanges": "Guardar cambios",
+    "bulkSelect": "Seleccionar",
+    "selectAll": "Seleccionar Todo",
+    "deselectAll": "Deseleccionar Todo",
+    "selectedCount": "{count} seleccionados",
+    "moveTo": "Mover a categoría...",
+    "confirmBulkDelete": "¿Eliminar {count} contactos? Esto no se puede deshacer.",
+    "bulkDeleted": "{count} contactos eliminados",
+    "bulkUpdated": "{count} contactos actualizados",
+    "exportCsv": "Exportar CSV",
+    "exported": "Directorio exportado"
   },
   "pwa": {
     "installTitle": "Instalar Construction PM",
@@ -734,5 +747,35 @@
     "failed": "fallidos",
     "settingsSaved": "Configuración de sincronización actualizada",
     "settingsError": "Error al actualizar la configuración"
+  },
+  "project": {
+    "confirmArchive": "¿Está seguro de que desea archivar este proyecto? Se ocultará del panel principal.",
+    "projectArchived": "Proyecto archivado exitosamente",
+    "projectRestored": "Proyecto restaurado exitosamente",
+    "archive": "Archivar",
+    "restore": "Restaurar"
+  },
+  "activity": {
+    "title": "Registro de Actividad",
+    "subtitle": "Rastrea todos los cambios en tus proyectos. Los administradores pueden deshacer acciones reversibles.",
+    "totalEntries": "{count} entradas",
+    "filter": "Filtrar",
+    "allProjects": "Todos los Proyectos",
+    "allActions": "Todas las Acciones",
+    "apply": "Aplicar",
+    "noEntries": "No se encontraron entradas de actividad",
+    "undo": "Deshacer esta acción",
+    "undoSuccess": "Acción deshecha exitosamente",
+    "pageOf": "Página {current} de {total}"
+  },
+  "profile": {
+    "title": "Mi Perfil",
+    "name": "Nombre Completo",
+    "phone": "Número de Teléfono",
+    "company": "Empresa",
+    "save": "Guardar Cambios",
+    "saved": "Perfil actualizado exitosamente",
+    "noChanges": "No hay cambios que guardar",
+    "changesLogged": "Todos los cambios de perfil se registran para revisión del administrador"
   }
 }

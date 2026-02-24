@@ -73,7 +73,8 @@
     "documents": "Documents",
     "photos": "Photos",
     "contractorPortal": "Portail entrepreneur",
-    "openMenu": "Ouvrir le menu"
+    "openMenu": "Ouvrir le menu",
+    "activityLog": "Journal d'Activité"
   },
   "auth": {
     "signIn": "Connexion",
@@ -119,7 +120,9 @@
     "notificationsWillAppear": "Les changements de statut, révisions et téléchargements apparaîtront ici",
     "activity": "Activité",
     "noActivityYet": "Aucune activité pour le moment",
-    "activityWillAppear": "Les changements de statut et téléchargements apparaîtront ici"
+    "activityWillAppear": "Les changements de statut et téléchargements apparaîtront ici",
+    "analyticsComingSoon": "Les analyses apparaîtront ici",
+    "analyticsDescription": "Au fur et à mesure que vos projets génèrent des données, les graphiques de budget et les métriques de performance apparaîtront ici."
   },
   "projects": {
     "title": "Projets",
@@ -662,7 +665,17 @@
     "failedToDelete": "Échec de la suppression",
     "deleteConfirm": "Supprimer {name} ? Toutes ses assignations de phase seront également supprimées.",
     "addContactBtn": "Ajouter un contact",
-    "saveChanges": "Enregistrer les modifications"
+    "saveChanges": "Enregistrer les modifications",
+    "bulkSelect": "Sélectionner",
+    "selectAll": "Tout Sélectionner",
+    "deselectAll": "Tout Désélectionner",
+    "selectedCount": "{count} sélectionnés",
+    "moveTo": "Déplacer vers catégorie...",
+    "confirmBulkDelete": "Supprimer {count} contacts ? Cette action est irréversible.",
+    "bulkDeleted": "{count} contacts supprimés",
+    "bulkUpdated": "{count} contacts mis à jour",
+    "exportCsv": "Exporter CSV",
+    "exported": "Répertoire exporté"
   },
   "pwa": {
     "installTitle": "Installer Construction PM",
@@ -734,5 +747,35 @@
     "failed": "échoués",
     "settingsSaved": "Paramètres de synchronisation mis à jour",
     "settingsError": "Échec de la mise à jour des paramètres"
+  },
+  "project": {
+    "confirmArchive": "Êtes-vous sûr de vouloir archiver ce projet ? Il sera masqué du tableau de bord principal.",
+    "projectArchived": "Projet archivé avec succès",
+    "projectRestored": "Projet restauré avec succès",
+    "archive": "Archiver",
+    "restore": "Restaurer"
+  },
+  "activity": {
+    "title": "Journal d'Activité",
+    "subtitle": "Suivez tous les changements sur vos projets. Les administrateurs peuvent annuler les actions réversibles.",
+    "totalEntries": "{count} entrées",
+    "filter": "Filtrer",
+    "allProjects": "Tous les Projets",
+    "allActions": "Toutes les Actions",
+    "apply": "Appliquer",
+    "noEntries": "Aucune entrée d'activité trouvée",
+    "undo": "Annuler cette action",
+    "undoSuccess": "Action annulée avec succès",
+    "pageOf": "Page {current} de {total}"
+  },
+  "profile": {
+    "title": "Mon Profil",
+    "name": "Nom Complet",
+    "phone": "Numéro de Téléphone",
+    "company": "Entreprise",
+    "save": "Enregistrer",
+    "saved": "Profil mis à jour avec succès",
+    "noChanges": "Aucune modification à enregistrer",
+    "changesLogged": "Toutes les modifications de profil sont enregistrées pour examen par l'administrateur"
   }
 }

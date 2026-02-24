@@ -17,6 +17,7 @@ import {
   X,
   BarChart3,
   HelpCircle,
+  ScrollText,
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 import { useTranslations } from "next-intl";
@@ -52,6 +53,7 @@ function getNavigation(role: string, t: (key: string) => string) {
   return [
     ...base,
     { name: t("directory"), href: "/dashboard/directory", icon: Users },
+    { name: t("activityLog"), href: "/dashboard/activity", icon: ScrollText },
     { name: t("notifications"), href: "/dashboard/notifications", icon: Bell },
     { name: t("settings"), href: "/dashboard/settings", icon: Settings },
     { name: t("help"), href: "/dashboard/help", icon: HelpCircle },

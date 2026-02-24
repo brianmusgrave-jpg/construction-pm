@@ -257,7 +257,7 @@ export function NotificationList({
                   {/* Delete button */}
                   <button
                     onClick={(e) => handleDelete(e, notification.id)}
-                    className="mt-1 p-1 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                    className="mt-1 p-1 text-gray-300 sm:opacity-0 sm:group-hover:opacity-100 hover:text-red-500 transition-all shrink-0"
                     title={tc("delete")}
                   >
                     <Trash2 className="w-4 h-4" />
