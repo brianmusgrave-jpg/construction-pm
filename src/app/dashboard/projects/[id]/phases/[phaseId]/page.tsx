@@ -24,6 +24,10 @@ import { SubmittalSection } from "@/components/phase/SubmittalSection";
 import { getSubmittals } from "@/actions/submittal";
 import { TimeTrackingSection } from "@/components/phase/TimeTrackingSection";
 import { getTimeEntries } from "@/actions/timeEntry";
+import { LienWaiverSection } from "@/components/phase/LienWaiverSection";
+import { getLienWaivers } from "@/actions/lienWaiver";
+import { PaymentApplicationSection } from "@/components/phase/PaymentApplicationSection";
+import { getPaymentApplications } from "@/actions/paymentApp";
 
 export default async function PhaseDetailPage({
   params,
@@ -75,13 +79,15 @@ export default async function PhaseDetailPage({
 
   const dbc = db as any;
 
-  const [comments, voiceNotes, punchListItems, rfiItems, submittalItems, timeEntries, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
+  const [comments, voiceNotes, punchListItems, rfiItems, submittalItems, timeEntries, lienWaivers, paymentApps, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
     getPhaseComments(phaseId),
     getPhaseVoiceNotes(phaseId),
     getPunchListItems(phaseId),
     getRFIs(phaseId),
     getSubmittals(phaseId),
     getTimeEntries(phaseId),
+    getLienWaivers(phaseId),
+    getPaymentApplications(phaseId),
     db.staff.findMany({ orderBy: { name: "asc" } }),
     db.checklistTemplate.findMany({
       include: { items: { orderBy: { order: "asc" } } },
@@ -197,6 +203,20 @@ export default async function PhaseDetailPage({
           changeOrders={changeOrders}
           canCreate={canEdit}
           canApprove={canManage}
+        />
+
+        <LienWaiverSection
+          phaseId={phaseId}
+          waivers={lienWaivers}
+          canEdit={canEdit}
+          canManage={canManage}
+        />
+
+        <PaymentApplicationSection
+          phaseId={phaseId}
+          applications={paymentApps}
+          canEdit={canEdit}
+          canManage={canManage}
         />
 
         <DocumentSection

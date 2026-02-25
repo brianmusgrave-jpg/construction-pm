@@ -238,6 +238,24 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       ],
     },
     {
+      id: "lien-waivers",
+      titleKey: "sections.lienWaivers",
+      icon: <ShieldCheck className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "lw-overview", titleKey: "articles.lienWaiversTitle", contentKey: "articles.lienWaiversBody", tags: ["lien", "waiver", "vendor", "conditional", "unconditional", "notarized"] },
+      ],
+    },
+    {
+      id: "payment-apps",
+      titleKey: "sections.paymentApps",
+      icon: <DollarSign className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "pa-overview", titleKey: "articles.paymentAppsTitle", contentKey: "articles.paymentAppsBody", tags: ["payment", "application", "pay app", "AIA", "retainage", "billing"] },
+      ],
+    },
+    {
       id: "voice-notes",
       titleKey: "sections.voiceNotes",
       icon: <Mic className="w-5 h-5" />,

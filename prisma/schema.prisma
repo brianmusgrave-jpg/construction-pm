@@ -84,6 +84,8 @@ model User {
   rfisCreated    RFI[]            @relation("rfi_created")
   submittals     Submittal[]      @relation("submittal_submitted")
   timeEntries    TimeEntry[]      @relation("time_entry_created")
+  lienWaivers    LienWaiver[]     @relation("lien_waiver_created")
+  paymentApps    PaymentApplication[] @relation("pay_app_created")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -189,6 +191,8 @@ model Phase {
   rfis            RFI[]
   submittals      Submittal[]
   timeEntries     TimeEntry[]
+  lienWaivers     LienWaiver[]
+  paymentApps     PaymentApplication[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -1080,6 +1084,82 @@ model QuickBooksSyncLog {
 
   @@index([connectionId, startedAt])
   @@map("quickbooks_sync_logs")
+}
+
+// ── Lien Waivers (Sprint AD #60) ──
+
+model LienWaiver {
+  id            String          @id @default(cuid())
+  waiverType    LienWaiverType  @map("waiver_type")
+  status        LienWaiverStatus @default(PENDING)
+  amount        Decimal?        @db.Decimal(12, 2)
+  throughDate   DateTime?       @map("through_date") @db.Date
+  description   String?         @db.Text
+  vendorName    String          @map("vendor_name")
+  notarized     Boolean         @default(false)
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdBy   User   @relation("lien_waiver_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, status])
+  @@map("lien_waivers")
+}
+
+enum LienWaiverType {
+  CONDITIONAL_PROGRESS
+  UNCONDITIONAL_PROGRESS
+  CONDITIONAL_FINAL
+  UNCONDITIONAL_FINAL
+}
+
+enum LienWaiverStatus {
+  PENDING
+  RECEIVED
+  APPROVED
+  REJECTED
+}
+
+// ── Payment Applications (Sprint AD #61) ──
+
+model PaymentApplication {
+  id              String                  @id @default(cuid())
+  number          Int                     // Pay app number (sequential)
+  periodStart     DateTime                @map("period_start") @db.Date
+  periodEnd       DateTime                @map("period_end") @db.Date
+  scheduledValue  Decimal                 @map("scheduled_value") @db.Decimal(12, 2)
+  workCompleted   Decimal                 @map("work_completed") @db.Decimal(12, 2)
+  materialsStored Decimal                 @default(0) @map("materials_stored") @db.Decimal(12, 2)
+  retainage       Decimal                 @default(0) @db.Decimal(12, 2)
+  previousPayments Decimal               @default(0) @map("previous_payments") @db.Decimal(12, 2)
+  currentDue      Decimal                 @map("current_due") @db.Decimal(12, 2)
+  status          PaymentAppStatus        @default(DRAFT)
+  notes           String?                 @db.Text
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdBy   User   @relation("pay_app_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, number])
+  @@map("payment_applications")
+}
+
+enum PaymentAppStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+  PAID
 }
 
 // ── Client Portal Tokens (Sprint H #39) ──
