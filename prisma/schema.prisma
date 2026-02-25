@@ -86,6 +86,7 @@ model User {
   timeEntries    TimeEntry[]      @relation("time_entry_created")
   lienWaivers    LienWaiver[]     @relation("lien_waiver_created")
   paymentApps    PaymentApplication[] @relation("pay_app_created")
+  drawings       Drawing[]            @relation("drawing_uploaded")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -193,6 +194,7 @@ model Phase {
   timeEntries     TimeEntry[]
   lienWaivers     LienWaiver[]
   paymentApps     PaymentApplication[]
+  drawings        Drawing[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -1160,6 +1162,54 @@ enum PaymentAppStatus {
   APPROVED
   REJECTED
   PAID
+}
+
+// ── Drawing Management (Sprint AE #62) ──
+
+model Drawing {
+  id          String        @id @default(cuid())
+  title       String
+  drawingNumber String      @map("drawing_number")
+  discipline  DrawingDiscipline
+  revision    String        @default("0")
+  status      DrawingStatus @default(CURRENT)
+  description String?       @db.Text
+  fileUrl     String?       @map("file_url") @db.Text
+  sheetSize   String?       @map("sheet_size")
+  scale       String?
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  uploadedBy   User   @relation("drawing_uploaded", fields: [uploadedById], references: [id])
+  uploadedById String @map("uploaded_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([phaseId, drawingNumber, revision])
+  @@index([phaseId, discipline])
+  @@map("drawings")
+}
+
+enum DrawingDiscipline {
+  ARCHITECTURAL
+  STRUCTURAL
+  MECHANICAL
+  ELECTRICAL
+  PLUMBING
+  CIVIL
+  LANDSCAPE
+  FIRE_PROTECTION
+  OTHER
+}
+
+enum DrawingStatus {
+  CURRENT
+  SUPERSEDED
+  VOID
+  FOR_REVIEW
+  PRELIMINARY
 }
 
 // ── Client Portal Tokens (Sprint H #39) ──

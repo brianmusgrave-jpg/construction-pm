@@ -28,6 +28,8 @@ import { LienWaiverSection } from "@/components/phase/LienWaiverSection";
 import { getLienWaivers } from "@/actions/lienWaiver";
 import { PaymentApplicationSection } from "@/components/phase/PaymentApplicationSection";
 import { getPaymentApplications } from "@/actions/paymentApp";
+import { DrawingSection } from "@/components/phase/DrawingSection";
+import { getDrawings } from "@/actions/drawing";
 
 export default async function PhaseDetailPage({
   params,
@@ -79,7 +81,7 @@ export default async function PhaseDetailPage({
 
   const dbc = db as any;
 
-  const [comments, voiceNotes, punchListItems, rfiItems, submittalItems, timeEntries, lienWaivers, paymentApps, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
+  const [comments, voiceNotes, punchListItems, rfiItems, submittalItems, timeEntries, lienWaivers, paymentApps, drawingItems, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
     getPhaseComments(phaseId),
     getPhaseVoiceNotes(phaseId),
     getPunchListItems(phaseId),
@@ -88,6 +90,7 @@ export default async function PhaseDetailPage({
     getTimeEntries(phaseId),
     getLienWaivers(phaseId),
     getPaymentApplications(phaseId),
+    getDrawings(phaseId),
     db.staff.findMany({ orderBy: { name: "asc" } }),
     db.checklistTemplate.findMany({
       include: { items: { orderBy: { order: "asc" } } },
@@ -215,6 +218,13 @@ export default async function PhaseDetailPage({
         <PaymentApplicationSection
           phaseId={phaseId}
           applications={paymentApps}
+          canEdit={canEdit}
+          canManage={canManage}
+        />
+
+        <DrawingSection
+          phaseId={phaseId}
+          drawings={drawingItems}
           canEdit={canEdit}
           canManage={canManage}
         />

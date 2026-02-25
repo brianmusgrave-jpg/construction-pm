@@ -39,6 +39,7 @@ import {
   MessageSquareText,
   FileCheck2,
   Timer,
+  PenTool,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -235,6 +236,15 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "tt-overview", titleKey: "articles.timeTrackingTitle", contentKey: "articles.timeTrackingBody", tags: ["time", "hours", "labor", "tracking", "approve", "cost code"] },
+      ],
+    },
+    {
+      id: "drawings",
+      titleKey: "sections.drawings",
+      icon: <PenTool className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "dr-overview", titleKey: "articles.drawingsTitle", contentKey: "articles.drawingsBody", tags: ["drawing", "plan", "blueprint", "revision", "discipline", "architectural", "structural"] },
       ],
     },
     {
