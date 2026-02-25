@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import db from "@/lib/db";
+import { db } from "@/lib/db";
 import { getFeatureToggles, getSystemStats, getUsers } from "@/actions/admin";
 import { AdminPanelClient } from "@/components/admin/AdminPanelClient";
 import { ActivityLogClient } from "@/components/activity/ActivityLogClient";
