@@ -464,7 +464,8 @@
       "insurance": "Insurance & Compliance",
       "voiceNotes": "Voice Notes",
       "rfis": "RFIs",
-      "submittals": "Submittals"
+      "submittals": "Submittals",
+      "timeTracking": "Time Tracking"
     },
     "articles": {
       "appOverview": "App Overview",
@@ -554,7 +555,9 @@
       "rfiTitle": "RFI Workflow",
       "rfiBody": "Track Requests for Information (RFIs) with numbered sequencing, ball-in-court tracking, priority levels, and response workflows. Create RFIs with questions, assign responsible parties, set due dates, and manage the full lifecycle from open to answered to closed.",
       "submittalTitle": "Submittal Tracking",
-      "submittalBody": "Manage the submittal review process with spec section references, revision tracking, and a full approval workflow. Submittals progress through Pending → Under Review → Approved/Approved as Noted/Revise & Resubmit/Rejected. Track revision history and return dates."
+      "submittalBody": "Manage the submittal review process with spec section references, revision tracking, and a full approval workflow. Submittals progress through Pending → Under Review → Approved/Approved as Noted/Revise & Resubmit/Rejected. Track revision history and return dates.",
+      "timeTrackingTitle": "Time Tracking",
+      "timeTrackingBody": "Log labor hours for each phase with cost codes, worker assignments, and an approval workflow. Managers can approve or reject entries. View total, approved, and pending hours at a glance. Filter by status to focus on entries needing attention."
     },
     "replayIntroDesc": "Walk through the app's key features step by step",
     "quickLinkNotifications": "Notifications",
@@ -1001,5 +1004,35 @@
     "errorStatus": "Failed to update status",
     "errorRevise": "Failed to create revision",
     "errorDelete": "Failed to delete submittal"
+  },
+  "timeTracking": {
+    "title": "Time Tracking",
+    "addEntry": "Log Time",
+    "selectWorker": "Select worker...",
+    "hoursPlaceholder": "Hours",
+    "costCodePlaceholder": "Cost code (optional)",
+    "descriptionPlaceholder": "Work description (optional)",
+    "cancel": "Cancel",
+    "create": "Log Entry",
+    "totalHours": "Total",
+    "approvedHours": "Approved",
+    "pendingApproval": "pending approval",
+    "filterAll": "All",
+    "filterPending": "Pending",
+    "filterApproved": "Approved",
+    "filterRejected": "Rejected",
+    "empty": "No time entries yet",
+    "statusPending": "Pending",
+    "statusApproved": "Approved",
+    "statusRejected": "Rejected",
+    "created": "Time entry logged",
+    "approved": "Time entry approved",
+    "rejected": "Time entry rejected",
+    "deleted": "Time entry deleted",
+    "confirmDelete": "Delete this time entry?",
+    "errorCreate": "Failed to log time entry",
+    "errorApprove": "Failed to approve",
+    "errorReject": "Failed to reject",
+    "errorDelete": "Failed to delete"
   }
 }

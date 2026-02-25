@@ -464,7 +464,8 @@
       "insurance": "Assurances et Conformité",
       "voiceNotes": "Notes Vocales",
       "rfis": "RFIs",
-      "submittals": "Soumissions"
+      "submittals": "Soumissions",
+      "timeTracking": "Suivi du Temps"
     },
     "articles": {
       "appOverview": "Vue d'ensemble de l'application",
@@ -554,7 +555,9 @@
       "rfiTitle": "Flux de travail RFI",
       "rfiBody": "Suivez les Demandes d'Information (RFIs) avec numérotation séquentielle, suivi du responsable actuel, niveaux de priorité et flux de réponse. Créez des RFIs avec des questions, assignez des responsables, définissez des dates d'échéance et gérez le cycle complet.",
       "submittalTitle": "Suivi des soumissions",
-      "submittalBody": "Gérez le processus de révision des soumissions avec les références des sections de spécification, le suivi des révisions et un flux d'approbation complet. Les soumissions progressent de En attente à En révision à Approuvé ou Rejeté."
+      "submittalBody": "Gérez le processus de révision des soumissions avec les références des sections de spécification, le suivi des révisions et un flux d'approbation complet. Les soumissions progressent de En attente à En révision à Approuvé ou Rejeté.",
+      "timeTrackingTitle": "Suivi du Temps",
+      "timeTrackingBody": "Enregistrez les heures de travail pour chaque phase avec codes de coût, affectation des ouvriers et flux d'approbation. Les gestionnaires peuvent approuver ou rejeter les saisies. Consultez les heures totales, approuvées et en attente d'un coup d'œil. Filtrez par statut pour vous concentrer sur les saisies nécessitant une attention."
     },
     "replayIntroDesc": "Parcourez les fonctionnalités clés de l'application étape par étape",
     "quickLinkNotifications": "Notifications",
@@ -1001,5 +1004,35 @@
     "errorStatus": "Échec de la mise à jour du statut",
     "errorRevise": "Échec de la création de la révision",
     "errorDelete": "Échec de la suppression de la soumission"
+  },
+  "timeTracking": {
+    "title": "Suivi du Temps",
+    "addEntry": "Saisir le Temps",
+    "selectWorker": "Sélectionner un ouvrier...",
+    "hoursPlaceholder": "Heures",
+    "costCodePlaceholder": "Code de coût (optionnel)",
+    "descriptionPlaceholder": "Description du travail (optionnel)",
+    "cancel": "Annuler",
+    "create": "Enregistrer",
+    "totalHours": "Total",
+    "approvedHours": "Approuvées",
+    "pendingApproval": "en attente d'approbation",
+    "filterAll": "Tous",
+    "filterPending": "En attente",
+    "filterApproved": "Approuvés",
+    "filterRejected": "Rejetés",
+    "empty": "Aucune saisie de temps",
+    "statusPending": "En attente",
+    "statusApproved": "Approuvé",
+    "statusRejected": "Rejeté",
+    "created": "Temps enregistré",
+    "approved": "Saisie approuvée",
+    "rejected": "Saisie rejetée",
+    "deleted": "Saisie supprimée",
+    "confirmDelete": "Supprimer cette saisie de temps ?",
+    "errorCreate": "Échec de l'enregistrement",
+    "errorApprove": "Échec de l'approbation",
+    "errorReject": "Échec du rejet",
+    "errorDelete": "Échec de la suppression"
   }
 }

@@ -38,6 +38,7 @@ import {
   ListChecks,
   MessageSquareText,
   FileCheck2,
+  Timer,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -225,6 +226,15 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "sub-overview", titleKey: "articles.submittalTitle", contentKey: "articles.submittalBody", tags: ["submittal", "review", "approval", "spec", "revision", "shop drawing"] },
+      ],
+    },
+    {
+      id: "time-tracking",
+      titleKey: "sections.timeTracking",
+      icon: <Timer className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "tt-overview", titleKey: "articles.timeTrackingTitle", contentKey: "articles.timeTrackingBody", tags: ["time", "hours", "labor", "tracking", "approve", "cost code"] },
       ],
     },
     {

@@ -83,6 +83,7 @@ model User {
   punchListItems PunchListItem[]  @relation("punch_list_created")
   rfisCreated    RFI[]            @relation("rfi_created")
   submittals     Submittal[]      @relation("submittal_submitted")
+  timeEntries    TimeEntry[]      @relation("time_entry_created")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -187,6 +188,7 @@ model Phase {
   punchListItems  PunchListItem[]
   rfis            RFI[]
   submittals      Submittal[]
+  timeEntries     TimeEntry[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -231,6 +233,7 @@ model Staff {
   punchListAssigned PunchListItem[] @relation("punch_list_assigned")
   rfiAssigned       RFI[]            @relation("rfi_assigned")
   submittalAssigned Submittal[]      @relation("submittal_assigned")
+  timeEntryWorker   TimeEntry[]      @relation("time_entry_worker")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -901,6 +904,41 @@ enum SubmittalStatus {
   APPROVED
   APPROVED_AS_NOTED
   REVISE_AND_RESUBMIT
+  REJECTED
+}
+
+// ── Time Tracking (Sprint AC #59) ──
+
+model TimeEntry {
+  id          String          @id @default(cuid())
+  date        DateTime        @db.Date
+  hours       Float
+  costCode    String?         @map("cost_code")
+  description String?         @db.Text
+  status      TimeEntryStatus @default(PENDING)
+  approvedAt  DateTime?       @map("approved_at")
+  approvedById String?        @map("approved_by_id")
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  worker   Staff  @relation("time_entry_worker", fields: [workerId], references: [id])
+  workerId String @map("worker_id")
+
+  createdBy   User   @relation("time_entry_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, date])
+  @@index([workerId, date])
+  @@map("time_entries")
+}
+
+enum TimeEntryStatus {
+  PENDING
+  APPROVED
   REJECTED
 }
 

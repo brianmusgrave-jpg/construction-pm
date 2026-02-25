@@ -464,7 +464,8 @@
       "insurance": "Seguros e Conformidade",
       "voiceNotes": "Notas de Voz",
       "rfis": "RFIs",
-      "submittals": "Submissões"
+      "submittals": "Submissões",
+      "timeTracking": "Controle de Horas"
     },
     "articles": {
       "appOverview": "Visão geral do app",
@@ -554,7 +555,9 @@
       "rfiTitle": "Fluxo de trabalho RFI",
       "rfiBody": "Rastreie Solicitações de Informação (RFIs) com sequência numerada, rastreamento de responsável atual, níveis de prioridade e fluxos de resposta. Crie RFIs com perguntas, atribua responsáveis, defina datas de vencimento e gerencie o ciclo completo.",
       "submittalTitle": "Rastreamento de submissões",
-      "submittalBody": "Gerencie o processo de revisão de submissões com referências de seções de especificação, rastreamento de revisões e um fluxo completo de aprovação. As submissões progridem de Pendente a Em revisão a Aprovado ou Rejeitado."
+      "submittalBody": "Gerencie o processo de revisão de submissões com referências de seções de especificação, rastreamento de revisões e um fluxo completo de aprovação. As submissões progridem de Pendente a Em revisão a Aprovado ou Rejeitado.",
+      "timeTrackingTitle": "Controle de Horas",
+      "timeTrackingBody": "Registre horas de trabalho para cada fase com códigos de custo, atribuição de trabalhadores e fluxo de aprovação. Gerentes podem aprovar ou rejeitar registros. Veja horas totais, aprovadas e pendentes de relance. Filtre por status para focar nos registros que precisam de atenção."
     },
     "replayIntroDesc": "Conheça os principais recursos do aplicativo passo a passo",
     "quickLinkNotifications": "Notificações",
@@ -1001,5 +1004,35 @@
     "errorStatus": "Erro ao atualizar status",
     "errorRevise": "Erro ao criar revisão",
     "errorDelete": "Erro ao excluir submissão"
+  },
+  "timeTracking": {
+    "title": "Controle de Horas",
+    "addEntry": "Registrar Horas",
+    "selectWorker": "Selecionar trabalhador...",
+    "hoursPlaceholder": "Horas",
+    "costCodePlaceholder": "Código de custo (opcional)",
+    "descriptionPlaceholder": "Descrição do trabalho (opcional)",
+    "cancel": "Cancelar",
+    "create": "Registrar",
+    "totalHours": "Total",
+    "approvedHours": "Aprovadas",
+    "pendingApproval": "pendentes de aprovação",
+    "filterAll": "Todos",
+    "filterPending": "Pendentes",
+    "filterApproved": "Aprovados",
+    "filterRejected": "Rejeitados",
+    "empty": "Nenhum registro de horas",
+    "statusPending": "Pendente",
+    "statusApproved": "Aprovado",
+    "statusRejected": "Rejeitado",
+    "created": "Horas registradas",
+    "approved": "Registro aprovado",
+    "rejected": "Registro rejeitado",
+    "deleted": "Registro excluído",
+    "confirmDelete": "Excluir este registro de horas?",
+    "errorCreate": "Erro ao registrar horas",
+    "errorApprove": "Erro ao aprovar",
+    "errorReject": "Erro ao rejeitar",
+    "errorDelete": "Erro ao excluir"
   }
 }

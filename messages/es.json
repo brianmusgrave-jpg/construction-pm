@@ -464,7 +464,8 @@
       "insurance": "Seguros y Cumplimiento",
       "voiceNotes": "Notas de Voz",
       "rfis": "RFIs",
-      "submittals": "Envíos"
+      "submittals": "Envíos",
+      "timeTracking": "Control de Tiempo"
     },
     "articles": {
       "appOverview": "Descripción general de la app",
@@ -554,7 +555,9 @@
       "rfiTitle": "Flujo de trabajo RFI",
       "rfiBody": "Rastree Solicitudes de Información (RFIs) con secuencia numerada, seguimiento de responsable actual, niveles de prioridad y flujos de respuesta. Cree RFIs con preguntas, asigne responsables, establezca fechas de vencimiento y gestione el ciclo completo.",
       "submittalTitle": "Seguimiento de envíos",
-      "submittalBody": "Gestione el proceso de revisión de envíos con referencias de secciones de especificación, seguimiento de revisiones y un flujo completo de aprobación. Los envíos progresan de Pendiente a En revisión a Aprobado o Rechazado."
+      "submittalBody": "Gestione el proceso de revisión de envíos con referencias de secciones de especificación, seguimiento de revisiones y un flujo completo de aprobación. Los envíos progresan de Pendiente a En revisión a Aprobado o Rechazado.",
+      "timeTrackingTitle": "Control de Tiempo",
+      "timeTrackingBody": "Registre horas de trabajo para cada fase con códigos de costo, asignación de trabajadores y flujo de aprobación. Los gerentes pueden aprobar o rechazar entradas. Vea horas totales, aprobadas y pendientes de un vistazo. Filtre por estado para enfocarse en las entradas que necesitan atención."
     },
     "replayIntroDesc": "Recorra las funciones clave de la aplicación paso a paso",
     "quickLinkNotifications": "Notificaciones",
@@ -1001,5 +1004,35 @@
     "errorStatus": "Error al actualizar estado",
     "errorRevise": "Error al crear revisión",
     "errorDelete": "Error al eliminar envío"
+  },
+  "timeTracking": {
+    "title": "Control de Tiempo",
+    "addEntry": "Registrar Tiempo",
+    "selectWorker": "Seleccionar trabajador...",
+    "hoursPlaceholder": "Horas",
+    "costCodePlaceholder": "Código de costo (opcional)",
+    "descriptionPlaceholder": "Descripción del trabajo (opcional)",
+    "cancel": "Cancelar",
+    "create": "Registrar",
+    "totalHours": "Total",
+    "approvedHours": "Aprobadas",
+    "pendingApproval": "pendientes de aprobación",
+    "filterAll": "Todos",
+    "filterPending": "Pendientes",
+    "filterApproved": "Aprobados",
+    "filterRejected": "Rechazados",
+    "empty": "Sin registros de tiempo",
+    "statusPending": "Pendiente",
+    "statusApproved": "Aprobado",
+    "statusRejected": "Rechazado",
+    "created": "Tiempo registrado",
+    "approved": "Registro aprobado",
+    "rejected": "Registro rechazado",
+    "deleted": "Registro eliminado",
+    "confirmDelete": "¿Eliminar este registro de tiempo?",
+    "errorCreate": "Error al registrar tiempo",
+    "errorApprove": "Error al aprobar",
+    "errorReject": "Error al rechazar",
+    "errorDelete": "Error al eliminar"
   }
 }
