@@ -87,6 +87,7 @@ model User {
   lienWaivers    LienWaiver[]     @relation("lien_waiver_created")
   paymentApps    PaymentApplication[] @relation("pay_app_created")
   drawings       Drawing[]            @relation("drawing_uploaded")
+  estimates      Estimate[]           @relation("estimate_created")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -195,6 +196,7 @@ model Phase {
   lienWaivers     LienWaiver[]
   paymentApps     PaymentApplication[]
   drawings        Drawing[]
+  estimates       Estimate[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -1210,6 +1212,55 @@ enum DrawingStatus {
   VOID
   FOR_REVIEW
   PRELIMINARY
+}
+
+// ── Estimating & Takeoffs (Sprint AF #63) ──
+
+model Estimate {
+  id            String          @id @default(cuid())
+  name          String
+  description   String?         @db.Text
+  status        EstimateStatus  @default(DRAFT)
+  totalCost     Decimal         @default(0) @map("total_cost") @db.Decimal(12, 2)
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdBy   User   @relation("estimate_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  items     TakeoffItem[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId])
+  @@map("estimates")
+}
+
+model TakeoffItem {
+  id          String  @id @default(cuid())
+  description String
+  quantity    Decimal @db.Decimal(12, 3)
+  unit        String
+  unitCost    Decimal @map("unit_cost") @db.Decimal(12, 2)
+  totalCost   Decimal @map("total_cost") @db.Decimal(12, 2)
+  category    String?
+  notes       String? @db.Text
+
+  estimate   Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+  estimateId String   @map("estimate_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([estimateId])
+  @@map("takeoff_items")
+}
+
+enum EstimateStatus {
+  DRAFT
+  FINAL
+  APPROVED
+  REVISED
 }
 
 // ── Client Portal Tokens (Sprint H #39) ──

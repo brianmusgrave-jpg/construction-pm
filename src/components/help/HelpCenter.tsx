@@ -40,6 +40,7 @@ import {
   FileCheck2,
   Timer,
   PenTool,
+  Calculator,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -236,6 +237,15 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "tt-overview", titleKey: "articles.timeTrackingTitle", contentKey: "articles.timeTrackingBody", tags: ["time", "hours", "labor", "tracking", "approve", "cost code"] },
+      ],
+    },
+    {
+      id: "estimates",
+      titleKey: "sections.estimates",
+      icon: <Calculator className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "est-overview", titleKey: "articles.estimatesTitle", contentKey: "articles.estimatesBody", tags: ["estimate", "takeoff", "quantity", "cost", "budget", "line item", "unit cost"] },
       ],
     },
     {
