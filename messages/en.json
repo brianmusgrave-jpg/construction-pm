@@ -75,7 +75,8 @@
     "photos": "Photos",
     "contractorPortal": "Contractor Portal",
     "openMenu": "Open menu",
-    "activityLog": "Activity Log"
+    "activityLog": "Activity Log",
+    "admin": "Admin"
   },
   "auth": {
     "signIn": "Sign In",
@@ -465,7 +466,8 @@
       "voiceNotes": "Voice Notes",
       "rfis": "RFIs",
       "submittals": "Submittals",
-      "timeTracking": "Time Tracking"
+      "timeTracking": "Time Tracking",
+      "adminPanel": "Admin Panel"
     },
     "articles": {
       "appOverview": "App Overview",
@@ -586,7 +588,9 @@
     "articles.drawingsBody": "Track all construction drawings organized by discipline (architectural, structural, MEP, civil, etc.). Add drawings with number, title, revision, sheet size, and scale. Manage drawing status — current, superseded, preliminary, for review, or void. Filter by discipline to find drawings quickly. Unique constraint ensures no duplicate drawing number + revision combinations per phase.",
     "sections.estimates": "Estimates & Takeoffs",
     "articles.estimatesTitle": "Estimating and Quantity Takeoffs",
-    "articles.estimatesBody": "Create detailed cost estimates with quantity takeoff line items. Each estimate contains line items with description, quantity, unit, and unit cost — the total is calculated automatically. Organize items by category (labor, material, equipment, etc.). Finalize estimates for review and get manager approval. Track the grand total across all estimates for the phase."
+    "articles.estimatesBody": "Create detailed cost estimates with quantity takeoff line items. Each estimate contains line items with description, quantity, unit, and unit cost — the total is calculated automatically. Organize items by category (labor, material, equipment, etc.). Finalize estimates for review and get manager approval. Track the grand total across all estimates for the phase.",
+    "articles.adminPanelTitle": "Admin Panel",
+    "articles.adminPanelBody": "The Admin Panel is available exclusively to users with the Admin role. Access it from the sidebar under the Admin link.\n\nFeature Toggles:\nEnable or disable platform features globally. Features are grouped by category: Field Operations, Financial, Integrations, and General. Disabled features are hidden from all users.\n\nActivity Log:\nView and manage the full system activity log. Admins can undo certain actions directly from the log, including phase status changes, member updates, and checklist toggles.\n\nUser Management:\nView all users, change roles, and deactivate accounts. Deactivating a user removes them from all projects and ends their active sessions. You cannot change your own role or deactivate yourself.\n\nSystem Health:\nMonitor system statistics including user counts, project counts, document and photo storage, and recent activity metrics.\n\nAudit Export:\nDownload a CSV file of up to 5,000 recent activity log entries for compliance and record-keeping."
   },
   "tour": {
     "welcomeTitle": "Welcome to Construction PM!",
@@ -1199,5 +1203,61 @@
     "errorDeleteItem": "Failed to remove line item",
     "errorStatus": "Failed to update status",
     "errorDelete": "Failed to delete estimate"
+  },
+  "adminPanel": {
+    "title": "Admin Panel",
+    "subtitle": "Manage features, users, and system settings",
+    "tabs": {
+      "features": "Feature Toggles",
+      "activity": "Activity Log",
+      "users": "User Management",
+      "health": "System Health",
+      "audit": "Audit Export"
+    },
+    "featuresDescription": "Enable or disable features across the platform",
+    "featureEnabled": "Feature enabled",
+    "featureDisabled": "Feature disabled",
+    "error": "Something went wrong",
+    "categories": {
+      "field": "Field Operations",
+      "financial": "Financial",
+      "integrations": "Integrations",
+      "general": "General"
+    },
+    "usersDescription": "Manage user roles and access across the platform",
+    "user": "User",
+    "role": "Role",
+    "projects": "Projects",
+    "joined": "Joined",
+    "actions": "Actions",
+    "deactivate": "Deactivate",
+    "confirmDeactivate": "Remove {name} from all projects and end their sessions?",
+    "roleUpdated": "Role updated",
+    "userDeactivated": "User deactivated",
+    "healthDescription": "Overview of system resources and usage",
+    "stats": {
+      "users": "Users",
+      "projects": "Projects",
+      "active": "active",
+      "phases": "Phases",
+      "staff": "Staff",
+      "documents": "Documents",
+      "photos": "Photos",
+      "storage": "Storage",
+      "activities": "Activities",
+      "last7days": "last 7 days"
+    },
+    "systemInfo": "System Information",
+    "version": "Version",
+    "framework": "Framework",
+    "database": "Database",
+    "languages": "Languages",
+    "auditDescription": "Download a CSV export of all activity logs",
+    "exportAuditLog": "Export Audit Log",
+    "exportDescription": "Generate a CSV file with up to 5,000 most recent activity log entries for compliance and record-keeping.",
+    "downloadCSV": "Download Audit CSV",
+    "auditExported": "Audit log exported",
+    "auditNote": "Data Retention Note",
+    "auditNoteDescription": "Exports up to 5,000 most recent entries. For complete data, contact your database administrator."
   }
 }

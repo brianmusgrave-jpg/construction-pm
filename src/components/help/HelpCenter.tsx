@@ -332,6 +332,15 @@ function useGuides(t: (key: string) => string): GuideSection[] {
         { id: "settings-security", titleKey: "articles.securityAccess", contentKey: "articles.securityAccessContent", tags: ["security", "login", "password", "oauth", "access"] },
       ],
     },
+    {
+      id: "admin-panel",
+      titleKey: "sections.adminPanel",
+      icon: <ShieldCheck className="w-5 h-5" />,
+      category: "admin",
+      articles: [
+        { id: "admin-panel-overview", titleKey: "articles.adminPanelTitle", contentKey: "articles.adminPanelBody", tags: ["admin", "feature toggle", "user management", "system health", "audit", "export"] },
+      ],
+    },
   ];
 }
 

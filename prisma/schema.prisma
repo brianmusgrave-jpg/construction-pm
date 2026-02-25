@@ -617,6 +617,24 @@ model OrgSettings {
   @@map("org_settings")
 }
 
+// ── Feature Toggles (Sprint AG) ──
+
+model FeatureToggle {
+  id         String  @id @default(cuid())
+  featureKey String  @unique @map("feature_key")
+  enabled    Boolean @default(true)
+  label      String  // Human-readable name
+  category   String  @default("general") // "core", "financial", "field", "integrations"
+
+  disabledBy   String?   @map("disabled_by") // userId who toggled it off
+  disabledAt   DateTime? @map("disabled_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("feature_toggles")
+}
+
 // ── Invitations ──
 
 model Invitation {

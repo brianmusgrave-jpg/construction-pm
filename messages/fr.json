@@ -75,7 +75,8 @@
     "photos": "Photos",
     "contractorPortal": "Portail entrepreneur",
     "openMenu": "Ouvrir le menu",
-    "activityLog": "Journal d'Activité"
+    "activityLog": "Journal d'Activité",
+    "admin": "Admin"
   },
   "auth": {
     "signIn": "Connexion",
@@ -465,7 +466,8 @@
       "voiceNotes": "Notes Vocales",
       "rfis": "RFIs",
       "submittals": "Soumissions",
-      "timeTracking": "Suivi du Temps"
+      "timeTracking": "Suivi du Temps",
+      "adminPanel": "Panneau d'Administration"
     },
     "articles": {
       "appOverview": "Vue d'ensemble de l'application",
@@ -586,7 +588,9 @@
     "articles.drawingsBody": "Suivez tous les plans de construction organisés par discipline (architectural, structurel, MEP, civil, etc.). Ajoutez des plans avec numéro, titre, révision, format de feuille et échelle. Gérez le statut — en vigueur, remplacé, préliminaire, en révision ou annulé. Filtrez par discipline pour trouver rapidement les plans.",
     "sections.estimates": "Devis et Métrés",
     "articles.estimatesTitle": "Devis et Métrés de Quantités",
-    "articles.estimatesBody": "Créez des devis détaillés avec des postes de métré. Chaque devis contient des postes avec description, quantité, unité et coût unitaire — le total est calculé automatiquement. Organisez par catégorie (main-d'œuvre, matériau, équipement, etc.). Finalisez les devis pour révision et obtenez l'approbation du gestionnaire."
+    "articles.estimatesBody": "Créez des devis détaillés avec des postes de métré. Chaque devis contient des postes avec description, quantité, unité et coût unitaire — le total est calculé automatiquement. Organisez par catégorie (main-d'œuvre, matériau, équipement, etc.). Finalisez les devis pour révision et obtenez l'approbation du gestionnaire.",
+    "articles.adminPanelTitle": "Panneau d'Administration",
+    "articles.adminPanelBody": "Le Panneau d'Administration est disponible exclusivement pour les utilisateurs avec le rôle Administrateur. Accédez-y depuis la barre latérale.\n\nFonctionnalités:\nActiver ou désactiver les fonctionnalités de la plateforme globalement.\n\nJournal d'Activité:\nVoir et gérer le journal complet des activités. Les administrateurs peuvent annuler certaines actions.\n\nGestion des Utilisateurs:\nVoir tous les utilisateurs, modifier les rôles et désactiver les comptes.\n\nSanté du Système:\nSurveiller les statistiques du système.\n\nExport d'Audit:\nTélécharger un fichier CSV de jusqu'à 5 000 entrées récentes."
   },
   "tour": {
     "welcomeTitle": "Bienvenue sur Construction PM !",
@@ -1199,5 +1203,61 @@
     "errorDeleteItem": "Erreur lors de la suppression du poste",
     "errorStatus": "Erreur lors de la mise à jour du statut",
     "errorDelete": "Erreur lors de la suppression du devis"
+  },
+  "adminPanel": {
+    "title": "Panneau d'Administration",
+    "subtitle": "Gérer les fonctionnalités, les utilisateurs et les paramètres système",
+    "tabs": {
+      "features": "Fonctionnalités",
+      "activity": "Journal d'Activité",
+      "users": "Gestion des Utilisateurs",
+      "health": "Santé du Système",
+      "audit": "Export d'Audit"
+    },
+    "featuresDescription": "Activer ou désactiver les fonctionnalités de la plateforme",
+    "featureEnabled": "Fonctionnalité activée",
+    "featureDisabled": "Fonctionnalité désactivée",
+    "error": "Une erreur est survenue",
+    "categories": {
+      "field": "Opérations Terrain",
+      "financial": "Financier",
+      "integrations": "Intégrations",
+      "general": "Général"
+    },
+    "usersDescription": "Gérer les rôles et l'accès des utilisateurs",
+    "user": "Utilisateur",
+    "role": "Rôle",
+    "projects": "Projets",
+    "joined": "Inscription",
+    "actions": "Actions",
+    "deactivate": "Désactiver",
+    "confirmDeactivate": "Retirer {name} de tous les projets et mettre fin à ses sessions ?",
+    "roleUpdated": "Rôle mis à jour",
+    "userDeactivated": "Utilisateur désactivé",
+    "healthDescription": "Aperçu des ressources et de l'utilisation du système",
+    "stats": {
+      "users": "Utilisateurs",
+      "projects": "Projets",
+      "active": "actifs",
+      "phases": "Phases",
+      "staff": "Personnel",
+      "documents": "Documents",
+      "photos": "Photos",
+      "storage": "Stockage",
+      "activities": "Activités",
+      "last7days": "7 derniers jours"
+    },
+    "systemInfo": "Informations Système",
+    "version": "Version",
+    "framework": "Framework",
+    "database": "Base de Données",
+    "languages": "Langues",
+    "auditDescription": "Télécharger une exportation CSV de tous les journaux d'activité",
+    "exportAuditLog": "Exporter le Journal d'Audit",
+    "exportDescription": "Générer un fichier CSV avec jusqu'à 5 000 entrées les plus récentes pour la conformité.",
+    "downloadCSV": "Télécharger CSV d'Audit",
+    "auditExported": "Journal d'audit exporté",
+    "auditNote": "Note de Conservation des Données",
+    "auditNoteDescription": "Exporte jusqu'à 5 000 entrées les plus récentes. Pour les données complètes, contactez votre administrateur."
   }
 }

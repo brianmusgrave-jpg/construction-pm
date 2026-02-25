@@ -18,6 +18,7 @@ import {
   BarChart3,
   HelpCircle,
   ScrollText,
+  ShieldCheck,
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 import { useTranslations } from "next-intl";
@@ -50,7 +51,7 @@ function getNavigation(role: string, t: (key: string) => string) {
     ];
   }
 
-  return [
+  const managerNav = [
     ...base,
     { name: t("directory"), href: "/dashboard/directory", icon: Users },
     { name: t("activityLog"), href: "/dashboard/activity", icon: ScrollText },
@@ -58,6 +59,17 @@ function getNavigation(role: string, t: (key: string) => string) {
     { name: t("settings"), href: "/dashboard/settings", icon: Settings },
     { name: t("help"), href: "/dashboard/help", icon: HelpCircle },
   ];
+
+  if (role === "ADMIN") {
+    // Insert admin link before help
+    managerNav.splice(managerNav.length - 1, 0, {
+      name: t("admin"),
+      href: "/dashboard/admin",
+      icon: ShieldCheck,
+    });
+  }
+
+  return managerNav;
 }
 
 export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread = 0 }: SidebarProps) {

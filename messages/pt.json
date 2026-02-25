@@ -75,7 +75,8 @@
     "photos": "Fotos",
     "contractorPortal": "Portal do empreiteiro",
     "openMenu": "Abrir menu",
-    "activityLog": "Registro de Atividade"
+    "activityLog": "Registro de Atividade",
+    "admin": "Admin"
   },
   "auth": {
     "signIn": "Entrar",
@@ -465,7 +466,8 @@
       "voiceNotes": "Notas de Voz",
       "rfis": "RFIs",
       "submittals": "Submissões",
-      "timeTracking": "Controle de Horas"
+      "timeTracking": "Controle de Horas",
+      "adminPanel": "Painel de Administração"
     },
     "articles": {
       "appOverview": "Visão geral do app",
@@ -586,7 +588,9 @@
     "articles.drawingsBody": "Acompanhe todos os desenhos de construção organizados por disciplina (arquitetônico, estrutural, MEP, civil, etc.). Adicione desenhos com número, título, revisão, tamanho de folha e escala. Gerencie o status — vigente, substituído, preliminar, em revisão ou anulado. Filtre por disciplina para encontrar desenhos rapidamente.",
     "sections.estimates": "Estimativas e Levantamentos",
     "articles.estimatesTitle": "Estimativa e Levantamento de Quantidades",
-    "articles.estimatesBody": "Crie estimativas de custo detalhadas com itens de levantamento de quantidades. Cada estimativa contém itens com descrição, quantidade, unidade e custo unitário — o total é calculado automaticamente. Organize por categoria (mão de obra, material, equipamento, etc.). Finalize estimativas para revisão e obtenha aprovação do gerente."
+    "articles.estimatesBody": "Crie estimativas de custo detalhadas com itens de levantamento de quantidades. Cada estimativa contém itens com descrição, quantidade, unidade e custo unitário — o total é calculado automaticamente. Organize por categoria (mão de obra, material, equipamento, etc.). Finalize estimativas para revisão e obtenha aprovação do gerente.",
+    "articles.adminPanelTitle": "Painel de Administração",
+    "articles.adminPanelBody": "O Painel de Administração está disponível exclusivamente para usuários com o papel de Administrador. Acesse-o pela barra lateral.\n\nRecursos do Sistema:\nAtivar ou desativar recursos da plataforma globalmente. Os recursos são agrupados por categoria.\n\nRegistro de Atividades:\nVer e gerenciar o registro completo de atividades do sistema. Administradores podem desfazer certas ações.\n\nGestão de Usuários:\nVer todos os usuários, alterar funções e desativar contas.\n\nSaúde do Sistema:\nMonitorar estatísticas do sistema.\n\nExportar Auditoria:\nBaixar um arquivo CSV de até 5.000 entradas recentes."
   },
   "tour": {
     "welcomeTitle": "Bem-vindo ao Construction PM!",
@@ -1199,5 +1203,61 @@
     "errorDeleteItem": "Erro ao remover item",
     "errorStatus": "Erro ao atualizar status",
     "errorDelete": "Erro ao excluir estimativa"
+  },
+  "adminPanel": {
+    "title": "Painel de Administração",
+    "subtitle": "Gerenciar recursos, usuários e configurações do sistema",
+    "tabs": {
+      "features": "Recursos",
+      "activity": "Registro de Atividades",
+      "users": "Gestão de Usuários",
+      "health": "Saúde do Sistema",
+      "audit": "Exportar Auditoria"
+    },
+    "featuresDescription": "Ativar ou desativar recursos em toda a plataforma",
+    "featureEnabled": "Recurso ativado",
+    "featureDisabled": "Recurso desativado",
+    "error": "Algo deu errado",
+    "categories": {
+      "field": "Operações de Campo",
+      "financial": "Financeiro",
+      "integrations": "Integrações",
+      "general": "Geral"
+    },
+    "usersDescription": "Gerenciar funções e acesso dos usuários na plataforma",
+    "user": "Usuário",
+    "role": "Função",
+    "projects": "Projetos",
+    "joined": "Cadastro",
+    "actions": "Ações",
+    "deactivate": "Desativar",
+    "confirmDeactivate": "Remover {name} de todos os projetos e encerrar suas sessões?",
+    "roleUpdated": "Função atualizada",
+    "userDeactivated": "Usuário desativado",
+    "healthDescription": "Visão geral dos recursos e uso do sistema",
+    "stats": {
+      "users": "Usuários",
+      "projects": "Projetos",
+      "active": "ativos",
+      "phases": "Fases",
+      "staff": "Equipe",
+      "documents": "Documentos",
+      "photos": "Fotos",
+      "storage": "Armazenamento",
+      "activities": "Atividades",
+      "last7days": "últimos 7 dias"
+    },
+    "systemInfo": "Informações do Sistema",
+    "version": "Versão",
+    "framework": "Framework",
+    "database": "Banco de Dados",
+    "languages": "Idiomas",
+    "auditDescription": "Baixar uma exportação CSV de todos os registros de atividade",
+    "exportAuditLog": "Exportar Registro de Auditoria",
+    "exportDescription": "Gerar um arquivo CSV com até 5.000 entradas mais recentes para conformidade e registro.",
+    "downloadCSV": "Baixar CSV de Auditoria",
+    "auditExported": "Registro de auditoria exportado",
+    "auditNote": "Nota de Retenção de Dados",
+    "auditNoteDescription": "Exporta até 5.000 entradas mais recentes. Para dados completos, entre em contato com seu administrador de banco de dados."
   }
 }
