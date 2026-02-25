@@ -36,6 +36,8 @@ import {
   DollarSign,
   Mic,
   ListChecks,
+  MessageSquareText,
+  FileCheck2,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -205,6 +207,24 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "pl-overview", titleKey: "articles.punchListTitle", contentKey: "articles.punchListBody", tags: ["punch", "list", "deficiency", "snag", "closeout", "completion"] },
+      ],
+    },
+    {
+      id: "rfis",
+      titleKey: "sections.rfis",
+      icon: <MessageSquareText className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "rfi-overview", titleKey: "articles.rfiTitle", contentKey: "articles.rfiBody", tags: ["rfi", "request", "information", "question", "answer", "ball-in-court"] },
+      ],
+    },
+    {
+      id: "submittals",
+      titleKey: "sections.submittals",
+      icon: <FileCheck2 className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "sub-overview", titleKey: "articles.submittalTitle", contentKey: "articles.submittalBody", tags: ["submittal", "review", "approval", "spec", "revision", "shop drawing"] },
       ],
     },
     {

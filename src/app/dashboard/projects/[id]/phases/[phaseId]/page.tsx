@@ -18,6 +18,10 @@ import { VoiceNoteSection } from "@/components/phase/VoiceNoteSection";
 import { getPhaseVoiceNotes } from "@/actions/voiceNotes";
 import { PunchListSection } from "@/components/phase/PunchListSection";
 import { getPunchListItems } from "@/actions/punchList";
+import { RFISection } from "@/components/phase/RFISection";
+import { getRFIs } from "@/actions/rfi";
+import { SubmittalSection } from "@/components/phase/SubmittalSection";
+import { getSubmittals } from "@/actions/submittal";
 
 export default async function PhaseDetailPage({
   params,
@@ -69,10 +73,12 @@ export default async function PhaseDetailPage({
 
   const dbc = db as any;
 
-  const [comments, voiceNotes, punchListItems, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
+  const [comments, voiceNotes, punchListItems, rfiItems, submittalItems, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
     getPhaseComments(phaseId),
     getPhaseVoiceNotes(phaseId),
     getPunchListItems(phaseId),
+    getRFIs(phaseId),
+    getSubmittals(phaseId),
     db.staff.findMany({ orderBy: { name: "asc" } }),
     db.checklistTemplate.findMany({
       include: { items: { orderBy: { order: "asc" } } },
@@ -135,6 +141,22 @@ export default async function PhaseDetailPage({
         <PunchListSection
           phaseId={phaseId}
           items={punchListItems}
+          allStaff={allStaff}
+          canEdit={canEdit}
+          canManage={canManage}
+        />
+
+        <RFISection
+          phaseId={phaseId}
+          rfis={rfiItems}
+          allStaff={allStaff}
+          canEdit={canEdit}
+          canManage={canManage}
+        />
+
+        <SubmittalSection
+          phaseId={phaseId}
+          submittals={submittalItems}
           allStaff={allStaff}
           canEdit={canEdit}
           canManage={canManage}

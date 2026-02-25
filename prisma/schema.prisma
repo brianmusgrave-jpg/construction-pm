@@ -81,6 +81,8 @@ model User {
   dailyLogs      DailyLog[]       @relation("daily_log_author")
   voiceNotes     VoiceNote[]      @relation("voice_notes")
   punchListItems PunchListItem[]  @relation("punch_list_created")
+  rfisCreated    RFI[]            @relation("rfi_created")
+  submittals     Submittal[]      @relation("submittal_submitted")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -183,6 +185,8 @@ model Phase {
   materials       Material[]
   voiceNotes      VoiceNote[]
   punchListItems  PunchListItem[]
+  rfis            RFI[]
+  submittals      Submittal[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -225,6 +229,8 @@ model Staff {
   assignments      PhaseAssignment[]
   certificates     InsuranceCertificate[] @relation("staff_certificates")
   punchListAssigned PunchListItem[] @relation("punch_list_assigned")
+  rfiAssigned       RFI[]            @relation("rfi_assigned")
+  submittalAssigned Submittal[]      @relation("submittal_assigned")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -809,6 +815,93 @@ enum PunchListPriority {
   MAJOR
   MINOR
   COSMETIC
+}
+
+// ── RFIs (Sprint AB #57) ──
+
+model RFI {
+  id          String    @id @default(cuid())
+  rfiNumber   Int       @map("rfi_number")
+  subject     String
+  question    String    @db.Text
+  answer      String?   @db.Text
+  status      RFIStatus @default(OPEN)
+  priority    RFIPriority @default(NORMAL)
+  dueDate     DateTime? @map("due_date") @db.Date
+  answeredAt  DateTime? @map("answered_at")
+  closedAt    DateTime? @map("closed_at")
+
+  // Ball-in-court tracking
+  ballInCourt   String?  @map("ball_in_court") // name/role of person responsible
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdBy   User   @relation("rfi_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  assignedTo   Staff?  @relation("rfi_assigned", fields: [assignedToId], references: [id])
+  assignedToId String? @map("assigned_to_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, status])
+  @@index([assignedToId])
+  @@map("rfis")
+}
+
+enum RFIStatus {
+  OPEN
+  ANSWERED
+  CLOSED
+  VOID
+}
+
+enum RFIPriority {
+  URGENT
+  HIGH
+  NORMAL
+  LOW
+}
+
+// ── Submittals (Sprint AB #58) ──
+
+model Submittal {
+  id              String          @id @default(cuid())
+  submittalNumber Int             @map("submittal_number")
+  title           String
+  specSection     String?         @map("spec_section") // e.g. "03 30 00 - Cast-in-Place Concrete"
+  description     String?         @db.Text
+  status          SubmittalStatus @default(PENDING)
+  revision        Int             @default(0)
+  dueDate         DateTime?       @map("due_date") @db.Date
+  returnedAt      DateTime?       @map("returned_at")
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  submittedBy   User   @relation("submittal_submitted", fields: [submittedById], references: [id])
+  submittedById String @map("submitted_by_id")
+
+  assignedTo   Staff?  @relation("submittal_assigned", fields: [assignedToId], references: [id])
+  assignedToId String? @map("assigned_to_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, status])
+  @@index([assignedToId])
+  @@map("submittals")
+}
+
+enum SubmittalStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  APPROVED_AS_NOTED
+  REVISE_AND_RESUBMIT
+  REJECTED
 }
 
 // ── Voice Notes (Sprint Z #55) ──
