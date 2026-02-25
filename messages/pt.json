@@ -560,7 +560,12 @@
     "subtitle": "Guias, dicas e respostas para perguntas frequentes",
     "voiceNotesTitle": "Notas de Voz",
     "voiceNotesDesc": "Grave notas de áudio diretamente em qualquer fase para documentação sem as mãos no canteiro de obras.",
-    "voiceNotesContent": "O recurso de Notas de Voz permite gravar áudio diretamente no aplicativo. Toque no botão Gravar em qualquer página de detalhe de fase para começar a gravar (máximo 5 minutos). As notas são salvas automaticamente e podem ser reproduzidas por qualquer membro da equipe. A transcrição com IA estará disponível em breve para tornar as notas de voz pesquisáveis. Você precisa conceder permissão de microfone no navegador na primeira vez que usar este recurso."
+    "voiceNotesContent": "O recurso de Notas de Voz permite gravar áudio diretamente no aplicativo. Toque no botão Gravar em qualquer página de detalhe de fase para começar a gravar (máximo 5 minutos). As notas são salvas automaticamente e podem ser reproduzidas por qualquer membro da equipe. A transcrição com IA estará disponível em breve para tornar as notas de voz pesquisáveis. Você precisa conceder permissão de microfone no navegador na primeira vez que usar este recurso.",
+    "punchListTitle": "Lista de Pendências",
+    "punchListBody": "Rastreie deficiências e itens de trabalho incompletos com a Lista de Pendências. Crie itens com níveis de prioridade (Crítico, Maior, Menor, Cosmético), atribua a membros da equipe, defina datas limite e acompanhe o status: Aberto → Em Progresso → Pronto para Revisão → Fechado. Filtre por status para focar no que precisa de atenção.",
+    "sections.punchLists": "Lista de Pendências",
+    "articles.punchListTitle": "Lista de Pendências",
+    "articles.punchListBody": "Rastreie deficiências e itens de trabalho incompletos com a Lista de Pendências. Crie itens com níveis de prioridade (Crítico, Maior, Menor, Cosmético), atribua a membros da equipe, defina datas limite e acompanhe o status: Aberto → Em Progresso → Pronto para Revisão → Fechado. Filtre por status para focar no que precisa de atenção."
   },
   "tour": {
     "welcomeTitle": "Bem-vindo ao Construction PM!",
@@ -877,5 +882,37 @@
     "untitledNote": "Nota de voz",
     "micPermissionDenied": "Acesso ao microfone negado. Permita o acesso ao microfone nas configurações do navegador.",
     "transcriptionHint": "Transcrição com IA em breve — as notas de voz serão pesquisáveis"
+  },
+  "punchList": {
+    "title": "Lista de Pendências",
+    "open": "abertos",
+    "addItem": "Adicionar",
+    "itemTitle": "Título",
+    "titlePlaceholder": "ex. Reparo de gesso necessário no corredor",
+    "description": "Descrição",
+    "descriptionPlaceholder": "Descrição detalhada da deficiência...",
+    "priority": "Prioridade",
+    "priorityCritical": "Crítico",
+    "priorityMajor": "Maior",
+    "priorityMinor": "Menor",
+    "priorityCosmetic": "Cosmético",
+    "location": "Localização",
+    "locationPlaceholder": "ex. 2º Andar, Unidade 3B",
+    "assignTo": "Atribuir A",
+    "unassigned": "Não atribuído",
+    "dueDate": "Data Limite",
+    "cancel": "Cancelar",
+    "create": "Criar",
+    "empty": "Nenhum item na lista de pendências",
+    "filterAll": "Todos",
+    "overdue": "Atrasado",
+    "due": "Vence",
+    "closedOn": "Fechado",
+    "moveTo": "Mover para",
+    "reopen": "Reabrir",
+    "confirmDelete": "Excluir este item?",
+    "errorCreate": "Erro ao criar item",
+    "errorUpdate": "Erro ao atualizar status",
+    "errorDelete": "Erro ao excluir item"
   }
 }

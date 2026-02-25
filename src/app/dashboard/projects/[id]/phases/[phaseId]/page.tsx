@@ -16,6 +16,8 @@ import { ChangeOrderSection } from "@/components/phase/ChangeOrderSection";
 import { getPhaseComments } from "@/actions/comments";
 import { VoiceNoteSection } from "@/components/phase/VoiceNoteSection";
 import { getPhaseVoiceNotes } from "@/actions/voiceNotes";
+import { PunchListSection } from "@/components/phase/PunchListSection";
+import { getPunchListItems } from "@/actions/punchList";
 
 export default async function PhaseDetailPage({
   params,
@@ -67,9 +69,10 @@ export default async function PhaseDetailPage({
 
   const dbc = db as any;
 
-  const [comments, voiceNotes, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
+  const [comments, voiceNotes, punchListItems, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
     getPhaseComments(phaseId),
     getPhaseVoiceNotes(phaseId),
+    getPunchListItems(phaseId),
     db.staff.findMany({ orderBy: { name: "asc" } }),
     db.checklistTemplate.findMany({
       include: { items: { orderBy: { order: "asc" } } },
@@ -125,6 +128,14 @@ export default async function PhaseDetailPage({
           phaseId={phaseId}
           checklist={phase.checklist}
           templates={templates}
+          canEdit={canEdit}
+          canManage={canManage}
+        />
+
+        <PunchListSection
+          phaseId={phaseId}
+          items={punchListItems}
+          allStaff={allStaff}
           canEdit={canEdit}
           canManage={canManage}
         />

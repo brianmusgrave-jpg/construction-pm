@@ -560,7 +560,12 @@
     "subtitle": "Guías, consejos y respuestas a preguntas frecuentes",
     "voiceNotesTitle": "Notas de Voz",
     "voiceNotesDesc": "Grabe notas de audio directamente en cualquier fase para documentación manos libres en el sitio de trabajo.",
-    "voiceNotesContent": "La función de Notas de Voz le permite grabar audio directamente en la aplicación. Toque el botón Grabar en cualquier página de detalle de fase para comenzar a grabar (máximo 5 minutos). Las notas se guardan automáticamente y cualquier miembro del equipo puede reproducirlas. La transcripción con IA estará disponible próximamente para hacer las notas de voz buscables. Debe otorgar permiso de micrófono en su navegador la primera vez que use esta función."
+    "voiceNotesContent": "La función de Notas de Voz le permite grabar audio directamente en la aplicación. Toque el botón Grabar en cualquier página de detalle de fase para comenzar a grabar (máximo 5 minutos). Las notas se guardan automáticamente y cualquier miembro del equipo puede reproducirlas. La transcripción con IA estará disponible próximamente para hacer las notas de voz buscables. Debe otorgar permiso de micrófono en su navegador la primera vez que use esta función.",
+    "punchListTitle": "Lista de Pendientes",
+    "punchListBody": "Rastree deficiencias y trabajos incompletos con la función Lista de Pendientes. Cree elementos con niveles de prioridad (Crítico, Mayor, Menor, Cosmético), asígnelos a miembros del equipo, establezca fechas límite y rastree su estado: Abierto → En Progreso → Listo para Revisión → Cerrado. Filtre por estado para enfocarse en lo que necesita atención.",
+    "sections.punchLists": "Lista de Pendientes",
+    "articles.punchListTitle": "Lista de Pendientes",
+    "articles.punchListBody": "Rastree deficiencias y trabajos incompletos con la función Lista de Pendientes. Cree elementos con niveles de prioridad (Crítico, Mayor, Menor, Cosmético), asígnelos a miembros del equipo, establezca fechas límite y rastree su estado: Abierto → En Progreso → Listo para Revisión → Cerrado. Filtre por estado para enfocarse en lo que necesita atención."
   },
   "tour": {
     "welcomeTitle": "¡Bienvenido a Construction PM!",
@@ -877,5 +882,37 @@
     "untitledNote": "Nota de voz",
     "micPermissionDenied": "Acceso al micrófono denegado. Permita el acceso al micrófono en la configuración del navegador.",
     "transcriptionHint": "Transcripción con IA próximamente — las notas de voz serán buscables"
+  },
+  "punchList": {
+    "title": "Lista de Pendientes",
+    "open": "abiertos",
+    "addItem": "Agregar",
+    "itemTitle": "Título",
+    "titlePlaceholder": "ej. Parche de yeso necesario en pasillo",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Descripción detallada de la deficiencia...",
+    "priority": "Prioridad",
+    "priorityCritical": "Crítico",
+    "priorityMajor": "Mayor",
+    "priorityMinor": "Menor",
+    "priorityCosmetic": "Cosmético",
+    "location": "Ubicación",
+    "locationPlaceholder": "ej. 2do Piso, Unidad 3B",
+    "assignTo": "Asignar A",
+    "unassigned": "Sin asignar",
+    "dueDate": "Fecha Límite",
+    "cancel": "Cancelar",
+    "create": "Crear",
+    "empty": "No hay elementos en la lista de pendientes",
+    "filterAll": "Todos",
+    "overdue": "Vencido",
+    "due": "Vence",
+    "closedOn": "Cerrado",
+    "moveTo": "Mover a",
+    "reopen": "Reabrir",
+    "confirmDelete": "¿Eliminar este elemento?",
+    "errorCreate": "Error al crear elemento",
+    "errorUpdate": "Error al actualizar estado",
+    "errorDelete": "Error al eliminar elemento"
   }
 }

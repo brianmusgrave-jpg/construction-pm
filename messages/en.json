@@ -560,7 +560,12 @@
     "subtitle": "Guides, tips, and answers to common questions",
     "voiceNotesTitle": "Voice Notes",
     "voiceNotesDesc": "Record audio notes directly on any phase for hands-free documentation on the job site.",
-    "voiceNotesContent": "The Voice Notes feature lets you record audio directly in the app. Tap the Record button on any phase detail page to start recording (max 5 minutes). Notes are saved automatically and can be played back by any team member. AI transcription is coming soon to make voice notes searchable. You need to grant microphone permission in your browser the first time you use this feature."
+    "voiceNotesContent": "The Voice Notes feature lets you record audio directly in the app. Tap the Record button on any phase detail page to start recording (max 5 minutes). Notes are saved automatically and can be played back by any team member. AI transcription is coming soon to make voice notes searchable. You need to grant microphone permission in your browser the first time you use this feature.",
+    "punchListTitle": "Punch Lists",
+    "punchListBody": "Track deficiencies and incomplete work items with the Punch List feature. Create items with priority levels (Critical, Major, Minor, Cosmetic), assign them to team members, set due dates, and track their status through a workflow: Open → In Progress → Ready for Review → Closed. Filter by status to focus on what needs attention. Overdue items are flagged automatically.",
+    "sections.punchLists": "Punch Lists",
+    "articles.punchListTitle": "Punch Lists",
+    "articles.punchListBody": "Track deficiencies and incomplete work items with the Punch List feature. Create items with priority levels (Critical, Major, Minor, Cosmetic), assign them to team members, set due dates, and track their status through a workflow: Open → In Progress → Ready for Review → Closed. Filter by status to focus on what needs attention. Overdue items are flagged automatically."
   },
   "tour": {
     "welcomeTitle": "Welcome to Construction PM!",
@@ -877,5 +882,37 @@
     "untitledNote": "Voice note",
     "micPermissionDenied": "Microphone access denied. Please allow mic access in browser settings.",
     "transcriptionHint": "AI transcription coming soon — voice notes will be searchable"
+  },
+  "punchList": {
+    "title": "Punch List",
+    "open": "open",
+    "addItem": "Add Item",
+    "itemTitle": "Title",
+    "titlePlaceholder": "e.g. Drywall patch needed in hallway",
+    "description": "Description",
+    "descriptionPlaceholder": "Detailed description of the deficiency...",
+    "priority": "Priority",
+    "priorityCritical": "Critical",
+    "priorityMajor": "Major",
+    "priorityMinor": "Minor",
+    "priorityCosmetic": "Cosmetic",
+    "location": "Location",
+    "locationPlaceholder": "e.g. 2nd Floor, Unit 3B",
+    "assignTo": "Assign To",
+    "unassigned": "Unassigned",
+    "dueDate": "Due Date",
+    "cancel": "Cancel",
+    "create": "Create",
+    "empty": "No punch list items yet",
+    "filterAll": "All",
+    "overdue": "Overdue",
+    "due": "Due",
+    "closedOn": "Closed",
+    "moveTo": "Move to",
+    "reopen": "Reopen",
+    "confirmDelete": "Delete this punch list item?",
+    "errorCreate": "Failed to create punch list item",
+    "errorUpdate": "Failed to update status",
+    "errorDelete": "Failed to delete item"
   }
 }

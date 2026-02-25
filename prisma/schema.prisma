@@ -80,6 +80,7 @@ model User {
   changeOrderApprovals ChangeOrder[] @relation("change_order_approvals")
   dailyLogs      DailyLog[]       @relation("daily_log_author")
   voiceNotes     VoiceNote[]      @relation("voice_notes")
+  punchListItems PunchListItem[]  @relation("punch_list_created")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -179,8 +180,9 @@ model Phase {
   changeOrders  ChangeOrder[]
   inspections   Inspection[]
   bids          SubcontractorBid[]
-  materials     Material[]
-  voiceNotes    VoiceNote[]
+  materials       Material[]
+  voiceNotes      VoiceNote[]
+  punchListItems  PunchListItem[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -220,8 +222,9 @@ model Staff {
   createdBy   User?   @relation("staff_created_by", fields: [createdById], references: [id])
   createdById String? @map("created_by_id")
 
-  assignments  PhaseAssignment[]
-  certificates InsuranceCertificate[] @relation("staff_certificates")
+  assignments      PhaseAssignment[]
+  certificates     InsuranceCertificate[] @relation("staff_certificates")
+  punchListAssigned PunchListItem[] @relation("punch_list_assigned")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -762,6 +765,50 @@ enum MaterialStatus {
   DELIVERED
   INSTALLED
   RETURNED
+}
+
+// ── Punch List (Sprint AA #56) ──
+
+model PunchListItem {
+  id          String          @id @default(cuid())
+  itemNumber  Int             @map("item_number")
+  title       String
+  description String?         @db.Text
+  status      PunchListStatus @default(OPEN)
+  priority    PunchListPriority @default(MAJOR)
+  location    String?         // e.g. "2nd Floor, Bathroom B"
+  dueDate     DateTime?       @map("due_date") @db.Date
+  closedAt    DateTime?       @map("closed_at")
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  assignedTo   Staff?  @relation("punch_list_assigned", fields: [assignedToId], references: [id])
+  assignedToId String? @map("assigned_to_id")
+
+  createdBy   User   @relation("punch_list_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, status])
+  @@index([assignedToId])
+  @@map("punch_list_items")
+}
+
+enum PunchListStatus {
+  OPEN
+  IN_PROGRESS
+  READY_FOR_REVIEW
+  CLOSED
+}
+
+enum PunchListPriority {
+  CRITICAL
+  MAJOR
+  MINOR
+  COSMETIC
 }
 
 // ── Voice Notes (Sprint Z #55) ──

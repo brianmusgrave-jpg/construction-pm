@@ -560,7 +560,12 @@
     "subtitle": "Guides, astuces et réponses aux questions courantes",
     "voiceNotesTitle": "Notes Vocales",
     "voiceNotesDesc": "Enregistrez des notes audio directement sur n'importe quelle phase pour une documentation mains libres sur le chantier.",
-    "voiceNotesContent": "La fonction Notes Vocales vous permet d'enregistrer de l'audio directement dans l'application. Appuyez sur le bouton Enregistrer sur n'importe quelle page de détail de phase pour commencer l'enregistrement (maximum 5 minutes). Les notes sont enregistrées automatiquement et peuvent être écoutées par n'importe quel membre de l'équipe. La transcription IA sera bientôt disponible pour rendre les notes vocales recherchables. Vous devez accorder la permission du microphone dans votre navigateur la première fois que vous utilisez cette fonction."
+    "voiceNotesContent": "La fonction Notes Vocales vous permet d'enregistrer de l'audio directement dans l'application. Appuyez sur le bouton Enregistrer sur n'importe quelle page de détail de phase pour commencer l'enregistrement (maximum 5 minutes). Les notes sont enregistrées automatiquement et peuvent être écoutées par n'importe quel membre de l'équipe. La transcription IA sera bientôt disponible pour rendre les notes vocales recherchables. Vous devez accorder la permission du microphone dans votre navigateur la première fois que vous utilisez cette fonction.",
+    "punchListTitle": "Liste de Réserves",
+    "punchListBody": "Suivez les déficiences et les travaux incomplets avec la Liste de Réserves. Créez des éléments avec des niveaux de priorité (Critique, Majeur, Mineur, Cosmétique), attribuez-les aux membres de l'équipe, définissez des dates limites et suivez leur statut : Ouvert → En Cours → Prêt pour Révision → Fermé. Filtrez par statut pour vous concentrer sur ce qui nécessite attention.",
+    "sections.punchLists": "Liste de Réserves",
+    "articles.punchListTitle": "Liste de Réserves",
+    "articles.punchListBody": "Suivez les déficiences et les travaux incomplets avec la Liste de Réserves. Créez des éléments avec des niveaux de priorité (Critique, Majeur, Mineur, Cosmétique), attribuez-les aux membres de l'équipe, définissez des dates limites et suivez leur statut : Ouvert → En Cours → Prêt pour Révision → Fermé. Filtrez par statut pour vous concentrer sur ce qui nécessite attention."
   },
   "tour": {
     "welcomeTitle": "Bienvenue sur Construction PM !",
@@ -877,5 +882,37 @@
     "untitledNote": "Note vocale",
     "micPermissionDenied": "Accès au microphone refusé. Veuillez autoriser l'accès au microphone dans les paramètres du navigateur.",
     "transcriptionHint": "Transcription IA bientôt disponible — les notes vocales seront recherchables"
+  },
+  "punchList": {
+    "title": "Liste de Réserves",
+    "open": "ouverts",
+    "addItem": "Ajouter",
+    "itemTitle": "Titre",
+    "titlePlaceholder": "ex. Réparation de plâtre dans le couloir",
+    "description": "Description",
+    "descriptionPlaceholder": "Description détaillée de la déficience...",
+    "priority": "Priorité",
+    "priorityCritical": "Critique",
+    "priorityMajor": "Majeur",
+    "priorityMinor": "Mineur",
+    "priorityCosmetic": "Cosmétique",
+    "location": "Emplacement",
+    "locationPlaceholder": "ex. 2e Étage, Unité 3B",
+    "assignTo": "Attribuer À",
+    "unassigned": "Non attribué",
+    "dueDate": "Date Limite",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "empty": "Aucun élément dans la liste de réserves",
+    "filterAll": "Tous",
+    "overdue": "En retard",
+    "due": "Échéance",
+    "closedOn": "Fermé",
+    "moveTo": "Déplacer vers",
+    "reopen": "Rouvrir",
+    "confirmDelete": "Supprimer cet élément ?",
+    "errorCreate": "Erreur lors de la création",
+    "errorUpdate": "Erreur lors de la mise à jour",
+    "errorDelete": "Erreur lors de la suppression"
   }
 }

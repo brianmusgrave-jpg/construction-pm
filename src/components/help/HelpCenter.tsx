@@ -35,6 +35,7 @@ import {
   Star,
   DollarSign,
   Mic,
+  ListChecks,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -195,6 +196,15 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "offline-mode", titleKey: "articles.offlineMode", contentKey: "articles.offlineModeContent", tags: ["offline", "sync", "queue", "connectivity", "field"] },
+      ],
+    },
+    {
+      id: "punch-lists",
+      titleKey: "sections.punchLists",
+      icon: <ListChecks className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "pl-overview", titleKey: "articles.punchListTitle", contentKey: "articles.punchListBody", tags: ["punch", "list", "deficiency", "snag", "closeout", "completion"] },
       ],
     },
     {
