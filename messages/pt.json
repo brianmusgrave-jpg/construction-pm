@@ -460,7 +460,8 @@
       "analytics": "Análises e Relatórios",
       "advanced": "Funcionalidades Avançadas",
       "quickbooks": "QuickBooks",
-      "activityAdmin": "Atividade e Administração"
+      "activityAdmin": "Atividade e Administração",
+      "insurance": "Seguros e Conformidade"
     },
     "articles": {
       "appOverview": "Visão geral do app",
@@ -532,7 +533,19 @@
       "directoryBulkOps": "Operações em Massa do Diretório",
       "directoryBulkOpsContent": "Gerencie múltiplos contatos do diretório de uma vez com operações em massa.\n\nModo de Seleção em Massa:\n1. Vá para a página do Diretório\n2. Clique no botão 'Selecionar' no cabeçalho\n3. Clique nos contatos para selecioná-los (ou use Selecionar Todos)\n4. Uma barra de ações flutuante aparece com suas opções\n\nAções em massa disponíveis:\n• Mover Para — Reatribuir contatos para uma categoria diferente\n• Excluir — Remover todos os contatos selecionados (requer confirmação)\n\nExportar CSV:\nClique em 'Exportar CSV' para baixar todo o seu diretório como planilha.",
       "projectArchive": "Arquivar e Restaurar Projetos",
-      "projectArchiveContent": "Arquive projetos concluídos ou inativos para manter seu painel limpo.\n\nPara arquivar um projeto:\n1. Abra a página de detalhes do projeto\n2. Clique no botão 'Arquivar' no cabeçalho\n3. Confirme a ação\n\nProjetos arquivados são ocultados da lista principal. Eles ainda existem e podem ser restaurados a qualquer momento.\n\nPara restaurar:\n1. Navegue até o projeto arquivado\n2. Clique em 'Restaurar'\n3. O projeto volta ao status ativo\n\nApenas Admins e Gerentes de Projeto podem arquivar ou restaurar projetos."
+      "projectArchiveContent": "Arquive projetos concluídos ou inativos para manter seu painel limpo.\n\nPara arquivar um projeto:\n1. Abra a página de detalhes do projeto\n2. Clique no botão 'Arquivar' no cabeçalho\n3. Confirme a ação\n\nProjetos arquivados são ocultados da lista principal. Eles ainda existem e podem ser restaurados a qualquer momento.\n\nPara restaurar:\n1. Navegue até o projeto arquivado\n2. Clique em 'Restaurar'\n3. O projeto volta ao status ativo\n\nApenas Admins e Gerentes de Projeto podem arquivar ou restaurar projetos.",
+      "insuranceCertificates": "Certificados de Seguro",
+      "insuranceCertificatesContent": "Rastreie certificados de seguro para subempreiteiros e fornecedores no Diretório de Pessoal.\n\nClique em qualquer contato e abra o painel de Seguros para gerenciar seus certificados. Você pode adicionar certificados para 7 tipos de cobertura: Responsabilidade Geral, Compensação Trabalhista, Auto, Guarda-chuva, Profissional, Risco do Construtor e Outro.\n\nCada certificado rastreia a seguradora, número da apólice, datas de vigência e vencimento, valor da cobertura e notas opcionais.",
+      "complianceExport": "Exportação CSV de Conformidade",
+      "complianceExportContent": "Exporte um CSV de Conformidade do Diretório para obter uma planilha completa de todos os contatos com seu status de seguro.\n\nO CSV inclui nome, empresa, tipo, e-mail, telefone, localização e um resumo da cobertura de seguros.",
+      "starRatings": "Classificações por Estrelas PM",
+      "starRatingsContent": "Gerentes de Projeto e Administradores podem classificar contratistas com 1–5 estrelas diretamente no cartão do Diretório.\n\nAs classificações são privadas — visíveis apenas para usuários com função de PM ou Administrador.",
+      "directorySearch": "Pesquisa e Filtros do Diretório",
+      "directorySearchContent": "O Diretório de Pessoal inclui uma barra de pesquisa e botões de filtro por tipo para ajudá-lo a encontrar contatos rapidamente.\n\nPesquisa: Digite um nome, empresa ou e-mail na barra de pesquisa para filtrar em tempo real.\n\nFiltrar por tipo: Use os botões (Todos, Subempreiteiro, Fornecedor, Inspetor, Funcionário, Outro).",
+      "staffLocation": "Localização do Pessoal",
+      "staffLocationContent": "Cada contato no Diretório pode ter um campo de Localização/Cidade.\n\nA localização é exibida no cartão de contato e incluída nas exportações CSV.",
+      "jobPL": "Relatório de L&P por Projeto",
+      "jobPLContent": "A página de Relatórios inclui uma tabela de L&P (Lucros e Perdas) por projeto para Gerentes de Projeto e Administradores.\n\nA tabela mostra uma linha por projeto com colunas para: Orçamento, Custo Estimado, Custo Real, Ordens de Mudança, Lucro Bruto e porcentagem de Margem."
     },
     "replayIntroDesc": "Conheça os principais recursos do aplicativo passo a passo",
     "quickLinkNotifications": "Notificações",

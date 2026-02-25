@@ -31,6 +31,9 @@ import {
   Webhook,
   TrendingUp,
   CalendarClock,
+  ShieldCheck,
+  Star,
+  DollarSign,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -202,6 +205,20 @@ function useGuides(t: (key: string) => string): GuideSection[] {
         { id: "analytics-dash", titleKey: "articles.analyticsDashboard", contentKey: "articles.analyticsDashboardContent", tags: ["analytics", "chart", "report", "dashboard", "statistics"] },
         { id: "budget-forecast", titleKey: "articles.budgetForecasting", contentKey: "articles.budgetForecastingContent", tags: ["forecast", "prediction", "trend", "CPI", "earned value"] },
         { id: "report-schedule", titleKey: "articles.reportScheduling", contentKey: "articles.reportSchedulingContent", tags: ["report", "schedule", "automatic", "email", "recurring"] },
+      ],
+    },
+    {
+      id: "insurance",
+      titleKey: "sections.insurance",
+      icon: <ShieldCheck className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "ins-certificates", titleKey: "articles.insuranceCertificates", contentKey: "articles.insuranceCertificatesContent", tags: ["insurance", "certificate", "coverage", "liability", "compliance"] },
+        { id: "ins-compliance", titleKey: "articles.complianceExport", contentKey: "articles.complianceExportContent", tags: ["compliance", "CSV", "export", "umbrella", "expiry"] },
+        { id: "ins-star-rating", titleKey: "articles.starRatings", contentKey: "articles.starRatingsContent", tags: ["star", "rating", "review", "performance", "contractor"] },
+        { id: "ins-directory-search", titleKey: "articles.directorySearch", contentKey: "articles.directorySearchContent", tags: ["search", "filter", "directory", "find", "type"] },
+        { id: "ins-location", titleKey: "articles.staffLocation", contentKey: "articles.staffLocationContent", tags: ["location", "city", "address", "staff", "directory"] },
+        { id: "ins-job-pl", titleKey: "articles.jobPL", contentKey: "articles.jobPLContent", tags: ["profit", "loss", "P&L", "margin", "report", "financial"] },
       ],
     },
     {

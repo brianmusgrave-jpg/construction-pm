@@ -460,7 +460,8 @@
       "analytics": "Análisis e Informes",
       "advanced": "Funciones Avanzadas",
       "quickbooks": "QuickBooks",
-      "activityAdmin": "Actividad y Administración"
+      "activityAdmin": "Actividad y Administración",
+      "insurance": "Seguros y Cumplimiento"
     },
     "articles": {
       "appOverview": "Descripción general de la app",
@@ -532,7 +533,19 @@
       "directoryBulkOps": "Operaciones Masivas del Directorio",
       "directoryBulkOpsContent": "Gestione múltiples contactos del directorio a la vez con operaciones masivas.\n\nModo de Selección Masiva:\n1. Vaya a la página del Directorio\n2. Haga clic en el botón 'Seleccionar' en el encabezado\n3. Haga clic en contactos para seleccionarlos (o use Seleccionar Todo)\n4. Aparece una barra de acciones flotante con sus opciones\n\nAcciones masivas disponibles:\n• Mover A — Reasignar contactos seleccionados a una categoría diferente\n• Eliminar — Eliminar todos los contactos seleccionados (requiere confirmación)\n\nExportar CSV:\nHaga clic en 'Exportar CSV' para descargar todo su directorio como hoja de cálculo.",
       "projectArchive": "Archivar y Restaurar Proyectos",
-      "projectArchiveContent": "Archive proyectos completados o inactivos para mantener su panel limpio.\n\nPara archivar un proyecto:\n1. Abra la página de detalle del proyecto\n2. Haga clic en el botón 'Archivar' en el encabezado\n3. Confirme la acción de archivado\n\nLos proyectos archivados se ocultan de la lista principal y el panel. Siguen existiendo y se pueden restaurar en cualquier momento.\n\nPara restaurar un proyecto archivado:\n1. Navegue al proyecto archivado\n2. Haga clic en el botón 'Restaurar'\n3. El proyecto regresa al estado activo\n\nSolo Admins y Gerentes de Proyecto pueden archivar o restaurar proyectos."
+      "projectArchiveContent": "Archive proyectos completados o inactivos para mantener su panel limpio.\n\nPara archivar un proyecto:\n1. Abra la página de detalle del proyecto\n2. Haga clic en el botón 'Archivar' en el encabezado\n3. Confirme la acción de archivado\n\nLos proyectos archivados se ocultan de la lista principal y el panel. Siguen existiendo y se pueden restaurar en cualquier momento.\n\nPara restaurar un proyecto archivado:\n1. Navegue al proyecto archivado\n2. Haga clic en el botón 'Restaurar'\n3. El proyecto regresa al estado activo\n\nSolo Admins y Gerentes de Proyecto pueden archivar o restaurar proyectos.",
+      "insuranceCertificates": "Certificados de Seguro",
+      "insuranceCertificatesContent": "Rastree certificados de seguro para subcontratistas y proveedores en el Directorio de Personal.\n\nHaga clic en cualquier contacto y abra el panel de Seguros para administrar sus certificados. Puede agregar certificados para 7 tipos de cobertura: Responsabilidad General, Compensación Laboral, Auto, Paraguas, Profesional, Riesgo del Constructor y Otro.\n\nCada certificado rastrea la aseguradora, número de póliza, fechas de vigencia y vencimiento, monto de cobertura y notas opcionales. Las insignias de estado se muestran automáticamente:\n• Activo (verde) — cobertura vigente\n• Por vencer (ámbar) — vence dentro de 30 días\n• Vencido (rojo) — cobertura caducada",
+      "complianceExport": "Exportación CSV de Cumplimiento",
+      "complianceExportContent": "Exporte un CSV de Cumplimiento desde el Directorio para obtener una hoja de cálculo completa de todos los contactos con su estado de seguro.\n\nEl CSV incluye nombre, empresa, tipo, correo, teléfono, ubicación y un resumen de cobertura de seguros de cada contacto.\n\nÚselo para auditorías de cumplimiento o revisiones de calificación de subcontratistas.",
+      "starRatings": "Calificaciones con Estrellas PM",
+      "starRatingsContent": "Los Gerentes de Proyecto y Administradores pueden calificar a los contratistas con una calificación de 1–5 estrellas directamente en su tarjeta del Directorio.\n\nLas calificaciones son privadas — solo son visibles para usuarios con rol de PM o Administrador.\n\nUse las calificaciones para rastrear el rendimiento y la confiabilidad de los contratistas internamente.",
+      "directorySearch": "Búsqueda y Filtros del Directorio",
+      "directorySearchContent": "El Directorio de Personal incluye una barra de búsqueda y botones de filtro por tipo para ayudarle a encontrar contactos rápidamente.\n\nBúsqueda: Escriba un nombre, empresa o correo en la barra de búsqueda para filtrar en tiempo real.\n\nFiltrar por tipo: Use los botones (Todos, Subcontratista, Proveedor, Inspector, Empleado, Otro) para mostrar solo contactos de un tipo específico.",
+      "staffLocation": "Ubicación del Personal",
+      "staffLocationContent": "Cada contacto en el Directorio puede tener un campo de Ubicación/Ciudad.\n\nLa ubicación se muestra en la tarjeta de contacto y se incluye en las exportaciones CSV.",
+      "jobPL": "Reporte de P&G por Proyecto",
+      "jobPLContent": "La página de Reportes incluye una tabla de P&G (Pérdidas y Ganancias) por proyecto para Gerentes de Proyecto y Administradores.\n\nLa tabla muestra una fila por proyecto con columnas para: Presupuesto, Costo Estimado, Costo Real, Órdenes de Cambio, Ganancia Bruta y porcentaje de Margen.\n\nLas insignias de margen tienen código de color:\n• Verde — margen saludable (más del 10%)\n• Ámbar — margen ajustado (0–10%)\n• Rojo — margen negativo"
     },
     "replayIntroDesc": "Recorra las funciones clave de la aplicación paso a paso",
     "quickLinkNotifications": "Notificaciones",

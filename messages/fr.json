@@ -460,7 +460,8 @@
       "analytics": "Analyses et Rapports",
       "advanced": "Fonctionnalités Avancées",
       "quickbooks": "QuickBooks",
-      "activityAdmin": "Activité et Administration"
+      "activityAdmin": "Activité et Administration",
+      "insurance": "Assurances et Conformité"
     },
     "articles": {
       "appOverview": "Vue d'ensemble de l'application",
@@ -532,7 +533,19 @@
       "directoryBulkOps": "Opérations en Masse du Répertoire",
       "directoryBulkOpsContent": "Gérez plusieurs contacts du répertoire à la fois avec des opérations en masse.\n\nMode de Sélection en Masse :\n1. Allez à la page du Répertoire\n2. Cliquez sur le bouton 'Sélectionner' dans l'en-tête\n3. Cliquez sur les contacts pour les sélectionner (ou utilisez Tout Sélectionner)\n4. Une barre d'actions flottante apparaît avec vos options\n\nActions en masse disponibles :\n• Déplacer Vers — Réaffecter les contacts sélectionnés à une catégorie différente\n• Supprimer — Supprimer tous les contacts sélectionnés (confirmation requise)\n\nExporter CSV :\nCliquez sur 'Exporter CSV' pour télécharger tout votre répertoire en tableur.",
       "projectArchive": "Archiver et Restaurer des Projets",
-      "projectArchiveContent": "Archivez les projets terminés ou inactifs pour garder votre tableau de bord propre.\n\nPour archiver un projet :\n1. Ouvrez la page de détail du projet\n2. Cliquez sur le bouton 'Archiver' dans l'en-tête\n3. Confirmez l'action d'archivage\n\nLes projets archivés sont masqués de la liste principale. Ils existent toujours et peuvent être restaurés à tout moment.\n\nPour restaurer :\n1. Naviguez vers le projet archivé\n2. Cliquez sur 'Restaurer'\n3. Le projet revient à l'état actif\n\nSeuls les Admins et Chefs de Projet peuvent archiver ou restaurer des projets."
+      "projectArchiveContent": "Archivez les projets terminés ou inactifs pour garder votre tableau de bord propre.\n\nPour archiver un projet :\n1. Ouvrez la page de détail du projet\n2. Cliquez sur le bouton 'Archiver' dans l'en-tête\n3. Confirmez l'action d'archivage\n\nLes projets archivés sont masqués de la liste principale. Ils existent toujours et peuvent être restaurés à tout moment.\n\nPour restaurer :\n1. Naviguez vers le projet archivé\n2. Cliquez sur 'Restaurer'\n3. Le projet revient à l'état actif\n\nSeuls les Admins et Chefs de Projet peuvent archiver ou restaurer des projets.",
+      "insuranceCertificates": "Certificats d'Assurance",
+      "insuranceCertificatesContent": "Suivez les certificats d'assurance des sous-traitants et fournisseurs dans le Répertoire du Personnel.\n\nCliquez sur un contact et ouvrez le panneau Assurances pour gérer ses certificats. Vous pouvez ajouter des certificats pour 7 types de couverture : Responsabilité Civile, Accidents du Travail, Auto, Parapluie, Professionnelle, Risque Constructeur et Autre.\n\nChaque certificat suit l'assureur, le numéro de police, les dates d'effet et d'expiration, le montant de couverture et des notes optionnelles.",
+      "complianceExport": "Export CSV de Conformité",
+      "complianceExportContent": "Exportez un CSV de Conformité depuis le Répertoire pour obtenir un tableur complet de tous les contacts avec leur statut d'assurance.\n\nLe CSV inclut nom, entreprise, type, e-mail, téléphone, localisation et un résumé de la couverture d'assurance.",
+      "starRatings": "Notes Étoilées PM",
+      "starRatingsContent": "Les Chefs de Projet et Administrateurs peuvent noter les entrepreneurs avec 1–5 étoiles directement sur leur carte du Répertoire.\n\nLes notes sont privées — visibles uniquement pour les utilisateurs avec le rôle PM ou Administrateur.",
+      "directorySearch": "Recherche et Filtres du Répertoire",
+      "directorySearchContent": "Le Répertoire du Personnel comprend une barre de recherche et des boutons de filtre par type pour vous aider à trouver des contacts rapidement.\n\nRecherche : Tapez un nom, une entreprise ou un e-mail dans la barre de recherche pour filtrer en temps réel.\n\nFiltrer par type : Utilisez les boutons (Tous, Sous-traitant, Fournisseur, Inspecteur, Employé, Autre).",
+      "staffLocation": "Localisation du Personnel",
+      "staffLocationContent": "Chaque contact dans le Répertoire peut avoir un champ Localisation/Ville.\n\nLa localisation est affichée sur la carte de contact et incluse dans les exports CSV.",
+      "jobPL": "Rapport P&L par Projet",
+      "jobPLContent": "La page Rapports comprend un tableau P&L (Profits et Pertes) par projet pour les Chefs de Projet et Administrateurs.\n\nLe tableau affiche une ligne par projet avec des colonnes pour : Budget, Coût Estimé, Coût Réel, Avenants, Bénéfice Brut et pourcentage de Marge."
     },
     "replayIntroDesc": "Parcourez les fonctionnalités clés de l'application étape par étape",
     "quickLinkNotifications": "Notifications",
