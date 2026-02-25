@@ -79,6 +79,7 @@ model User {
   changeOrderRequests  ChangeOrder[] @relation("change_order_requests")
   changeOrderApprovals ChangeOrder[] @relation("change_order_approvals")
   dailyLogs      DailyLog[]       @relation("daily_log_author")
+  voiceNotes     VoiceNote[]      @relation("voice_notes")
   totpSecret     TotpSecret?
 
   @@map("users")
@@ -179,6 +180,7 @@ model Phase {
   inspections   Inspection[]
   bids          SubcontractorBid[]
   materials     Material[]
+  voiceNotes    VoiceNote[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -760,6 +762,28 @@ enum MaterialStatus {
   DELIVERED
   INSTALLED
   RETURNED
+}
+
+// ── Voice Notes (Sprint Z #55) ──
+
+model VoiceNote {
+  id         String  @id @default(cuid())
+  audioUrl   String  @map("audio_url")
+  duration   Int     // seconds
+  transcript String? @db.Text
+  label      String? // optional user label
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  createdBy   User   @relation("voice_notes", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([phaseId, createdAt])
+  @@map("voice_notes")
 }
 
 // ── API Keys & Webhooks (Sprint H #43) ──

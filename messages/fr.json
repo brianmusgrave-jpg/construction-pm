@@ -461,7 +461,8 @@
       "advanced": "Fonctionnalités Avancées",
       "quickbooks": "QuickBooks",
       "activityAdmin": "Activité et Administration",
-      "insurance": "Assurances et Conformité"
+      "insurance": "Assurances et Conformité",
+      "voiceNotes": "Notes Vocales"
     },
     "articles": {
       "appOverview": "Vue d'ensemble de l'application",
@@ -545,7 +546,9 @@
       "staffLocation": "Localisation du Personnel",
       "staffLocationContent": "Chaque contact dans le Répertoire peut avoir un champ Localisation/Ville.\n\nLa localisation est affichée sur la carte de contact et incluse dans les exports CSV.",
       "jobPL": "Rapport P&L par Projet",
-      "jobPLContent": "La page Rapports comprend un tableau P&L (Profits et Pertes) par projet pour les Chefs de Projet et Administrateurs.\n\nLe tableau affiche une ligne par projet avec des colonnes pour : Budget, Coût Estimé, Coût Réel, Avenants, Bénéfice Brut et pourcentage de Marge."
+      "jobPLContent": "La page Rapports comprend un tableau P&L (Profits et Pertes) par projet pour les Chefs de Projet et Administrateurs.\n\nLe tableau affiche une ligne par projet avec des colonnes pour : Budget, Coût Estimé, Coût Réel, Avenants, Bénéfice Brut et pourcentage de Marge.",
+      "voiceNotes": "Notes Vocales",
+      "voiceNotesContent": "La fonction Notes Vocales vous permet d'enregistrer de l'audio directement dans l'application. Appuyez sur le bouton Enregistrer sur n'importe quelle page de détail de phase pour commencer l'enregistrement (maximum 5 minutes). Les notes sont enregistrées automatiquement et peuvent être écoutées par n'importe quel membre de l'équipe. La transcription IA sera bientôt disponible pour rendre les notes vocales recherchables. Vous devez accorder la permission du microphone dans votre navigateur la première fois que vous utilisez cette fonction."
     },
     "replayIntroDesc": "Parcourez les fonctionnalités clés de l'application étape par étape",
     "quickLinkNotifications": "Notifications",
@@ -554,7 +557,10 @@
     "quickLinkAnalytics": "Analyses",
     "quickLinkAdvanced": "Intégrations",
     "quickLinkQuickBooks": "QuickBooks",
-    "subtitle": "Guides, astuces et réponses aux questions courantes"
+    "subtitle": "Guides, astuces et réponses aux questions courantes",
+    "voiceNotesTitle": "Notes Vocales",
+    "voiceNotesDesc": "Enregistrez des notes audio directement sur n'importe quelle phase pour une documentation mains libres sur le chantier.",
+    "voiceNotesContent": "La fonction Notes Vocales vous permet d'enregistrer de l'audio directement dans l'application. Appuyez sur le bouton Enregistrer sur n'importe quelle page de détail de phase pour commencer l'enregistrement (maximum 5 minutes). Les notes sont enregistrées automatiquement et peuvent être écoutées par n'importe quel membre de l'équipe. La transcription IA sera bientôt disponible pour rendre les notes vocales recherchables. Vous devez accorder la permission du microphone dans votre navigateur la première fois que vous utilisez cette fonction."
   },
   "tour": {
     "welcomeTitle": "Bienvenue sur Construction PM !",
@@ -853,5 +859,23 @@
     "type_PROFESSIONAL": "Responsabilité Professionnelle",
     "type_BUILDERS_RISK": "Risque Constructeur",
     "type_OTHER": "Autre"
+  },
+  "voiceNotes": {
+    "title": "Notes Vocales",
+    "record": "Enregistrer",
+    "stop": "Arrêter",
+    "saving": "Enregistrement...",
+    "saved": "Note vocale enregistrée",
+    "saveFailed": "Échec de l'enregistrement de la note vocale",
+    "deleted": "Note vocale supprimée",
+    "deleteFailed": "Échec de la suppression de la note vocale",
+    "playFailed": "Échec de la lecture audio",
+    "noNotesYet": "Aucune note vocale",
+    "noNotesHint": "Appuyez sur enregistrer pour ajouter une note vocale à cette phase",
+    "hint": "Enregistrez une note vocale (max 5 min)",
+    "maxDuration": "Maximum 5 minutes",
+    "untitledNote": "Note vocale",
+    "micPermissionDenied": "Accès au microphone refusé. Veuillez autoriser l'accès au microphone dans les paramètres du navigateur.",
+    "transcriptionHint": "Transcription IA bientôt disponible — les notes vocales seront recherchables"
   }
 }

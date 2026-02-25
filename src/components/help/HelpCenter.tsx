@@ -34,6 +34,7 @@ import {
   ShieldCheck,
   Star,
   DollarSign,
+  Mic,
 } from "lucide-react";
 import { PlayCircle } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -194,6 +195,15 @@ function useGuides(t: (key: string) => string): GuideSection[] {
       category: "features",
       articles: [
         { id: "offline-mode", titleKey: "articles.offlineMode", contentKey: "articles.offlineModeContent", tags: ["offline", "sync", "queue", "connectivity", "field"] },
+      ],
+    },
+    {
+      id: "voice-notes",
+      titleKey: "sections.voiceNotes",
+      icon: <Mic className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "vn-overview", titleKey: "articles.voiceNotes", contentKey: "articles.voiceNotesContent", tags: ["voice", "audio", "record", "note", "transcription", "mic"] },
       ],
     },
     {

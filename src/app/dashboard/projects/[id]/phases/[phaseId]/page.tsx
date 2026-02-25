@@ -14,6 +14,8 @@ import { SubcontractorBidSection } from "@/components/phase/SubcontractorBidSect
 import { MaterialSection } from "@/components/phase/MaterialSection";
 import { ChangeOrderSection } from "@/components/phase/ChangeOrderSection";
 import { getPhaseComments } from "@/actions/comments";
+import { VoiceNoteSection } from "@/components/phase/VoiceNoteSection";
+import { getPhaseVoiceNotes } from "@/actions/voiceNotes";
 
 export default async function PhaseDetailPage({
   params,
@@ -65,8 +67,9 @@ export default async function PhaseDetailPage({
 
   const dbc = db as any;
 
-  const [comments, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
+  const [comments, voiceNotes, allStaff, templates, inspections, bids, materials, changeOrders] = await Promise.all([
     getPhaseComments(phaseId),
+    getPhaseVoiceNotes(phaseId),
     db.staff.findMany({ orderBy: { name: "asc" } }),
     db.checklistTemplate.findMany({
       include: { items: { orderBy: { order: "asc" } } },
@@ -165,6 +168,14 @@ export default async function PhaseDetailPage({
           canUpload={can(userRole, "create", "photo")}
           canDelete={can(userRole, "delete", "photo")}
           canFlag={canManage}
+        />
+
+        <VoiceNoteSection
+          phaseId={phaseId}
+          voiceNotes={voiceNotes}
+          currentUserId={session.user.id}
+          isAdmin={(session.user as any).role === "ADMIN"}
+          canRecord={canEdit}
         />
 
         <CommentSection

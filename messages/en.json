@@ -461,7 +461,8 @@
       "advanced": "Advanced Features",
       "quickbooks": "QuickBooks",
       "activityAdmin": "Activity & Administration",
-      "insurance": "Insurance & Compliance"
+      "insurance": "Insurance & Compliance",
+      "voiceNotes": "Voice Notes"
     },
     "articles": {
       "appOverview": "App Overview",
@@ -545,7 +546,9 @@
       "staffLocation": "Staff Location Field",
       "staffLocationContent": "Each contact in the Staff Directory can have a Location/City field.\n\nThe location is displayed on the contact card below their company name, and is included in CSV exports (both the regular directory export and the compliance export).\n\nUse this field to track where your subcontractors, vendors, and team members are based — helpful for project staffing decisions and travel planning.",
       "jobPL": "Job P&L Report",
-      "jobPLContent": "The Reports page includes a Job P&L (Profit & Loss) table for Project Managers and Admins.\n\nThe table shows one row per project with columns for: Budget, Estimated Cost, Actual Cost, Change Orders, Gross Profit, and Margin percentage.\n\nMargin badges are color-coded:\n• Green — healthy margin (above 10%)\n• Amber — tight margin (0–10%)\n• Red — negative margin (losing money)\n\nUse this report to monitor profitability across all your projects at a glance."
+      "jobPLContent": "The Reports page includes a Job P&L (Profit & Loss) table for Project Managers and Admins.\n\nThe table shows one row per project with columns for: Budget, Estimated Cost, Actual Cost, Change Orders, Gross Profit, and Margin percentage.\n\nMargin badges are color-coded:\n• Green — healthy margin (above 10%)\n• Amber — tight margin (0–10%)\n• Red — negative margin (losing money)\n\nUse this report to monitor profitability across all your projects at a glance.",
+      "voiceNotes": "Voice Notes",
+      "voiceNotesContent": "The Voice Notes feature lets you record audio directly in the app. Tap the Record button on any phase detail page to start recording (max 5 minutes). Notes are saved automatically and can be played back by any team member. AI transcription is coming soon to make voice notes searchable. You need to grant microphone permission in your browser the first time you use this feature."
     },
     "replayIntroDesc": "Walk through the app's key features step by step",
     "quickLinkNotifications": "Notifications",
@@ -554,7 +557,10 @@
     "quickLinkAnalytics": "Analytics",
     "quickLinkAdvanced": "Integrations",
     "quickLinkQuickBooks": "QuickBooks",
-    "subtitle": "Guides, tips, and answers to common questions"
+    "subtitle": "Guides, tips, and answers to common questions",
+    "voiceNotesTitle": "Voice Notes",
+    "voiceNotesDesc": "Record audio notes directly on any phase for hands-free documentation on the job site.",
+    "voiceNotesContent": "The Voice Notes feature lets you record audio directly in the app. Tap the Record button on any phase detail page to start recording (max 5 minutes). Notes are saved automatically and can be played back by any team member. AI transcription is coming soon to make voice notes searchable. You need to grant microphone permission in your browser the first time you use this feature."
   },
   "tour": {
     "welcomeTitle": "Welcome to Construction PM!",
@@ -853,5 +859,23 @@
     "type_PROFESSIONAL": "Professional Liability",
     "type_BUILDERS_RISK": "Builder's Risk",
     "type_OTHER": "Other"
+  },
+  "voiceNotes": {
+    "title": "Voice Notes",
+    "record": "Record",
+    "stop": "Stop",
+    "saving": "Saving...",
+    "saved": "Voice note saved",
+    "saveFailed": "Failed to save voice note",
+    "deleted": "Voice note deleted",
+    "deleteFailed": "Failed to delete voice note",
+    "playFailed": "Failed to play audio",
+    "noNotesYet": "No voice notes yet",
+    "noNotesHint": "Tap record to add a voice note to this phase",
+    "hint": "Record a voice note (max 5 min)",
+    "maxDuration": "Max 5 minutes",
+    "untitledNote": "Voice note",
+    "micPermissionDenied": "Microphone access denied. Please allow mic access in browser settings.",
+    "transcriptionHint": "AI transcription coming soon — voice notes will be searchable"
   }
 }

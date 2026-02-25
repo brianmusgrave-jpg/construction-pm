@@ -461,7 +461,8 @@
       "advanced": "Funciones Avanzadas",
       "quickbooks": "QuickBooks",
       "activityAdmin": "Actividad y Administración",
-      "insurance": "Seguros y Cumplimiento"
+      "insurance": "Seguros y Cumplimiento",
+      "voiceNotes": "Notas de Voz"
     },
     "articles": {
       "appOverview": "Descripción general de la app",
@@ -545,7 +546,9 @@
       "staffLocation": "Ubicación del Personal",
       "staffLocationContent": "Cada contacto en el Directorio puede tener un campo de Ubicación/Ciudad.\n\nLa ubicación se muestra en la tarjeta de contacto y se incluye en las exportaciones CSV.",
       "jobPL": "Reporte de P&G por Proyecto",
-      "jobPLContent": "La página de Reportes incluye una tabla de P&G (Pérdidas y Ganancias) por proyecto para Gerentes de Proyecto y Administradores.\n\nLa tabla muestra una fila por proyecto con columnas para: Presupuesto, Costo Estimado, Costo Real, Órdenes de Cambio, Ganancia Bruta y porcentaje de Margen.\n\nLas insignias de margen tienen código de color:\n• Verde — margen saludable (más del 10%)\n• Ámbar — margen ajustado (0–10%)\n• Rojo — margen negativo"
+      "jobPLContent": "La página de Reportes incluye una tabla de P&G (Pérdidas y Ganancias) por proyecto para Gerentes de Proyecto y Administradores.\n\nLa tabla muestra una fila por proyecto con columnas para: Presupuesto, Costo Estimado, Costo Real, Órdenes de Cambio, Ganancia Bruta y porcentaje de Margen.\n\nLas insignias de margen tienen código de color:\n• Verde — margen saludable (más del 10%)\n• Ámbar — margen ajustado (0–10%)\n• Rojo — margen negativo",
+      "voiceNotes": "Notas de Voz",
+      "voiceNotesContent": "La función de Notas de Voz le permite grabar audio directamente en la aplicación. Toque el botón Grabar en cualquier página de detalle de fase para comenzar a grabar (máximo 5 minutos). Las notas se guardan automáticamente y cualquier miembro del equipo puede reproducirlas. La transcripción con IA estará disponible próximamente para hacer las notas de voz buscables. Debe otorgar permiso de micrófono en su navegador la primera vez que use esta función."
     },
     "replayIntroDesc": "Recorra las funciones clave de la aplicación paso a paso",
     "quickLinkNotifications": "Notificaciones",
@@ -554,7 +557,10 @@
     "quickLinkAnalytics": "Analíticas",
     "quickLinkAdvanced": "Integraciones",
     "quickLinkQuickBooks": "QuickBooks",
-    "subtitle": "Guías, consejos y respuestas a preguntas frecuentes"
+    "subtitle": "Guías, consejos y respuestas a preguntas frecuentes",
+    "voiceNotesTitle": "Notas de Voz",
+    "voiceNotesDesc": "Grabe notas de audio directamente en cualquier fase para documentación manos libres en el sitio de trabajo.",
+    "voiceNotesContent": "La función de Notas de Voz le permite grabar audio directamente en la aplicación. Toque el botón Grabar en cualquier página de detalle de fase para comenzar a grabar (máximo 5 minutos). Las notas se guardan automáticamente y cualquier miembro del equipo puede reproducirlas. La transcripción con IA estará disponible próximamente para hacer las notas de voz buscables. Debe otorgar permiso de micrófono en su navegador la primera vez que use esta función."
   },
   "tour": {
     "welcomeTitle": "¡Bienvenido a Construction PM!",
@@ -853,5 +859,23 @@
     "type_PROFESSIONAL": "Responsabilidad Profesional",
     "type_BUILDERS_RISK": "Riesgo del Constructor",
     "type_OTHER": "Otro"
+  },
+  "voiceNotes": {
+    "title": "Notas de Voz",
+    "record": "Grabar",
+    "stop": "Detener",
+    "saving": "Guardando...",
+    "saved": "Nota de voz guardada",
+    "saveFailed": "Error al guardar la nota de voz",
+    "deleted": "Nota de voz eliminada",
+    "deleteFailed": "Error al eliminar la nota de voz",
+    "playFailed": "Error al reproducir el audio",
+    "noNotesYet": "Sin notas de voz aún",
+    "noNotesHint": "Toque grabar para agregar una nota de voz a esta fase",
+    "hint": "Grabe una nota de voz (máx 5 min)",
+    "maxDuration": "Máximo 5 minutos",
+    "untitledNote": "Nota de voz",
+    "micPermissionDenied": "Acceso al micrófono denegado. Permita el acceso al micrófono en la configuración del navegador.",
+    "transcriptionHint": "Transcripción con IA próximamente — las notas de voz serán buscables"
   }
 }
