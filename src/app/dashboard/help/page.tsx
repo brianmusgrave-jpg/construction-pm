@@ -12,6 +12,7 @@ export default async function HelpPage({ searchParams }: Props) {
   if (!session?.user) redirect("/login");
 
   const t = await getTranslations("nav");
+  const th = await getTranslations("help");
   const params = await searchParams;
 
   return (
@@ -19,7 +20,7 @@ export default async function HelpPage({ searchParams }: Props) {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900">{t("help")}</h1>
         <p className="text-sm text-gray-500 mt-1">
-          Guides, tips, and answers to common questions
+          {th("subtitle")}
         </p>
       </div>
       <HelpCenter

@@ -553,7 +553,8 @@
     "quickLinkOffline": "Offline Mode",
     "quickLinkAnalytics": "Analytics",
     "quickLinkAdvanced": "Integrations",
-    "quickLinkQuickBooks": "QuickBooks"
+    "quickLinkQuickBooks": "QuickBooks",
+    "subtitle": "Guides, tips, and answers to common questions"
   },
   "tour": {
     "welcomeTitle": "Welcome to Construction PM!",
