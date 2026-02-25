@@ -417,6 +417,143 @@ async function main() {
     }),
   ]);
 
+  // ── Demo Data for v1.0 Features (#56-#63) ──
+
+  // #56 — Punch List Items
+  await (db as any).punchListItem.createMany({
+    data: [
+      { itemNumber: 1, title: "Touch up paint - master bedroom north wall", status: "OPEN", priority: "MINOR", location: "2nd Floor, Master Bedroom", phaseId: phases[6].id, createdById: admin.id },
+      { itemNumber: 2, title: "Fix grout gap in kitchen backsplash", status: "IN_PROGRESS", priority: "MAJOR", location: "1st Floor, Kitchen", phaseId: phases[6].id, createdById: admin.id, assignedToId: staffMembers[0].id },
+      { itemNumber: 3, title: "Replace cracked outlet cover - garage", status: "CLOSED", priority: "COSMETIC", location: "Garage", phaseId: phases[5].id, createdById: admin.id, closedAt: new Date() },
+      { itemNumber: 4, title: "Adjust bathroom door alignment", status: "READY_FOR_REVIEW", priority: "MAJOR", location: "1st Floor, Bathroom", phaseId: phases[6].id, createdById: contractor.id },
+    ],
+  });
+
+  // #57 — RFIs
+  await (db as any).rFI.createMany({
+    data: [
+      { rfiNumber: 1, subject: "Foundation reinforcement at NW corner", question: "Should we add additional rebar at the NW corner where soil tests show clay content? This may affect structural load path.", status: "ANSWERED", priority: "HIGH", answer: "Yes, add #5 rebar at 12\" OC per revised structural drawing S-201A.", phaseId: phases[3].id, createdById: contractor.id, ballInCourt: "Contractor", answeredAt: new Date(now.getTime() - 3 * 86400000) },
+      { rfiNumber: 2, subject: "Window header size for great room", question: "Plans show LVL 3.5x11.25 but supplier has 3.5x11.875 in stock. Is this acceptable substitute?", status: "OPEN", priority: "NORMAL", phaseId: phases[4].id, createdById: contractor.id, ballInCourt: "Engineer" },
+      { rfiNumber: 3, subject: "Electrical panel location clarification", question: "Plans show panel on east wall of utility room but plumbing conflicts. Can we relocate to south wall?", status: "OPEN", priority: "URGENT", dueDate: new Date(now.getTime() + 3 * 86400000), phaseId: phases[5].id, createdById: admin.id, ballInCourt: "Architect" },
+    ],
+  });
+
+  // #58 — Submittals
+  await (db as any).submittal.createMany({
+    data: [
+      { submittalNumber: 1, title: "Concrete Mix Design", specSection: "03 30 00 - Cast-in-Place Concrete", status: "APPROVED", revision: 0, phaseId: phases[3].id, submittedById: admin.id },
+      { submittalNumber: 2, title: "Steel Beam Shop Drawings", specSection: "05 12 00 - Structural Steel Framing", status: "UNDER_REVIEW", revision: 1, dueDate: new Date(now.getTime() + 7 * 86400000), phaseId: phases[4].id, submittedById: contractor.id },
+      { submittalNumber: 3, title: "Roofing Material Samples", specSection: "07 31 00 - Asphalt Shingles", status: "REVISE_AND_RESUBMIT", revision: 0, phaseId: phases[4].id, submittedById: contractor.id },
+    ],
+  });
+
+  // #59 — Time Entries
+  await (db as any).timeEntry.createMany({
+    data: [
+      { date: new Date(now.getTime() - 2 * 86400000), hours: 8, costCode: "310", description: "Site grading and foundation excavation", status: "APPROVED", phaseId: phases[3].id, workerId: staffMembers[0].id, createdById: admin.id, approvedAt: new Date(now.getTime() - 1 * 86400000) },
+      { date: new Date(now.getTime() - 1 * 86400000), hours: 6.5, costCode: "310", description: "Foundation form work", status: "APPROVED", phaseId: phases[3].id, workerId: staffMembers[0].id, createdById: admin.id, approvedAt: new Date() },
+      { date: new Date(), hours: 4, costCode: "260", description: "Rough-in electrical - first floor", status: "PENDING", phaseId: phases[5].id, workerId: staffMembers[1].id, createdById: contractor.id },
+      { date: new Date(), hours: 5, costCode: "220", description: "Plumbing rough-in - bathrooms", status: "PENDING", phaseId: phases[5].id, workerId: staffMembers[2].id, createdById: contractor.id },
+      { date: new Date(now.getTime() - 3 * 86400000), hours: 7.5, costCode: "051", description: "Structural steel installation", status: "REJECTED", phaseId: phases[4].id, workerId: staffMembers[3].id, createdById: contractor.id },
+    ],
+  });
+
+  // #60 — Lien Waivers
+  await (db as any).lienWaiver.createMany({
+    data: [
+      { waiverType: "CONDITIONAL_PROGRESS", status: "APPROVED", amount: 45000.00, throughDate: new Date(now.getTime() - 14 * 86400000), vendorName: "Johnson Construction", notarized: true, phaseId: phases[3].id, createdById: admin.id },
+      { waiverType: "UNCONDITIONAL_PROGRESS", status: "RECEIVED", amount: 22500.00, throughDate: new Date(now.getTime() - 7 * 86400000), vendorName: "Williams Electric", phaseId: phases[5].id, createdById: admin.id },
+      { waiverType: "CONDITIONAL_PROGRESS", status: "PENDING", amount: 18750.00, throughDate: new Date(), vendorName: "Park Plumbing", phaseId: phases[5].id, createdById: admin.id },
+    ],
+  });
+
+  // #61 — Payment Applications
+  await (db as any).paymentApplication.createMany({
+    data: [
+      { number: 1, periodStart: new Date("2026-02-01"), periodEnd: new Date("2026-02-28"), scheduledValue: 125000.00, workCompleted: 45000.00, materialsStored: 8000.00, retainage: 5300.00, previousPayments: 0, currentDue: 47700.00, status: "APPROVED", phaseId: phases[3].id, createdById: admin.id },
+      { number: 2, periodStart: new Date("2026-03-01"), periodEnd: new Date("2026-03-15"), scheduledValue: 125000.00, workCompleted: 78000.00, materialsStored: 12000.00, retainage: 9000.00, previousPayments: 47700.00, currentDue: 33300.00, status: "SUBMITTED", phaseId: phases[4].id, createdById: contractor.id },
+    ],
+  });
+
+  // #62 — Drawings
+  await (db as any).drawing.createMany({
+    data: [
+      { title: "Foundation Plan", drawingNumber: "S-101", discipline: "STRUCTURAL", revision: "A", status: "CURRENT", sheetSize: "24x36", scale: "1/4\" = 1'-0\"", phaseId: phases[3].id, uploadedById: admin.id },
+      { title: "First Floor Framing Plan", drawingNumber: "S-201", discipline: "STRUCTURAL", revision: "B", status: "CURRENT", sheetSize: "24x36", scale: "1/4\" = 1'-0\"", phaseId: phases[4].id, uploadedById: admin.id },
+      { title: "Electrical Plan - First Floor", drawingNumber: "E-101", discipline: "ELECTRICAL", revision: "0", status: "FOR_REVIEW", sheetSize: "24x36", scale: "1/4\" = 1'-0\"", phaseId: phases[5].id, uploadedById: admin.id },
+      { title: "Plumbing Riser Diagram", drawingNumber: "P-001", discipline: "PLUMBING", revision: "0", status: "PRELIMINARY", sheetSize: "11x17", scale: "NTS", phaseId: phases[5].id, uploadedById: admin.id },
+      { title: "Architectural Floor Plan", drawingNumber: "A-101", discipline: "ARCHITECTURAL", revision: "C", status: "SUPERSEDED", sheetSize: "30x42", scale: "1/4\" = 1'-0\"", phaseId: phases[4].id, uploadedById: admin.id },
+    ],
+  });
+
+  // #63 — Estimates with Takeoff Items
+  const estimate1 = await (db as any).estimate.create({
+    data: {
+      name: "Foundation Materials Estimate",
+      description: "Cost estimate for all foundation phase materials and labor",
+      status: "FINALIZED",
+      totalCost: 42850.00,
+      phaseId: phases[3].id,
+      createdById: admin.id,
+    },
+  });
+
+  await (db as any).takeoffItem.createMany({
+    data: [
+      { description: "Ready-mix concrete (4000 psi)", quantity: 85, unit: "CY", unitCost: 165.00, totalCost: 14025.00, category: "material", estimateId: estimate1.id },
+      { description: "#5 Rebar", quantity: 4200, unit: "LF", unitCost: 1.85, totalCost: 7770.00, category: "material", estimateId: estimate1.id },
+      { description: "Form rental (foundation)", quantity: 1, unit: "LS", unitCost: 4500.00, totalCost: 4500.00, category: "equipment", estimateId: estimate1.id },
+      { description: "Foundation labor crew (4 workers)", quantity: 120, unit: "HR", unitCost: 65.00, totalCost: 7800.00, category: "labor", estimateId: estimate1.id },
+      { description: "Waterproofing membrane", quantity: 3200, unit: "SF", unitCost: 2.75, totalCost: 8800.00, category: "material", estimateId: estimate1.id },
+    ],
+  });
+
+  const estimate2 = await (db as any).estimate.create({
+    data: {
+      name: "Framing Package Estimate",
+      description: "Cost estimate for framing materials and labor",
+      status: "DRAFT",
+      totalCost: 0,
+      phaseId: phases[4].id,
+      createdById: admin.id,
+    },
+  });
+
+  await (db as any).takeoffItem.createMany({
+    data: [
+      { description: "2x6 SPF studs", quantity: 450, unit: "EA", unitCost: 8.50, totalCost: 3825.00, category: "material", estimateId: estimate2.id },
+      { description: "LVL beam 3.5x11.25", quantity: 6, unit: "EA", unitCost: 285.00, totalCost: 1710.00, category: "material", estimateId: estimate2.id },
+      { description: "Framing crew labor", quantity: 200, unit: "HR", unitCost: 55.00, totalCost: 11000.00, category: "labor", estimateId: estimate2.id },
+    ],
+  });
+
+  // ── Feature Toggles (Sprint AG #64) ──
+  await (db as any).featureToggle.createMany({
+    data: [
+      { featureKey: "punch_lists", label: "Punch Lists", category: "field", enabled: true },
+      { featureKey: "rfis", label: "RFIs", category: "field", enabled: true },
+      { featureKey: "submittals", label: "Submittals", category: "field", enabled: true },
+      { featureKey: "time_tracking", label: "Time Tracking", category: "field", enabled: true },
+      { featureKey: "drawings", label: "Drawing Management", category: "field", enabled: true },
+      { featureKey: "daily_logs", label: "Daily Logs", category: "field", enabled: true },
+      { featureKey: "inspections", label: "Inspections", category: "field", enabled: true },
+      { featureKey: "voice_notes", label: "Voice Notes", category: "field", enabled: true },
+      { featureKey: "lien_waivers", label: "Lien Waivers", category: "financial", enabled: true },
+      { featureKey: "payment_apps", label: "Payment Applications", category: "financial", enabled: true },
+      { featureKey: "estimates", label: "Estimating & Takeoffs", category: "financial", enabled: true },
+      { featureKey: "change_orders", label: "Change Orders", category: "financial", enabled: true },
+      { featureKey: "budgets", label: "Budget Tracking", category: "financial", enabled: true },
+      { featureKey: "bids", label: "Subcontractor Bids", category: "financial", enabled: true },
+      { featureKey: "quickbooks", label: "QuickBooks Integration", category: "integrations", enabled: false },
+      { featureKey: "webhooks", label: "Webhooks", category: "integrations", enabled: true },
+      { featureKey: "api_keys", label: "API Keys", category: "integrations", enabled: true },
+      { featureKey: "client_portal", label: "Client Portal", category: "general", enabled: true },
+      { featureKey: "analytics", label: "Analytics Dashboard", category: "general", enabled: true },
+      { featureKey: "offline_mode", label: "Offline Mode", category: "general", enabled: true },
+    ],
+    skipDuplicates: true,
+  });
+
   // ── Organization Settings (default theme) ──
   await db.orgSettings.create({
     data: { theme: "blue" },
