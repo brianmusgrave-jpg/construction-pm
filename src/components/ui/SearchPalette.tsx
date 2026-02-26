@@ -1,5 +1,25 @@
 "use client";
 
+/**
+ * @file components/ui/SearchPalette.tsx
+ * @description Global command-palette search modal (Cmd+K / Ctrl+K).
+ *
+ * Exports two components:
+ *   - `SearchPalette` — the full-screen modal (rendered once in `Sidebar`).
+ *   - `SearchButton`  — a sidebar trigger button that fires a synthetic
+ *     `keydown` event to open the palette without tight coupling.
+ *
+ * Behaviour:
+ *   - Opens/closes on Cmd+K (Mac) or Ctrl+K (Windows/Linux); closes on Escape.
+ *   - Query is debounced 250 ms; minimum 2 characters before `globalSearch` fires.
+ *   - Results are rendered with type-specific icons (project, phase, document, staff).
+ *   - Keyboard navigation: ↑/↓ to move selection, Enter to navigate, Esc to close.
+ *   - Mouse hover also updates `selectedIdx` for consistent highlight state.
+ *
+ * Server actions: `globalSearch` (search).
+ * i18n namespaces: `search`, `common`.
+ */
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { globalSearch, type SearchResult } from "@/actions/search";

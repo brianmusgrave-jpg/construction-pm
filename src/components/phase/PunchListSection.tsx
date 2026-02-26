@@ -1,5 +1,33 @@
 "use client";
 
+/**
+ * @file components/phase/PunchListSection.tsx
+ * @description Punch list (deficiency list) tracker for a phase detail page.
+ *
+ * Status flow defined in `STATUS_FLOW`:
+ *   OPEN → IN_PROGRESS → READY_FOR_REVIEW → CLOSED.
+ *   Closed items can be re-opened via a "Reopen" button.
+ *
+ * Priorities defined in `PRIORITY_CONFIG`:
+ *   CRITICAL (red), MAJOR (orange), MINOR (yellow), COSMETIC (gray).
+ *
+ * Key behaviours:
+ *   - Items are expandable rows (click to reveal description, location,
+ *     assignee, due date, and status-change buttons).
+ *   - Overdue flag: `item.dueDate < new Date() && item.status !== "CLOSED"`.
+ *   - Status filter tabs include counts; filter includes all statuses plus ALL.
+ *   - Summary badges show total open count and critical-open count.
+ *   - `allStaff` prop populates the assignee dropdown on the create form.
+ *
+ * Permissions:
+ *   - `canEdit`   — may create items and advance status (including reopen).
+ *   - `canManage` — may delete items.
+ *
+ * Server actions: `createPunchListItem`, `updatePunchListStatus`,
+ *   `deletePunchListItem`.
+ * i18n namespace: `punchList`.
+ */
+
 import { useState } from "react";
 import {
   ListChecks,

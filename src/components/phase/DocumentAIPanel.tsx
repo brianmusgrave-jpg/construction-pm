@@ -1,5 +1,28 @@
 "use client";
 
+/**
+ * @file components/phase/DocumentAIPanel.tsx
+ * @description Collapsible AI data-extraction panel rendered below each
+ *   document row in `DocumentSection`.
+ *
+ * Calls `POST /api/documents/:id/extract` to run server-side extraction,
+ * then surfaces the structured result (`ExtractedData`) including:
+ *   - `summary` — natural language description
+ *   - `detectedDates` — date strings found in the document
+ *   - `detectedAmounts` — monetary values detected
+ *   - `refNumbers` — reference/PO/invoice numbers
+ *   - `detectedKeywords` — domain-relevant keywords
+ *   - `hints` — AI suggestions for follow-up actions
+ *   - `confidence` — 0–100 score (green ≥70, amber ≥50, red <50)
+ *
+ * The panel is collapsed by default; it expands automatically after a
+ * successful extraction or if `initialData` is provided. The user can
+ * toggle expansion and re-run extraction at any time.
+ *
+ * API routes: `POST /api/documents/[id]/extract`.
+ * i18n: none.
+ */
+
 import { useState } from "react";
 import {
   Sparkles,

@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * @file components/project/TeamSection.tsx
+ * @description Project team member list with inline role management and invitation
+ *   trigger.
+ *
+ * Member rows:
+ *   - Avatar circle shows first character of `user.name || user.email` (uppercase).
+ *   - Name/email truncated; current user receives a "(you)" badge.
+ *   - `canInvite` users see an inline `<select>` for role changes
+ *     (OWNER / MANAGER / CONTRACTOR / STAKEHOLDER / VIEWER) — wraps
+ *     `updateMemberRole(memberId, projectId, newRole)` in `useTransition`.
+ *   - Non-managing users see a plain text role label.
+ *   - Remove button (Trash2) shown for non-self members when `canInvite`; calls
+ *     `removeMember(memberId, projectId)` after `confirm()` dialog.
+ *   - `pendingMemberId` tracks which row is in-flight to show Loader2.
+ *
+ * `roleLabel(role)` tries the `invitations` namespace first, falls back to title-
+ * casing the raw role string.
+ *
+ * "Invite" button (UserPlus) opens `<InviteModal>` with existing `invitations` list.
+ *
+ * Server actions: `updateMemberRole`, `removeMember`.
+ * i18n namespaces: `team`, `common`, `invitations`.
+ */
+
 import { useState, useTransition } from "react";
 import { UserPlus, Users, ChevronDown, Loader2, Trash2 } from "lucide-react";
 import { InviteModal } from "./InviteModal";

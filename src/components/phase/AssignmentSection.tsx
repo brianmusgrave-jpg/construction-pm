@@ -1,5 +1,29 @@
 "use client";
 
+/**
+ * @file components/phase/AssignmentSection.tsx
+ * @description Staff assignment section for a phase detail page.
+ *
+ * Shows currently assigned staff with their company and an owner badge
+ * (Crown icon) for the phase owner. A modal triggered by the "Assign
+ * Staff" button lists all available staff filtered by a live search
+ * input; clicking a staff card assigns them via `assignStaffToPhase`.
+ *
+ * Owner assignment: the "Add as Owner" button appears only when the
+ * phase has no owner yet; it calls `assignStaffToPhase` with
+ * `{ isOwner: true }`.
+ *
+ * Sub-component: `StaffCard` — a clickable card rendering name, role,
+ * and company for a single staff member within the assignment modal.
+ *
+ * Permissions:
+ *   - `canEdit` — required to show assignment controls; read-only
+ *     otherwise.
+ *
+ * Server actions: `assignStaffToPhase`, `unassignStaffFromPhase`.
+ * i18n namespace: `assignments`.
+ */
+
 import { useState } from "react";
 import { Users, Plus, X, Crown, Building2 } from "lucide-react";
 import { assignStaffToPhase, unassignStaffFromPhase } from "@/actions/phases";

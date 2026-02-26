@@ -1,3 +1,9 @@
+/**
+ * @file src/app/api/upload/route.ts
+ * @description Vercel Blob client upload handler. Enforces auth and permission
+ * checks in onBeforeGenerateToken, validates ALLOWED_TYPES and a 50 MB file-size
+ * cap, and applies a 30 requests/min rate limit.
+ */
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";

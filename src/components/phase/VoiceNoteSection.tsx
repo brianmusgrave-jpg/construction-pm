@@ -1,5 +1,35 @@
 "use client";
 
+/**
+ * @file components/phase/VoiceNoteSection.tsx
+ * @description Voice memo recorder and playback section for a phase detail page.
+ *
+ * Recording uses the browser MediaRecorder API:
+ *   - MIME type: `audio/webm;codecs=opus` with fallback to `audio/webm`.
+ *   - Data collected every 100 ms via `mediaRecorder.start(100)`.
+ *   - Maximum duration: 5 minutes (300 s) — auto-stops at 300 via timer.
+ *   - On stop, chunks are assembled into a Blob and converted to a
+ *     base64 data URL via `FileReader.readAsDataURL` for storage.
+ *
+ * Playback uses a single shared `audioRef` (HTMLAudioElement). Clicking a
+ *   different note pauses the current one before starting the new one.
+ *
+ * State management:
+ *   - `useTransition` wraps `createVoiceNote` / `deleteVoiceNote` calls.
+ *   - Local `localNotes` state mirrors server data with optimistic updates.
+ *   - Notes are displayed newest-first (`sort` by `createdAt` descending).
+ *
+ * Delete permission:
+ *   `canDelete = (creatorId) => creatorId === currentUserId || isAdmin`.
+ *
+ * Permissions:
+ *   - `canRecord` — may start/stop recording (default: true).
+ *   - `isAdmin`   — may delete any note.
+ *
+ * Server actions: `createVoiceNote`, `deleteVoiceNote`.
+ * i18n namespace: `voiceNotes`.
+ */
+
 import React, { useState, useRef, useTransition, useEffect, useCallback } from "react";
 import { Mic, Square, Trash2, Loader2, Play, Pause, MicOff } from "lucide-react";
 import { createVoiceNote, deleteVoiceNote } from "@/actions/voiceNotes";

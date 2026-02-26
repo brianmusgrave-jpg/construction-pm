@@ -1,3 +1,10 @@
+/**
+ * @file src/app/layout.tsx
+ * @description Root application layout. Wraps all pages with NextIntlClientProvider
+ * for i18n, Providers (SessionProvider + Toaster), OfflineSyncProvider,
+ * OfflineIndicator, and ServiceWorkerRegister. Sets PWA metadata, viewport,
+ * and manifest link.
+ */
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";

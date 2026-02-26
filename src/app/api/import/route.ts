@@ -1,3 +1,9 @@
+/**
+ * @file src/app/api/import/route.ts
+ * @description CSV bulk import endpoint. Parses CSV files with quoted-field support,
+ * enforces a 100-row limit, and bulk-creates projects and phases with flexible
+ * header matching.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db-types";

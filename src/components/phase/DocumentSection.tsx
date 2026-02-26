@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * @file components/phase/DocumentSection.tsx
+ * @description Phase section for uploading and managing construction documents.
+ *
+ * Supports upload via file-picker button or drag-and-drop onto the section.
+ * Files are uploaded to Vercel Blob via the client SDK (`@vercel/blob/client`)
+ * using the `/api/upload` server-side token endpoint, then registered with
+ * `createDocument`. Multi-file uploads are processed sequentially with a
+ * per-file progress message.
+ *
+ * Document categories: PERMIT, CONTRACT, INVOICE, BLUEPRINT, INSPECTION, OTHER.
+ * Accepted MIME types: PDF, JPEG, PNG, WebP, HEIC, DOC, DOCX, XLS, XLSX, CSV.
+ *
+ * Per-document actions:
+ *   - Status management (PENDING / APPROVED / REJECTED) — `canManageStatus` only.
+ *   - Delete — `canManageStatus` only; shown on hover on desktop.
+ *   - Open document in new tab (all users).
+ *
+ * AI extraction panel (`DocumentAIPanel`) is rendered below each document row
+ * and displays any previously extracted data.
+ *
+ * Server actions: `createDocument`, `updateDocumentStatus`, `deleteDocument` (documents).
+ * i18n namespaces: `documents`, `status`, `common`.
+ */
+
 import { useState, useRef, useCallback } from "react";
 import {
   FileText,

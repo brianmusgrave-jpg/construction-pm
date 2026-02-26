@@ -1,5 +1,41 @@
 "use client";
 
+/**
+ * @file components/admin/AdminPanelClient.tsx
+ * @description Full-width admin control panel with five tabs: Features, Activity,
+ *   Users, System Health, and Audit Export.
+ *
+ * Tab: "features"
+ *   Feature toggle list grouped by category (field / financial / integrations /
+ *   general). Each row shows a green/gray dot, label, and a ToggleRight/ToggleLeft
+ *   button. `handleToggle(featureKey, enabled)` calls `toggleFeature`; optimistic
+ *   update via `setFeatures`. `togglingKey` prevents concurrent toggle conflicts.
+ *
+ * Tab: "activity"
+ *   Renders the server-provided `activityLogNode` React node (an `<ActivityLogClient>`
+ *   with server-side props injected at the page level).
+ *
+ * Tab: "users"
+ *   Table of all workspace users. For non-self rows: inline role `<select>` triggers
+ *   `updateUserRole`; "Deactivate" link calls `deactivateUser` after confirm().
+ *   Current user row shows a role badge with Shield icon (no editable select).
+ *   `roleColors` map provides badge styling.
+ *
+ * Tab: "health"
+ *   Stat cards grid (2×4): users, projects (with active sub-count), phases, staff,
+ *   documents, photos, storage (`formatBytes`), activities (with last-7-days sub).
+ *   System info table: version, framework (Next.js 16), database (PostgreSQL/Neon),
+ *   supported languages.
+ *
+ * Tab: "audit"
+ *   Single download button: calls `exportAuditLog()` server action, streams result as
+ *   a Blob, and triggers download as `audit-log-YYYY-MM-DD.csv`. Amber warning note
+ *   about audit log sensitivity.
+ *
+ * Server actions: `toggleFeature`, `updateUserRole`, `deactivateUser`, `exportAuditLog`.
+ * i18n namespace: `adminPanel`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {

@@ -1,5 +1,35 @@
 "use client";
 
+/**
+ * @file components/phase/RFISection.tsx
+ * @description Request for Information (RFI) tracker for a phase detail page.
+ *
+ * Each RFI is numbered sequentially (rfiNumber) and displayed as
+ *   "RFI-NNN" with zero-padded 3 digits.
+ *
+ * Status workflow:
+ *   OPEN → ANSWERED (via `answerRFI`) → CLOSED (via `canManage`).
+ *   Any non-VOID RFI can be voided by `canManage` at any time.
+ *
+ * Priority levels (via `PRIORITY_CONFIG`):
+ *   URGENT (red), HIGH (orange), NORMAL (blue), LOW (gray).
+ *
+ * Key behaviours:
+ *   - `ballInCourt` text field identifies the responsible party.
+ *   - Overdue detection: `item.dueDate && item.status === "OPEN" &&
+ *     new Date(item.dueDate) < new Date()`.
+ *   - Expandable rows show question, answer (if ANSWERED), metadata,
+ *     and inline answer form (`answeringId` state).
+ *   - Filter tabs: ALL / OPEN / ANSWERED / CLOSED (with counts).
+ *
+ * Permissions:
+ *   - `canEdit`   — may create RFIs and provide answers.
+ *   - `canManage` — may close, void, and delete RFIs.
+ *
+ * Server actions: `createRFI`, `answerRFI`, `updateRFIStatus`, `deleteRFI`.
+ * i18n namespace: `rfi`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createRFI, answerRFI, updateRFIStatus, deleteRFI } from "@/actions/rfi";

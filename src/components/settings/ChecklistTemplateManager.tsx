@@ -1,5 +1,16 @@
 "use client";
 
+/**
+ * @file ChecklistTemplateManager.tsx
+ * @description Accordion-style checklist template manager for the settings page. Lists
+ * all templates with expand/collapse; each expanded row shows numbered items with drag
+ * handles (GripVertical). Edit mode replaces the accordion row with an inline
+ * TemplateForm; the same form is used for creating new templates. Items support Enter-
+ * key addition and individual removal; empty items are filtered on submit. Deletes
+ * require a confirmation dialog. Server actions: createChecklistTemplate,
+ * updateChecklistTemplate, deleteChecklistTemplate. i18n: settings.
+ */
+
 import { useState, useTransition } from "react";
 import {
   createChecklistTemplate,

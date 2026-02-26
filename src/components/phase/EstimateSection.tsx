@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/phase/EstimateSection.tsx
+ * @description Phase section for managing cost estimates and takeoff line items.
+ *
+ * Displays a collapsible list of estimates, each with a status badge
+ * (DRAFT → FINAL → APPROVED / REVISED), a running total, and an expandable
+ * table of takeoff line items (description, qty, unit, unit cost, total).
+ *
+ * Features:
+ *   - Grand total aggregates `totalCost` across all estimates in the section.
+ *   - Estimates are expanded/collapsed individually via `expandedEstimate` state.
+ *   - Status flow: canManage required to Finalize (DRAFT→FINAL) or Approve
+ *     (FINAL→APPROVED); canEdit required to create/delete estimates and add items.
+ *   - Optimistic UI: after create/add/delete, local state is updated immediately
+ *     with recalculated `totalCost` before the next server render.
+ *   - Toast notifications on every action success/failure (sonner).
+ *
+ * Server actions: `createEstimate`, `addTakeoffItem`, `deleteTakeoffItem`,
+ *   `updateEstimateStatus`, `deleteEstimate` (estimate).
+ * i18n namespace: `estimate`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createEstimate, addTakeoffItem, deleteTakeoffItem, updateEstimateStatus, deleteEstimate } from "@/actions/estimate";

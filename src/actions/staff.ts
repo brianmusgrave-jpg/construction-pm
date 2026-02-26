@@ -1,26 +1,64 @@
 "use server";
 
+/**
+ * @file actions/staff.ts
+ * @description Server actions for the staff/contact directory.
+ *
+ * Staff records represent people and companies that work on projects:
+ * internal team members, subcontractors, vendors, and inspectors.
+ * They live in a flat directory and are assigned to phases via PhaseAssignment.
+ *
+ * Contact types: TEAM | SUBCONTRACTOR | VENDOR | INSPECTOR
+ *
+ * Bulk operations:
+ *   - bulkDeleteStaff: delete multiple records in a single DB call
+ *   - bulkUpdateStaffType: reclassify multiple records at once
+ *
+ * Export:
+ *   - exportStaffCsv: returns a CSV string for download, ordered by type then name
+ *
+ * Auth: create/update/delete require the corresponding `can()` permission.
+ * Read operations (used in assignment pickers) are handled by page-level queries,
+ * not exposed here.
+ *
+ * Note: `updateStaff` normalizes empty strings to null before writing — the UI
+ * sends empty string for cleared optional fields, which must not overwrite
+ * existing DB values with "".
+ */
+
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+// ── Zod Schemas ──
+
+/** Full staff creation schema. */
 const CreateStaffSchema = z.object({
-  name: z.string().min(1, "Name is required").max(200),
-  company: z.string().max(200).optional(),
-  role: z.string().max(200).optional(),
+  name:        z.string().min(1, "Name is required").max(200),
+  company:     z.string().max(200).optional(),
+  role:        z.string().max(200).optional(),
   contactType: z.enum(["TEAM", "SUBCONTRACTOR", "VENDOR", "INSPECTOR"]),
-  email: z.string().email("Invalid email").max(200).optional().or(z.literal("")),
-  phone: z.string().max(30).optional(),
-  location: z.string().max(200).optional(),
-  notes: z.string().max(2000).optional(),
+  email:       z.string().email("Invalid email").max(200).optional().or(z.literal("")),
+  phone:       z.string().max(30).optional(),
+  location:    z.string().max(200).optional(),
+  notes:       z.string().max(2000).optional(),
 });
 
+/** All fields optional for partial update, plus required `id`. */
 const UpdateStaffSchema = CreateStaffSchema.partial().extend({
   id: z.string().min(1),
 });
 
+// ── Mutations ──
+
+/**
+ * Create a new staff/contact record in the directory.
+ * Records the creating user for audit purposes.
+ *
+ * Requires: "create staff" permission (ADMIN or PROJECT_MANAGER).
+ */
 export async function createStaff(data: {
   name: string;
   company?: string;
@@ -40,14 +78,14 @@ export async function createStaff(data: {
 
   const staff = await db.staff.create({
     data: {
-      name: parsed.name,
-      company: parsed.company || null,
-      role: parsed.role || null,
+      name:        parsed.name,
+      company:     parsed.company || null,
+      role:        parsed.role || null,
       contactType: parsed.contactType,
-      email: parsed.email || null,
-      phone: parsed.phone || null,
-      location: parsed.location || null,
-      notes: parsed.notes || null,
+      email:       parsed.email || null,
+      phone:       parsed.phone || null,
+      location:    parsed.location || null,
+      notes:       parsed.notes || null,
       createdById: session.user.id,
     },
   });
@@ -56,6 +94,14 @@ export async function createStaff(data: {
   return staff;
 }
 
+/**
+ * Update an existing staff record with partial field changes.
+ * Empty strings submitted from cleared form fields are normalized to null
+ * to prevent overwriting existing values with empty strings.
+ * Fields omitted from `data` are left unchanged.
+ *
+ * Requires: "update staff" permission.
+ */
 export async function updateStaff(data: {
   id: string;
   name?: string;
@@ -75,7 +121,7 @@ export async function updateStaff(data: {
   const parsed = UpdateStaffSchema.parse(data);
   const { id, ...updates } = parsed;
 
-  // Clean empty strings to null
+  // Normalize empty strings → null so cleared optional fields don't persist as ""
   const cleaned: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(updates)) {
     if (value === undefined) continue;
@@ -91,6 +137,12 @@ export async function updateStaff(data: {
   return staff;
 }
 
+/**
+ * Delete a single staff record.
+ * Phase assignments referencing this staff will cascade-delete per schema.
+ *
+ * Requires: "delete staff" permission.
+ */
 export async function deleteStaff(id: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -101,6 +153,13 @@ export async function deleteStaff(id: string) {
   revalidatePath("/dashboard/directory");
 }
 
+/**
+ * Delete multiple staff records in a single DB call.
+ * Returns the count of deleted records.
+ * No-ops gracefully on an empty id array.
+ *
+ * Requires: "delete staff" permission.
+ */
 export async function bulkDeleteStaff(ids: string[]) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -113,6 +172,13 @@ export async function bulkDeleteStaff(ids: string[]) {
   return { deleted: result.count };
 }
 
+/**
+ * Reclassify multiple staff records to a new contact type in a single call.
+ * Used by the bulk-edit toolbar in the directory table.
+ * Returns the count of updated records.
+ *
+ * Requires: "update staff" permission.
+ */
 export async function bulkUpdateStaffType(ids: string[], contactType: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -131,6 +197,13 @@ export async function bulkUpdateStaffType(ids: string[], contactType: string) {
   return { updated: result.count };
 }
 
+/**
+ * Export the full staff directory as a CSV string for download.
+ * Ordered by contact type then name. All fields are double-quote escaped.
+ * Returns a plain CSV string (the API route writes the Content-Disposition header).
+ *
+ * Requires: authenticated session.
+ */
 export async function exportStaffCsv() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");

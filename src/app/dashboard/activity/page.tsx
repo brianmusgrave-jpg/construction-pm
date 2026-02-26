@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/activity/page.tsx
+ * @description Activity log page for ADMIN and PROJECT_MANAGER roles. Fetches the
+ * first 50 activity log entries, all projects, and total count, then renders
+ * ActivityLogClient.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";

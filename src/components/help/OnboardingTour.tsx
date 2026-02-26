@@ -1,5 +1,35 @@
 "use client";
 
+/**
+ * @file components/help/OnboardingTour.tsx
+ * @description First-run modal tour shown to new users after a 1-second delay.
+ *
+ * Steps:
+ *   - ADMIN_STEPS (10): Welcome, Projects, Phases, Team, Checklists, Change Orders,
+ *     Analytics, Offline, Advanced, Notifications.
+ *   - CONTRACTOR_STEPS (5): Welcome, Assigned Phases, Upload Photos, Request Review,
+ *     Offline.
+ *   Component receives `userRole` and renders the appropriate step set.
+ *
+ * Each step has an icon, title, description, optional tip (shown in a primary-
+ *   bg callout), and an optional `learnMore` link that navigates to
+ *   `/dashboard/help?section=…&article=…` and marks the tour complete.
+ *
+ * Persistence: tour completion stored in `localStorage` under `TOUR_STORAGE_KEY`
+ *   (`"construction-pm-tour-complete"`). Set to prevent re-showing; cleared by
+ *   `resetTour()` which also dispatches a `"replay-tour"` window event picked up
+ *   by the effect listener.
+ *
+ * Exports:
+ *   `TOUR_STORAGE_KEY` — the localStorage key constant.
+ *   `resetTour()` — clears the key and triggers replay via window event.
+ *
+ * UI: progress bar + pill dot indicator; back / skip / next-or-"Get Started"
+ *   buttons. Clicking the backdrop calls `completeTour()`.
+ *
+ * i18n namespaces: `tour`, `common`.
+ */
+
 import { useState, useEffect } from "react";
 import {
   X,

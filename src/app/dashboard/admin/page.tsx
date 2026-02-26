@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/admin/page.tsx
+ * @description Admin panel page. Restricted to ADMIN role. Fetches feature toggles,
+ * system stats, users, activity logs, and projects in parallel; serializes dates
+ * and builds an embedded ActivityLogClient node for AdminPanelClient.
+ */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";

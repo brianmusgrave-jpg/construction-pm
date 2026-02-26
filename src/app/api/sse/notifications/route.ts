@@ -1,3 +1,9 @@
+/**
+ * @file src/app/api/sse/notifications/route.ts
+ * @description Server-Sent Events stream for real-time notification delivery.
+ * Sends an initial unread count and polls every 30 seconds; cleans up on abort
+ * signal. Uses force-dynamic and Node.js runtime.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { NextRequest } from "next/server";

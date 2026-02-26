@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/contractor/ContractorNav.tsx
+ * @description Responsive navigation shell for the contractor portal.
+ *
+ * Layout:
+ *   - Desktop (sm+): sticky top header with logo, 5 nav links, user info + sign-out.
+ *   - Mobile: sticky top bar (logo + avatar + sign-out) + fixed bottom tab bar.
+ *
+ * Nav links: My Work (/contractor), Documents, Photos, Reports, Notifications.
+ *   Notifications link shows an unread badge (max "99+" desktop / "9+" mobile) when
+ *   `unreadCount > 0`.
+ *
+ * `isActive(href)` uses exact match for root `/contractor`, prefix match otherwise.
+ *
+ * Branding: if `logoUrl` is provided it replaces the HardHat icon; `companyName` or
+ *   i18n fallback used as text label.
+ *
+ * Sign-out calls `signOut({ callbackUrl: "/login" })` from next-auth/react.
+ *
+ * i18n namespaces: `nav`, `common`, `contractor`.
+ */
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";

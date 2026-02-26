@@ -1,3 +1,10 @@
+/**
+ * @file src/middleware.ts
+ * @description NextAuth edge middleware for route protection. Defines a public
+ * allowlist (/login, /register, /api/auth, /invite), redirects authenticated users
+ * away from /login, enforces CONTRACTOR↔dashboard routing, and excludes static
+ * assets from matching.
+ */
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 

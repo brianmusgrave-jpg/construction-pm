@@ -1,5 +1,26 @@
 "use client";
 
+/**
+ * @file components/dashboard/BulkImportButton.tsx
+ * @description CSV bulk-import button for creating multiple projects at once.
+ *
+ * Triggers a modal with:
+ *   - A "Download CSV Template" button that builds a Blob from the embedded
+ *     `CSV_TEMPLATE` constant and triggers a browser download as
+ *     `projects-import-template.csv`.
+ *   - A drag-and-drop / click-to-upload area (accepts .csv and .txt) that
+ *     POSTs the selected file as FormData to `POST /api/import`.
+ *   - On success: shows `ImportResult` (created/total/errors) in a green/amber
+ *     card; if any projects were created, auto-reloads the page after 1.5 s.
+ *   - On API error: shows the error message in a red banner.
+ *   - Maximum 100 projects per file (enforced by the API route).
+ *
+ * CSV columns: name, description, status, location, start_date, end_date,
+ *   budget, phases (semicolon-separated).
+ *
+ * No i18n — copy is hardcoded in English.
+ */
+
 import { useState, useRef } from "react";
 import {
   Upload,

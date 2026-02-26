@@ -1,3 +1,8 @@
+/**
+ * @file src/app/contractor/photos/page.tsx
+ * @description Contractor photo gallery. Displays photos from all contractor
+ * member projects in a 2×3 grid with project and phase name overlays.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";

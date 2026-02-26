@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * @file ApiKeySection.tsx
+ * @description API key management panel for the settings page. Allows users to create
+ * named API keys with optional expiry dates. New key values are shown once in an amber
+ * one-time banner with a clipboard copy button (Check/Copy toggle). Existing keys
+ * display their prefix, creation date, last-used date, expiry, and Revoked/Expired
+ * status badges. Individual keys can be revoked (ToggleRight) or permanently deleted.
+ * Server actions: createApiKey, revokeApiKey, deleteApiKey.
+ */
+
 import { useState } from "react";
 import {
   Key,
