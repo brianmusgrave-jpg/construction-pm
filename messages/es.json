@@ -906,7 +906,16 @@
     "maxDuration": "Máximo 5 minutos",
     "untitledNote": "Nota de voz",
     "micPermissionDenied": "Acceso al micrófono denegado. Permita el acceso al micrófono en la configuración del navegador.",
-    "transcriptionHint": "Transcripción con IA próximamente — las notas de voz serán buscables"
+    "transcribe": "✨ Transcribir",
+    "transcribing": "Transcribiendo...",
+    "transcribed": "Transcripción completa",
+    "transcribeFailed": "Error al transcribir",
+    "extractTasks": "Extraer tareas",
+    "extractingTasks": "Extrayendo...",
+    "suggestedTasks": "Tareas sugeridas",
+    "noTasksFound": "No se encontraron tareas en la transcripción",
+    "taskExtractFailed": "Error al extraer tareas",
+    "aiHint": "Usa ✨ Transcribir para convertir audio a texto y luego Extraer tareas"
   },
   "punchList": {
     "title": "Lista de Pendientes",

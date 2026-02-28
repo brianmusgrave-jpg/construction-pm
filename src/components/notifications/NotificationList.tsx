@@ -1,5 +1,39 @@
 "use client";
 
+/**
+ * @file components/notifications/NotificationList.tsx
+ * @description Full-page notification centre with grouping, read tracking, and
+ *   infinite pagination.
+ *
+ * Grouping: notifications are bucketed into today / yesterday / thisWeek / older
+ *   using `date-fns` helpers (`isToday`, `isYesterday`, `isAfter`, `subDays(now, 7)`).
+ *   Each group has a sticky section header.
+ *
+ * Per-notification behaviour:
+ *   - Unread indicator: 2×2 primary-colour dot on the left + bolder title text +
+ *     primary-bg tinted row.
+ *   - Type icon (`getNotificationIcon`): PHASE_STATUS_CHANGED → HardHat,
+ *     REVIEW_REQUESTED → Clock (amber), REVIEW_COMPLETED → CheckCircle2 (green),
+ *     CHECKLIST_COMPLETED → ClipboardCheck, DOCUMENT_UPLOADED → FileText,
+ *     DOCUMENT_STATUS_CHANGED → FileCheck, MEMBER_INVITED → UserPlus,
+ *     TIMELINE_SHIFTED → Clock (red), default → Bell.
+ *   - Click: marks as read (fire-and-forget `markAsRead`), decrements `unread`
+ *     counter, then navigates via `getNotificationLink(data)`:
+ *       data.projectId + data.phaseId → `/dashboard/projects/[p]/phases/[ph]`
+ *       data.projectId only           → `/dashboard/projects/[p]/timeline`
+ *       otherwise                     → `/dashboard`
+ *   - Delete (Trash2, hover-reveal): removes from local state, decrements unread if
+ *     applicable, fire-and-forget `deleteNotification`.
+ *
+ * Header: "Mark all as read" button shown when `unread > 0`; calls `markAllAsRead`.
+ *
+ * Load-more: calls `getNotifications(nextPage, 20)`; appends to list; updates
+ *   `hasMore` and `page`.
+ *
+ * Server actions: `markAsRead`, `markAllAsRead`, `deleteNotification`, `getNotifications`.
+ * i18n namespaces: `notifications`, `common`.
+ */
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {

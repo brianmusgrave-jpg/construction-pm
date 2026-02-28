@@ -1,5 +1,16 @@
 "use client";
 
+/**
+ * @file ChecklistTemplateManager.tsx
+ * @description Accordion-style checklist template manager for the settings page. Lists
+ * all templates with expand/collapse; each expanded row shows numbered items with drag
+ * handles (GripVertical). Edit mode replaces the accordion row with an inline
+ * TemplateForm; the same form is used for creating new templates. Items support Enter-
+ * key addition and individual removal; empty items are filtered on submit. Deletes
+ * require a confirmation dialog. Server actions: createChecklistTemplate,
+ * updateChecklistTemplate, deleteChecklistTemplate. i18n: settings.
+ */
+
 import { useState, useTransition } from "react";
 import {
   createChecklistTemplate,
@@ -18,6 +29,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface TemplateItem {
   id: string;
@@ -36,6 +48,7 @@ interface Props {
 }
 
 export function ChecklistTemplateManager({ templates: initial }: Props) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("settings");
   const [templates, setTemplates] = useState(initial);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -153,8 +166,8 @@ export function ChecklistTemplateManager({ templates: initial }: Props) {
                         <Pencil className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (!confirm(t("deleteTemplateConfirm", { name: template.name }))) return;
+                        onClick={async () => {
+                          if (!await confirm(t("deleteTemplateConfirm", { name: template.name }), { danger: true })) return;
                           startTransition(async () => {
                             try {
                               await deleteChecklistTemplate(template.id);

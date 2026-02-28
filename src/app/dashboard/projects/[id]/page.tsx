@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/projects/[id]/page.tsx
+ * @description Full project overview page. Renders budget cards, a progress bar,
+ * phase list, TeamSection, ClientTokenSection, DailyLogSection, BudgetSection, and
+ * recent activity. Includes BudgetCard and StatCard helper components.
+ */
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";

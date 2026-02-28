@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/phase/ChecklistSection.tsx
+ * @description Checklist management section for a phase detail page.
+ *
+ * Renders a progress bar (completed items / total items), a list of
+ * checklist items with toggle-completion checkboxes, an "Add item"
+ * inline input, and a template picker modal for applying pre-built
+ * org-level checklist templates.
+ *
+ * Template flow: user opens the picker → selects a template →
+ *   `applyChecklistTemplate` server action creates all checklist items
+ *   from the template in a single call → local state is replaced.
+ *
+ * Permissions:
+ *   - `canEdit`   — toggle item completion, add custom items.
+ *   - `canManage` — delete items, apply templates.
+ *
+ * Server actions: `createChecklistItem`, `toggleChecklistItem`,
+ *   `deleteChecklistItem`, `applyChecklistTemplate`.
+ * i18n namespace: `checklist`.
+ */
+
 import { useState } from "react";
 import {
   CheckSquare,

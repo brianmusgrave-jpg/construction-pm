@@ -32,8 +32,8 @@
  */
 
 import React, { useState, useRef, useTransition, useEffect, useCallback } from "react";
-import { Mic, Square, Trash2, Loader2, Play, Pause, MicOff } from "lucide-react";
-import { createVoiceNote, deleteVoiceNote } from "@/actions/voiceNotes";
+import { Mic, Square, Trash2, Loader2, Play, Pause, MicOff, Sparkles, ListChecks, X } from "lucide-react";
+import { createVoiceNote, deleteVoiceNote, transcribeVoiceNote, extractTasksFromTranscript } from "@/actions/voiceNotes";
 import { upload } from "@vercel/blob/client";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslations } from "next-intl";
@@ -81,6 +81,11 @@ export function VoiceNoteSection({
   const [isPending, startTransition] = useTransition();
   const [localNotes, setLocalNotes] = useState<VoiceNote[]>(voiceNotes);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  // AI feature state
+  const [transcribingId, setTranscribingId] = useState<string | null>(null);
+  const [extractingId, setExtractingId] = useState<string | null>(null);
+  const [suggestedTasks, setSuggestedTasks] = useState<{ noteId: string; tasks: string[] } | null>(null);
 
   // Recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -213,6 +218,36 @@ export function VoiceNoteSection({
         setDeletingId(null);
       }
     });
+  };
+
+  const handleTranscribe = async (note: VoiceNote) => {
+    setTranscribingId(note.id);
+    try {
+      const { transcript } = await transcribeVoiceNote(note.id);
+      setLocalNotes((prev) =>
+        prev.map((n) => (n.id === note.id ? { ...n, transcript } : n))
+      );
+      toast.success(t("transcribed"));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("transcribeFailed"));
+    } finally {
+      setTranscribingId(null);
+    }
+  };
+
+  const handleExtractTasks = async (note: VoiceNote) => {
+    if (!note.transcript) return;
+    setExtractingId(note.id);
+    setSuggestedTasks(null);
+    try {
+      const { tasks } = await extractTasksFromTranscript(note.transcript, currentUserId);
+      setSuggestedTasks({ noteId: note.id, tasks });
+      if (tasks.length === 0) toast.info(t("noTasksFound"));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : t("taskExtractFailed"));
+    } finally {
+      setExtractingId(null);
+    }
   };
 
   const togglePlay = (note: VoiceNote) => {
@@ -359,10 +394,68 @@ export function VoiceNoteSection({
                     {formatDistanceToNow(new Date(note.createdAt), { addSuffix: true })}
                   </span>
                 </div>
+                {/* Transcript display */}
                 {note.transcript && (
-                  <p className="text-xs text-gray-500 mt-1 line-clamp-2 italic">
-                    {note.transcript}
+                  <p className="text-xs text-gray-500 mt-1 line-clamp-3 italic">
+                    &ldquo;{note.transcript}&rdquo;
                   </p>
+                )}
+
+                {/* AI action buttons */}
+                <div className="flex items-center gap-2 mt-1.5">
+                  {!note.transcript && (
+                    <button
+                      onClick={() => handleTranscribe(note)}
+                      disabled={transcribingId === note.id}
+                      className="inline-flex items-center gap-1 text-[10px] font-medium text-[var(--color-primary)] hover:underline disabled:opacity-50"
+                    >
+                      {transcribingId === note.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-3 h-3" />
+                      )}
+                      {transcribingId === note.id ? t("transcribing") : t("transcribe")}
+                    </button>
+                  )}
+                  {note.transcript && (
+                    <button
+                      onClick={() => handleExtractTasks(note)}
+                      disabled={extractingId === note.id}
+                      className="inline-flex items-center gap-1 text-[10px] font-medium text-purple-600 hover:underline disabled:opacity-50"
+                    >
+                      {extractingId === note.id ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <ListChecks className="w-3 h-3" />
+                      )}
+                      {extractingId === note.id ? t("extractingTasks") : t("extractTasks")}
+                    </button>
+                  )}
+                </div>
+
+                {/* Suggested tasks panel */}
+                {suggestedTasks?.noteId === note.id && suggestedTasks.tasks.length > 0 && (
+                  <div className="mt-2 p-2.5 bg-purple-50 border border-purple-100 rounded-lg">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-semibold text-purple-700 uppercase tracking-wide">
+                        {t("suggestedTasks")}
+                      </span>
+                      <button
+                        onClick={() => setSuggestedTasks(null)}
+                        className="text-purple-400 hover:text-purple-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                    <ul className="space-y-0.5">
+                      {suggestedTasks.tasks.map((task, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-xs text-purple-800">
+                          <span className="mt-0.5 w-1.5 h-1.5 rounded-full bg-purple-400 shrink-0" />
+                          {task}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
 
@@ -385,10 +478,11 @@ export function VoiceNoteSection({
         </div>
       )}
 
-      {/* Future AI transcription note */}
+      {/* AI hint */}
       {localNotes.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-gray-100">
-          <p className="text-xs text-gray-400 italic">{t("transcriptionHint")}</p>
+        <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-1.5">
+          <Sparkles className="w-3 h-3 text-gray-300" />
+          <p className="text-xs text-gray-400 italic">{t("aiHint")}</p>
         </div>
       )}
     </div>

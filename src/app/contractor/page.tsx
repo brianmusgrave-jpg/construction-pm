@@ -1,3 +1,9 @@
+/**
+ * @file src/app/contractor/page.tsx
+ * @description Contractor dashboard home. Merges project memberships with staff
+ * email matching to show KPI grid (active/overdue/done), overdue alert, upcoming
+ * deadlines (7-day window), recent activity, and phase cards with progress bars.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";

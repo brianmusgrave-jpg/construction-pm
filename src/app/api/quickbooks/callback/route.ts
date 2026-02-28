@@ -1,3 +1,9 @@
+/**
+ * @file src/app/api/quickbooks/callback/route.ts
+ * @description QuickBooks OAuth callback handler. Exchanges the authorization code
+ * and realm ID for tokens via exchangeQuickBooksCode, then redirects to settings
+ * with qb_connected=true or qb_error= on failure.
+ */
 import { NextRequest, NextResponse } from "next/server";
 import { exchangeQuickBooksCode } from "@/actions/quickbooks";
 

@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/phase/SubcontractorBidSection.tsx
+ * @description Subcontractor bid comparison and award section for a phase detail page.
+ *
+ * Key behaviours:
+ *   - Bids are displayed sorted ascending by `amount`
+ *     (`[...bids].sort((a, b) => a.amount - b.amount)`).
+ *   - Lowest bid receives a "Lowest bid" badge when multiple bids exist
+ *     (`lowestBid = bids.reduce((min, b) => (!min || b.amount < min.amount ? b : min), null)`).
+ *   - Bid spread (max − min) is shown below the list when > 1 bid exists.
+ *   - `awardBid(bid.id, !bid.awarded)` toggles the award state — only one
+ *     bid can be awarded; previously awarded bids are not auto-revoked here
+ *     (controlled server-side).
+ *   - Awarded bid row is highlighted with a green background.
+ *
+ * Permissions:
+ *   - `canManage` — all actions (add, award/revoke, delete).
+ *
+ * Server actions: `createSubcontractorBid`, `awardBid`,
+ *   `deleteSubcontractorBid`.
+ */
+
 import { useState } from "react";
 import {
   Briefcase,
@@ -21,6 +43,7 @@ import {
   deleteSubcontractorBid,
 } from "@/actions/subcontractor-bids";
 import type { SubcontractorBid } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface SubcontractorBidSectionProps {
   phaseId: string;
@@ -33,6 +56,7 @@ function fmt(n: number) {
 }
 
 export function SubcontractorBidSection({ phaseId, bids, canManage }: SubcontractorBidSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -87,7 +111,7 @@ export function SubcontractorBidSection({ phaseId, bids, canManage }: Subcontrac
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this bid?")) return;
+    if (!await confirm("Delete this bid?", { danger: true })) return;
     setActionId(id);
     try {
       await deleteSubcontractorBid(id);

@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/project/ClientTokenSection.tsx
+ * @description Read-only client portal link management for a project.
+ *
+ * Each token generates a public URL at `${origin}/client/[token]` that gives
+ * unauthenticated visitors a read-only view of project status, phases, and progress.
+ *
+ * Key behaviours:
+ *   - Create: form accepts a required `label` and optional `expiresAt` date.
+ *     On success `newToken` state is set, showing a green banner with the full URL
+ *     and a clipboard copy button (2-second "copied" confirmation state).
+ *   - Token list: each row shows label, expiry date, and status badges:
+ *       "Revoked" (bg-gray-100)  when `!token.active`
+ *       "Expired" (bg-red-50)    when `token.expiresAt < new Date()`
+ *     Active, non-expired tokens show Copy / ExternalLink / Revoke (ToggleRight) icons.
+ *   - Revoke: calls `revokeClientToken(token.id, projectId)` — sets `active = false`.
+ *   - Delete: permanent; requires confirm() dialog.
+ *   - `actionId` prevents concurrent actions on the same token row.
+ *
+ * Server actions: `createClientToken`, `revokeClientToken`, `deleteClientToken`.
+ */
+
 import { useState } from "react";
 import {
   Eye,
@@ -17,6 +39,7 @@ import {
 } from "lucide-react";
 import { createClientToken, revokeClientToken, deleteClientToken } from "@/actions/client-tokens";
 import type { ClientToken } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface ClientTokenSectionProps {
   projectId: string;
@@ -24,6 +47,7 @@ interface ClientTokenSectionProps {
 }
 
 export function ClientTokenSection({ projectId, tokens }: ClientTokenSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -74,7 +98,7 @@ export function ClientTokenSection({ projectId, tokens }: ClientTokenSectionProp
   };
 
   const handleDelete = async (tokenId: string) => {
-    if (!confirm("Delete this client link permanently?")) return;
+    if (!await confirm("Delete this client link permanently?", { danger: true })) return;
     setActionId(tokenId);
     try {
       await deleteClientToken(tokenId, projectId);

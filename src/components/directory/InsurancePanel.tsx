@@ -1,5 +1,31 @@
 "use client";
 
+/**
+ * @file components/directory/InsurancePanel.tsx
+ * @description Insurance certificate management modal for a directory contact.
+ *
+ * Sections:
+ *   1. Umbrella override — checkbox to mark the contact as covered by an
+ *      umbrella policy; when checked a dropdown appears to select the specific
+ *      umbrella certificate from `allCertificates`. Calls `setUmbrellaOverride`.
+ *   2. Certificate list — existing certs shown with carrier, policy number,
+ *      coverage type, date range, coverage amount, and a "View Doc" link. Each
+ *      has a status badge via `statusBadge()` (ACTIVE → green ShieldCheck,
+ *      EXPIRING_SOON → yellow ShieldAlert, EXPIRED → red ShieldX).
+ *      Delete button (canManage only) calls `deleteCertificate` after `confirm()`.
+ *   3. Add-certificate inline form (canManage only) — carrier (required),
+ *      policy number, coverage type (7 options in `COVERAGE_TYPES`), effective
+ *      date (required), expiry date (required), coverage amount, notes.
+ *      Submits via `createCertificate`.
+ *
+ * COVERAGE_TYPES: GENERAL_LIABILITY, WORKERS_COMP, AUTO, UMBRELLA, PROFESSIONAL,
+ *   BUILDERS_RISK, OTHER.
+ *
+ * Server actions: `createCertificate`, `updateCertificate`, `deleteCertificate`,
+ *   `setUmbrellaOverride`.
+ * i18n namespaces: `insurance`, `common`.
+ */
+
 import { useState, useTransition } from "react";
 import {
   X,
@@ -22,6 +48,7 @@ import {
 } from "@/actions/insurance";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface Certificate {
   id: string;
@@ -73,6 +100,7 @@ export function InsurancePanel({
   allCertificates,
   onClose,
 }: InsurancePanelProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("insurance");
   const tc = useTranslations("common");
   const [isPending, startTransition] = useTransition();
@@ -125,8 +153,8 @@ export function InsurancePanel({
     });
   }
 
-  function handleDelete(certId: string) {
-    if (!confirm(t("confirmDelete"))) return;
+  async function handleDelete(certId: string) {
+    if (!await confirm(t("confirmDelete"), { danger: true })) return;
     startTransition(async () => {
       try {
         await deleteCertificate(certId);

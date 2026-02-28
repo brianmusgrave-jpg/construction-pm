@@ -1,5 +1,35 @@
 "use client";
 
+/**
+ * @file components/projects/NewProjectForm.tsx
+ * @description Multi-step wizard for creating a new project with optional phase
+ *   templates and a full phase builder.
+ *
+ * Step flow (0 → 1 → 2):
+ *   Step 0 — Template picker:
+ *     Main types: Residential (RESIDENTIAL_TEMPLATE), Commercial (COMMERCIAL_TEMPLATE),
+ *     Blank (empty phases). Trade-specific grid: TRADE_TEMPLATES (Electrical, Plumbing,
+ *     HVAC, Framing, etc.) with icon lookup via `tradeIcons` map.
+ *     `selectTemplate(choice)` populates `phases` state from the chosen template and
+ *     advances to step 1.
+ *   Step 1 — Project details:
+ *     name (required), description, address, planApproval date, budget.
+ *     Advances to step 2 on valid name.
+ *   Step 2 — Phase builder:
+ *     Ordered list of `PhaseInput` objects. Each row shows: number, move-up/down
+ *     chevrons, Diamond icon (milestone) or GripVertical, phase name, date range.
+ *     Expanded panel adds: name input, isMilestone checkbox, detail, estStart/estEnd
+ *     (required), optional worstStart/worstEnd (red labels).
+ *     Milestone phases share estStart as estEnd (single-day event).
+ *     `expandAll` / `collapseAll` buttons when > 1 phase.
+ *     Submit calls `createProjectWithPhases`; success navigates away server-side.
+ *
+ * Phase validation: every phase must have a non-empty name plus estStart and estEnd.
+ *
+ * Server action: `createProjectWithPhases`.
+ * i18n namespaces: `projects`, `common`.
+ */
+
 import { useState } from "react";
 import { createProjectWithPhases } from "@/actions/projects";
 import {

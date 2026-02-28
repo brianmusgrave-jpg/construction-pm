@@ -1,5 +1,38 @@
 "use client";
 
+/**
+ * @file components/phase/TimeTrackingSection.tsx
+ * @description Labour time entry tracker for a phase detail page.
+ *
+ * Each entry records hours for a worker on a specific date at a phase.
+ * Hours input uses `step="0.25"` (quarter-hour precision).
+ *
+ * Status workflow (via `STATUS_STYLES`):
+ *   PENDING → APPROVED | REJECTED.
+ *   Only PENDING entries can be deleted (by `canEdit`).
+ *   Only managers can approve or reject.
+ *
+ * Summary bar shows:
+ *   - totalHours: sum of all entries regardless of status.
+ *   - approvedHours: sum of APPROVED entries only.
+ *   - pendingCount: count of PENDING entries.
+ *
+ * Key behaviours:
+ *   - Optional `costCode` field for budget tracking.
+ *   - Date field defaults to today (`new Date().toISOString().slice(0, 10)`).
+ *   - Collapsible section with `expanded` state.
+ *   - Filter tabs: ALL / PENDING / APPROVED / REJECTED.
+ *   - `allStaff` prop populates the worker dropdown.
+ *
+ * Permissions:
+ *   - `canEdit`   — may create entries and delete PENDING entries.
+ *   - `canManage` — may approve and reject PENDING entries.
+ *
+ * Server actions: `createTimeEntry`, `approveTimeEntry`,
+ *   `rejectTimeEntry`, `deleteTimeEntry`.
+ * i18n namespace: `timeTracking`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createTimeEntry, approveTimeEntry, rejectTimeEntry, deleteTimeEntry } from "@/actions/timeEntry";
@@ -14,6 +47,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
   PENDING: { color: "text-amber-700", bg: "bg-amber-100" },
@@ -30,6 +64,7 @@ interface TimeTrackingSectionProps {
 }
 
 export function TimeTrackingSection({ phaseId, entries, allStaff, canEdit, canManage }: TimeTrackingSectionProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("timeTracking");
   const [items, setItems] = useState(entries);
   const [showForm, setShowForm] = useState(false);
@@ -98,7 +133,7 @@ export function TimeTrackingSection({ phaseId, entries, allStaff, canEdit, canMa
   }
 
   async function handleDelete(id: string) {
-    if (!confirm(t("confirmDelete"))) return;
+    if (!await confirm(t("confirmDelete"), { danger: true })) return;
     try {
       await deleteTimeEntry(id);
       setItems((prev) => prev.filter((i) => i.id !== id));

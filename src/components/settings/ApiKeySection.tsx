@@ -1,5 +1,15 @@
 "use client";
 
+/**
+ * @file ApiKeySection.tsx
+ * @description API key management panel for the settings page. Allows users to create
+ * named API keys with optional expiry dates. New key values are shown once in an amber
+ * one-time banner with a clipboard copy button (Check/Copy toggle). Existing keys
+ * display their prefix, creation date, last-used date, expiry, and Revoked/Expired
+ * status badges. Individual keys can be revoked (ToggleRight) or permanently deleted.
+ * Server actions: createApiKey, revokeApiKey, deleteApiKey.
+ */
+
 import { useState } from "react";
 import {
   Key,
@@ -17,12 +27,14 @@ import {
 } from "lucide-react";
 import { createApiKey, revokeApiKey, deleteApiKey } from "@/actions/api-keys";
 import type { ApiKey } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface ApiKeySectionProps {
   apiKeys: ApiKey[];
 }
 
 export function ApiKeySection({ apiKeys }: ApiKeySectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -63,7 +75,7 @@ export function ApiKeySection({ apiKeys }: ApiKeySectionProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Permanently delete this API key?")) return;
+    if (!await confirm("Permanently delete this API key?", { danger: true })) return;
     setActionId(id);
     try { await deleteApiKey(id); }
     catch (err) { setError(err instanceof Error ? err.message : "Failed"); }

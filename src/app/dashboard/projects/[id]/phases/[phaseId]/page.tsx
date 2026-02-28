@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/projects/[id]/phases/[phaseId]/page.tsx
+ * @description Full phase detail page. Performs 16 parallel data fetches and renders
+ * 17 section components covering checklist, documents, photos, budget, dependencies,
+ * weather, comments, and more.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { notFound, redirect } from "next/navigation";

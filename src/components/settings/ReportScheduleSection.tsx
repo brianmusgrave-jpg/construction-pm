@@ -1,5 +1,17 @@
 "use client";
 
+/**
+ * @file ReportScheduleSection.tsx
+ * @description Scheduled report builder supporting WEEKLY and MONTHLY frequencies.
+ * Weekly schedules select a day of the week; monthly schedules specify a day of month
+ * (1–28). Send hour is chosen from a 24-entry array displayed in 12-hour AM/PM UTC
+ * format. Recipients are entered as email tag pills via Enter or an Add button; at least
+ * one recipient is required. Existing schedules display a human-readable summary from
+ * describeSchedule(), a last-sent date, and an active/paused badge with a toggle.
+ * Deletes require confirmation. Server actions: createReportSchedule,
+ * toggleReportSchedule, deleteReportSchedule.
+ */
+
 import { useState } from "react";
 import {
   Mail,
@@ -19,6 +31,7 @@ import {
   deleteReportSchedule,
 } from "@/actions/report-schedules";
 import type { ReportSchedule, ReportFrequency } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface ReportScheduleSectionProps {
   schedules: ReportSchedule[];
@@ -33,6 +46,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) => {
 });
 
 export function ReportScheduleSection({ schedules }: ReportScheduleSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -92,7 +106,7 @@ export function ReportScheduleSection({ schedules }: ReportScheduleSectionProps)
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this report schedule?")) return;
+    if (!await confirm("Delete this report schedule?", { danger: true })) return;
     setActionId(id);
     try {
       await deleteReportSchedule(id);

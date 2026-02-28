@@ -1,9 +1,20 @@
 "use client";
 
+/**
+ * @file LogoUploader.tsx
+ * @description Company branding panel combining logo upload and company name editing.
+ * Accepts PNG, JPG, SVG, or WebP images up to 2 MB (validated client-side); renders an
+ * 80×80 preview box with a HardHat fallback. Uploads via uploadLogo(FormData) and
+ * deletes with a confirmation prompt via deleteLogo(). Company name auto-saves after an
+ * 800 ms debounce via updateCompanyName(). Server actions: uploadLogo, deleteLogo,
+ * updateCompanyName. i18n: settings, common.
+ */
+
 import { useState, useRef } from "react";
 import { Upload, Trash2, HardHat, Loader2, AlertCircle } from "lucide-react";
 import { uploadLogo, deleteLogo, updateCompanyName } from "@/actions/settings";
 import { useTranslations } from "next-intl";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface LogoUploaderProps {
   logoUrl: string | null;
@@ -11,6 +22,7 @@ interface LogoUploaderProps {
 }
 
 export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("settings");
   const tc = useTranslations("common");
   const [currentLogo, setCurrentLogo] = useState(logoUrl);
@@ -54,7 +66,7 @@ export function LogoUploader({ logoUrl, companyName }: LogoUploaderProps) {
   }
 
   async function handleDelete() {
-    if (!confirm(t("removeLogoConfirm"))) return;
+    if (!await confirm(t("removeLogoConfirm"), { danger: true })) return;
     setDeleting(true);
     try {
       await deleteLogo();

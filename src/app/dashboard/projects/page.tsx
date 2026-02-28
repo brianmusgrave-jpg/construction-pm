@@ -1,3 +1,8 @@
+/**
+ * @file src/app/dashboard/projects/page.tsx
+ * @description Projects listing page. Displays all projects as cards with progress
+ * bars and estimated end dates. Shows BulkImportButton for ADMIN and PM roles.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canCreateProject } from "@/lib/permissions";

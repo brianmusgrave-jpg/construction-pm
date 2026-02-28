@@ -1,5 +1,42 @@
 "use client";
 
+/**
+ * @file components/project/BudgetSection.tsx
+ * @description Project-level budget and phase cost tracking panel with Earned Value
+ *   Management (EVM) forecasting.
+ *
+ * Structure:
+ *   - Header: project total budget (inline-editable by `canManage` users via Pencil
+ *     button → text input → Check/X). Change order impact row appears when
+ *     `totalApprovedCOs > 0`, showing approved CO total and adjusted budget.
+ *   - Summary cards: totalEstimated / totalActual / variance (red TrendingUp when
+ *     actual > estimated, green TrendingDown when under).
+ *   - Budget usage bar: width = `min(budgetUsed%, 100)%`; colour thresholds:
+ *       green < 80 % | amber 80–100 % | red > 100 %.
+ *   - EVM Forecast block (rendered only when `totalEstimated > 0 && totalActual > 0`):
+ *       `EV  = BAC × (completedPhases / totalPhases)`
+ *       `CPI = EV / actualCost`
+ *       `EAC = BAC / CPI`   (projected final cost)
+ *       `VAC = BAC − EAC`   (positive = under budget)
+ *     Blue progress bar shows EV as a fraction of BAC.
+ *   - Phase breakdown rows: each phase shows estimated / actual / phase-level approved
+ *     COs / per-phase variance. `canManage` users click a row to open inline editing
+ *     (two text inputs for estimated and actual cost, Enter to save).
+ *
+ * `fmt(n)` formats USD with no decimal places; returns "—" for null/0.
+ * `pct(actual, estimated)` returns integer percentage.
+ *
+ * @param projectId          Owning project ID.
+ * @param projectBudget      Overall project budget (nullable).
+ * @param phases             Array of phases with estimatedCost, actualCost, approvedCOs.
+ * @param canManage          Enables all edit controls.
+ * @param totalApprovedCOs   Sum of all approved change orders (default 0).
+ * @param adjustedBudget     Budget after CO impact (optional).
+ *
+ * Server actions: `updateProjectBudget`, `updatePhaseCosts`.
+ * i18n namespace: `budget`.
+ */
+
 import { useState, useTransition } from "react";
 import { updateProjectBudget, updatePhaseCosts } from "@/actions/budget";
 import { DollarSign, TrendingUp, TrendingDown, Minus, Pencil, Check, X, BarChart3 } from "lucide-react";

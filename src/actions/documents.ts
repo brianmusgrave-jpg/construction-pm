@@ -1,5 +1,30 @@
 "use server";
 
+/**
+ * @file actions/documents.ts
+ * @description Server actions for document upload, status workflow, and deletion.
+ *
+ * Documents are files attached to a phase (permits, contracts, invoices, blueprints,
+ * inspection reports, etc.). They live in Vercel Blob storage; the DB record holds
+ * metadata and a reference URL.
+ *
+ * Status workflow: PENDING → APPROVED | REJECTED | EXPIRED
+ * (EXPIRED is set by external processes, not through this file.)
+ *
+ * Notification events:
+ *   - DOCUMENT_UPLOADED        → all project members on creation
+ *   - DOCUMENT_STATUS_CHANGED  → the uploader when their document is approved/rejected
+ *
+ * Auth:
+ *   - create: any role with "create document" permission
+ *   - updateStatus: any role with "update document" permission (PM+)
+ *   - delete: any role with "delete document" permission
+ *
+ * Blob cleanup: deletion attempts to remove the Vercel Blob object before
+ * removing the DB record. If blob deletion fails (e.g. already removed),
+ * the error is logged but the DB deletion still proceeds.
+ */
+
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
@@ -10,11 +35,21 @@ import { notify, getProjectMemberIds } from "@/lib/notifications";
 type DocCategory = "PERMIT" | "CONTRACT" | "INVOICE" | "BLUEPRINT" | "INSPECTION" | "OTHER";
 type DocStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXPIRED";
 
+// ── Mutations ──
+
+/**
+ * Record a newly uploaded document in the database.
+ * The file itself is uploaded to Vercel Blob by the client before this action
+ * is called — this action receives the resulting URL and metadata.
+ * Logs a DOCUMENT_UPLOADED activity and notifies all project members.
+ *
+ * Requires: "create document" permission.
+ */
 export async function createDocument(data: {
   phaseId: string;
   name: string;
-  url: string;
-  size: number;
+  url: string;       // Vercel Blob URL
+  size: number;      // File size in bytes
   mimeType: string;
   category: DocCategory;
   notes?: string;
@@ -25,7 +60,7 @@ export async function createDocument(data: {
   const userRole = session.user.role || "VIEWER";
   if (!can(userRole, "create", "document")) throw new Error("Forbidden");
 
-  // Verify phase exists and get project ID for revalidation
+  // Verify phase exists and fetch projectId for revalidation and notifications
   const phase = await db.phase.findUnique({
     where: { id: data.phaseId },
     select: { id: true, projectId: true, name: true },
@@ -45,7 +80,7 @@ export async function createDocument(data: {
     },
   });
 
-  // Log activity
+  // Activity log (awaited — important for document audit trails)
   await db.activityLog.create({
     data: {
       action: "DOCUMENT_UPLOADED",
@@ -60,7 +95,7 @@ export async function createDocument(data: {
     },
   });
 
-  // Notify project members about new document
+  // Notify all project members of the new document
   const memberIds = await getProjectMemberIds(phase.projectId);
   notify({
     type: "DOCUMENT_UPLOADED",
@@ -75,6 +110,12 @@ export async function createDocument(data: {
   return document;
 }
 
+/**
+ * Update a document's review status (APPROVED, REJECTED, etc.).
+ * Logs the status change and notifies the original uploader.
+ *
+ * Requires: "update document" permission (PM+ level).
+ */
 export async function updateDocumentStatus(
   documentId: string,
   status: DocStatus
@@ -83,7 +124,6 @@ export async function updateDocumentStatus(
   if (!session?.user) throw new Error("Unauthorized");
 
   const userRole = session.user.role || "VIEWER";
-  // Only PM+ can approve/reject documents
   if (!can(userRole, "update", "document")) throw new Error("Forbidden");
 
   const document = await db.document.findUnique({
@@ -114,7 +154,7 @@ export async function updateDocumentStatus(
     },
   });
 
-  // Notify the document uploader about status change
+  // Notify the uploader (not all members) of the decision
   const statusLabel = status === "APPROVED" ? "approved" : status === "REJECTED" ? "rejected" : "updated";
   if (document.uploadedById) {
     notify({
@@ -131,6 +171,13 @@ export async function updateDocumentStatus(
   return updated;
 }
 
+/**
+ * Delete a document: removes the file from Vercel Blob, then deletes the DB record.
+ * If Blob deletion fails (e.g. already deleted), the error is logged and DB
+ * deletion continues — prevents orphaned DB records from blocking cleanup.
+ *
+ * Requires: "delete document" permission.
+ */
 export async function deleteDocument(documentId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -146,7 +193,7 @@ export async function deleteDocument(documentId: string) {
   });
   if (!document) throw new Error("Document not found");
 
-  // Delete from Vercel Blob storage
+  // Remove from Vercel Blob — failure is non-fatal (blob may have been cleaned up already)
   try {
     await del(document.url);
   } catch (e) {

@@ -906,7 +906,16 @@
     "maxDuration": "Max 5 minutes",
     "untitledNote": "Voice note",
     "micPermissionDenied": "Microphone access denied. Please allow mic access in browser settings.",
-    "transcriptionHint": "AI transcription coming soon — voice notes will be searchable"
+    "transcribe": "✨ Transcribe",
+    "transcribing": "Transcribing...",
+    "transcribed": "Transcription complete",
+    "transcribeFailed": "Transcription failed",
+    "extractTasks": "Extract Tasks",
+    "extractingTasks": "Extracting...",
+    "suggestedTasks": "Suggested Tasks",
+    "noTasksFound": "No tasks found in transcript",
+    "taskExtractFailed": "Task extraction failed",
+    "aiHint": "Use ✨ Transcribe to convert audio to text, then Extract Tasks to surface action items"
   },
   "punchList": {
     "title": "Punch List",

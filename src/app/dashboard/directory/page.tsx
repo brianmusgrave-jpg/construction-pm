@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/directory/page.tsx
+ * @description Staff directory page. Fetches all staff with their phase assignments,
+ * certificates, and umbrella policy, then renders DirectoryClient with role-based
+ * manage and PM flags.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";

@@ -1,3 +1,8 @@
+/**
+ * @file src/app/dashboard/layout.tsx
+ * @description Dashboard shell layout. Renders the Sidebar, OnboardingTour, and
+ * InstallPrompt, and applies the org theme CSS variable for all dashboard pages.
+ */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/ui/Sidebar";
@@ -6,6 +11,7 @@ import { getThemeCSS } from "@/lib/themes";
 import { getUnreadCount } from "@/actions/notifications";
 import { OnboardingTour } from "@/components/help/OnboardingTour";
 import { InstallPrompt } from "@/components/ui/InstallPrompt";
+import { ConfirmDialogProvider } from "@/components/ui/ConfirmDialog";
 
 export default async function DashboardLayout({
   children,
@@ -30,7 +36,7 @@ export default async function DashboardLayout({
         unreadCount={unreadCount}
       />
       <main className="flex-1 overflow-auto pt-14 pb-16 lg:pt-0 lg:pb-0">
-        {children}
+        <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
       </main>
       <OnboardingTour
         userRole={session.user.role || "VIEWER"}

@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/phase/InspectionSection.tsx
+ * @description Scheduled inspection tracker for a phase detail page.
+ *
+ * Displays upcoming and past inspections grouped by completion state.
+ * Key behaviours:
+ *   - Result states: PASS, FAIL, CONDITIONAL — each with a distinct icon/colour
+ *     via `RESULT_CONFIG`.
+ *   - Upcoming: `completedAt` is null AND `scheduledAt` >= now.
+ *     Past: has `completedAt` OR `scheduledAt` < now.
+ *   - `notifyOnResult` checkbox on the create form triggers a notification
+ *     when a result is later recorded via `recordInspectionResult`.
+ *   - Inline "Record Result" panel expands below the inspection row;
+ *     includes an optional notes textarea before submitting the result.
+ *
+ * Permissions:
+ *   - `canCreate` — may schedule new inspections.
+ *   - `canRecord` — may record a PASS / FAIL / CONDITIONAL result.
+ *
+ * Server actions: `createInspection`, `recordInspectionResult`, `deleteInspection`.
+ */
+
 import { useState } from "react";
 import {
   ClipboardCheck,
@@ -22,6 +44,7 @@ import {
   deleteInspection,
 } from "@/actions/inspections";
 import type { Inspection } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface InspectionSectionProps {
   phaseId: string;
@@ -41,6 +64,7 @@ function formatDt(d: Date | string) {
 }
 
 export function InspectionSection({ phaseId, inspections, canCreate, canRecord }: InspectionSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -85,7 +109,7 @@ export function InspectionSection({ phaseId, inspections, canCreate, canRecord }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this inspection?")) return;
+    if (!await confirm("Delete this inspection?", { danger: true })) return;
     setActionId(id);
     try { await deleteInspection(id); }
     catch (err) { setError(err instanceof Error ? err.message : "Failed to delete"); }

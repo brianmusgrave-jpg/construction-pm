@@ -1,5 +1,13 @@
 "use client";
 
+/**
+ * @file ProfileEditor.tsx
+ * @description User profile editor displaying name, phone, and company fields in a
+ * two-column grid alongside an avatar image (or User icon fallback) and a read-only
+ * email. Calls updateProfile() on save and shows a "saved" or "noChanges" toast based
+ * on whether any values actually changed. Server action: updateProfile. i18n: profile.
+ */
+
 import { useState, useTransition } from "react";
 import { User, Loader2, Save } from "lucide-react";
 import { updateProfile } from "@/actions/profile";

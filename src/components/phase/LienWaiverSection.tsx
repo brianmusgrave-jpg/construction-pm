@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * @file components/phase/LienWaiverSection.tsx
+ * @description Lien waiver register for a phase detail page.
+ *
+ * Tracks four waiver types defined in `WAIVER_TYPE_LABELS`:
+ *   CONDITIONAL_PROGRESS, UNCONDITIONAL_PROGRESS,
+ *   CONDITIONAL_FINAL, UNCONDITIONAL_FINAL.
+ *
+ * Status workflow (advanced by `canManage` users):
+ *   PENDING → RECEIVED → APPROVED  (or REJECTED at either step).
+ *
+ * Features:
+ *   - Status filter tabs (ALL / PENDING / RECEIVED / APPROVED / REJECTED).
+ *   - Summary bar shows approved count and pending-review count.
+ *   - `throughDate` and optional `notarized` flag displayed per waiver row.
+ *   - Collapsible section with `expanded` state.
+ *
+ * Permissions:
+ *   - `canEdit`   — may add and delete waivers.
+ *   - `canManage` — may advance status (RECEIVED, APPROVED, REJECTED).
+ *
+ * Server actions: `createLienWaiver`, `updateLienWaiverStatus`, `deleteLienWaiver`.
+ * i18n namespace: `lienWaiver`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createLienWaiver, updateLienWaiverStatus, deleteLienWaiver } from "@/actions/lienWaiver";
@@ -14,6 +39,7 @@ import {
   ChevronUp,
   FileText,
 } from "lucide-react";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
   PENDING: { color: "text-amber-700", bg: "bg-amber-100" },
@@ -37,6 +63,7 @@ interface LienWaiverSectionProps {
 }
 
 export function LienWaiverSection({ phaseId, waivers, canEdit, canManage }: LienWaiverSectionProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("lienWaiver");
   const [items, setItems] = useState(waivers);
   const [showForm, setShowForm] = useState(false);
@@ -94,7 +121,7 @@ export function LienWaiverSection({ phaseId, waivers, canEdit, canManage }: Lien
   }
 
   async function handleDelete(id: string) {
-    if (!confirm(t("confirmDelete"))) return;
+    if (!await confirm(t("confirmDelete"), { danger: true })) return;
     try {
       await deleteLienWaiver(id);
       setItems((prev) => prev.filter((i) => i.id !== id));

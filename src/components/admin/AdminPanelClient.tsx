@@ -69,6 +69,7 @@ import {
 } from "@/actions/admin";
 import { AISettingsPanel } from "@/components/admin/AISettingsPanel";
 import type { AISettingsData, AIUsageSummary } from "@/actions/aiSettings";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 type Tab = "features" | "activity" | "users" | "health" | "audit" | "ai";
 
@@ -126,6 +127,7 @@ export function AdminPanelClient({
   aiSettings,
   aiUsage,
 }: AdminPanelClientProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("adminPanel");
   const [tab, setTab] = useState<Tab>("features");
   const [features, setFeatures] = useState(initialFeatures);
@@ -187,7 +189,7 @@ export function AdminPanelClient({
   }
 
   async function handleDeactivate(userId: string, userName: string) {
-    if (!confirm(t("confirmDeactivate", { name: userName || "this user" }))) return;
+    if (!await confirm(t("confirmDeactivate", { name: userName || "this user" }), { danger: true })) return;
     try {
       await deactivateUser(userId);
       toast.success(t("userDeactivated"));

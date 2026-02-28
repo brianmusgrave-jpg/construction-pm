@@ -1,5 +1,13 @@
 "use client";
 
+/**
+ * @file LanguagePicker.tsx
+ * @description Language selector displaying four locale buttons: English (🇺🇸 en),
+ * Español (🇲🇽 es), Português (🇧🇷 pt), and Français (🇫🇷 fr). The active locale is
+ * highlighted with the primary brand colour. Selecting a locale calls setLocale() from
+ * @/i18n/locale then router.refresh() to apply the change app-wide.
+ */
+
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Globe } from "lucide-react";

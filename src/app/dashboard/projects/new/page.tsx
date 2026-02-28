@@ -1,3 +1,8 @@
+/**
+ * @file src/app/dashboard/projects/new/page.tsx
+ * @description New project creation page. Checks canCreateProject permission via
+ * role-based access control and renders NewProjectForm if authorized.
+ */
 import { auth } from "@/lib/auth";
 import { canCreateProject } from "@/lib/permissions";
 import { redirect } from "next/navigation";

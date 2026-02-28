@@ -1,5 +1,40 @@
 "use server";
 
+/**
+ * @file actions/invitations.ts
+ * @description Server actions for project membership — invitations, role management,
+ * and member removal.
+ *
+ * Invitation lifecycle:
+ *   1. `createInvitation`      — Generates a 7-day single-use token, emails it,
+ *                                and notifies existing project members.
+ *   2. `getInvitationByToken`  — Public lookup (no auth) used by the accept page
+ *                                to display project/role info before sign-in.
+ *   3. `acceptInvitation`      — Atomically creates the ProjectMember row and
+ *                                deletes the invitation in a single transaction.
+ *   4. `cancelInvitation`      — Hard-deletes a pending invite.
+ *
+ * Member management:
+ *   - `updateMemberRole` — Change a member's project-level role; guards against
+ *                          demoting the last OWNER.
+ *   - `removeMember`     — Remove a member from the project; guards against
+ *                          removing the last OWNER.
+ *
+ * Duplicate guards:
+ *   - `createInvitation` checks for an existing ProjectMember row AND an unexpired
+ *     Invitation row before creating a new one — prevents duplicate email spam.
+ *
+ * Fire-and-forget operations:
+ *   - Activity log writes (.catch(() => {})) — never block the response.
+ *   - `sendInvitationEmail` — email delivery is best-effort.
+ *   - `notify` — SSE notification delivery is best-effort.
+ *
+ * Role requirements:
+ *   - create/cancel invitation: `can(role, "create", "member")`
+ *   - update member role:       `can(role, "update", "member")`
+ *   - remove member:            `can(role, "delete", "member")`
+ */
+
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
@@ -10,6 +45,24 @@ import { sendInvitationEmail } from "@/lib/email";
 
 // ── Create Invitation ──
 
+/**
+ * Invite a user by email to join a project with a specific role.
+ *
+ * Guards:
+ *   - User must not already be a project member.
+ *   - No unexpired invitation may exist for the same email + project.
+ *
+ * On success:
+ *   - Creates an Invitation record with a 7-day expiry token.
+ *   - Sends an invitation email (fire-and-forget).
+ *   - Logs MEMBER_INVITED to the project activity log (fire-and-forget).
+ *   - Notifies all current project members via SSE.
+ *
+ * @param projectId - Project to invite the user to.
+ * @param email     - Invitee's email address (normalised to lowercase).
+ * @param role      - Project-level role to assign on acceptance (default CONTRACTOR).
+ * @returns Invitation metadata including the raw token for link generation.
+ */
 export async function createInvitation(
   projectId: string,
   email: string,
@@ -21,7 +74,7 @@ export async function createInvitation(
 
   const normalizedEmail = email.toLowerCase().trim();
 
-  // Check if user is already a member
+  // Guard: user is already a member
   const existingMember = await db.projectMember.findFirst({
     where: {
       projectId,
@@ -30,7 +83,7 @@ export async function createInvitation(
   });
   if (existingMember) throw new Error("User is already a member of this project");
 
-  // Check for pending invitation
+  // Guard: active (unexpired) invitation already exists for this email
   const existingInvite = await db.invitation.findFirst({
     where: {
       projectId,
@@ -40,10 +93,10 @@ export async function createInvitation(
   });
   if (existingInvite) throw new Error("An invitation has already been sent to this email");
 
-  // Generate unique token
+  // Generate a 64-char hex token (256 bits of entropy)
   const token = randomBytes(32).toString("hex");
   const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + 7); // 7-day expiry
+  expiresAt.setDate(expiresAt.getDate() + 7); // 7-day expiry window
 
   const invitation = await db.invitation.create({
     data: {
@@ -58,7 +111,7 @@ export async function createInvitation(
     },
   });
 
-  // Log activity
+  // Activity log — fire-and-forget (never block response on this write)
   db.activityLog.create({
     data: {
       action: "MEMBER_INVITED",
@@ -69,7 +122,7 @@ export async function createInvitation(
     },
   }).catch(() => {});
 
-  // Send invitation email (fire-and-forget)
+  // Invitation email — fire-and-forget (email delivery is best-effort)
   sendInvitationEmail(
     normalizedEmail,
     invitation.project.name,
@@ -78,7 +131,7 @@ export async function createInvitation(
     session.user.name || session.user.email || "A team member"
   ).catch(() => {});
 
-  // Notify existing project members
+  // Notify all current project members via SSE
   const memberIds = await getProjectMemberIds(projectId);
   notify({
     type: "MEMBER_INVITED",
@@ -100,8 +153,13 @@ export async function createInvitation(
   };
 }
 
-// ── Get Project Invitations ──
+// ── Query Invitations ──
 
+/**
+ * Fetch all invitations (pending and expired) for a project.
+ * Ordered newest first. Used to populate the pending invitations list in the
+ * project members panel.
+ */
 export async function getProjectInvitations(projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -112,23 +170,48 @@ export async function getProjectInvitations(projectId: string) {
   });
 }
 
-// ── Cancel Invitation ──
-
-export async function cancelInvitation(invitationId: string) {
-  const session = await auth();
-  if (!session?.user) throw new Error("Unauthorized");
-  if (!can(session.user.role, "create", "member")) throw new Error("Forbidden");
-
-  const invitation = await db.invitation.delete({
-    where: { id: invitationId },
+/**
+ * Public token lookup — no auth required.
+ * Called by the `/invite/[token]` page before the user signs in, so the page
+ * can display the project name, role, and expiry status without a session.
+ *
+ * @returns Invitation preview object, or `null` if the token does not exist.
+ */
+export async function getInvitationByToken(token: string) {
+  const invitation = await db.invitation.findUnique({
+    where: { token },
+    include: { project: { select: { name: true, address: true } } },
   });
 
-  revalidatePath(`/dashboard/projects/${invitation.projectId}`);
-  return { success: true };
+  if (!invitation) return null;
+
+  return {
+    id: invitation.id,
+    email: invitation.email,
+    role: invitation.role,
+    projectName: invitation.project.name,
+    projectAddress: invitation.project.address,
+    expiresAt: invitation.expiresAt,
+    expired: invitation.expiresAt < new Date(),
+  };
 }
 
-// ── Accept Invitation ──
+// ── Accept / Cancel Invitation ──
 
+/**
+ * Accept an invitation and join the project.
+ *
+ * Requires the user to be signed in (redirects to sign-in if not).
+ * Uses a DB transaction to atomically create the ProjectMember row and
+ * delete the invitation — prevents double-acceptance race conditions.
+ *
+ * Already-a-member case: if the user accepted a duplicate invite or was
+ * added manually in the meantime, the invitation is quietly deleted and
+ * `alreadyMember: true` is returned so the UI can show an appropriate message.
+ *
+ * @param token - The raw invitation token from the URL.
+ * @returns `{ success, projectId, projectName, alreadyMember }`
+ */
 export async function acceptInvitation(token: string) {
   const invitation = await db.invitation.findUnique({
     where: { token },
@@ -141,7 +224,7 @@ export async function acceptInvitation(token: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Please sign in to accept this invitation");
 
-  // Check if already a member
+  // Check if already a member (e.g. added manually after invitation was sent)
   const existingMember = await db.projectMember.findUnique({
     where: {
       userId_projectId: {
@@ -152,7 +235,7 @@ export async function acceptInvitation(token: string) {
   });
 
   if (existingMember) {
-    // Already a member — just clean up the invitation
+    // Clean up the stale invitation without adding a duplicate member row
     await db.invitation.delete({ where: { id: invitation.id } });
     return {
       success: true,
@@ -162,7 +245,7 @@ export async function acceptInvitation(token: string) {
     };
   }
 
-  // Create project membership and delete invitation
+  // Atomic: create membership + consume (delete) invitation in one transaction
   await db.$transaction([
     db.projectMember.create({
       data: {
@@ -174,7 +257,7 @@ export async function acceptInvitation(token: string) {
     db.invitation.delete({ where: { id: invitation.id } }),
   ]);
 
-  // Log activity
+  // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
       action: "MEMBER_JOINED",
@@ -184,7 +267,7 @@ export async function acceptInvitation(token: string) {
     },
   }).catch(() => {});
 
-  // Notify existing members
+  // Notify existing project members
   const memberIds = await getProjectMemberIds(invitation.projectId);
   notify({
     type: "MEMBER_INVITED",
@@ -205,29 +288,37 @@ export async function acceptInvitation(token: string) {
   };
 }
 
-// ── Get invitation details by token (public, no auth needed) ──
+/**
+ * Hard-delete a pending invitation (cannot be undone).
+ * The invitee's token link will return "Invitation not found" after cancellation.
+ *
+ * Requires: `can(role, "create", "member")` — same permission as creating invitations.
+ */
+export async function cancelInvitation(invitationId: string) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!can(session.user.role, "create", "member")) throw new Error("Forbidden");
 
-export async function getInvitationByToken(token: string) {
-  const invitation = await db.invitation.findUnique({
-    where: { token },
-    include: { project: { select: { name: true, address: true } } },
+  const invitation = await db.invitation.delete({
+    where: { id: invitationId },
   });
 
-  if (!invitation) return null;
-
-  return {
-    id: invitation.id,
-    email: invitation.email,
-    role: invitation.role,
-    projectName: invitation.project.name,
-    projectAddress: invitation.project.address,
-    expiresAt: invitation.expiresAt,
-    expired: invitation.expiresAt < new Date(),
-  };
+  revalidatePath(`/dashboard/projects/${invitation.projectId}`);
+  return { success: true };
 }
 
-// ── Update member role ──
+// ── Member Role Management ──
 
+/**
+ * Change a project member's role.
+ *
+ * Last-owner guard: if the target member is the last OWNER on the project,
+ * their role cannot be changed — prevents projects from becoming ownerless.
+ *
+ * @param memberId - ProjectMember row ID.
+ * @param projectId - Used to validate the member belongs to this project.
+ * @param newRole   - Role to assign.
+ */
 export async function updateMemberRole(
   memberId: string,
   projectId: string,
@@ -245,7 +336,7 @@ export async function updateMemberRole(
   if (!member) throw new Error("Member not found");
   if (member.projectId !== projectId) throw new Error("Member not in this project");
 
-  // Prevent demoting the last owner
+  // Prevent demoting the last OWNER — the project must always have at least one
   if (member.role === "OWNER" && newRole !== "OWNER") {
     const ownerCount = await db.projectMember.count({
       where: { projectId, role: "OWNER" },
@@ -258,6 +349,7 @@ export async function updateMemberRole(
     data: { role: newRole as never },
   });
 
+  // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
       action: "MEMBER_UPDATED",
@@ -272,14 +364,19 @@ export async function updateMemberRole(
   return { success: true };
 }
 
-// ── Remove member from project ──
-
+/**
+ * Remove a member from a project entirely.
+ *
+ * Last-owner guard: the last OWNER cannot be removed — they must first transfer
+ * ownership to another member before they can leave or be removed.
+ *
+ * Requires: `can(role, "delete", "member")`.
+ */
 export async function removeMember(memberId: string, projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
   if (!can(session.user.role, "delete", "member")) throw new Error("Forbidden");
 
-  // Don't allow removing yourself if you're the only owner
   const member = await db.projectMember.findUnique({
     where: { id: memberId },
     include: { user: { select: { name: true, email: true } } },
@@ -287,6 +384,7 @@ export async function removeMember(memberId: string, projectId: string) {
 
   if (!member) throw new Error("Member not found");
 
+  // Prevent removing the last OWNER
   if (member.role === "OWNER") {
     const ownerCount = await db.projectMember.count({
       where: { projectId, role: "OWNER" },
@@ -296,6 +394,7 @@ export async function removeMember(memberId: string, projectId: string) {
 
   await db.projectMember.delete({ where: { id: memberId } });
 
+  // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
       action: "MEMBER_REMOVED",

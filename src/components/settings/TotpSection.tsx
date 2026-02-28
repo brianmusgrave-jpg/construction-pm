@@ -1,5 +1,24 @@
 "use client";
 
+/**
+ * @file components/settings/TotpSection.tsx
+ * @description Settings panel for managing TOTP two-factor authentication.
+ *
+ * Renders a three-state wizard:
+ *   1. **Idle / not enabled** — "Enable 2FA" button; calls `setupTotp` which
+ *      returns a QR code data-URL and the base32 secret.
+ *   2. **Setup** — displays the QR code (and the manual entry key formatted in
+ *      groups of 4 for readability), then a 6-digit numeric input that calls
+ *      `verifyAndEnableTotp`. Input is stripped of non-digits on change.
+ *   3. **Enabled & verified** — shows a confirmation state with a "Disable 2FA"
+ *      button (requires user confirm dialog) that calls `disableTotp`.
+ *
+ * The component is fully self-contained: it derives the current step from
+ * local `enabled`/`verified`/`step` state seeded from props.
+ *
+ * Server actions: `setupTotp`, `verifyAndEnableTotp`, `disableTotp` (totp).
+ */
+
 import { useState } from "react";
 import {
   Shield,
@@ -12,6 +31,7 @@ import {
   Key,
 } from "lucide-react";
 import { setupTotp, verifyAndEnableTotp, disableTotp } from "@/actions/totp";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface TotpSectionProps {
   enabled: boolean;
@@ -19,6 +39,7 @@ interface TotpSectionProps {
 }
 
 export function TotpSection({ enabled: initEnabled, verified: initVerified }: TotpSectionProps) {
+  const confirm = useConfirmDialog();
   const [enabled, setEnabled] = useState(initEnabled);
   const [verified, setVerified] = useState(initVerified);
   const [step, setStep] = useState<"idle" | "setup" | "verify" | "disabling">("idle");
@@ -68,7 +89,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
   };
 
   const handleDisable = async () => {
-    if (!confirm("Disable two-factor authentication? Your account will be less secure.")) return;
+    if (!await confirm("Disable two-factor authentication? Your account will be less secure.", { danger: true })) return;
     setLoading(true);
     setError(null);
     try {

@@ -1,5 +1,16 @@
 "use client";
 
+/**
+ * @file WebhookSection.tsx
+ * @description Webhook management panel for the settings page. The creation form accepts
+ * a name, an HTTPS URL, and one or more event checkboxes sourced from WEBHOOK_EVENTS in
+ * @/lib/webhook-events. Existing webhooks display the URL in monospace, up to three
+ * event chips (with "+N more" overflow), last-triggered date, and an HTTP status icon
+ * (CheckCircle2 green for 2xx responses, XCircle red otherwise). Each webhook can be
+ * toggled active/paused or deleted (with confirmation). Server actions: createWebhook,
+ * toggleWebhook, deleteWebhook.
+ */
+
 import { useState } from "react";
 import {
   Zap,
@@ -17,12 +28,14 @@ import {
 import { createWebhook, toggleWebhook, deleteWebhook } from "@/actions/webhooks";
 import { WEBHOOK_EVENTS } from "@/lib/webhook-events";
 import type { Webhook } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface WebhookSectionProps {
   webhooks: Webhook[];
 }
 
 export function WebhookSection({ webhooks }: WebhookSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -63,7 +76,7 @@ export function WebhookSection({ webhooks }: WebhookSectionProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this webhook?")) return;
+    if (!await confirm("Delete this webhook?", { danger: true })) return;
     setActionId(id);
     try { await deleteWebhook(id); }
     catch (err) { setError(err instanceof Error ? err.message : "Failed"); }

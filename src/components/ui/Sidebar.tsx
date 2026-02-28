@@ -1,5 +1,30 @@
 "use client";
 
+/**
+ * @file components/ui/Sidebar.tsx
+ * @description Main navigation sidebar for the dashboard layout.
+ *
+ * Renders a desktop sidebar (always visible, fixed-width on lg+) and a
+ * mobile slide-out drawer (triggered by a top bar hamburger button), plus
+ * a bottom tab bar on mobile showing the first four nav items.
+ *
+ * Features:
+ *   - Role-based navigation: STAKEHOLDER/VIEWER receive a reduced set (no
+ *     directory, activity, or settings links). ADMIN receives an extra admin
+ *     panel link inserted before "Help".
+ *   - Live unread notification badge via `useNotificationSSE`; seeded from
+ *     the `unreadCount` prop (SSR value) and updated in real time by SSE.
+ *   - Company logo/name shown if provided; falls back to HardHat icon and
+ *     "Construction PM" text.
+ *   - Mobile drawer: closes on route change and locks body scroll while open.
+ *   - Global `<SearchPalette />` is mounted here so it is available on all
+ *     dashboard pages. `<SearchButton />` in the sidebar triggers it via a
+ *     synthetic Cmd+K keyboard event.
+ *
+ * Server actions: none (sign-out via `next-auth/react` `signOut`).
+ * i18n namespaces: `nav`, `common`.
+ */
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";

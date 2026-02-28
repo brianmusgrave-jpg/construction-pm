@@ -1,3 +1,8 @@
+/**
+ * @file src/app/dashboard/notifications/page.tsx
+ * @description Full notifications page. Loads the first 20 notifications, unread
+ * count, and i18n strings, then renders NotificationList for the authenticated user.
+ */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getNotifications, getUnreadCount } from "@/actions/notifications";

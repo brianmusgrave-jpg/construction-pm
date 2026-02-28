@@ -1,5 +1,33 @@
 "use client";
 
+/**
+ * @file components/phase/PunchListSection.tsx
+ * @description Punch list (deficiency list) tracker for a phase detail page.
+ *
+ * Status flow defined in `STATUS_FLOW`:
+ *   OPEN → IN_PROGRESS → READY_FOR_REVIEW → CLOSED.
+ *   Closed items can be re-opened via a "Reopen" button.
+ *
+ * Priorities defined in `PRIORITY_CONFIG`:
+ *   CRITICAL (red), MAJOR (orange), MINOR (yellow), COSMETIC (gray).
+ *
+ * Key behaviours:
+ *   - Items are expandable rows (click to reveal description, location,
+ *     assignee, due date, and status-change buttons).
+ *   - Overdue flag: `item.dueDate < new Date() && item.status !== "CLOSED"`.
+ *   - Status filter tabs include counts; filter includes all statuses plus ALL.
+ *   - Summary badges show total open count and critical-open count.
+ *   - `allStaff` prop populates the assignee dropdown on the create form.
+ *
+ * Permissions:
+ *   - `canEdit`   — may create items and advance status (including reopen).
+ *   - `canManage` — may delete items.
+ *
+ * Server actions: `createPunchListItem`, `updatePunchListStatus`,
+ *   `deletePunchListItem`.
+ * i18n namespace: `punchList`.
+ */
+
 import { useState } from "react";
 import {
   ListChecks,
@@ -26,6 +54,7 @@ import {
   deletePunchListItem,
 } from "@/actions/punchList";
 import { useTranslations } from "next-intl";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface PunchListItem {
   id: string;
@@ -72,6 +101,7 @@ function formatDate(d: string | null) {
 }
 
 export function PunchListSection({ phaseId, items, allStaff, canEdit, canManage }: PunchListSectionProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("punchList");
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -124,7 +154,7 @@ export function PunchListSection({ phaseId, items, allStaff, canEdit, canManage 
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm(t("confirmDelete"))) return;
+    if (!await confirm(t("confirmDelete"), { danger: true })) return;
     setActionId(id);
     try {
       await deletePunchListItem(id);

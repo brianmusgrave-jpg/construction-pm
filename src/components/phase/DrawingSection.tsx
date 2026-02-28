@@ -1,5 +1,35 @@
 "use client";
 
+/**
+ * @file components/phase/DrawingSection.tsx
+ * @description Construction drawing register for a phase detail page.
+ *
+ * Tracks drawings across nine disciplines defined in `DISCIPLINES`:
+ *   ARCHITECTURAL, STRUCTURAL, MECHANICAL, ELECTRICAL, PLUMBING,
+ *   CIVIL, LANDSCAPE, FIRE_PROTECTION, OTHER.
+ *
+ * Drawing statuses (via `STATUS_STYLES`):
+ *   CURRENT (green), SUPERSEDED (gray), VOID (red),
+ *   FOR_REVIEW (amber), PRELIMINARY (blue).
+ *
+ * Key behaviours:
+ *   - Discipline filter tabs appear only when > 1 discipline is present
+ *     (`presentDiscs = Array.from(new Set(items.map(i => i.discipline)))`).
+ *   - `currentCount` summary badge counts CURRENT drawings.
+ *   - `handleSupersede` → sets status to SUPERSEDED (available on CURRENT drawings).
+ *   - `handleVoid` → sets status to VOID (available on all non-VOID drawings).
+ *   - Collapsible section via `expanded` state.
+ *   - Each drawing displays drawingNumber, title, discipline, revision,
+ *     and optional sheetSize / scale fields.
+ *
+ * Permissions:
+ *   - `canEdit`   — may add and delete drawings.
+ *   - `canManage` — may supersede or void drawings.
+ *
+ * Server actions: `createDrawing`, `updateDrawingStatus`, `deleteDrawing`.
+ * i18n namespace: `drawing`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createDrawing, updateDrawingStatus, deleteDrawing } from "@/actions/drawing";
@@ -13,6 +43,7 @@ import {
   FileImage,
   Archive,
 } from "lucide-react";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
   CURRENT: { color: "text-green-700", bg: "bg-green-100" },
@@ -42,6 +73,7 @@ interface DrawingSectionProps {
 }
 
 export function DrawingSection({ phaseId, drawings, canEdit, canManage }: DrawingSectionProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("drawing");
   const [items, setItems] = useState(drawings);
   const [showForm, setShowForm] = useState(false);
@@ -114,7 +146,7 @@ export function DrawingSection({ phaseId, drawings, canEdit, canManage }: Drawin
   }
 
   async function handleDelete(id: string) {
-    if (!confirm(t("confirmDelete"))) return;
+    if (!await confirm(t("confirmDelete"), { danger: true })) return;
     try {
       await deleteDrawing(id);
       setItems((prev) => prev.filter((i) => i.id !== id));

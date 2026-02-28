@@ -906,7 +906,16 @@
     "maxDuration": "Maximum 5 minutes",
     "untitledNote": "Note vocale",
     "micPermissionDenied": "Accès au microphone refusé. Veuillez autoriser l'accès au microphone dans les paramètres du navigateur.",
-    "transcriptionHint": "Transcription IA bientôt disponible — les notes vocales seront recherchables"
+    "transcribe": "✨ Transcrire",
+    "transcribing": "Transcription...",
+    "transcribed": "Transcription terminée",
+    "transcribeFailed": "Échec de la transcription",
+    "extractTasks": "Extraire les tâches",
+    "extractingTasks": "Extraction...",
+    "suggestedTasks": "Tâches suggérées",
+    "noTasksFound": "Aucune tâche trouvée dans la transcription",
+    "taskExtractFailed": "Échec de l'extraction des tâches",
+    "aiHint": "Utilisez ✨ Transcrire pour convertir l'audio en texte, puis Extraire les tâches"
   },
   "punchList": {
     "title": "Liste de Réserves",

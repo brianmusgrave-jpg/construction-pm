@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/reports/page.tsx
+ * @description Reports and analytics page. Performs 7 parallel data fetches to
+ * render Job P&L summaries, team performance metrics, overdue phases, and an
+ * activity sparkline. ADMIN and PROJECT_MANAGER only.
+ */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";

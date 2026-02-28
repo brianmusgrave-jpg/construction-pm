@@ -1,3 +1,9 @@
+/**
+ * @file src/app/dashboard/page.tsx
+ * @description Main dashboard page. Performs 6 parallel data fetches to populate
+ * 5 KPI widgets, an attention panel, upcoming phases, project cards, and
+ * notifications and activity sidebars. Includes AnalyticsWidgets.
+ */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { canCreateProject } from "@/lib/permissions";

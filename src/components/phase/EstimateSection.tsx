@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/phase/EstimateSection.tsx
+ * @description Phase section for managing cost estimates and takeoff line items.
+ *
+ * Displays a collapsible list of estimates, each with a status badge
+ * (DRAFT → FINAL → APPROVED / REVISED), a running total, and an expandable
+ * table of takeoff line items (description, qty, unit, unit cost, total).
+ *
+ * Features:
+ *   - Grand total aggregates `totalCost` across all estimates in the section.
+ *   - Estimates are expanded/collapsed individually via `expandedEstimate` state.
+ *   - Status flow: canManage required to Finalize (DRAFT→FINAL) or Approve
+ *     (FINAL→APPROVED); canEdit required to create/delete estimates and add items.
+ *   - Optimistic UI: after create/add/delete, local state is updated immediately
+ *     with recalculated `totalCost` before the next server render.
+ *   - Toast notifications on every action success/failure (sonner).
+ *
+ * Server actions: `createEstimate`, `addTakeoffItem`, `deleteTakeoffItem`,
+ *   `updateEstimateStatus`, `deleteEstimate` (estimate).
+ * i18n namespace: `estimate`.
+ */
+
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createEstimate, addTakeoffItem, deleteTakeoffItem, updateEstimateStatus, deleteEstimate } from "@/actions/estimate";
@@ -13,6 +35,7 @@ import {
   ChevronRight,
   CheckCircle2,
 } from "lucide-react";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const STATUS_STYLES: Record<string, { color: string; bg: string }> = {
   DRAFT: { color: "text-gray-700", bg: "bg-gray-100" },
@@ -29,6 +52,7 @@ interface EstimateSectionProps {
 }
 
 export function EstimateSection({ phaseId, estimates, canEdit, canManage }: EstimateSectionProps) {
+  const confirm = useConfirmDialog();
   const t = useTranslations("estimate");
   const [items, setItems] = useState(estimates);
   const [showForm, setShowForm] = useState(false);
@@ -131,7 +155,7 @@ export function EstimateSection({ phaseId, estimates, canEdit, canManage }: Esti
   }
 
   async function handleDeleteEstimate(id: string) {
-    if (!confirm(t("confirmDelete"))) return;
+    if (!await confirm(t("confirmDelete"), { danger: true })) return;
     try {
       await deleteEstimate(id);
       setItems((prev) => prev.filter((e) => e.id !== id));

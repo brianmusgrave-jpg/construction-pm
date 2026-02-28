@@ -1,5 +1,33 @@
 "use client";
 
+/**
+ * @file components/project/InviteModal.tsx
+ * @description Full-screen backdrop modal for sending team invitations and managing
+ *   pending invites on a project.
+ *
+ * Layout sections:
+ *   1. Header — "Invite Team Member" title with close button.
+ *   2. Form   — email input (Mail icon, autoFocus) + role grid selector:
+ *                 MANAGER | CONTRACTOR | STAKEHOLDER | VIEWER
+ *              Each role card shows label + description from i18n; selected card
+ *              gets primary-colour border/background.
+ *   3. Pending invitations list — filtered to `expiresAt > now`; each row shows
+ *      email, expiry date, role, and a Trash2 cancel button.
+ *   4. Footer — translucent info note about invite links.
+ *
+ * On successful creation:
+ *   - Toast "Invitation sent" fires.
+ *   - New invite is prepended to local `invitations` state.
+ *   - `${window.location.origin}/invite/${result.token}` is written to clipboard.
+ *   - A second toast "Link copied" confirms the clipboard write.
+ *
+ * `useTransition` wraps both `createInvitation` and `cancelInvitation` to provide
+ * `isPending` loading state on the submit button.
+ *
+ * Server actions: `createInvitation`, `cancelInvitation`.
+ * i18n namespaces: `invitations`, `common`.
+ */
+
 import { useState, useTransition } from "react";
 import { createInvitation, cancelInvitation } from "@/actions/invitations";
 import {

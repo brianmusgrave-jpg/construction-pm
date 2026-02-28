@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/phase/MaterialSection.tsx
+ * @description Material tracking section for a phase detail page.
+ *
+ * Tracks materials through four statuses defined in `STATUS_CONFIG`:
+ *   ORDERED (ShoppingCart), DELIVERED (Truck), INSTALLED (Hammer),
+ *   RETURNED (RotateCcw) — each with a distinct colour and icon.
+ *
+ * Key behaviours:
+ *   - Total cost: `materials.reduce((sum, m) => sum + (m.cost ?? 0) * m.quantity, 0)`.
+ *   - Status summary pills appear at the top when at least one material exists.
+ *   - Status change uses a CSS `group-hover` dropdown overlay on each row,
+ *     allowing quick inline status edits without a modal.
+ *   - Supported units: ea, lf, sf, sy, cy, ton, lb, gal, bag, pcs, set.
+ *   - `fmt` helper formats USD amounts with `Intl.NumberFormat`.
+ *
+ * Permissions:
+ *   - `canManage` — controls all add / status-change / delete actions.
+ *
+ * Server actions: `createMaterial`, `updateMaterialStatus`, `deleteMaterial`.
+ */
+
 import { useState } from "react";
 import {
   Package,
@@ -16,6 +38,7 @@ import {
 } from "lucide-react";
 import { createMaterial, updateMaterialStatus, deleteMaterial } from "@/actions/materials";
 import type { Material, MaterialStatus } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface MaterialSectionProps {
   phaseId: string;
@@ -37,6 +60,7 @@ function fmt(n: number) {
 }
 
 export function MaterialSection({ phaseId, materials, canManage }: MaterialSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [actionId, setActionId] = useState<string | null>(null);
@@ -86,7 +110,7 @@ export function MaterialSection({ phaseId, materials, canManage }: MaterialSecti
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this material?")) return;
+    if (!await confirm("Delete this material?", { danger: true })) return;
     setActionId(id);
     try {
       await deleteMaterial(id);

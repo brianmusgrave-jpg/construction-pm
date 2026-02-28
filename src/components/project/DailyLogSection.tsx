@@ -1,5 +1,27 @@
 "use client";
 
+/**
+ * @file components/project/DailyLogSection.tsx
+ * @description Site diary / field journal section for a project detail page.
+ *
+ * Each log entry captures the following fields:
+ *   date (required), weather (select from 8 WEATHER_OPTIONS), tempHigh / tempLow (°F),
+ *   crewCount, equipment (free text), workSummary (required textarea),
+ *   issues / delays (textarea), notes (textarea).
+ *
+ * List behaviour:
+ *   - Entries are rendered as collapsible rows; clicking toggles `expandedId`.
+ *   - Collapsed row shows: formatted date, weather (sm+), crew count (sm+),
+ *     truncated workSummary, and an AlertTriangle icon if `log.issues` is present.
+ *   - Expanded panel shows all fields plus author name/email.
+ *   - Delete button (Trash2) calls `deleteDailyLog(id)` after confirm(); tracked
+ *     by `deletingId` to show spinner while in-flight.
+ *
+ * `canCreate` prop controls visibility of the "Add Entry" button and form.
+ *
+ * Server actions: `createDailyLog`, `deleteDailyLog`.
+ */
+
 import { useState } from "react";
 import {
   BookOpen,
@@ -16,6 +38,7 @@ import {
 } from "lucide-react";
 import { createDailyLog, deleteDailyLog } from "@/actions/daily-logs";
 import type { DailyLog } from "@/lib/db-types";
+import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 interface DailyLogSectionProps {
   projectId: string;
@@ -26,6 +49,7 @@ interface DailyLogSectionProps {
 const WEATHER_OPTIONS = ["Sunny", "Partly Cloudy", "Cloudy", "Rainy", "Stormy", "Windy", "Foggy", "Snowy"];
 
 export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionProps) {
+  const confirm = useConfirmDialog();
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -73,7 +97,7 @@ export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionP
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this daily log entry?")) return;
+    if (!await confirm("Delete this daily log entry?", { danger: true })) return;
     setDeletingId(id);
     try {
       await deleteDailyLog(id);
