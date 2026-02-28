@@ -1,29 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/PhaseHeader.tsx
- * @description Sticky page header for the phase detail view.
- *
- * Shows breadcrumb navigation (Project → Timeline → Phase), the phase name,
- * a status badge, and a milestone indicator. When the user has edit permissions,
- * action buttons for the valid workflow transitions from the current status are
- * rendered.
- *
- * Workflow transitions (STATUS_TRANSITION_KEYS):
- *   PENDING          → IN_PROGRESS   (canEdit)
- *   IN_PROGRESS      → REVIEW_REQUESTED (canEdit)
- *   REVIEW_REQUESTED → UNDER_REVIEW  (canEdit)
- *   UNDER_REVIEW     → COMPLETE      (canManage — PM/ADMIN only)
- *                    → IN_PROGRESS   (canManage — "send back")
- *   COMPLETE         → (none)
- *
- * The `canManage` guard prevents non-PM users from approving or sending back
- * phases; they can still start and submit for review.
- *
- * Server actions: `updatePhaseStatus` (phases).
- * i18n namespaces: `phases`, `status`.
- */
-
 import Link from "next/link";
 import { cn, statusColor } from "@/lib/utils";
 import { updatePhaseStatus } from "@/actions/phases";

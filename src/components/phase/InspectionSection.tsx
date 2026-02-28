@@ -1,27 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/InspectionSection.tsx
- * @description Scheduled inspection tracker for a phase detail page.
- *
- * Displays upcoming and past inspections grouped by completion state.
- * Key behaviours:
- *   - Result states: PASS, FAIL, CONDITIONAL — each with a distinct icon/colour
- *     via `RESULT_CONFIG`.
- *   - Upcoming: `completedAt` is null AND `scheduledAt` >= now.
- *     Past: has `completedAt` OR `scheduledAt` < now.
- *   - `notifyOnResult` checkbox on the create form triggers a notification
- *     when a result is later recorded via `recordInspectionResult`.
- *   - Inline "Record Result" panel expands below the inspection row;
- *     includes an optional notes textarea before submitting the result.
- *
- * Permissions:
- *   - `canCreate` — may schedule new inspections.
- *   - `canRecord` — may record a PASS / FAIL / CONDITIONAL result.
- *
- * Server actions: `createInspection`, `recordInspectionResult`, `deleteInspection`.
- */
-
 import { useState } from "react";
 import {
   ClipboardCheck,

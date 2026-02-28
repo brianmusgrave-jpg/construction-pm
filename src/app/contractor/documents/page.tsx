@@ -1,9 +1,3 @@
-/**
- * @file src/app/contractor/documents/page.tsx
- * @description Contractor documents page. Fetches all documents from the
- * contractor's member projects and displays them with category/status colored
- * badges and file-type icons by MIME type.
- */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect } from "next/navigation";

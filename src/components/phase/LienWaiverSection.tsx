@@ -1,30 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/LienWaiverSection.tsx
- * @description Lien waiver register for a phase detail page.
- *
- * Tracks four waiver types defined in `WAIVER_TYPE_LABELS`:
- *   CONDITIONAL_PROGRESS, UNCONDITIONAL_PROGRESS,
- *   CONDITIONAL_FINAL, UNCONDITIONAL_FINAL.
- *
- * Status workflow (advanced by `canManage` users):
- *   PENDING → RECEIVED → APPROVED  (or REJECTED at either step).
- *
- * Features:
- *   - Status filter tabs (ALL / PENDING / RECEIVED / APPROVED / REJECTED).
- *   - Summary bar shows approved count and pending-review count.
- *   - `throughDate` and optional `notarized` flag displayed per waiver row.
- *   - Collapsible section with `expanded` state.
- *
- * Permissions:
- *   - `canEdit`   — may add and delete waivers.
- *   - `canManage` — may advance status (RECEIVED, APPROVED, REJECTED).
- *
- * Server actions: `createLienWaiver`, `updateLienWaiverStatus`, `deleteLienWaiver`.
- * i18n namespace: `lienWaiver`.
- */
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createLienWaiver, updateLienWaiverStatus, deleteLienWaiver } from "@/actions/lienWaiver";

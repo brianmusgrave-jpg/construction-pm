@@ -1,17 +1,5 @@
 "use client";
 
-/**
- * @file ReportScheduleSection.tsx
- * @description Scheduled report builder supporting WEEKLY and MONTHLY frequencies.
- * Weekly schedules select a day of the week; monthly schedules specify a day of month
- * (1–28). Send hour is chosen from a 24-entry array displayed in 12-hour AM/PM UTC
- * format. Recipients are entered as email tag pills via Enter or an Add button; at least
- * one recipient is required. Existing schedules display a human-readable summary from
- * describeSchedule(), a last-sent date, and an active/paused badge with a toggle.
- * Deletes require confirmation. Server actions: createReportSchedule,
- * toggleReportSchedule, deleteReportSchedule.
- */
-
 import { useState } from "react";
 import {
   Mail,

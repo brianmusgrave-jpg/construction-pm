@@ -1212,7 +1212,8 @@
       "activity": "Activity Log",
       "users": "User Management",
       "health": "System Health",
-      "audit": "Audit Export"
+      "audit": "Audit Export",
+      "ai": "AI Settings"
     },
     "featuresDescription": "Enable or disable features across the platform",
     "featureEnabled": "Feature enabled",
@@ -1258,6 +1259,7 @@
     "downloadCSV": "Download Audit CSV",
     "auditExported": "Audit log exported",
     "auditNote": "Data Retention Note",
-    "auditNoteDescription": "Exports up to 5,000 most recent entries. For complete data, contact your database administrator."
+    "auditNoteDescription": "Exports up to 5,000 most recent entries. For complete data, contact your database administrator.",
+    "aiDescription": "Configure the AI provider, model, usage limits, and monitor API costs"
   }
 }

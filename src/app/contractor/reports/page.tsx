@@ -1,9 +1,3 @@
-/**
- * @file src/app/contractor/reports/page.tsx
- * @description Contractor performance report page. Fetches performance data via
- * getContractorPerformance and renders a KPI grid, overdue alert, and a
- * phase breakdown table.
- */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";

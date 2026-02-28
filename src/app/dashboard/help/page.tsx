@@ -1,8 +1,3 @@
-/**
- * @file src/app/dashboard/help/page.tsx
- * @description Help center page. Passes the user's role and searchParams (section
- * and article) to the HelpCenter component for contextual help navigation.
- */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { HelpCenter } from "@/components/help/HelpCenter";

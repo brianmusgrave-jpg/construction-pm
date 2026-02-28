@@ -1,9 +1,3 @@
-/**
- * @file src/app/dashboard/projects/[id]/timeline/page.tsx
- * @description Gantt chart timeline page for a project. Renders GanttChart and
- * computes lastEstPhase and lastWorstPhase summary metrics. Includes a SummaryCard
- * helper component.
- */
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";

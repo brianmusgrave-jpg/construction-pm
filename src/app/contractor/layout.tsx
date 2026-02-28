@@ -1,9 +1,3 @@
-/**
- * @file src/app/contractor/layout.tsx
- * @description Layout shell for the contractor portal. Enforces CONTRACTOR-only
- * access, loads org settings and unread count, applies the theme CSS variable,
- * and renders ContractorNav with OnboardingTour.
- */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { ContractorNav } from "@/components/contractor/ContractorNav";

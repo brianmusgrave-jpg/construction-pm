@@ -1,32 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/PaymentApplicationSection.tsx
- * @description AIA-style payment application (G702/G703) section for a phase detail page.
- *
- * Each application covers a billing period and tracks:
- *   scheduledValue, workCompleted, materialsStored, retainage,
- *   previousPayments → `currentDue` (computed by the server action).
- *
- * Status workflow:
- *   DRAFT → SUBMITTED (by `canEdit`) → APPROVED / REJECTED (by `canManage`)
- *   → PAID (by `canManage` after APPROVED).
- *
- * Features:
- *   - Summary bar shows total `currentDue` across all applications and
- *     the sum of PAID applications.
- *   - Status filter tabs: ALL / DRAFT / SUBMITTED / APPROVED / REJECTED / PAID.
- *   - Collapsible section with `expanded` state.
- *
- * Permissions:
- *   - `canEdit`   — may create, submit, and delete applications.
- *   - `canManage` — may approve, reject, and mark as paid.
- *
- * Server actions: `createPaymentApplication`, `updatePaymentAppStatus`,
- *   `deletePaymentApplication`.
- * i18n namespace: `paymentApp`.
- */
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createPaymentApplication, updatePaymentAppStatus, deletePaymentApplication } from "@/actions/paymentApp";

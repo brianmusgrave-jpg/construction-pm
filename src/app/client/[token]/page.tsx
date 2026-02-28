@@ -1,9 +1,3 @@
-/**
- * @file src/app/client/[token]/page.tsx
- * @description Public read-only client portal. Verifies a client access token and
- * renders a full project overview including budget, phases, Gantt timeline bar,
- * photos, documents, and change orders without requiring authentication.
- */
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db-types";
 import { verifyClientToken } from "@/actions/client-tokens";

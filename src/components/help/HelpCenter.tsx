@@ -1,35 +1,5 @@
 "use client";
 
-/**
- * @file components/help/HelpCenter.tsx
- * @description Searchable in-app help documentation with accordion sections and
- *   expandable articles.
- *
- * Content: 30+ guide sections (returned by `useGuides`) covering getting-started,
- *   all feature areas (projects, phases, checklists, documents, photos, team,
- *   notifications, comments, change orders, daily logs, inspections, materials,
- *   bids, offline mode, punch lists, RFIs, submittals, time tracking, estimates,
- *   drawings, lien waivers, payment apps, voice notes, analytics, insurance), and
- *   admin topics (advanced, settings, admin panel).
- *
- * Role gating: the "admin" category sections (advanced, settings, admin panel) are
- *   hidden for roles other than ADMIN and PROJECT_MANAGER.
- *
- * Search: filters sections and articles by title, i18n content, and article tags.
- *   Active search forces all matching sections to expand; result count shown.
- *
- * Quick links: shown when no search is active — 8 shortcut buttons plus a
- *   "Replay Intro Tour" button that calls `resetTour()` from OnboardingTour.
- *
- * Accordion: click section header to expand/collapse; expanding auto-opens the
- *   first article. Clicking an article toggles its body content.
- *
- * Initial state: `initialSection` and `initialArticle` props support deep-linking
- *   from tour "Learn More" buttons via URL query params.
- *
- * i18n namespaces: `help`, `common`.
- */
-
 import { useState } from "react";
 import {
   Search,

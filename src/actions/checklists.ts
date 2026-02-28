@@ -1,51 +1,11 @@
 "use server";
 
-/**
- * @file actions/checklists.ts
- * @description Server actions for phase checklists — applying templates, toggling
- * items, adding custom items, and deleting items.
- *
- * Checklist model:
- *   Phase → (0 or 1) Checklist → ChecklistItem[]
- *   Each phase may have at most one checklist. A checklist is created by
- *   applying a ChecklistTemplate; items can then be customised per-phase.
- *
- * Completion notification:
- *   When `toggleChecklistItem` marks an item complete, the remaining-items count
- *   is checked. If the count drops to 0, all project members are notified via SSE
- *   with a CHECKLIST_COMPLETED notification.
- *
- * Custom items:
- *   `addCustomChecklistItem` appends ad-hoc items beyond what the template provided.
- *   New items get `order = maxOrder + 1` so they appear at the bottom of the list.
- *
- * Permission model (all ops use `can()` from @/lib/permissions):
- *   - applyChecklistTemplate:  can(role, "create", "checklist")
- *   - toggleChecklistItem:     can(role, "update", "checklist")
- *   - addCustomChecklistItem:  can(role, "create", "checklist")
- *   - deleteChecklistItem:     can(role, "delete", "checklist")
- */
-
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
 
-// ── Template Application ──
-
-/**
- * Apply a checklist template to a phase, creating a new Checklist with the
- * template's items copied in (at their original order).
- *
- * One checklist per phase: throws if the phase already has a checklist.
- * Items are copied by value — subsequent template edits do NOT affect
- * checklists that have already been applied to phases.
- *
- * @param phaseId    - Phase to apply the checklist to.
- * @param templateId - ChecklistTemplate to copy items from.
- * @returns The created Checklist record with phase info included.
- */
 export async function applyChecklistTemplate(
   phaseId: string,
   templateId: string
@@ -55,18 +15,20 @@ export async function applyChecklistTemplate(
   if (!can(session.user.role || "VIEWER", "create", "checklist"))
     throw new Error("Forbidden");
 
-  // Enforce one-checklist-per-phase constraint
-  const existing = await db.checklist.findUnique({ where: { phaseId } });
+  // Check if phase already has a checklist
+  const existing = await db.checklist.findUnique({
+    where: { phaseId },
+  });
   if (existing) throw new Error("Phase already has a checklist");
 
-  // Fetch the template to copy items from (items already ordered by `order` asc)
+  // Get template items
   const template = await db.checklistTemplate.findUnique({
     where: { id: templateId },
     include: { items: { orderBy: { order: "asc" } } },
   });
   if (!template) throw new Error("Template not found");
 
-  // Items are copied by value — template changes won't retroactively affect this checklist
+  // Create checklist with items from template
   const checklist = await db.checklist.create({
     data: {
       phaseId,
@@ -80,7 +42,7 @@ export async function applyChecklistTemplate(
     include: { phase: { select: { name: true, projectId: true } } },
   });
 
-  // Activity log — fire-and-forget
+  // Log activity
   db.activityLog.create({
     data: {
       action: "CHECKLIST_APPLIED",
@@ -95,24 +57,6 @@ export async function applyChecklistTemplate(
   return checklist;
 }
 
-// ── Item Toggling ──
-
-/**
- * Toggle a checklist item's completion state.
- *
- * Stores `completedAt` and `completedById` when completing; clears them when
- * un-checking (these are used for the audit trail and undo system).
- *
- * Completion trigger:
- *   After a completing toggle, checks if ALL items in the checklist are now done.
- *   If so, sends a CHECKLIST_COMPLETED notification to all project members via SSE.
- *
- * The activity log entry includes `wasCompleted` (the state BEFORE this toggle),
- * which `undoActivity` in activity.ts uses to reverse the operation.
- *
- * @param itemId - ID of the ChecklistItem to toggle.
- * @returns The updated ChecklistItem record.
- */
 export async function toggleChecklistItem(itemId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -129,7 +73,7 @@ export async function toggleChecklistItem(itemId: string) {
   });
   if (!item) throw new Error("Item not found");
 
-  const nowCompleting = !item.completed; // Toggle direction
+  const nowCompleting = !item.completed;
 
   const updated = await db.checklistItem.update({
     where: { id: itemId },
@@ -140,30 +84,23 @@ export async function toggleChecklistItem(itemId: string) {
     },
   });
 
-  // Activity log — `wasCompleted` is the PRE-toggle state (used by undoActivity)
+  // Log activity
   db.activityLog.create({
     data: {
       action: "CHECKLIST_ITEM_TOGGLED",
       message: `${nowCompleting ? "Completed" : "Unchecked"} "${item.title}"`,
       projectId: item.checklist.phase.projectId,
       userId: session.user.id,
-      data: {
-        phaseId: item.checklist.phaseId,
-        itemId: itemId,
-        completed: nowCompleting,
-        wasCompleted: item.completed, // Pre-toggle state for undo
-        completedById: item.completedById,
-      },
+      data: { phaseId: item.checklist.phaseId, itemId: itemId, completed: nowCompleting },
     },
   }).catch(() => {});
 
-  // Check if the checklist is now 100% complete (only when completing an item)
+  // If completing an item, check if all items in checklist are now done
   if (nowCompleting) {
     const remaining = await db.checklistItem.count({
       where: { checklistId: item.checklist.id, completed: false },
     });
     if (remaining === 0) {
-      // All items done — notify the whole project team
       const phase = await db.phase.findUnique({
         where: { id: item.checklist.phaseId },
         select: { id: true, name: true, projectId: true, project: { select: { name: true } } },
@@ -182,20 +119,12 @@ export async function toggleChecklistItem(itemId: string) {
     }
   }
 
-  revalidatePath(`/dashboard/projects/${item.checklist.phase.projectId}`);
+  revalidatePath(
+    `/dashboard/projects/${item.checklist.phase.projectId}`
+  );
   return updated;
 }
 
-// ── Custom Item Management ──
-
-/**
- * Add a custom (non-template) item to an existing checklist.
- * Appended at the end with `order = maxOrder + 1`.
- *
- * @param checklistId - Checklist to add the item to.
- * @param title       - Display text for the new item.
- * @returns The created ChecklistItem with its checklist/phase context included.
- */
 export async function addCustomChecklistItem(
   checklistId: string,
   title: string
@@ -205,7 +134,7 @@ export async function addCustomChecklistItem(
   if (!can(session.user.role || "VIEWER", "create", "checklist"))
     throw new Error("Forbidden");
 
-  // Compute the next order value — append after the current last item
+  // Get next order
   const maxOrder = await db.checklistItem.aggregate({
     where: { checklistId },
     _max: { order: true },
@@ -215,7 +144,6 @@ export async function addCustomChecklistItem(
     data: {
       checklistId,
       title,
-      // If checklist has no items yet, maxOrder._max.order is null → start at 0
       order: (maxOrder._max.order ?? -1) + 1,
     },
     include: {
@@ -225,19 +153,12 @@ export async function addCustomChecklistItem(
     },
   });
 
-  revalidatePath(`/dashboard/projects/${item.checklist.phase.projectId}`);
+  revalidatePath(
+    `/dashboard/projects/${item.checklist.phase.projectId}`
+  );
   return item;
 }
 
-/**
- * Delete a checklist item.
- * No re-ordering of remaining items is performed — gaps in `order` are acceptable
- * since items are displayed in ascending order and gaps don't affect sort behaviour.
- *
- * Requires: can(role, "delete", "checklist").
- *
- * @param itemId - ID of the ChecklistItem to delete.
- */
 export async function deleteChecklistItem(itemId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -253,5 +174,7 @@ export async function deleteChecklistItem(itemId: string) {
     },
   });
 
-  revalidatePath(`/dashboard/projects/${item.checklist.phase.projectId}`);
+  revalidatePath(
+    `/dashboard/projects/${item.checklist.phase.projectId}`
+  );
 }

@@ -1,16 +1,5 @@
 "use client";
 
-/**
- * @file WebhookSection.tsx
- * @description Webhook management panel for the settings page. The creation form accepts
- * a name, an HTTPS URL, and one or more event checkboxes sourced from WEBHOOK_EVENTS in
- * @/lib/webhook-events. Existing webhooks display the URL in monospace, up to three
- * event chips (with "+N more" overflow), last-triggered date, and an HTTP status icon
- * (CheckCircle2 green for 2xx responses, XCircle red otherwise). Each webhook can be
- * toggled active/paused or deleted (with confirmation). Server actions: createWebhook,
- * toggleWebhook, deleteWebhook.
- */
-
 import { useState } from "react";
 import {
   Zap,

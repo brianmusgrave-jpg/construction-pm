@@ -1,26 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/CommentSection.tsx
- * @description Threaded comment section for a phase detail page.
- *
- * Displays comments sorted newest-first with relative timestamps
- * (via `date-fns` `formatDistanceToNow`). Each comment shows the
- * author's avatar (initial letter fallback) and name.
- *
- * Add/delete operations use React `useTransition` so the UI stays
- * interactive while the server action is in flight (spinner on the
- * send button; delete button disabled during transition).
- *
- * Delete permissions:
- *   - The comment author may delete their own comment.
- *   - ADMIN role users may delete any comment.
- *   Both cases are determined by the `canDelete` helper closure.
- *
- * Server actions: `addPhaseComment`, `deletePhaseComment`.
- * i18n namespace: `comments`.
- */
-
 import React from "react";
 import { useState, useTransition } from "react";
 import { MessageSquare, Send, Trash2, Loader2 } from "lucide-react";

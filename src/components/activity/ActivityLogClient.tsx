@@ -1,35 +1,5 @@
 "use client";
 
-/**
- * @file components/activity/ActivityLogClient.tsx
- * @description Paginated activity log viewer with filter and undo capabilities.
- *
- * Layout:
- *   - Header bar: total entry count + Filter toggle button.
- *   - Filter panel (collapsible): project selector + action type selector + Apply
- *     button. Both selects draw from server-provided `projects` and `actionTypes`.
- *   - Log list: each entry shows user avatar (image or User icon), user name,
- *     action badge (colour-coded via `actionColor`), message text, project name
- *     (FolderKanban), and relative time (`timeAgo`).
- *   - Undo button (Undo2, admin-only): shown on hover for entries whose `action`
- *     is in `UNDOABLE_ACTIONS` and whose message does not start with "Undo:".
- *     Calls `undoActivity(logId)`, then refreshes the current page.
- *   - Pagination: ChevronLeft / ChevronRight buttons when `pages > 1`.
- *
- * Helpers:
- *   `formatAction(action)` — converts SNAKE_CASE to Title Case.
- *   `timeAgo(dateStr)`     — "Just now" / "Xm ago" / "Xh ago" / "Xd ago" / date.
- *   `actionColor(action)`  — returns Tailwind classes: green (CREATED/JOINED/ADDED),
- *     red (REMOVED/DELETED), blue (CHANGED/UPDATED/TOGGLED), purple (UPLOADED),
- *     yellow (INVITED), gray (default).
- *
- * UNDOABLE_ACTIONS: PROJECT_STATUS_CHANGED, PHASE_STATUS_CHANGED, MEMBER_REMOVED,
- *   MEMBER_UPDATED, CHECKLIST_ITEM_TOGGLED.
- *
- * Server actions: `undoActivity`, `getActivityLogs`.
- * i18n namespace: `activity`.
- */
-
 import { useState, useTransition } from "react";
 import {
   Undo2,

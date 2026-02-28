@@ -1,24 +1,5 @@
 "use client";
 
-/**
- * @file components/project/ProjectActions.tsx
- * @description Archive / Restore action button for a project.
- *
- * Render logic:
- *   - Returns `null` if `!canManage`.
- *   - Returns a Restore button (green, RotateCcw icon) when `status === "ARCHIVED"`.
- *   - Returns an Archive button (gray, Archive icon) when status is one of:
- *     `"ACTIVE"`, `"COMPLETED"`, or `"ON_HOLD"`.
- *   - Returns `null` for any other status (e.g. DRAFT before first activation).
- *
- * Both actions use `useTransition` for non-blocking async execution and show a
- * Loader2 spinner while pending. Errors are surfaced via `toast.error`.
- * Archive requires a `confirm()` dialog before proceeding.
- *
- * Server actions: `archiveProject`, `restoreProject`.
- * i18n namespace: `project`.
- */
-
 import { useState, useTransition } from "react";
 import { Archive, RotateCcw, Loader2 } from "lucide-react";
 import { archiveProject, restoreProject } from "@/actions/projects";

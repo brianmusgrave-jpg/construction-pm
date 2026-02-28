@@ -1,15 +1,5 @@
 "use client";
 
-/**
- * @file ThemeSelector.tsx
- * @description Theme preset selector rendered as a responsive grid of clickable cards.
- * Each card displays four colour swatches (primary, dark, light, background) sourced
- * from THEME_PRESETS in @/lib/themes. The active preset is highlighted with a dark
- * border and a checkmark overlay. Selecting a preset applies an optimistic UI update,
- * calls updateTheme(themeId), and reverts the selection on error.
- * Server action: updateTheme. i18n: settings.
- */
-
 import { useState } from "react";
 import { Check } from "lucide-react";
 import { THEME_PRESETS } from "@/lib/themes";

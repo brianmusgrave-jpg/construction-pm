@@ -1,25 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/ChangeOrderSection.tsx
- * @description Change order management section for a phase detail page.
- *
- * Displays all change orders for a phase with status badges (PENDING /
- * APPROVED / REJECTED), a running total of approved amounts, and a count
- * of pending items. Amounts are formatted with `Intl.NumberFormat` USD.
- *
- * Status workflow:
- *   - Any team member with `canCreate` may submit a new CO (number,
- *     title, optional amount/reason/description).
- *   - PMs and admins (`canApprove`) see Approve ✓ and Reject ✗ buttons
- *     on PENDING items.
- *   - Only `canApprove` users can delete change orders.
- *
- * Server actions: `createChangeOrder`, `updateChangeOrderStatus`,
- *   `deleteChangeOrder`.
- * i18n: none (hardcoded English labels — see STATUS_CONFIG).
- */
-
 import { useState } from "react";
 import {
   FileDiff,

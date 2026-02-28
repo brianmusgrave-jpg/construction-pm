@@ -1,42 +1,5 @@
 "use client";
 
-/**
- * @file components/directory/DirectoryClient.tsx
- * @description Full-page staff directory with search, filtering, bulk operations,
- *   insurance status display, and star ratings.
- *
- * Grouping: contacts displayed in sections: TEAM → SUBCONTRACTOR → INSPECTOR →
- *   VENDOR (only non-empty groups shown). Each type has a `TYPE_CONFIG` entry
- *   with label, description, icon, and Tailwind colour classes.
- *
- * Search & filter: `useMemo`-filtered by search query (name/company/role/
- *   location/email) and by type tab. Includes a clear-search (×) button.
- *
- * Bulk mode (canManage only):
- *   - Toggles checkbox overlay on each card.
- *   - Sticky action bar shows select-all, selected count, "Move To" retype
- *     dropdown, and delete button.
- *   - `bulkDeleteStaff` / `bulkUpdateStaffType` server actions.
- *
- * Insurance status per contact (`getInsuranceStatus`):
- *   Shield (blue) = uninsuredOverride, ShieldX (red) = no certs, ShieldAlert
- *   (red) = expired cert, ShieldAlert (yellow) = expiring soon, ShieldCheck
- *   (green) = all active.
- *
- * PM-only star ratings: 1–5 star buttons per contact; click same rating to
- *   clear (sets 0); calls `updateStaffRating`.
- *
- * Exports: `exportStaffCsv` → `directory.csv`; `exportInsuranceCsv` →
- *   `insurance-compliance.csv` (both via Blob download).
- *
- * Opens: `ContactFormModal` (add/edit) and `InsurancePanel` on hover-reveal
- *   shield icon.
- *
- * Server actions: `bulkDeleteStaff`, `bulkUpdateStaffType`, `exportStaffCsv`,
- *   `updateStaffRating`, `exportInsuranceCsv`.
- * i18n namespaces: `directory`, `common`.
- */
-
 import { useState, useTransition, useMemo } from "react";
 import {
   Users,

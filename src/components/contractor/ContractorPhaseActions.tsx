@@ -1,21 +1,5 @@
 "use client";
 
-/**
- * @file components/contractor/ContractorPhaseActions.tsx
- * @description Minimal action button shown on contractor phase detail views.
- *
- * Renders a "Request Review" button only when `status === "IN_PROGRESS"`.
- * Returns `null` for any other status.
- *
- * On click: calls `updatePhaseStatus(phaseId, "REVIEW_REQUESTED")`.
- *   - While in-flight shows a Loader2 spinner.
- *   - On success sets `done = true` which replaces the button with an amber
- *     confirmation banner (Eye icon + "Review Requested" text).
- *
- * Server action: `updatePhaseStatus` (from `@/actions/phases`).
- * i18n namespace: `contractor`.
- */
-
 import { useState } from "react";
 import { updatePhaseStatus } from "@/actions/phases";
 import { Eye, Loader2 } from "lucide-react";

@@ -1,35 +1,5 @@
 "use client";
 
-/**
- * @file components/dashboard/AnalyticsWidgets.tsx
- * @description Full analytics dashboard rendered with Recharts visualisations.
- *
- * Charts rendered:
- *   - Budget summary cards: Estimated / Actual / Variance (red/green/neutral).
- *   - Budget S-Curve: AreaChart of cumulative planned vs actual spend over time.
- *   - Project Budget Comparison: grouped BarChart per project (estimated vs actual).
- *   - Monthly Activity: grouped BarChart of phases created + documents added per month.
- *   - Phase Completion Trend: LineChart of completed phases per week.
- *   - Project Status Pie: donut PieChart of project status distribution.
- *   - Phase Status Pie: donut PieChart of phase status distribution.
- *   - Team Workload: horizontal BarChart of assigned phases per member (names truncated
- *     to 10 chars).
- *
- * Date range selector (3m / 6m / 12m / all) calls `onRangeChange` prop.
- *
- * CSV export button serialises all analytics data into a multi-section CSV file and
- *   triggers a Blob + object URL download as `analytics-YYYY-MM-DD.csv`.
- *
- * Helpers:
- *   `fmt(n)` → "$1.2M" / "$300K" / "$42" formatted USD string.
- *   `SectionHeader` — small labelled section divider used inside each chart card.
- *
- * `STATUS_COLORS` maps known status strings to hex colours.
- * `CHART_COLORS` is the 8-colour fallback palette for unknown statuses.
- *
- * i18n namespace: `analytics`.
- */
-
 import { useState, useCallback } from "react";
 import type { AnalyticsData, AnalyticsDateRange } from "@/lib/analytics-types";
 import {

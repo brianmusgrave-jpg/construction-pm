@@ -1,31 +1,5 @@
 "use client";
 
-/**
- * @file components/reports/ExportButton.tsx
- * @description CSV export dropdown for the reports page.
- *
- * Export options (shown in a popover menu):
- *   - "Full Report"        — concatenated CSV with sections for Project Health,
- *     Phase Status Breakdown, Document Stats, Overdue Phases, and Team Performance
- *     (when data is present); saved as `full-report.csv`.
- *   - "Project Health"     — per-project status, phase counts, progress %, overdue;
- *     saved as `project-health-report.csv`.
- *   - "Overdue Report"     — phase name, project name, days overdue, owner;
- *     saved as `overdue-report.csv`.
- *   - "Team Performance"   — only shown when `data.teamPerformance` is non-empty;
- *     saved as `team-performance.csv`.
- *
- * `toCSV(headers, rows)` produces RFC-4180-compliant CSV: values containing commas,
- * double-quotes, or newlines are quoted and internal double-quotes are doubled.
- *
- * `downloadCSV(filename, content)` creates a `Blob`, generates an object URL, and
- * simulates a click on a transient `<a>` element, then revokes the URL.
- *
- * The dropdown is closed by clicking any menu item or the fixed-position backdrop.
- *
- * i18n namespace: `reports`.
- */
-
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { useTranslations } from "next-intl";

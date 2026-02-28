@@ -1,12 +1,5 @@
 "use client";
 
-/**
- * @file src/app/(auth)/login/page.tsx
- * @description Credentials-based login form. Calls signIn("credentials") with
- * email and password; supports callbackUrl from searchParams. Wrapped in Suspense
- * for async searchParams access.
- */
-
 import { signIn } from "next-auth/react";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";

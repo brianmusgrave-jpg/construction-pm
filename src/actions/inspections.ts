@@ -1,50 +1,21 @@
 "use server";
 
-/**
- * @file actions/inspections.ts
- * @description Server actions for scheduling and recording field inspections.
- *
- * Inspections are scheduled against a phase and follow a two-step lifecycle:
- *   1. Scheduled: created with a future `scheduledAt` date, result is null.
- *   2. Completed: result recorded as PASS | FAIL | CONDITIONAL,
- *      `completedAt` set to now, optional notes attached.
- *
- * Notification behavior:
- *   - On schedule: all project members notified via SSE (INSPECTION_SCHEDULED).
- *   - On result: members notified only if `notifyOnResult` is true on the record
- *     (set at creation time, defaults to true).
- *
- * All mutations require an authenticated session. No additional role checks —
- * any project member can schedule and record inspections.
- */
-
 import { db } from "@/lib/db-types";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
 import { z } from "zod";
 
-// ── Zod Schemas ──
-
-/** Validates inspection creation input. */
 const CreateInspectionSchema = z.object({
   phaseId: z.string().min(1),
   title: z.string().min(1).max(500),
-  inspectorName: z.string().max(200).optional(), // Optional — inspector may not be known yet
-  scheduledAt: z.string().min(1),                // ISO date string
-  notifyOnResult: z.boolean().optional(),        // Defaults to true in DB
+  inspectorName: z.string().max(200).optional(),
+  scheduledAt: z.string().min(1),
+  notifyOnResult: z.boolean().optional(),
 });
 
-/** Valid inspection result values. */
 const InspectionResultSchema = z.enum(["PASS", "FAIL", "CONDITIONAL"]);
 
-// ── Queries ──
-
-/**
- * Fetch all inspections for a phase, newest first.
- *
- * Requires: authenticated session.
- */
 export async function getInspections(phaseId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
@@ -54,19 +25,11 @@ export async function getInspections(phaseId: string) {
   });
 }
 
-// ── Mutations ──
-
-/**
- * Schedule a new inspection on a phase.
- * Notifies all project members of the scheduled date via SSE.
- *
- * Requires: authenticated session.
- */
 export async function createInspection(data: {
   phaseId: string;
   title: string;
   inspectorName?: string;
-  scheduledAt: string;  // ISO date string
+  scheduledAt: string;
   notifyOnResult?: boolean;
 }) {
   const session = await auth();
@@ -89,7 +52,7 @@ export async function createInspection(data: {
     },
   });
 
-  // Notify all project members of the scheduled inspection
+  // Notify members
   const memberIds = await getProjectMemberIds(phase.projectId);
   notify({
     type: "INSPECTION_SCHEDULED",
@@ -104,14 +67,6 @@ export async function createInspection(data: {
   return inspection;
 }
 
-/**
- * Record the outcome of a completed inspection.
- * Sets `completedAt` to now and saves the result (PASS/FAIL/CONDITIONAL) and notes.
- * If `notifyOnResult` was set on the inspection record, fires an SSE notification
- * to all project members with a human-readable result label.
- *
- * Requires: authenticated session.
- */
 export async function recordInspectionResult(
   inspectionId: string,
   result: "PASS" | "FAIL" | "CONDITIONAL",
@@ -119,7 +74,7 @@ export async function recordInspectionResult(
 ) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");
-  InspectionResultSchema.parse(result); // Validate enum before DB write
+  InspectionResultSchema.parse(result);
 
   const inspection = await db.inspection.findUnique({
     where: { id: inspectionId },
@@ -132,7 +87,6 @@ export async function recordInspectionResult(
     data: { result, completedAt: new Date(), notes: notes ?? null },
   });
 
-  // Only notify if the inspection was created with notifyOnResult=true
   if (inspection.notifyOnResult) {
     const memberIds = await getProjectMemberIds(inspection.phase.projectId);
     const resultLabel = result === "PASS" ? "Passed ✓" : result === "FAIL" ? "Failed ✗" : "Conditional";
@@ -150,11 +104,6 @@ export async function recordInspectionResult(
   return updated;
 }
 
-/**
- * Delete an inspection record (typically to cancel a scheduled inspection).
- *
- * Requires: authenticated session.
- */
 export async function deleteInspection(inspectionId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthorized");

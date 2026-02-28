@@ -2,8 +2,8 @@
 
 /**
  * @file components/admin/AdminPanelClient.tsx
- * @description Full-width admin control panel with five tabs: Features, Activity,
- *   Users, System Health, and Audit Export.
+ * @description Full-width admin control panel with six tabs: Features, Activity,
+ *   Users, System Health, Audit Export, and AI Settings.
  *
  * Tab: "features"
  *   Feature toggle list grouped by category (field / financial / integrations /
@@ -58,6 +58,7 @@ import {
   FileText,
   Camera,
   BarChart3,
+  Bot,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -66,8 +67,10 @@ import {
   deactivateUser,
   exportAuditLog,
 } from "@/actions/admin";
+import { AISettingsPanel } from "@/components/admin/AISettingsPanel";
+import type { AISettingsData, AIUsageSummary } from "@/actions/aiSettings";
 
-type Tab = "features" | "activity" | "users" | "health" | "audit";
+type Tab = "features" | "activity" | "users" | "health" | "audit" | "ai";
 
 interface FeatureToggle {
   id: string;
@@ -108,6 +111,10 @@ interface AdminPanelClientProps {
   stats: SystemStats;
   currentUserId: string;
   activityLogNode: React.ReactNode;
+  /** Current AI settings row (admin only). */
+  aiSettings: AISettingsData;
+  /** Usage summary for the last 7 days. */
+  aiUsage: AIUsageSummary;
 }
 
 export function AdminPanelClient({
@@ -116,6 +123,8 @@ export function AdminPanelClient({
   stats,
   currentUserId,
   activityLogNode,
+  aiSettings,
+  aiUsage,
 }: AdminPanelClientProps) {
   const t = useTranslations("adminPanel");
   const [tab, setTab] = useState<Tab>("features");
@@ -130,6 +139,7 @@ export function AdminPanelClient({
     { key: "users", label: t("tabs.users"), icon: <Users className="w-4 h-4" /> },
     { key: "health", label: t("tabs.health"), icon: <Server className="w-4 h-4" /> },
     { key: "audit", label: t("tabs.audit"), icon: <Download className="w-4 h-4" /> },
+    { key: "ai", label: t("tabs.ai"), icon: <Bot className="w-4 h-4" /> },
   ];
 
   // ── Feature Toggles ──
@@ -462,6 +472,16 @@ export function AdminPanelClient({
               <h4 className="text-sm font-medium text-amber-900">{t("auditNote")}</h4>
               <p className="text-xs text-amber-700 mt-1">{t("auditNoteDescription")}</p>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── AI Settings Tab ── */}
+      {tab === "ai" && (
+        <div className="space-y-6">
+          <p className="text-sm text-gray-500">{t("aiDescription")}</p>
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <AISettingsPanel settings={aiSettings} usage={aiUsage} />
           </div>
         </div>
       )}

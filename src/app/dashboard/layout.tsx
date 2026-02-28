@@ -1,8 +1,3 @@
-/**
- * @file src/app/dashboard/layout.tsx
- * @description Dashboard shell layout. Renders the Sidebar, OnboardingTour, and
- * InstallPrompt, and applies the org theme CSS variable for all dashboard pages.
- */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/ui/Sidebar";

@@ -1212,7 +1212,8 @@
       "activity": "Registro de Atividades",
       "users": "Gestão de Usuários",
       "health": "Saúde do Sistema",
-      "audit": "Exportar Auditoria"
+      "audit": "Exportar Auditoria",
+      "ai": "Configurações de IA"
     },
     "featuresDescription": "Ativar ou desativar recursos em toda a plataforma",
     "featureEnabled": "Recurso ativado",
@@ -1258,6 +1259,7 @@
     "downloadCSV": "Baixar CSV de Auditoria",
     "auditExported": "Registro de auditoria exportado",
     "auditNote": "Nota de Retenção de Dados",
-    "auditNoteDescription": "Exporta até 5.000 entradas mais recentes. Para dados completos, entre em contato com seu administrador de banco de dados."
+    "auditNoteDescription": "Exporta até 5.000 entradas mais recentes. Para dados completos, entre em contato com seu administrador de banco de dados.",
+    "aiDescription": "Configurar o provedor de IA, modelo, limites de uso e monitorar custos de API"
   }
 }

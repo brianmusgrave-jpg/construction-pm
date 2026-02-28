@@ -1,16 +1,5 @@
 "use client";
 
-/**
- * @file InstallPrompt.tsx
- * @description Progressive Web App install prompt banner. Listens for the browser's
- * beforeinstallprompt event and stores the deferred prompt for later invocation.
- * Suppressed for seven days after dismissal via a localStorage timestamp
- * (key: "pwa-install-dismissed"), and skipped entirely when the app is already running
- * in standalone display mode. Renders a fixed bottom-right card with a HardHat icon and
- * Install / Not Now actions; shows a success toast on acceptance.
- * i18n: pwa.
- */
-
 import { useEffect, useState } from "react";
 import { HardHat, X, Download } from "lucide-react";
 import { useTranslations } from "next-intl";

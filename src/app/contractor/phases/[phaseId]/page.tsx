@@ -1,9 +1,3 @@
-/**
- * @file src/app/contractor/phases/[phaseId]/page.tsx
- * @description Contractor phase detail page. Verifies contractor membership before
- * rendering ChecklistSection, DocumentSection, PhotoSection, and
- * ContractorPhaseActions for the specified phase.
- */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirect, notFound } from "next/navigation";

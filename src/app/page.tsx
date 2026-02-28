@@ -1,8 +1,3 @@
-/**
- * @file src/app/page.tsx
- * @description Public landing page. Displays the HardHat brand icon, app tagline,
- * and a "Go to Dashboard" CTA link. Uses home/common i18n namespaces.
- */
 import Link from "next/link";
 import { HardHat, ArrowRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";

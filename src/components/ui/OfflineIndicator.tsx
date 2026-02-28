@@ -1,15 +1,5 @@
 "use client";
 
-/**
- * @file OfflineIndicator.tsx
- * @description Offline and sync status indicator fixed to the bottom-left of the
- * viewport. Uses the useOfflineSync hook and renders nothing when the app is online with
- * an empty mutation queue. Displays four mutually-exclusive states: an amber offline
- * banner (WifiOff icon), a blue syncing spinner (RefreshCw animate-spin), an indigo
- * pending-sync button that triggers syncAll(), and a red failed-sync banner with a Retry
- * button. i18n: pwa.
- */
-
 import { useOfflineSync } from "@/hooks/useOfflineSync";
 import { WifiOff, Wifi, RefreshCw, AlertTriangle } from "lucide-react";
 import { useTranslations } from "next-intl";

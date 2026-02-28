@@ -1212,7 +1212,8 @@
       "activity": "Journal d'Activité",
       "users": "Gestion des Utilisateurs",
       "health": "Santé du Système",
-      "audit": "Export d'Audit"
+      "audit": "Export d'Audit",
+      "ai": "Paramètres IA"
     },
     "featuresDescription": "Activer ou désactiver les fonctionnalités de la plateforme",
     "featureEnabled": "Fonctionnalité activée",
@@ -1258,6 +1259,7 @@
     "downloadCSV": "Télécharger CSV d'Audit",
     "auditExported": "Journal d'audit exporté",
     "auditNote": "Note de Conservation des Données",
-    "auditNoteDescription": "Exporte jusqu'à 5 000 entrées les plus récentes. Pour les données complètes, contactez votre administrateur."
+    "auditNoteDescription": "Exporte jusqu'à 5 000 entrées les plus récentes. Pour les données complètes, contactez votre administrateur.",
+    "aiDescription": "Configurer le fournisseur d'IA, le modèle, les limites d'utilisation et surveiller les coûts API"
   }
 }

@@ -1,29 +1,5 @@
 "use client";
 
-/**
- * @file components/timeline/PhaseRow.tsx
- * @description A single phase row within the Gantt chart, with pointer-based
- *   drag-to-move and drag-to-resize interactions for estimated and worst-case bars.
- *
- * Interaction model:
- *   - `handlePointerDown` is invoked with `barType` ("estimated"|"worst") and
- *     `mode` ("move"|"resize-left"|"resize-right").
- *   - `setPointerCapture` keeps pointer events routed to the drag target even
- *     when the cursor leaves the element, preventing lost drags.
- *   - Day delta = `Math.round(dx / pxPerDay)` where `pxPerDay` is calculated
- *     from the track element's bounding rect at drag start.
- *   - Constraints: resize-left clamps so `newStart < newEnd`; resize-right
- *     clamps so `newEnd > newStart`.
- *   - Date changes are reported via `onDatesChange`; `GanttChart` owns state
- *     and debounces the `updatePhaseDates` server action call.
- *
- * Sub-component: `TimelineBar` — a positioned div with visible left/right
- *   resize handle overlays that appear on hover.
- * Milestones render a rotated diamond div instead of a bar.
- *
- * Utilities: `statusColor`, `statusLabel`, `fmtShort` from `@/lib/utils`.
- */
-
 import { useRef, useCallback } from "react";
 import Link from "next/link";
 import { differenceInDays, addDays, format } from "date-fns";

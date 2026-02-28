@@ -1,15 +1,5 @@
 "use client";
 
-/**
- * @file LogoUploader.tsx
- * @description Company branding panel combining logo upload and company name editing.
- * Accepts PNG, JPG, SVG, or WebP images up to 2 MB (validated client-side); renders an
- * 80×80 preview box with a HardHat fallback. Uploads via uploadLogo(FormData) and
- * deletes with a confirmation prompt via deleteLogo(). Company name auto-saves after an
- * 800 ms debounce via updateCompanyName(). Server actions: uploadLogo, deleteLogo,
- * updateCompanyName. i18n: settings, common.
- */
-
 import { useState, useRef } from "react";
 import { Upload, Trash2, HardHat, Loader2, AlertCircle } from "lucide-react";
 import { uploadLogo, deleteLogo, updateCompanyName } from "@/actions/settings";

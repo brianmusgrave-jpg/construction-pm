@@ -1,9 +1,3 @@
-/**
- * @file src/app/dashboard/settings/page.tsx
- * @description User and organization settings page. Performs 10 parallel data
- * fetches to populate profile, TOTP, language, appearance, templates, QuickBooks
- * integration, webhooks, and report schedule settings.
- */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { can } from "@/lib/permissions";

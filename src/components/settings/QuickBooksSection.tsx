@@ -1,33 +1,5 @@
 "use client";
 
-/**
- * @file components/settings/QuickBooksSection.tsx
- * @description Settings panel for the QuickBooks Online integration.
- *
- * Shows either a "connect" CTA (when no connection exists) or a connected
- * state with sync controls, per-entity toggles, and sync history.
- *
- * Connected state features:
- *   - Company info card with disconnect button (requires confirm dialog).
- *   - Last-sync status row with a "Sync Now" button (triggers full sync).
- *   - Four per-entity toggles (invoices, expenses, vendors, customers) with
- *     optimistic UI — toggle reverts on server error.
- *   - Master "Auto Sync" toggle for scheduled background syncs.
- *   - Sync history table showing the last 5 log entries with status icons.
- *
- * ⚠️  NOTE: `triggerQuickBooksSync` is currently a stub on the server side —
- * it fetches QB records but does NOT write to the application database yet.
- * After a successful sync call the component reloads the page to reflect
- * updated connection metadata.
- *
- * Status icons: CheckCircle2 (success), XCircle (error), AlertTriangle
- *   (partial), Loader2 (started/in-progress), Clock (unknown/pending).
- *
- * Server actions: `getQuickBooksAuthUrl`, `disconnectQuickBooks`,
- *   `triggerQuickBooksSync`, `updateQuickBooksSyncSettings` (quickbooks).
- * i18n namespace: `quickbooks`.
- */
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {

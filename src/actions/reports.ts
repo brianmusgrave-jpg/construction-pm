@@ -1,51 +1,10 @@
 "use server";
 
-/**
- * @file actions/reports.ts
- * @description Server actions powering the Reports dashboard and contractor performance views.
- *
- * This file contains two groups of reports:
- *
- * Admin / PM Reports — aggregated across all projects the user is a member of:
- *   - `getProjectHealthReport`   — per-project progress, phase counts, schedule health
- *   - `getPhaseStatusBreakdown`  — global count by phase status (for pie chart)
- *   - `getDocumentStats`         — totals by DocStatus and DocCategory
- *   - `getActivityTimeline`      — daily activity counts + breakdown by action type
- *   - `getTeamPerformance`       — per-staff assignment stats (completed, active, overdue)
- *   - `getOverdueReport`         — phases past estEnd, not yet COMPLETE
- *   - `getJobPLReport`           — per-project P&L: budget vs actual vs change orders
- *   - `exportJobPLCsv`           — CSV export of the Job P&L data
- *
- * Contractor Reports — scoped to the current user's assigned work:
- *   - `getContractorPerformance` — merged view of member phases + staff-matched phases
- *
- * Key types:
- *   `JobPLRow` — exported interface for the P&L report row shape; lives here because
- *   this is not a `"use server"` restriction violation (it IS in the actions file and
- *   exported types are allowed when the file has async exports). Consuming components
- *   should import it from here.
- *
- * Decimal coercion:
- *   All Prisma `Decimal` fields (budget, estimatedCost, actualCost, amount) are
- *   coerced with `Number()` before being returned — Decimal objects are not
- *   serialisable across the server/client boundary.
- */
-
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 // ── Admin / PM Reports ──
 
-/**
- * Compute a health summary for every project the current user is a member of.
- *
- * Health classification:
- *   - "at-risk"     — any phase is overdue (past estEnd, not COMPLETE)
- *   - "on-track"    — no overdue phases, at least one active phase
- *   - "not-started" — no active or overdue phases
- *
- * @returns Array of project summary objects ordered by most recently updated.
- */
 export async function getProjectHealthReport() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -89,7 +48,7 @@ export async function getProjectHealthReport() {
     const total = phases.length;
     const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
-    // "at-risk" takes precedence; "not-started" when no phases are moving
+    // Schedule health: ratio of on-time vs overdue
     const health =
       overdue > 0 ? "at-risk" : active > 0 ? "on-track" : "not-started";
 
@@ -98,7 +57,7 @@ export async function getProjectHealthReport() {
       name: project.name,
       address: project.address,
       status: project.status,
-      budget: project.budget ? Number(project.budget) : null, // Decimal → number
+      budget: project.budget ? Number(project.budget) : null,
       estCompletion: project.estCompletion,
       memberCount: project._count.members,
       phases: { total, completed, active, overdue, pending },
@@ -108,13 +67,6 @@ export async function getProjectHealthReport() {
   });
 }
 
-/**
- * Return a global count of phases grouped by status.
- * Scoped to projects the current user is a member of.
- * Pre-initialises all 5 status keys to 0 so the chart always has a full dataset.
- *
- * @returns Array of `{ status, count }` objects for all 5 phase statuses.
- */
 export async function getPhaseStatusBreakdown() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -124,7 +76,6 @@ export async function getPhaseStatusBreakdown() {
     select: { status: true },
   });
 
-  // Pre-fill all statuses with 0 so the pie chart renders even if some are empty
   const counts: Record<string, number> = {
     PENDING: 0,
     IN_PROGRESS: 0,
@@ -142,13 +93,6 @@ export async function getPhaseStatusBreakdown() {
   }));
 }
 
-/**
- * Return document totals by status and category.
- * Scoped to phases in projects the current user is a member of.
- * Uses parallel `groupBy` queries for efficiency.
- *
- * @returns `{ total, byStatus[], byCategory[] }`
- */
 export async function getDocumentStats() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -161,8 +105,16 @@ export async function getDocumentStats() {
 
   const [total, byStatus, byCategory] = await Promise.all([
     db.document.count({ where }),
-    db.document.groupBy({ by: ["status"], where, _count: true }),
-    db.document.groupBy({ by: ["category"], where, _count: true }),
+    db.document.groupBy({
+      by: ["status"],
+      where,
+      _count: true,
+    }),
+    db.document.groupBy({
+      by: ["category"],
+      where,
+      _count: true,
+    }),
   ]);
 
   return {
@@ -175,14 +127,6 @@ export async function getDocumentStats() {
   };
 }
 
-/**
- * Aggregate activity log events into a daily histogram and action-type breakdown.
- * Useful for a "team activity over time" sparkline chart.
- *
- * @param days - Look-back window in days (default 30).
- * @returns `{ daily[], byAction[], totalActions }` — daily sorted ascending by date;
- *   byAction sorted descending by count.
- */
 export async function getActivityTimeline(days: number = 30) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -199,14 +143,14 @@ export async function getActivityTimeline(days: number = 30) {
     orderBy: { createdAt: "asc" },
   });
 
-  // Group raw log entries into daily buckets (ISO date string as key)
+  // Group by day
   const dailyCounts: Record<string, number> = {};
   activity.forEach((a: typeof activity[number]) => {
     const day = a.createdAt.toISOString().split("T")[0];
     dailyCounts[day] = (dailyCounts[day] || 0) + 1;
   });
 
-  // Count occurrences of each action type for the breakdown bar chart
+  // Also group by action type
   const actionCounts: Record<string, number> = {};
   activity.forEach((a: typeof activity[number]) => {
     actionCounts[a.action] = (actionCounts[a.action] || 0) + 1;
@@ -224,16 +168,11 @@ export async function getActivityTimeline(days: number = 30) {
   };
 }
 
-/**
- * Per-staff member performance summary across all their phase assignments.
- * Filters to staff that have at least one assignment (unassigned staff omitted).
- *
- * @returns Array of staff performance objects, ordered alphabetically by name.
- */
 export async function getTeamPerformance() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
+  // Get all staff with their assignment data
   const staff = await db.staff.findMany({
     include: {
       assignments: {
@@ -257,7 +196,7 @@ export async function getTeamPerformance() {
   const now = new Date();
 
   return staff
-    .filter((s: typeof staff[number]) => s.assignments.length > 0) // Skip unassigned staff
+    .filter((s: typeof staff[number]) => s.assignments.length > 0)
     .map((s: typeof staff[number]) => {
       const phases = s.assignments.map((a: typeof s.assignments[number]) => a.phase);
       const completed = phases.filter((p: typeof phases[number]) => p.status === "COMPLETE").length;
@@ -281,19 +220,11 @@ export async function getTeamPerformance() {
         completed,
         active,
         overdue,
-        // How many phases this person is the primary owner (vs. supporting member)
         isOwnerCount: s.assignments.filter((a: typeof s.assignments[number]) => a.isOwner).length,
       };
     });
 }
 
-/**
- * Return all phases that are overdue (estEnd < now, status ≠ COMPLETE).
- * Scoped to projects the current user is a member of.
- * Includes the primary owner (isOwner=true assignment, up to 1) for accountability.
- *
- * @returns Array sorted by estEnd ascending (oldest overdue first).
- */
 export async function getOverdueReport() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -311,10 +242,10 @@ export async function getOverdueReport() {
       assignments: {
         include: { staff: { select: { name: true, company: true } } },
         where: { isOwner: true },
-        take: 1, // Only the primary owner
+        take: 1,
       },
     },
-    orderBy: { estEnd: "asc" }, // Most overdue first
+    orderBy: { estEnd: "asc" },
   });
 
   return overduePhases.map((p: typeof overduePhases[number]) => {
@@ -336,42 +267,23 @@ export async function getOverdueReport() {
   });
 }
 
-// ── Job P&L Report ──
+// ── Job P&L Report (Sprint Y #54) ──
 
-/**
- * Row shape for the Job Profit & Loss report.
- * Exported so consuming components can type-annotate report table rows.
- */
 export interface JobPLRow {
   projectId: string;
   projectName: string;
   status: string;
-  /** Original project budget (from project.budget). */
   budget: number;
-  /** Sum of all phase estimatedCost values. */
   totalEstimatedCost: number;
-  /** Sum of all phase actualCost values. */
   totalActualCost: number;
-  /** Sum of all approved change order amounts across all phases. */
   changeOrderTotal: number;
-  /** budget + changeOrderTotal — the revenue-adjusted contract value. */
   adjustedBudget: number;
-  /** adjustedBudget - totalActualCost — gross profit before overhead. */
   grossProfit: number;
-  /** grossProfit / adjustedBudget * 100 — percentage margin. */
   profitMargin: number;
   phaseCount: number;
   completedPhases: number;
 }
 
-/**
- * Build the Job P&L report for all active (non-archived) projects.
- * Aggregates budget, costs, and approved change orders into a single row per project.
- *
- * Note: Only approved change orders are included in `changeOrderTotal` —
- * pending/rejected COs have no financial impact until approved.
- * All Prisma Decimal values are coerced to Number before return.
- */
 export async function getJobPLReport(): Promise<JobPLRow[]> {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -386,7 +298,7 @@ export async function getJobPLReport(): Promise<JobPLRow[]> {
           estimatedCost: true,
           actualCost: true,
           changeOrders: {
-            where: { status: "APPROVED" }, // Only approved COs affect P&L
+            where: { status: "APPROVED" },
             select: { amount: true },
           },
         },
@@ -432,12 +344,6 @@ export async function getJobPLReport(): Promise<JobPLRow[]> {
   });
 }
 
-/**
- * Export the Job P&L report as a CSV string.
- * All string values are double-quote escaped to handle names containing commas.
- *
- * @returns A UTF-8 CSV string ready to be written to a Blob or Response.
- */
 export async function exportJobPLCsv(): Promise<string> {
   const rows = await getJobPLReport();
 
@@ -457,7 +363,7 @@ export async function exportJobPLCsv(): Promise<string> {
       r.phaseCount,
       r.completedPhases,
     ]
-      .map((v) => `"${v.toString().replace(/"/g, '""')}"`) // Escape double quotes
+      .map((v) => `"${v.toString().replace(/"/g, '""')}"`)
       .join(",")
   );
 
@@ -466,26 +372,15 @@ export async function exportJobPLCsv(): Promise<string> {
 
 // ── Contractor Reports ──
 
-/**
- * Performance summary for the currently logged-in contractor user.
- *
- * Phase discovery uses two parallel paths to catch all relevant phases:
- *   1. Phases in projects where the user has a CONTRACTOR ProjectMember row.
- *   2. Phases where a Staff record with the user's email has a PhaseAssignment.
- * Results are de-duplicated by phase ID via a Map before aggregation.
- *
- * Returns both a high-level summary and a per-phase breakdown suitable for
- * the contractor's personal dashboard and mobile view.
- */
 export async function getContractorPerformance() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
   const now = new Date();
 
-  // Fetch via both paths in parallel for efficiency
+  // Find phases assigned to this contractor via ProjectMember + PhaseAssignment
   const [memberPhases, staffPhases, checklistActivity] = await Promise.all([
-    // Path 1: phases in projects where this user is a CONTRACTOR member
+    // Phases from projects where user is a member
     db.phase.findMany({
       where: {
         project: {
@@ -507,7 +402,7 @@ export async function getContractorPerformance() {
       },
     }),
 
-    // Path 2: phases assigned to a Staff record matching the user's email
+    // Phases assigned to staff matching user email
     db.phaseAssignment.findMany({
       where: {
         staff: { email: session.user.email || "" },
@@ -529,14 +424,13 @@ export async function getContractorPerformance() {
       },
     }),
 
-    // Total checklist items this user personally completed (for the KPI card)
+    // Checklist items completed by this user
     db.checklistItem.count({
       where: { completedById: session.user.id, completed: true },
     }),
   ]);
 
-  // De-duplicate phases from both paths — a phase may appear in both if the
-  // contractor is both a project member AND has a staff email assignment
+  // Merge unique phases
   const phaseMap = new Map<string, (typeof memberPhases)[number]>();
   memberPhases.forEach((p: typeof memberPhases[number]) => phaseMap.set(p.id, p));
   staffPhases.forEach((a: typeof staffPhases[number]) => {
@@ -561,7 +455,7 @@ export async function getContractorPerformance() {
   const totalDocs = allPhases.reduce((sum: number, p: typeof allPhases[number]) => sum + p._count.documents, 0);
   const totalPhotos = allPhases.reduce((sum: number, p: typeof allPhases[number]) => sum + p._count.photos, 0);
 
-  // Aggregate checklist completion across all assigned phases
+  // Checklist stats across all assigned phases
   let checklistTotal = 0;
   let checklistDone = 0;
   allPhases.forEach((p: typeof allPhases[number]) => {
@@ -571,7 +465,7 @@ export async function getContractorPerformance() {
     }
   });
 
-  // On-time completion: completed phases where actualEnd ≤ estEnd
+  // On-time completion rate
   const completedOnTime = allPhases.filter(
     (p: typeof allPhases[number]) =>
       p.status === "COMPLETE" &&
@@ -602,7 +496,6 @@ export async function getContractorPerformance() {
       progress: p.progress,
       projectName: p.project.name,
       estEnd: p.estEnd,
-      // daysOverdue = 0 for on-time or complete phases
       daysOverdue:
         p.status !== "COMPLETE" && new Date(p.estEnd) < now
           ? Math.ceil(

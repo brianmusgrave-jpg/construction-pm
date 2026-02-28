@@ -1,56 +1,9 @@
 "use server";
 
-/**
- * @file actions/activity.ts
- * @description Server actions for the cross-project activity log viewer and undo system.
- *
- * Activity logs are append-only audit records written by every other action file.
- * This file provides two capabilities:
- *
- *   1. `getActivityLogs` — Paginated, filterable query of all activity logs.
- *      Restricted to ADMIN and PROJECT_MANAGER roles; CONTRACTOR and below cannot
- *      query cross-project activity (they see it inline on their project pages instead).
- *
- *   2. `undoActivity` — Reverses specific reversible actions by re-applying the
- *      stored `oldStatus`/`oldRole` from the log's `data` JSON blob.
- *      ADMIN-only. After reversal, logs a new entry describing the undo and
- *      hard-deletes the original log row.
- *
- * Reversible action types:
- *   - PROJECT_STATUS_CHANGED  — restores project status to `data.oldStatus`
- *   - PHASE_STATUS_CHANGED    — restores phase status to `data.oldStatus`
- *   - MEMBER_REMOVED          — re-creates the ProjectMember row
- *   - MEMBER_UPDATED          — reverts the role to `data.oldRole`
- *   - CHECKLIST_ITEM_TOGGLED  — re-toggles the checklist item to `data.wasCompleted`
- *
- * Actions NOT listed above (e.g. PROJECT_CREATED, DOCUMENT_UPLOADED) are
- * considered irreversible and will throw "Cannot undo action type: …".
- *
- * Note: The `data` column is stored as JSON in the DB (`Record<string, unknown>`).
- * All field accesses cast through `as string | boolean` — TypeScript cannot
- * narrow untyped JSON, so these casts are intentional.
- */
-
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-// ── Queries ──
-
-/**
- * Paginated, optionally-filtered query of the activity log.
- * Returns a page of log entries alongside the total count for pagination controls.
- *
- * Access: ADMIN and PROJECT_MANAGER only — these roles see cross-project history.
- * CONTRACTOR / STAKEHOLDER / VIEWER are blocked (Forbidden).
- *
- * @param opts.projectId  - Filter to a single project (optional).
- * @param opts.actionType - Filter to a specific action string, e.g. "PHASE_STATUS_CHANGED" (optional).
- * @param opts.page       - 1-based page number (default 1).
- * @param opts.limit      - Items per page (default 50).
- * @returns `{ logs[], total, pages }` — logs are plain serialisable objects with
- *   ISO string dates (safe to pass to client components).
- */
 export async function getActivityLogs(opts?: {
   projectId?: string;
   actionType?: string;
@@ -60,7 +13,7 @@ export async function getActivityLogs(opts?: {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  // Role check — fetch fresh from DB to guard against stale JWT role claim
+  // Only ADMIN / PM can see cross-project logs
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (!user || !["ADMIN", "PROJECT_MANAGER"].includes(user.role)) {
     throw new Error("Forbidden");
@@ -99,33 +52,13 @@ export async function getActivityLogs(opts?: {
       userId: l.userId,
       userName: l.user.name ?? l.user.email,
       userImage: l.user.image,
-      createdAt: l.createdAt.toISOString(), // Plain string — safe for server→client
+      createdAt: l.createdAt.toISOString(),
     })),
     total,
     pages: Math.ceil(total / limit),
   };
 }
 
-// ── Undo System ──
-
-/**
- * Reverse a previously logged action, if the action type is reversible.
- *
- * The undo mechanism reads the `data` JSON blob from the original log entry,
- * extracts the pre-change values (oldStatus, oldRole, etc.), and applies them
- * back to the database.
- *
- * After reversal:
- *   1. A new activity log entry is created with message "Undo: <original message>"
- *      to preserve the audit trail.
- *   2. The original log entry is hard-deleted.
- *
- * Requires: ADMIN role — undo is a privileged operation.
- *
- * @param logId - ID of the ActivityLog entry to reverse.
- * @throws If the log is not found, the action is not reversible, or required
- *         data fields are missing from the log's JSON payload.
- */
 export async function undoActivity(logId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -136,9 +69,9 @@ export async function undoActivity(logId: string) {
   const log = await db.activityLog.findUnique({ where: { id: logId } });
   if (!log) throw new Error("Activity not found");
 
-  // The `data` column is untyped JSON — cast fields explicitly as they are used
   const data = (log.data ?? {}) as Record<string, unknown>;
 
+  // Handle reversible actions
   switch (log.action) {
     case "PROJECT_STATUS_CHANGED": {
       const oldStatus = data.oldStatus as string;
@@ -162,12 +95,11 @@ export async function undoActivity(logId: string) {
     }
 
     case "MEMBER_REMOVED": {
-      // Re-create the membership row — use stored memberId as ID if available
-      // to preserve any references to the original row (rare, but defensive)
       const memberId = data.memberId as string;
       const memberUserId = data.userId as string;
       const memberRole = data.role as string;
       if (!memberUserId || !memberRole) throw new Error("Cannot undo: missing member data");
+      // Re-add the member
       await db.projectMember.create({
         data: {
           id: memberId || undefined,
@@ -180,7 +112,6 @@ export async function undoActivity(logId: string) {
     }
 
     case "MEMBER_UPDATED": {
-      // Revert to the role the member had BEFORE the update
       const memberUserId = data.userId as string;
       const oldRole = data.oldRole as string;
       if (!memberUserId || !oldRole) throw new Error("Cannot undo: missing role data");
@@ -192,7 +123,6 @@ export async function undoActivity(logId: string) {
     }
 
     case "CHECKLIST_ITEM_TOGGLED": {
-      // Re-apply the pre-toggle completion state
       const itemId = data.itemId as string;
       const wasCompleted = data.wasCompleted as boolean;
       if (!itemId) throw new Error("Cannot undo: missing item");
@@ -200,8 +130,6 @@ export async function undoActivity(logId: string) {
         where: { id: itemId },
         data: {
           completed: wasCompleted ?? false,
-          // Restore original completedById if item was previously completed;
-          // clear it if it was previously uncompleted
           completedById: wasCompleted ? (data.completedById as string) : null,
         },
       });
@@ -212,7 +140,7 @@ export async function undoActivity(logId: string) {
       throw new Error(`Cannot undo action type: ${log.action}`);
   }
 
-  // Write an "Undo:" audit entry — preserves the trail even after reversal
+  // Log the undo itself
   await db.activityLog.create({
     data: {
       action: log.action,
@@ -223,7 +151,7 @@ export async function undoActivity(logId: string) {
     },
   });
 
-  // Hard-delete the original log row now that the undo is recorded
+  // Delete the original log entry
   await db.activityLog.delete({ where: { id: logId } });
 
   revalidatePath("/dashboard/activity");

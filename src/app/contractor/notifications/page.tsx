@@ -1,9 +1,3 @@
-/**
- * @file src/app/contractor/notifications/page.tsx
- * @description Contractor notifications page. Loads the first 20 notifications
- * and unread count for the authenticated contractor and passes them to
- * NotificationList.
- */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getNotifications, getUnreadCount } from "@/actions/notifications";

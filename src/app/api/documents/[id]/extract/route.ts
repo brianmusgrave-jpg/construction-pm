@@ -1,9 +1,3 @@
-/**
- * @file src/app/api/documents/[id]/extract/route.ts
- * @description Heuristic metadata extraction endpoint for uploaded documents.
- * Parses PDF/DOCX files to extract structured fields and updates the document
- * record with the extracted data.
- */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";

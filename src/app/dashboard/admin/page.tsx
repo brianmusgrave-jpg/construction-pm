@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { db } from "@/lib/db";
 import { getFeatureToggles, getSystemStats, getUsers } from "@/actions/admin";
+import { getAISettings, getAIUsageSummary } from "@/actions/aiSettings";
 import { AdminPanelClient } from "@/components/admin/AdminPanelClient";
 import { ActivityLogClient } from "@/components/activity/ActivityLogClient";
 
@@ -26,11 +27,13 @@ export default async function AdminPage() {
 
   const t = await getTranslations("adminPanel");
 
-  // Fetch admin data in parallel
-  const [features, stats, users] = await Promise.all([
+  // Fetch admin data in parallel (including AI settings + usage)
+  const [features, stats, users, aiSettings, aiUsage] = await Promise.all([
     getFeatureToggles(),
     getSystemStats(),
     getUsers(),
+    getAISettings(),
+    getAIUsageSummary(7),
   ]);
 
   // Fetch activity logs for the embedded tab (reuse existing pattern)
@@ -124,6 +127,8 @@ export default async function AdminPage() {
         stats={stats}
         currentUserId={session.user.id!}
         activityLogNode={activityLogNode}
+        aiSettings={aiSettings}
+        aiUsage={aiUsage}
       />
     </div>
   );

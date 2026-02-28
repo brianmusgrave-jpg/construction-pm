@@ -1,53 +1,8 @@
 "use server";
 
-/**
- * @file actions/quickbooks.ts
- * @description Server actions for QuickBooks Online integration.
- *
- * Implements the full OAuth 2.0 authorization code flow for connecting a
- * QuickBooks company account, plus periodic data syncing. Architecture:
- *
- *   OAuth flow:
- *     1. `getQuickBooksAuthUrl()` → redirect user to Intuit authorization page.
- *     2. Intuit redirects back to QB_REDIRECT_URI with `code` + `realmId`.
- *     3. `exchangeQuickBooksCode(code, realmId)` → exchange for tokens,
- *        fetch company info, upsert a `quickBooksConnection` row.
- *
- *   Token lifecycle:
- *     - Tokens are encrypted with `encryptToken`/`decryptToken` from `@/lib/crypto`
- *       before storage; they are never persisted in plaintext.
- *     - `refreshAccessToken` (private) auto-renews tokens on demand with a
- *       60-second validity buffer to prevent race conditions.
- *
- *   Sync engine:
- *     - `triggerQuickBooksSync` fetches Invoices, Purchases (expenses),
- *       Vendors, and Customers from the QuickBooks REST API.
- *     - ⚠️  IMPORTANT: The current implementation only fetches and counts
- *       records — it does NOT write them to the app database. The QB data is
- *       not yet mapped to projects/phases/staff. Each endpoint has a comment
- *       noting the intended target model. This is a stub to be completed.
- *     - Sync results are written to `quickBooksSyncLog` for history and
- *       the connection row is updated with `lastSyncAt`/`lastSyncStatus`.
- *     - Status values: "success" (all ok), "partial" (some failed), "error" (all failed).
- *
- * Permission: all write operations require `can(role, "manage", "phase")`,
- * which maps to ADMIN and PROJECT_MANAGER global roles. Read operations
- * return null/[] for unauthenticated callers.
- *
- * Both `quickBooksConnection` and `quickBooksSyncLog` were added after the
- * last Prisma client generation, so `(db as any)` casts are required throughout.
- * The `/* eslint-disable @typescript-eslint/no-explicit-any *\/` pragma at
- * the top of the file suppresses these warnings en masse.
- *
- * Environment variables required:
- *   QUICKBOOKS_CLIENT_ID      — OAuth app client ID from Intuit developer portal
- *   QUICKBOOKS_CLIENT_SECRET  — OAuth app client secret
- *   QUICKBOOKS_REDIRECT_URI   — Callback URL registered in the Intuit app settings
- */
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// quickBooksConnection and quickBooksSyncLog are not in the generated Prisma
-// client types yet, so (db as any) casts are necessary throughout this file.
+// QuickBooks models (quickBooksConnection, quickBooksSyncLog) are not in the
+// generated Prisma client types yet, so (db as any) casts are necessary.
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
@@ -55,8 +10,7 @@ import { can } from "@/lib/permissions";
 import { encryptToken, decryptToken } from "@/lib/crypto";
 import { z } from "zod";
 
-// ── QuickBooks API Configuration ──
-// Pulled from environment variables set in .env / Vercel project settings.
+// ── QuickBooks OAuth Configuration ──
 const QB_CLIENT_ID = process.env.QUICKBOOKS_CLIENT_ID || "";
 const QB_CLIENT_SECRET = process.env.QUICKBOOKS_CLIENT_SECRET || "";
 const QB_REDIRECT_URI = process.env.QUICKBOOKS_REDIRECT_URI || "";
@@ -64,23 +18,7 @@ const QB_AUTH_URL = "https://appcenter.intuit.com/connect/oauth2";
 const QB_TOKEN_URL = "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer";
 const QB_API_BASE = "https://quickbooks.api.intuit.com/v3";
 
-// ── OAuth ──
-
-/**
- * Generate the Intuit OAuth 2.0 authorization URL for the QuickBooks connection flow.
- *
- * The caller should redirect the user to the returned URL. After authorization,
- * Intuit redirects back to `QB_REDIRECT_URI` with `?code=…&state=…&realmId=…`.
- * Pass `code` and `realmId` to `exchangeQuickBooksCode` to complete the flow.
- *
- * Note: `state` is generated as a random UUID per request for CSRF protection
- * but is not persisted — a more robust implementation should store it in the
- * session and verify it in the callback handler.
- *
- * @returns `{ url }` on success, or `{ url: null, error }` on failure.
- *
- * Requires: `manage:phase` permission (ADMIN or PROJECT_MANAGER global role).
- */
+// ── Get OAuth URL ──
 export async function getQuickBooksAuthUrl(): Promise<{ url: string | null; error?: string }> {
   const session = await auth();
   if (!session?.user) return { url: null, error: "Unauthorized" };
@@ -92,32 +30,14 @@ export async function getQuickBooksAuthUrl(): Promise<{ url: string | null; erro
     return { url: null, error: "QuickBooks not configured" };
   }
 
-  const state = crypto.randomUUID(); // CSRF token — not currently persisted/verified
+  const state = crypto.randomUUID();
   const scopes = "com.intuit.quickbooks.accounting";
   const url = `${QB_AUTH_URL}?client_id=${QB_CLIENT_ID}&response_type=code&scope=${scopes}&redirect_uri=${encodeURIComponent(QB_REDIRECT_URI)}&state=${state}`;
 
   return { url };
 }
 
-/**
- * Exchange an OAuth authorization code for QuickBooks access + refresh tokens.
- *
- * Called from the OAuth callback route after Intuit redirects back with a
- * `code` and `realmId`. Steps:
- *   1. POST to the Intuit token endpoint with Basic Auth (client_id:client_secret).
- *   2. Optionally fetch the company's display name from the CompanyInfo API.
- *   3. Upsert the `quickBooksConnection` row (one connection per `companyId`/realmId).
- *   4. Encrypt both tokens before storage using `encryptToken` from @/lib/crypto.
- *
- * Company name fetch is best-effort — failure is logged and swallowed so the
- * connection is still saved even if the CompanyInfo call errors.
- *
- * @param code    - Authorization code from Intuit's OAuth redirect query string.
- * @param realmId - QuickBooks company ID from Intuit's OAuth redirect query string.
- * @returns `{ success: true }` on success, or `{ success: false, error }`.
- *
- * Requires: `manage:phase` permission (ADMIN or PROJECT_MANAGER global role).
- */
+// ── Exchange Auth Code for Tokens ──
 export async function exchangeQuickBooksCode(
   code: string,
   realmId: string
@@ -197,18 +117,7 @@ export async function exchangeQuickBooksCode(
   }
 }
 
-// ── Queries ──
-
-/**
- * Return the current QuickBooks connection details for the settings UI.
- *
- * Returns the first connection found (the app supports one QB company at a
- * time). Deliberately excludes encrypted token fields from the projection —
- * only metadata needed for the settings page is returned.
- *
- * @returns The connection record (minus tokens), or null if not connected
- *          or if the table doesn't exist yet in this environment.
- */
+// ── Get Connection Status ──
 export async function getQuickBooksConnection() {
   const session = await auth();
   if (!session?.user) return null;
@@ -237,20 +146,7 @@ export async function getQuickBooksConnection() {
   }
 }
 
-// ── Mutations ──
-
-/**
- * Disconnect the QuickBooks integration by deleting all connection records.
- *
- * Uses `deleteMany` (not `delete` by ID) since there should be at most one
- * connection, but this is more robust. Does NOT revoke the OAuth token on
- * the Intuit side — the user should also disconnect from their QB app settings
- * if they want to fully revoke access.
- *
- * @returns `{ success: true }` on success, or `{ success: false, error }`.
- *
- * Requires: `manage:phase` permission (ADMIN or PROJECT_MANAGER global role).
- */
+// ── Disconnect QuickBooks ──
 export async function disconnectQuickBooks(): Promise<{ success: boolean; error?: string }> {
   const session = await auth();
   if (!session?.user) return { success: false, error: "Unauthorized" };
@@ -266,9 +162,7 @@ export async function disconnectQuickBooks(): Promise<{ success: boolean; error?
   }
 }
 
-// ── Sync Settings ──
-
-/** Validates the payload for updating which entity types are synced. */
+// ── Update Sync Settings ──
 const SyncSettingsSchema = z.object({
   syncEnabled: z.boolean().optional(),
   syncInvoices: z.boolean().optional(),
@@ -277,17 +171,6 @@ const SyncSettingsSchema = z.object({
   syncCustomers: z.boolean().optional(),
 });
 
-/**
- * Update which QuickBooks entity types are included in future syncs.
- *
- * Only updates the `quickBooksConnection` row for the first (active) connection.
- * All fields are optional — only provided fields are changed.
- *
- * @param settings - Partial sync configuration flags.
- * @returns `{ success: true }` on success, or `{ success: false, error }`.
- *
- * Requires: `manage:phase` permission (ADMIN or PROJECT_MANAGER global role).
- */
 export async function updateQuickBooksSyncSettings(settings: {
   syncEnabled?: boolean;
   syncInvoices?: boolean;
@@ -316,27 +199,7 @@ export async function updateQuickBooksSyncSettings(settings: {
   }
 }
 
-// ── Token Refresh (internal helper) ──
-
-/**
- * Ensure the stored access token is valid and return it decrypted.
- *
- * This is an internal helper called by `triggerQuickBooksSync`. It:
- *   1. Checks if the stored token expires more than 60 seconds from now.
- *      If so, decrypts and returns it without an HTTP call.
- *   2. If expired (or within the 60s buffer), calls the Intuit token refresh
- *      endpoint using the stored (decrypted) refresh token.
- *   3. On a successful refresh, encrypts and persists the new token pair,
- *      then returns the new plaintext access token.
- *
- * The 60-second buffer prevents expiry races in high-latency environments.
- * If the refresh token is also expired (rare, requires 100-day inactivity),
- * the fetch will fail and this function returns null, prompting the caller
- * to surface a re-auth message to the user.
- *
- * @param connectionId - Primary key of the quickBooksConnection row.
- * @returns The valid plaintext access token, or null if refresh fails.
- */
+// ── Refresh Token (internal helper) ──
 async function refreshAccessToken(connectionId: string): Promise<string | null> {
   try {
     const connection = await (db as any).quickBooksConnection.findUnique({
@@ -344,9 +207,9 @@ async function refreshAccessToken(connectionId: string): Promise<string | null> 
     });
     if (!connection) return null;
 
-    // 60-second buffer: avoid using a token that will expire mid-request.
+    // Check if token is still valid
     if (new Date(connection.tokenExpiry) > new Date(Date.now() + 60000)) {
-      return decryptToken(connection.accessToken); // Token still valid — no HTTP call
+      return decryptToken(connection.accessToken);
     }
 
     const basicAuth = Buffer.from(`${QB_CLIENT_ID}:${QB_CLIENT_SECRET}`).toString("base64");
@@ -363,11 +226,9 @@ async function refreshAccessToken(connectionId: string): Promise<string | null> 
       }),
     });
 
-    if (!res.ok) return null; // Caller surfaces re-auth prompt to user
+    if (!res.ok) return null;
 
     const tokens = await res.json();
-    // Intuit may not return a new refresh token (it extends the existing one).
-    // Fall back to the existing token if the response omits refresh_token.
     await (db as any).quickBooksConnection.update({
       where: { id: connectionId },
       data: {
@@ -377,39 +238,13 @@ async function refreshAccessToken(connectionId: string): Promise<string | null> 
       },
     });
 
-    return tokens.access_token; // Plaintext — used immediately by the caller
+    return tokens.access_token;
   } catch {
     return null;
   }
 }
 
-// ── Sync ──
-
-/**
- * Trigger a QuickBooks data sync for one or all entity types.
- *
- * ⚠️  STUB IMPLEMENTATION: The current code fetches records from the QB API
- * and counts them, but does NOT write them to the app database. Each section
- * has a comment indicating the intended target model:
- *   - Invoices  → project budgets
- *   - Expenses  → phase actual costs
- *   - Vendors   → staff directory
- *   - Customers → client directory
- *
- * A `quickBooksSyncLog` row is created at start and updated with final counts
- * and status on completion. The connection's `lastSyncAt`/`lastSyncStatus`
- * fields are also updated for the settings page display.
- *
- * Sync status determination:
- *   - "success"  — all entity fetches succeeded (itemsFailed = 0)
- *   - "partial"  — some succeeded, some failed (0 < itemsFailed, itemsSynced > 0)
- *   - "error"    — all fetches failed (itemsSynced = 0, itemsFailed > 0)
- *
- * @param syncType - Entity types to sync; defaults to "full" (all types).
- * @returns `{ success, syncLogId }` on success, or `{ success: false, error }`.
- *
- * Requires: `manage:phase` permission (ADMIN or PROJECT_MANAGER global role).
- */
+// ── Trigger Sync ──
 export async function triggerQuickBooksSync(
   syncType: "invoices" | "expenses" | "vendors" | "customers" | "full" = "full"
 ): Promise<{ success: boolean; error?: string; syncLogId?: string }> {
@@ -438,10 +273,6 @@ export async function triggerQuickBooksSync(
     let itemsSynced = 0;
     let itemsFailed = 0;
     const errors: string[] = [];
-
-    // ── Entity Fetch Blocks ──
-    // Each block fetches up to 100 records from the QB REST API using IQL.
-    // TODO: After fetching, map QB records to app models and upsert them.
 
     // Sync invoices → map to project budgets
     if (syncType === "full" || syncType === "invoices") {
@@ -535,8 +366,6 @@ export async function triggerQuickBooksSync(
       }
     }
 
-    // Determine final status based on counts:
-    // "success" = 0 failures, "partial" = mixed, "error" = nothing succeeded.
     const status = itemsFailed > 0 ? (itemsSynced > 0 ? "partial" : "error") : "success";
     const errorMessage = errors.length > 0 ? errors.join("; ") : null;
 
@@ -568,18 +397,7 @@ export async function triggerQuickBooksSync(
   }
 }
 
-// ── Sync History ──
-
-/**
- * Return a paginated list of past QuickBooks sync attempts.
- * Used by the QuickBooks settings page to show sync history.
- *
- * Returns an empty array (not throws) for unauthenticated callers or
- * if the table doesn't exist yet in this environment.
- *
- * @param limit - Maximum number of log entries to return (default: 10).
- * @returns Sync log entries ordered newest-first, with counts and timestamps.
- */
+// ── Get Sync History ──
 export async function getQuickBooksSyncLogs(limit = 10) {
   const session = await auth();
   if (!session?.user) return [];

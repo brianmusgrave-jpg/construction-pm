@@ -1,24 +1,5 @@
 "use client";
 
-/**
- * @file components/settings/TotpSection.tsx
- * @description Settings panel for managing TOTP two-factor authentication.
- *
- * Renders a three-state wizard:
- *   1. **Idle / not enabled** — "Enable 2FA" button; calls `setupTotp` which
- *      returns a QR code data-URL and the base32 secret.
- *   2. **Setup** — displays the QR code (and the manual entry key formatted in
- *      groups of 4 for readability), then a 6-digit numeric input that calls
- *      `verifyAndEnableTotp`. Input is stripped of non-digits on change.
- *   3. **Enabled & verified** — shows a confirmation state with a "Disable 2FA"
- *      button (requires user confirm dialog) that calls `disableTotp`.
- *
- * The component is fully self-contained: it derives the current step from
- * local `enabled`/`verified`/`step` state seeded from props.
- *
- * Server actions: `setupTotp`, `verifyAndEnableTotp`, `disableTotp` (totp).
- */
-
 import { useState } from "react";
 import {
   Shield,

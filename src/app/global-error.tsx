@@ -1,11 +1,5 @@
 "use client";
 
-/**
- * @file src/app/global-error.tsx
- * @description Global error boundary for the entire application. Displays the error
- * message, digest ID, stack trace (dev only), and a "Try again" reset button.
- */
-
 export default function GlobalError({
   error,
   reset,

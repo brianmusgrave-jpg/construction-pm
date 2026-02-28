@@ -1,29 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/PhotoMapView.tsx
- * @description Full-screen Leaflet map modal that plots geo-tagged photos on
- *   an OpenStreetMap tile layer.
- *
- * Leaflet is loaded lazily at runtime to avoid SSR issues:
- *   - CSS injected via a `<link>` element (id="leaflet-css") if not already present.
- *   - JS injected via a `<script>` element (id="leaflet-js") if not already present;
- *     `loaded` state is set `true` in the script's `onload` handler.
- *   - `_leaflet_id` on the map container prevents double-initialisation.
- *
- * Map behaviour:
- *   - Center = average of all photo coordinates:
- *     `photos.reduce((acc, p) => [acc[0] + p.latitude / photos.length, ...], [0, 0])`.
- *   - When `photos.length > 1`, `fitBounds` with 40 px padding replaces the
- *     fixed zoom-14 center view.
- *   - Custom blue circle `divIcon` (24 × 24 px) used for all markers.
- *   - Clicking a marker sets `activePhoto`; a thumbnail + coordinate panel
- *     appears below the map.
- *
- * @param photos  Array of geo-tagged photos with latitude/longitude.
- * @param onClose Callback to close the modal.
- */
-
 import { useEffect, useRef, useState } from "react";
 import { MapPin, X } from "lucide-react";
 

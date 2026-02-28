@@ -1,28 +1,5 @@
 "use client";
 
-/**
- * @file components/timeline/GanttChart.tsx
- * @description Interactive Gantt chart for visualising and editing phase schedules.
- *
- * Renders a scrollable horizontal timeline showing all phases for a project.
- * Each phase is represented by a `PhaseRow` that includes a draggable blue
- * "estimated" bar and an optional red "worst-case" bar. Milestones render as
- * diamond markers instead of bars.
- *
- * Architecture:
- *   - Timeline range is computed dynamically from all phase dates (2 weeks
- *     before earliest start → 4 weeks after latest end) so the chart always
- *     fits all data without manual configuration.
- *   - Month labels and the "today" green vertical marker are derived from the
- *     same `tlStart`/`totalDays` coordinate system used by `PhaseRow`.
- *   - Date changes from `PhaseRow` are applied optimistically to local state
- *     and then debounced (500 ms) before calling `updatePhaseDates` to avoid
- *     a server round-trip on every pointer move.
- *
- * Server actions: `updatePhaseDates` (phases).
- * i18n namespace: `gantt`.
- */
-
 import { useState, useRef, useCallback, useEffect } from "react";
 import { format, addMonths, startOfMonth, differenceInDays } from "date-fns";
 import { PhaseRow } from "./PhaseRow";
@@ -64,13 +41,6 @@ interface GanttChartProps {
   planApproval: Date;
 }
 
-/**
- * Interactive Gantt chart showing estimated and worst-case date bars for each phase.
- *
- * @param projectId     - Used to build per-phase detail links inside `PhaseRow`.
- * @param phases        - Array of phases with assignments; displayed sorted by `sortOrder`.
- * @param planApproval  - Project plan approval date (available for future milestone marker).
- */
 export function GanttChart({ projectId, phases: initialPhases, planApproval }: GanttChartProps) {
   const t = useTranslations("gantt");
   const [phases, setPhases] = useState(initialPhases);

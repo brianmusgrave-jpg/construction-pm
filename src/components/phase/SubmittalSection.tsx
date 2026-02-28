@@ -1,38 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/SubmittalSection.tsx
- * @description Construction submittal log for a phase detail page.
- *
- * Each submittal is numbered sequentially (submittalNumber) and displayed
- *   as "SUB-NNN" with zero-padded 3 digits.
- *
- * Status workflow (via `STATUS_CONFIG`):
- *   PENDING → UNDER_REVIEW → APPROVED | APPROVED_AS_NOTED
- *                           → REVISE_AND_RESUBMIT | REJECTED.
- *   `reviseSubmittal` increments the `revision` counter and resets
- *   status to PENDING for resubmission.
- *
- * Filter buckets:
- *   ALL / PENDING / UNDER_REVIEW / APPROVED (includes APPROVED_AS_NOTED) /
- *   ACTION (REVISE_AND_RESUBMIT + REJECTED).
- *
- * Key behaviours:
- *   - `specSection` field ties the submittal to a spec section reference.
- *   - Overdue detection: `dueDate < now && status not in [APPROVED, APPROVED_AS_NOTED]`.
- *   - Expandable rows show description, metadata, review actions, and
- *     resubmit button for ACTION-bucket items.
- *   - `returnedAt` timestamp recorded on status changes.
- *
- * Permissions:
- *   - `canEdit`   — may create and resubmit submittals.
- *   - `canManage` — may advance review status and delete.
- *
- * Server actions: `createSubmittal`, `updateSubmittalStatus`,
- *   `reviseSubmittal`, `deleteSubmittal`.
- * i18n namespace: `submittal`.
- */
-
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createSubmittal, updateSubmittalStatus, reviseSubmittal, deleteSubmittal } from "@/actions/submittal";

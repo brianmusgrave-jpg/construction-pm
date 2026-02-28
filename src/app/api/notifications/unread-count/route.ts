@@ -1,9 +1,3 @@
-/**
- * @file src/app/api/notifications/unread-count/route.ts
- * @description GET endpoint that returns the unread notification count for the
- * authenticated user. Responds with Cache-Control: private, max-age=10,
- * stale-while-revalidate=20.
- */
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";

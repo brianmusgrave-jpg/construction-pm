@@ -1,24 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/PhaseInfoSection.tsx
- * @description Read-only phase schedule and progress summary card.
- *
- * Displays:
- *   - Completion progress bar (percentage from `phase.progress`).
- *   - Estimated date range with duration in days.
- *   - Worst-case date range (if set) with duration in days.
- *   - Actual start / actual end dates when recorded.
- *
- * All dates are formatted with `fmtLong` from `@/lib/utils`; durations
- * use `daysBetween` from the same module.
- *
- * This component is purely presentational — it has no server actions
- * and accepts no edit callbacks.
- *
- * i18n namespace: `phaseInfo`.
- */
-
 import { fmtLong, daysBetween } from "@/lib/utils";
 import { Calendar, Clock } from "lucide-react";
 import { useTranslations } from "next-intl";

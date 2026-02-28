@@ -89,6 +89,7 @@ model User {
   drawings       Drawing[]            @relation("drawing_uploaded")
   estimates      Estimate[]           @relation("estimate_created")
   totpSecret     TotpSecret?
+  aiUsageLogs    AIUsageLog[]         @relation("ai_usage_by_user")
 
   @@map("users")
 }
@@ -1294,4 +1295,75 @@ model ClientToken {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("client_tokens")
+}
+
+// ── AI Infrastructure (Sprint AH #64–66) ──
+
+enum AIProvider {
+  OPENAI
+  ANTHROPIC
+}
+
+/// Singleton workspace-level AI configuration.
+/// Only one row exists; fetched via findFirst / upsert.
+model AISettings {
+  id             String     @id @default(cuid())
+  provider       AIProvider @default(OPENAI)
+  /// Model identifier — e.g. "gpt-4o-mini", "gpt-4o", "claude-3-haiku-20240307"
+  model          String     @default("gpt-4o-mini")
+  /// Hard cap on tokens per AI response to control cost.
+  maxTokens      Int        @default(2000) @map("max_tokens")
+  /// Rolling 24-hour spend cap in USD. Requests that would exceed this are rejected.
+  dailyBudgetUsd Float      @default(10.0) @map("daily_budget_usd")
+  /// Master toggle: when false, all AI features return a "disabled" error immediately.
+  enabled        Boolean    @default(false)
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+
+  @@map("ai_settings")
+}
+
+/// One row per AI API call, used for usage dashboards and cost controls.
+model AIUsageLog {
+  id               String     @id @default(cuid())
+  userId           String     @map("user_id")
+  user             User       @relation("ai_usage_by_user", fields: [userId], references: [id], onDelete: Cascade)
+  provider         AIProvider
+  /// Exact model string returned by the API (e.g. "gpt-4o-mini-2024-07-18").
+  model            String
+  promptTokens     Int        @default(0) @map("prompt_tokens")
+  completionTokens Int        @default(0) @map("completion_tokens")
+  totalTokens      Int        @default(0) @map("total_tokens")
+  /// Estimated USD cost for this call based on published token pricing.
+  costUsd          Float      @default(0) @map("cost_usd")
+  /// Which AI feature triggered this call — e.g. "voice_transcription", "doc_parsing".
+  feature          String
+  success          Boolean    @default(true)
+  createdAt        DateTime   @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@index([feature, createdAt])
+  @@map("ai_usage_logs")
+}
+
+/// Stores text embeddings for semantic search across project entities.
+/// The embedding vector is serialised as a JSON float array (1536 dims for
+/// text-embedding-3-small). Cosine similarity is computed in-process.
+/// A future migration can replace this with a native pgvector column.
+model Embedding {
+  id         String   @id @default(cuid())
+  /// Type of the entity this embedding represents — e.g. "voice_note", "document".
+  entityType String   @map("entity_type")
+  /// ID of the entity in its own table (voiceNoteId, documentId, etc.).
+  entityId   String   @map("entity_id")
+  /// The original text that was embedded (used for result display).
+  content    String   @db.Text
+  /// JSON-encoded float array — embedding vector from the OpenAI embeddings API.
+  vector     String   @db.Text @map("vector")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@unique([entityType, entityId])
+  @@index([entityType])
+  @@map("embeddings")
 }

@@ -1,71 +1,41 @@
 "use server";
 
-/**
- * @file actions/admin.ts
- * @description Server actions for admin-only system management.
- *
- * Covers four admin domains:
- *   1. Feature Toggles  — enable/disable named feature flags app-wide
- *   2. System Stats     — aggregate counts and storage metrics for the admin dashboard
- *   3. User Management  — list users, change roles, deactivate accounts
- *   4. Audit Export     — download the full activity log as a CSV
- *
- * Most functions require the ADMIN or PROJECT_MANAGER role (enforced via
- * `can(role, "manage", "phase")`). Role changes and deactivation are
- * restricted to ADMIN only.
- *
- * Note: `dbc` is a cast to `any` to access Prisma models (featureToggle, session)
- * that may not be present in older generated types but exist in the schema.
- */
-
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 
-// Cast to any for access to schema models not yet reflected in generated types
 const dbc = db as any;
 
 // ── Feature Toggles ──
 
-/**
- * All feature keys recognised by the app, with their display label and category.
- * On first load, any missing keys are auto-seeded into the DB (enabled=true by default).
- * Categories: "field" | "financial" | "integrations" | "general"
- */
 const DEFAULT_FEATURES = [
-  // Core field operations
-  { featureKey: "punch_lists",   label: "Punch Lists",               category: "field" },
-  { featureKey: "rfis",          label: "RFIs",                      category: "field" },
-  { featureKey: "submittals",    label: "Submittals",                 category: "field" },
-  { featureKey: "time_tracking", label: "Time Tracking",             category: "field" },
-  { featureKey: "drawings",      label: "Drawing Management",        category: "field" },
-  { featureKey: "daily_logs",    label: "Daily Logs",                category: "field" },
-  { featureKey: "inspections",   label: "Inspections",               category: "field" },
-  { featureKey: "voice_notes",   label: "Voice Notes",               category: "field" },
+  // Core features (always shown)
+  { featureKey: "punch_lists", label: "Punch Lists", category: "field" },
+  { featureKey: "rfis", label: "RFIs", category: "field" },
+  { featureKey: "submittals", label: "Submittals", category: "field" },
+  { featureKey: "time_tracking", label: "Time Tracking", category: "field" },
+  { featureKey: "drawings", label: "Drawing Management", category: "field" },
+  { featureKey: "daily_logs", label: "Daily Logs", category: "field" },
+  { featureKey: "inspections", label: "Inspections", category: "field" },
+  { featureKey: "voice_notes", label: "Voice Notes", category: "field" },
   // Financial features
-  { featureKey: "lien_waivers",  label: "Lien Waivers",              category: "financial" },
-  { featureKey: "payment_apps",  label: "Payment Applications",      category: "financial" },
-  { featureKey: "estimates",     label: "Estimating & Takeoffs",     category: "financial" },
-  { featureKey: "change_orders", label: "Change Orders",             category: "financial" },
-  { featureKey: "budgets",       label: "Budget Tracking",           category: "financial" },
-  { featureKey: "bids",          label: "Subcontractor Bids",        category: "financial" },
+  { featureKey: "lien_waivers", label: "Lien Waivers", category: "financial" },
+  { featureKey: "payment_apps", label: "Payment Applications", category: "financial" },
+  { featureKey: "estimates", label: "Estimating & Takeoffs", category: "financial" },
+  { featureKey: "change_orders", label: "Change Orders", category: "financial" },
+  { featureKey: "budgets", label: "Budget Tracking", category: "financial" },
+  { featureKey: "bids", label: "Subcontractor Bids", category: "financial" },
   // Integrations
-  { featureKey: "quickbooks",    label: "QuickBooks Integration",    category: "integrations" },
-  { featureKey: "webhooks",      label: "Webhooks",                  category: "integrations" },
-  { featureKey: "api_keys",      label: "API Keys",                  category: "integrations" },
-  // General
-  { featureKey: "client_portal", label: "Client Portal",             category: "general" },
-  { featureKey: "analytics",     label: "Analytics Dashboard",       category: "general" },
-  { featureKey: "offline_mode",  label: "Offline Mode",              category: "general" },
+  { featureKey: "quickbooks", label: "QuickBooks Integration", category: "integrations" },
+  { featureKey: "webhooks", label: "Webhooks", category: "integrations" },
+  { featureKey: "api_keys", label: "API Keys", category: "integrations" },
+  // Other
+  { featureKey: "client_portal", label: "Client Portal", category: "general" },
+  { featureKey: "analytics", label: "Analytics Dashboard", category: "general" },
+  { featureKey: "offline_mode", label: "Offline Mode", category: "general" },
 ];
 
-/**
- * Fetch all feature toggles, seeding any missing defaults first.
- * The settings UI renders the returned array directly — order is alphabetical by key.
- *
- * Requires: authenticated session (no role check — read-only for all users).
- */
 export async function getFeatureToggles() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -74,7 +44,7 @@ export async function getFeatureToggles() {
     orderBy: { featureKey: "asc" },
   });
 
-  // Seed any features that don't yet exist in the DB (enabled by default)
+  // Ensure all default features exist
   const existingKeys = new Set(existing.map((f: any) => f.featureKey));
   const missing = DEFAULT_FEATURES.filter((f) => !existingKeys.has(f.featureKey));
 
@@ -89,13 +59,6 @@ export async function getFeatureToggles() {
   return existing;
 }
 
-/**
- * Enable or disable a named feature flag.
- * When disabling, records who disabled it and when (for the audit trail).
- * When re-enabling, clears those fields.
- *
- * Requires: ADMIN or PROJECT_MANAGER role.
- */
 export async function toggleFeature(featureKey: string, enabled: boolean) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -106,7 +69,7 @@ export async function toggleFeature(featureKey: string, enabled: boolean) {
     where: { featureKey },
     data: {
       enabled,
-      disabledBy: enabled ? null : session.user.id, // Clear on re-enable
+      disabledBy: enabled ? null : session.user.id,
       disabledAt: enabled ? null : new Date(),
     },
   });
@@ -117,17 +80,6 @@ export async function toggleFeature(featureKey: string, enabled: boolean) {
 
 // ── System Health / Stats ──
 
-/**
- * Return aggregate counts across all major entities for the admin overview panel.
- * All counts run in parallel via Promise.all to minimise latency.
- *
- * Returns:
- *   - users, projects, activeProjects, phases, documents, photos, staff
- *   - totalActivities, recentActivities (last 7 days)
- *   - storageBytes: sum of all document file sizes (photos excluded)
- *
- * Requires: ADMIN or PROJECT_MANAGER role.
- */
 export async function getSystemStats() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -154,14 +106,14 @@ export async function getSystemStats() {
     dbc.project.count({ where: { status: "ACTIVE" } }),
   ]);
 
-  // Activity in the rolling 7-day window
+  // Get recent activity (last 7 days)
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const recentActivityCount = await dbc.activityLog.count({
     where: { createdAt: { gte: sevenDaysAgo } },
   });
 
-  // Storage estimate from document sizes (photos stored in Blob, size not tracked)
+  // Storage estimate (documents + photos)
   const docSizeAgg = await dbc.document.aggregate({ _sum: { size: true } });
   const totalStorageBytes = docSizeAgg._sum?.size || 0;
 
@@ -181,12 +133,6 @@ export async function getSystemStats() {
 
 // ── User Management ──
 
-/**
- * List all users with their role, project membership count, and notification count.
- * Ordered by creation date (newest first) for the admin user table.
- *
- * Requires: ADMIN or PROJECT_MANAGER role.
- */
 export async function getUsers() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -207,12 +153,6 @@ export async function getUsers() {
   });
 }
 
-/**
- * Change a user's global system role (e.g. promote to PROJECT_MANAGER).
- * Cannot change your own role — prevents accidental self-demotion.
- *
- * Requires: ADMIN role only.
- */
 export async function updateUserRole(userId: string, newRole: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -233,14 +173,6 @@ export async function updateUserRole(userId: string, newRole: string) {
   return { success: true };
 }
 
-/**
- * Deactivate a user account by removing them from all projects and
- * invalidating all active sessions (immediate logout).
- * The user record itself is retained for audit/activity log references.
- * Cannot deactivate yourself.
- *
- * Requires: ADMIN role only.
- */
 export async function deactivateUser(userId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -251,10 +183,10 @@ export async function deactivateUser(userId: string) {
     throw new Error("Cannot deactivate yourself");
   }
 
-  // Remove from all project memberships
+  // Remove from all projects
   await dbc.projectMember.deleteMany({ where: { userId } });
 
-  // Invalidate active sessions (forces immediate logout)
+  // Deactivate sessions
   await dbc.session.deleteMany({ where: { userId } });
 
   revalidatePath("/dashboard/admin");
@@ -263,15 +195,6 @@ export async function deactivateUser(userId: string) {
 
 // ── Audit Export ──
 
-/**
- * Generate a CSV export of the most recent 5,000 activity log entries,
- * including user name/email and project name. Suitable for download via
- * the admin UI.
- *
- * Returns a plain CSV string (header row + data rows, double-quote escaped).
- *
- * Requires: ADMIN or PROJECT_MANAGER role.
- */
 export async function exportAuditLog() {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -284,10 +207,10 @@ export async function exportAuditLog() {
       project: { select: { name: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: 5000, // Cap to prevent enormous exports
+    take: 5000,
   });
 
-  // Build a double-quote-escaped CSV string
+  // Build CSV string
   const header = "Timestamp,User,Email,Action,Message,Project";
   const rows = logs.map((log: any) => {
     const ts = new Date(log.createdAt).toISOString();

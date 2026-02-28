@@ -1,17 +1,5 @@
 "use client";
 
-/**
- * @file NotificationSettings.tsx
- * @description Notification preference editor with three channel toggles: in-app, email,
- * and SMS. Email preferences cover five event types (phase status, review, checklist,
- * docs, comments); SMS covers four. Enabling the SMS channel reveals a phone number
- * input. Quiet hours accepts a start and end time. Save persists all preferences via
- * updateNotificationPreferences() and conditionally updates the phone number via
- * updatePhoneNumber() when changed. Includes local Toggle and PreferenceRow sub-
- * components. Server actions: updateNotificationPreferences, updatePhoneNumber.
- * i18n: notifPrefs, common.
- */
-
 import { useState, useTransition } from "react";
 import { Bell, Mail, MessageSquare, Phone, Moon, Save } from "lucide-react";
 import { cn } from "@/lib/utils";

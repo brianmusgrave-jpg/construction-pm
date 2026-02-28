@@ -1,22 +1,5 @@
 "use server";
 
-/**
- * @file actions/projects.ts
- * @description Server actions for project lifecycle management.
- *
- * Covers: create, update, delete, archive/restore, and list.
- * All mutations require an authenticated session. Create/delete are
- * further gated by role (ADMIN or PROJECT_MANAGER only).
- *
- * Pattern used throughout:
- *   1. Verify session (throw "Unauthorized" if missing)
- *   2. Check role/membership (throw "Forbidden" if insufficient)
- *   3. Validate input with Zod
- *   4. Write to DB via Prisma
- *   5. Revalidate Next.js cache paths
- *   6. Redirect or return data
- */
-
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { canCreateProject } from "@/lib/permissions";
@@ -24,39 +7,25 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-// ── Zod Schemas ──
-
-/** Validates a single phase in the project creation wizard. */
 const PhaseInputSchema = z.object({
   name: z.string().min(1).max(200),
   detail: z.string().max(1000).optional(),
   isMilestone: z.boolean().optional(),
   estStart: z.string().min(1),
   estEnd: z.string().min(1),
-  worstStart: z.string().optional(), // Pessimistic scenario start date
-  worstEnd: z.string().optional(),   // Pessimistic scenario end date
+  worstStart: z.string().optional(),
+  worstEnd: z.string().optional(),
 });
 
-/** Validates the full project creation payload from the multi-step wizard. */
 const CreateProjectWithPhasesSchema = z.object({
   name: z.string().min(1, "Project name is required").max(200),
   description: z.string().max(2000).optional(),
   address: z.string().max(500).optional(),
-  planApproval: z.string().optional(), // ISO date string for plan approval
+  planApproval: z.string().optional(),
   budget: z.coerce.number().positive().optional(),
   phases: z.array(PhaseInputSchema).optional(),
 });
 
-// ── Mutations ──
-
-/**
- * Create a new project with optional pre-built phases (from the wizard).
- * The creator is automatically added as an OWNER member.
- * Sets estCompletion to the latest phase end date if phases are provided.
- * Redirects to the new project's timeline on success.
- *
- * Requires: ADMIN or PROJECT_MANAGER role.
- */
 export async function createProjectWithPhases(data: {
   name: string;
   description?: string;
@@ -90,7 +59,6 @@ export async function createProjectWithPhases(data: {
       budget: parsed.budget,
       status: "ACTIVE",
       members: {
-        // Creator becomes OWNER automatically
         create: {
           userId: session.user.id,
           role: "OWNER",
@@ -102,7 +70,7 @@ export async function createProjectWithPhases(data: {
               name: phase.name,
               detail: phase.detail,
               isMilestone: phase.isMilestone || false,
-              sortOrder: i, // Preserve wizard order on the Gantt
+              sortOrder: i,
               estStart: new Date(phase.estStart),
               estEnd: new Date(phase.estEnd),
               worstStart: phase.worstStart
@@ -124,7 +92,7 @@ export async function createProjectWithPhases(data: {
     },
   });
 
-  // Derive estCompletion from the furthest phase end date
+  // Compute estimated completion from last phase
   if (parsed.phases && parsed.phases.length > 0) {
     const lastDate = parsed.phases.reduce((latest, p) => {
       const end = new Date(p.estEnd);
@@ -141,13 +109,7 @@ export async function createProjectWithPhases(data: {
   redirect(`/dashboard/projects/${project.id}/timeline`);
 }
 
-/**
- * Legacy FormData-based project creator. Kept for backward compatibility
- * with older form submissions that don't go through the wizard.
- * Does not create phases; those are added separately.
- *
- * Requires: ADMIN or PROJECT_MANAGER role.
- */
+// Keep the old FormData-based action for backward compat
 export async function createProject(formData: FormData) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -186,12 +148,6 @@ export async function createProject(formData: FormData) {
   redirect(`/dashboard/projects/${project.id}/timeline`);
 }
 
-/**
- * Update mutable project metadata. Only updates fields that are present
- * in the FormData (empty strings are ignored to preserve existing values).
- *
- * Requires: authenticated session (no role check — member-level update).
- */
 export async function updateProject(projectId: string, formData: FormData) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -217,12 +173,6 @@ export async function updateProject(projectId: string, formData: FormData) {
   revalidatePath("/dashboard");
 }
 
-/**
- * Permanently delete a project and all cascaded data (phases, documents, etc.).
- * This is irreversible — prefer archiveProject for soft removal.
- *
- * Requires: ADMIN role only.
- */
 export async function deleteProject(projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -233,18 +183,11 @@ export async function deleteProject(projectId: string) {
   redirect("/dashboard");
 }
 
-/**
- * Soft-archive a project by setting its status to ARCHIVED.
- * Archived projects are hidden from the main list but not deleted.
- * Logs the status change to the activity log.
- *
- * Requires: OWNER or MANAGER membership on the project.
- */
 export async function archiveProject(projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  // Verify the user has an OWNER or MANAGER role on this project
+  // Only ADMIN or PROJECT_MANAGER can archive
   const member = await db.projectMember.findUnique({
     where: { userId_projectId: { userId: session.user.id, projectId } },
   });
@@ -271,12 +214,6 @@ export async function archiveProject(projectId: string) {
   revalidatePath("/dashboard");
 }
 
-/**
- * Restore an ARCHIVED project back to ACTIVE status.
- * Logs the status change to the activity log.
- *
- * Requires: OWNER or MANAGER membership on the project.
- */
 export async function restoreProject(projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
@@ -307,14 +244,6 @@ export async function restoreProject(projectId: string) {
   revalidatePath("/dashboard");
 }
 
-// ── Queries ──
-
-/**
- * Fetch all projects the current user is a member of.
- * Includes phase status counts (for dashboard KPI cards) and member counts.
- * Returns [] for unauthenticated users (safe for server component use).
- * Ordered by most recently updated.
- */
 export async function getProjects() {
   const session = await auth();
   if (!session?.user) return [];
@@ -326,7 +255,7 @@ export async function getProjects() {
     include: {
       _count: { select: { phases: true, members: true } },
       phases: {
-        select: { status: true }, // Used for status breakdown on dashboard cards
+        select: { status: true },
       },
     },
     orderBy: { updatedAt: "desc" },

@@ -1,8 +1,3 @@
-/**
- * @file src/app/(auth)/invite/[token]/page.tsx
- * @description Invite acceptance page. Looks up the invitation by token via
- * getInvitationByToken and renders the AcceptInvitation component.
- */
 import { getInvitationByToken } from "@/actions/invitations";
 import { auth } from "@/lib/auth";
 import { notFound } from "next/navigation";

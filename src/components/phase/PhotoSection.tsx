@@ -1,37 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/PhotoSection.tsx
- * @description Photo gallery section for a phase detail page.
- *
- * Supports uploading photos from the device gallery or live camera
- * (`<input capture="environment">`), drag-and-drop, and bulk upload
- * via `createPhotoBatch` (>1 file) or `createPhoto` (single file).
- *
- * Upload flow:
- *   1. File(s) selected → GPS coordinates requested via
- *      `navigator.geolocation.getCurrentPosition` (5 s timeout) in parallel
- *      with Vercel Blob upload (`put` from `@vercel/blob/client`).
- *   2. On success, `createPhoto` / `createPhotoBatch` server action persists
- *      the record(s) with URL, size, MIME type, and optional GPS coordinates.
- *
- * Features:
- *   - Lightbox modal (`viewPhoto` state) for full-size image review.
- *   - Photo flagging (REPLACEMENT_NEEDED, ADDITIONAL_ANGLES,
- *     ADDITIONAL_PHOTOS, CLARIFICATION_NEEDED) — PM/admin only (`canFlag`).
- *   - `PhotoMapView` inline map rendered when any photo has GPS coordinates.
- *   - Per-photo delete with confirmation (`deletePhoto` server action).
- *
- * Permissions:
- *   - `canEdit`   — upload photos, delete own photos.
- *   - `canFlag`   — add/remove flags on any photo (PM/admin).
- *   - `canManage` — delete any photo.
- *
- * Server actions: `createPhoto`, `createPhotoBatch`, `deletePhoto`,
- *   `flagPhoto`, `unflagPhoto`.
- * i18n namespace: `photos`.
- */
-
 import { useState, useRef, useCallback } from "react";
 import {
   Camera,

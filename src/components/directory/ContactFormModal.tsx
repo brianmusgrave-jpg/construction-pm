@@ -1,26 +1,5 @@
 "use client";
 
-/**
- * @file components/directory/ContactFormModal.tsx
- * @description Add / edit modal for directory contacts.
- *
- * Mode:
- *   - "add"  → calls `createStaff` on submit; no delete button shown.
- *   - "edit" → calls `updateStaff` on submit; shows a "Delete" button that
- *     calls `deleteStaff(contact.id)` after a `confirm()` prompt.
- *
- * Contact type selector: 2×2 button grid for TEAM / SUBCONTRACTOR / VENDOR /
- *   INSPECTOR; defaults to SUBCONTRACTOR for new contacts.
- *
- * Required field: name (non-empty). All other fields (company, role, email,
- *   phone, location, notes) are optional — empty strings are sent as `undefined`.
- *
- * Error handling: inline red banner for validation or server errors.
- *
- * Server actions: `createStaff`, `updateStaff`, `deleteStaff`.
- * i18n namespaces: `directory`, `common`.
- */
-
 import { useState } from "react";
 import { X } from "lucide-react";
 import { createStaff, updateStaff, deleteStaff } from "@/actions/staff";

@@ -8,8 +8,9 @@
  *   - MIME type: `audio/webm;codecs=opus` with fallback to `audio/webm`.
  *   - Data collected every 100 ms via `mediaRecorder.start(100)`.
  *   - Maximum duration: 5 minutes (300 s) — auto-stops at 300 via timer.
- *   - On stop, chunks are assembled into a Blob and converted to a
- *     base64 data URL via `FileReader.readAsDataURL` for storage.
+ *   - On stop, chunks are assembled into a Blob and uploaded directly to
+ *     Vercel Blob via the `/api/upload` route using `@vercel/blob/client`.
+ *     The resulting CDN URL is stored as `audioUrl` on the VoiceNote record.
  *
  * Playback uses a single shared `audioRef` (HTMLAudioElement). Clicking a
  *   different note pauses the current one before starting the new one.
@@ -33,6 +34,7 @@
 import React, { useState, useRef, useTransition, useEffect, useCallback } from "react";
 import { Mic, Square, Trash2, Loader2, Play, Pause, MicOff } from "lucide-react";
 import { createVoiceNote, deleteVoiceNote } from "@/actions/voiceNotes";
+import { upload } from "@vercel/blob/client";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -159,16 +161,30 @@ export function VoiceNoteSection({
     setIsRecording(false);
   }, []);
 
-  const saveRecording = (blob: Blob) => {
-    // Convert to base64 data URL for storage
-    // In production this would upload to cloud storage (S3/Cloudinary)
-    const reader = new FileReader();
-    reader.onload = () => {
-      const audioUrl = reader.result as string;
+  /**
+   * Upload the audio blob to Vercel Blob via `/api/upload`, then persist
+   * the returned CDN URL as the voice note's `audioUrl`.
+   *
+   * Uses `@vercel/blob/client` `upload()` which sends the file directly
+   * from the browser to Vercel Blob — the server only validates the upload
+   * token (auth + MIME allowlist checked in `/api/upload`).
+   *
+   * @param blob - The raw audio Blob from MediaRecorder
+   */
+  const saveRecording = useCallback(
+    (blob: Blob) => {
       const duration = recordingTime || 1;
+      // Build a unique filename: voice-<phaseId>-<timestamp>.webm
+      const filename = `voice-${phaseId}-${Date.now()}.webm`;
 
       startTransition(async () => {
         try {
+          // Upload to Vercel Blob via the existing /api/upload route
+          const { url: audioUrl } = await upload(filename, blob, {
+            access: "public",
+            handleUploadUrl: "/api/upload",
+          });
+
           const result = await createVoiceNote({
             phaseId,
             audioUrl,
@@ -180,9 +196,9 @@ export function VoiceNoteSection({
           toast.error(t("saveFailed"));
         }
       });
-    };
-    reader.readAsDataURL(blob);
-  };
+    },
+    [phaseId, recordingTime, startTransition, t]
+  );
 
   const handleDelete = (noteId: string) => {
     setDeletingId(noteId);

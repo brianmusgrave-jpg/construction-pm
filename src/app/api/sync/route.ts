@@ -1,9 +1,3 @@
-/**
- * @file src/app/api/sync/route.ts
- * @description Background offline mutation sync endpoint. Receives batched offline
- * mutations, replays up to 50 actions sorted by timestamp, handles 25 action types,
- * and enforces a 20 requests/min rate limit.
- */
 // Background sync endpoint — receives batched offline mutations from the
 // service worker or client-side sync logic and replays them server-side.
 //

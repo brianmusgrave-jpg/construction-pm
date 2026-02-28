@@ -1,11 +1,5 @@
 "use client";
 
-/**
- * @file src/app/providers.tsx
- * @description Client-side provider tree. Wraps children with NextAuth
- * SessionProvider and Sonner Toaster for global toast notifications.
- */
-
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
 

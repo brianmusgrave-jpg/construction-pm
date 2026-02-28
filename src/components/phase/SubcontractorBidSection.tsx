@@ -1,27 +1,5 @@
 "use client";
 
-/**
- * @file components/phase/SubcontractorBidSection.tsx
- * @description Subcontractor bid comparison and award section for a phase detail page.
- *
- * Key behaviours:
- *   - Bids are displayed sorted ascending by `amount`
- *     (`[...bids].sort((a, b) => a.amount - b.amount)`).
- *   - Lowest bid receives a "Lowest bid" badge when multiple bids exist
- *     (`lowestBid = bids.reduce((min, b) => (!min || b.amount < min.amount ? b : min), null)`).
- *   - Bid spread (max − min) is shown below the list when > 1 bid exists.
- *   - `awardBid(bid.id, !bid.awarded)` toggles the award state — only one
- *     bid can be awarded; previously awarded bids are not auto-revoked here
- *     (controlled server-side).
- *   - Awarded bid row is highlighted with a green background.
- *
- * Permissions:
- *   - `canManage` — all actions (add, award/revoke, delete).
- *
- * Server actions: `createSubcontractorBid`, `awardBid`,
- *   `deleteSubcontractorBid`.
- */
-
 import { useState } from "react";
 import {
   Briefcase,

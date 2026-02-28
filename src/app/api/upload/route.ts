@@ -10,18 +10,27 @@ import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { rateLimitHeaders } from "@/lib/rate-limit";
 
-// Allowed file types for construction documents
+// Allowed file types for construction documents and audio voice notes
 const ALLOWED_TYPES = [
+  // Documents
   "application/pdf",
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/heic",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   "application/vnd.ms-excel",
   "text/csv",
+  // Images
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  // Audio (for voice note uploads)
+  "audio/webm",
+  "audio/ogg",
+  "audio/mp4",
+  "audio/mpeg",
+  "audio/wav",
+  "audio/x-wav",
 ];
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB

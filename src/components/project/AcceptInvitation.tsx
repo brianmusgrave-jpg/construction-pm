@@ -1,31 +1,5 @@
 "use client";
 
-/**
- * @file components/project/AcceptInvitation.tsx
- * @description Page-level component that handles team invitation acceptance from a
- *   tokenised invite URL (`/invite/[token]`).
- *
- * Render branches (mutually exclusive, rendered in priority order):
- *   1. `invite.expired === true` — red XCircle panel with "Go to Login" link.
- *   2. `result.success === true`  — green CheckCircle2 panel; shows "Already a member"
- *      message when `result.alreadyMember` is set, otherwise "Welcome to the team".
- *      Button navigates to `/dashboard/projects/[result.projectId]`.
- *   3. `result.error` set        — red XCircle error panel with "Go to Login" link.
- *   4. Default                   — HardHat welcome panel showing project name, role,
- *      invited email, and expiry date, with either:
- *        - Accept button (`isLoggedIn === true`) → calls `acceptInvitation(token)`
- *          via `useTransition`; sets `result` state on resolution.
- *        - "Sign in to accept" link (`isLoggedIn === false`) → navigates to
- *          `/login?callbackUrl=/invite/${token}`.
- *
- * @param token     Invitation token string from the URL.
- * @param invite    Invitation details including project name, role, email, expiry.
- * @param isLoggedIn Whether the current visitor has an active session.
- *
- * Server action: `acceptInvitation`.
- * i18n namespaces: `invitations`, `common`.
- */
-
 import { useState, useTransition } from "react";
 import { acceptInvitation } from "@/actions/invitations";
 import { CheckCircle2, XCircle, Loader2, HardHat } from "lucide-react";
