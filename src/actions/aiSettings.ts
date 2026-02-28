@@ -89,39 +89,32 @@ export async function getAISettingsInternal(): Promise<{
  * Called fire-and-forget (without await) from callAI() so callers are
  * never blocked by a DB write. Failures are logged but swallowed.
  *
- * @param userId           - The user who triggered the AI call
- * @param provider         - The AI provider used ("OPENAI" | "ANTHROPIC")
- * @param model            - The model string (e.g. "gpt-4o-mini")
- * @param promptTokens     - Input tokens consumed
- * @param completionTokens - Output tokens produced
- * @param totalTokens      - Total tokens (usually prompt + completion)
- * @param costUsd          - Estimated cost in USD
- * @param feature          - Feature label for grouping (e.g. "voice_transcription")
- * @param success          - Whether the AI call completed without error
+ * Accepts a single options object for ergonomics and to match the call
+ * site in src/lib/ai.ts.
  */
-export async function logAIUsageInternal(
-  userId: string,
-  provider: string,
-  model: string,
-  promptTokens: number,
-  completionTokens: number,
-  totalTokens: number,
-  costUsd: number,
-  feature: string,
-  success: boolean
-): Promise<void> {
+export async function logAIUsageInternal(opts: {
+  userId: string;
+  provider: string;
+  model: string;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  costUsd: number;
+  feature: string;
+  success: boolean;
+}): Promise<void> {
   try {
     await dbc.aIUsageLog.create({
       data: {
-        userId,
-        provider,
-        model,
-        promptTokens,
-        completionTokens,
-        totalTokens,
-        costUsd,
-        feature,
-        success,
+        userId: opts.userId,
+        provider: opts.provider,
+        model: opts.model,
+        promptTokens: opts.promptTokens,
+        completionTokens: opts.completionTokens,
+        totalTokens: opts.totalTokens,
+        costUsd: opts.costUsd,
+        feature: opts.feature,
+        success: opts.success,
       },
     });
   } catch (err) {
