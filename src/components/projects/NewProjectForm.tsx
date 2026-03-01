@@ -199,7 +199,8 @@ export function NewProjectForm() {
         setError(t("phaseNeedsName", { n: phases.indexOf(phase) + 1 }));
         return;
       }
-      if (!phase.estStart || !phase.estEnd) {
+      // Milestones only need a start date (estEnd is auto-set to estStart on submit)
+      if (!phase.estStart || (!phase.isMilestone && !phase.estEnd)) {
         setError(t("phaseNeedsDates", { name: phase.name }));
         return;
       }

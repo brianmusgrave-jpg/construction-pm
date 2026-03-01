@@ -683,7 +683,9 @@
     "estimated": "Estimated",
     "worstCase": "Worst Case",
     "today": "Today",
-    "dragHelp": "Drag bars to slide • Drag edges to resize"
+    "dragHelp": "Drag bars to slide • Drag edges to resize",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out"
   },
   "directory": {
     "title": "Directory",

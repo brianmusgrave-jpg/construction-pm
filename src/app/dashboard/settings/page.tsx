@@ -142,6 +142,38 @@ export default async function SettingsPage() {
           <ReportScheduleSection schedules={reportSchedules} />
         </div>
       )}
+
+      {/* About / Special Thanks */}
+      <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">About Construction PM</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          v2.1 — Built with Next.js, Prisma, and Supabase. A modern construction project
+          management platform for teams of all sizes.
+        </p>
+        <div className="border-t border-gray-100 pt-4">
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">🙏 Beta Testers — Special Thanks</h3>
+          <p className="text-xs text-gray-500 mb-3">
+            These individuals gave their time and feedback to help shape this product:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              "Patrick Bryant",
+              "Jeff Keeney",
+              "Kris Gorman",
+              "Jon Thomas",
+              "Jeff Prater",
+              "Phil McBrayer",
+            ].map((name) => (
+              <span
+                key={name}
+                className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium border border-blue-100"
+              >
+                {name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

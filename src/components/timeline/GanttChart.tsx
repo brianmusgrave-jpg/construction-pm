@@ -23,12 +23,16 @@
  * i18n namespace: `gantt`.
  */
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import { format, addMonths, startOfMonth, differenceInDays } from "date-fns";
+import { ZoomIn, ZoomOut } from "lucide-react";
 import { PhaseRow } from "./PhaseRow";
 import { updatePhaseDates } from "@/actions/phases";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+
+const ZOOM_STEPS = [0.5, 0.75, 1, 1.5, 2, 3];
+const BASE_WIDTH_PX = 1000;
 
 interface Phase {
   id: string;
@@ -74,7 +78,11 @@ interface GanttChartProps {
 export function GanttChart({ projectId, phases: initialPhases, planApproval }: GanttChartProps) {
   const t = useTranslations("gantt");
   const [phases, setPhases] = useState(initialPhases);
+  const [zoomIdx, setZoomIdx] = useState(2); // default = 1x (index 2 in ZOOM_STEPS)
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const zoomLevel = ZOOM_STEPS[zoomIdx];
+  const chartWidth = Math.round(BASE_WIDTH_PX * zoomLevel);
 
   // Calculate timeline range: 2 weeks before first phase to 4 weeks after last
   const allDates = phases.flatMap((p) => [
@@ -172,14 +180,46 @@ const saveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
           <span className="w-2 h-3 bg-green-500 rounded-sm" />
           {t("today")}
         </span>
-        <span className="hidden sm:inline ml-auto text-gray-400">
+        <span className="hidden sm:inline text-gray-400">
           {t("dragHelp")}
+        </span>
+        {/* Zoom controls */}
+        <span className="ml-auto flex items-center gap-1">
+          <button
+            onClick={() => setZoomIdx((i) => Math.max(0, i - 1))}
+            disabled={zoomIdx === 0}
+            className={cn(
+              "p-1 rounded border transition-colors",
+              zoomIdx === 0
+                ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                : "border-gray-300 text-gray-600 hover:bg-gray-100"
+            )}
+            title={t("zoomOut")}
+          >
+            <ZoomOut className="w-3.5 h-3.5" />
+          </button>
+          <span className="text-[10px] font-medium text-gray-500 min-w-[28px] text-center">
+            {Math.round(zoomLevel * 100)}%
+          </span>
+          <button
+            onClick={() => setZoomIdx((i) => Math.min(ZOOM_STEPS.length - 1, i + 1))}
+            disabled={zoomIdx === ZOOM_STEPS.length - 1}
+            className={cn(
+              "p-1 rounded border transition-colors",
+              zoomIdx === ZOOM_STEPS.length - 1
+                ? "border-gray-200 text-gray-300 cursor-not-allowed"
+                : "border-gray-300 text-gray-600 hover:bg-gray-100"
+            )}
+            title={t("zoomIn")}
+          >
+            <ZoomIn className="w-3.5 h-3.5" />
+          </button>
         </span>
       </div>
 
       {/* Timeline */}
       <div ref={containerRef} className="flex-1 overflow-x-auto overflow-y-auto -webkit-overflow-scrolling-touch">
-        <div className="min-w-[600px] sm:min-w-[800px] lg:min-w-[1000px]">
+        <div style={{ minWidth: `${chartWidth}px` }}>
           {/* Month headers */}
           <div className="relative h-8 border-b border-gray-200 bg-gray-50">
             {months.map((m, i) => (

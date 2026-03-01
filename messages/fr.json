@@ -683,7 +683,9 @@
     "estimated": "Estimé",
     "worstCase": "Pire cas",
     "today": "Aujourd'hui",
-    "dragHelp": "Glissez les barres pour déplacer • Glissez les bords pour redimensionner"
+    "dragHelp": "Glissez les barres pour déplacer • Glissez les bords pour redimensionner",
+    "zoomIn": "Zoomer",
+    "zoomOut": "Dézoomer"
   },
   "directory": {
     "title": "Répertoire",

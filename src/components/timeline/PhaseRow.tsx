@@ -201,11 +201,13 @@ export function PhaseRow({
           style={{ left: `${todayPct}%` }}
         />
 
-        {/* Milestone diamond */}
+        {/* Milestone diamond — draggable to move date */}
         {phase.isMilestone ? (
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-blue-500 rotate-45 z-20"
-            style={{ left: `${estLeft}%`, marginLeft: "-6px" }}
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-blue-500 rotate-45 z-20 cursor-grab active:cursor-grabbing hover:bg-blue-600 transition-colors"
+            style={{ left: `${estLeft}%`, marginLeft: "-8px" }}
+            title={`${phase.name}: ${format(phase.estStart, "MMM d, yyyy")}`}
+            onPointerDown={(e) => handlePointerDown(e, "estimated", "move")}
           />
         ) : (
           <>
