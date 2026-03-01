@@ -106,6 +106,7 @@ export async function addPhaseComment(
     db.activityLog
       .create({
         data: {
+          orgId: session.user.orgId!,
           action: "COMMENT_ADDED",
           message: `${session.user.name || session.user.email} commented on ${phase.name}`,
           projectId: phase.projectId,
@@ -157,6 +158,7 @@ export async function deletePhaseComment(commentId: string) {
   db.activityLog
     .create({
       data: {
+        orgId: session.user.orgId!,
         action: "COMMENT_DELETED",
         message: `Deleted comment on phase`,
         projectId: comment.phase.projectId,

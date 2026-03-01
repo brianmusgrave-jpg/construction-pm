@@ -123,6 +123,7 @@ export async function createVoiceNote(
     db.activityLog
       .create({
         data: {
+          orgId: session.user.orgId!,
           action: "PHASE_CREATED" as any, // Closest available action type
           message: `${session.user.name || session.user.email} added a voice note to ${phase.name}`,
           projectId: phase.projectId,

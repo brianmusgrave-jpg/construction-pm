@@ -112,6 +112,7 @@ export async function addPhaseDependency(data: AddDependencyInput) {
   db.activityLog
     .create({
       data: {
+        orgId: session.user.orgId!,
         action: "DEPENDENCY_ADDED",
         message: `${phase.name} now depends on ${dependsOn.name}`,
         projectId: phase.projectId,
@@ -153,6 +154,7 @@ export async function removePhaseDependency(data: RemoveDependencyInput) {
   db.activityLog
     .create({
       data: {
+        orgId: session.user.orgId!,
         action: "DEPENDENCY_REMOVED",
         message: `Removed dependency for ${dep.phase.name}`,
         projectId: dep.phase.projectId,
