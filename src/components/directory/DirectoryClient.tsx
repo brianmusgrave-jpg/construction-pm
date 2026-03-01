@@ -61,8 +61,10 @@ import {
   ShieldCheck,
   ShieldX,
   FileText,
+  FileSpreadsheet,
 } from "lucide-react";
 import { ContactFormModal } from "./ContactFormModal";
+import { ImportContactsModal } from "./ImportContactsModal";
 import { InsurancePanel } from "./InsurancePanel";
 import { bulkDeleteStaff, bulkUpdateStaffType, exportStaffCsv } from "@/actions/staff";
 import { updateStaffRating, exportInsuranceCsv } from "@/actions/insurance";
@@ -163,6 +165,7 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
   >(null);
 
   const [insurancePanel, setInsurancePanel] = useState<Contact | null>(null);
+  const [showImport, setShowImport] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkMode, setBulkMode] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -345,6 +348,14 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
                 <span className="hidden sm:inline">{t("exportCsv")}</span>
               </button>
               <button
+                onClick={() => setShowImport(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg hover:bg-gray-50 transition-colors"
+                title={t("importContacts")}
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                <span className="hidden sm:inline">{t("importContacts")}</span>
+              </button>
+              <button
                 onClick={() => bulkMode ? exitBulkMode() : setBulkMode(true)}
                 className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm border rounded-lg transition-colors ${
                   bulkMode ? "bg-gray-100 border-gray-300" : "hover:bg-gray-50"
@@ -465,13 +476,23 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
           <h3 className="text-lg font-medium text-gray-900 mb-1">{t("noContactsYet")}</h3>
           <p className="text-sm text-gray-500 mb-4">{t("noContactsMessage")}</p>
           {canManage && (
-            <button
-              onClick={() => setModalState({ mode: "add" })}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              {t("addFirstContact")}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setModalState({ mode: "add" })}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium bg-[var(--color-primary)] text-white rounded-lg hover:bg-[var(--color-primary-dark)] transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                {t("addFirstContact")}
+              </button>
+              <span className="text-sm text-gray-400">{tc("or")}</span>
+              <button
+                onClick={() => setShowImport(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <FileSpreadsheet className="w-4 h-4" />
+                {t("importContacts")}
+              </button>
+            </div>
           )}
         </div>
       ) : (
@@ -634,6 +655,10 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
           contact={modalState.contact}
           onClose={() => setModalState(null)}
         />
+      )}
+
+      {showImport && (
+        <ImportContactsModal onClose={() => setShowImport(false)} />
       )}
 
       {insurancePanel && (

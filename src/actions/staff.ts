@@ -198,6 +198,151 @@ export async function bulkUpdateStaffType(ids: string[], contactType: string) {
   return { updated: result.count };
 }
 
+// ── Bulk Import ──
+
+/** A single row from the import wizard, already mapped to staff fields. */
+const ImportRowSchema = z.object({
+  name: z.string().min(1).max(200),
+  company: z.string().max(200).optional(),
+  role: z.string().max(200).optional(),
+  contactType: z
+    .enum(["TEAM", "SUBCONTRACTOR", "VENDOR", "INSPECTOR"])
+    .optional()
+    .default("SUBCONTRACTOR"),
+  email: z
+    .string()
+    .email()
+    .max(200)
+    .optional()
+    .or(z.literal("")),
+  phone: z.string().max(30).optional(),
+  location: z.string().max(200).optional(),
+  notes: z.string().max(2000).optional(),
+});
+
+/**
+ * Bulk-import contacts from a spreadsheet.
+ * Accepts an array of mapped rows, validates each, creates all valid rows
+ * in a single transaction, and returns a summary with per-row errors.
+ *
+ * Duplicate detection: if `skipDuplicateEmails` is true, rows whose email
+ * matches an existing staff record (case-insensitive) are skipped rather
+ * than inserted.
+ *
+ * Requires: "create staff" permission (ADMIN or PROJECT_MANAGER).
+ */
+export async function bulkImportStaff(
+  rows: Record<string, string>[],
+  options?: { skipDuplicateEmails?: boolean }
+) {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (!can(session.user.role || "VIEWER", "create", "staff"))
+    throw new Error("Forbidden");
+
+  const skipDupes = options?.skipDuplicateEmails ?? true;
+  const errors: { row: number; message: string }[] = [];
+  const skipped: { row: number; reason: string }[] = [];
+
+  // If deduping, fetch existing emails for this org
+  let existingEmails = new Set<string>();
+  if (skipDupes) {
+    const existing = await db.staff.findMany({
+      where: { orgId: session.user.orgId! },
+      select: { email: true },
+    });
+    existingEmails = new Set(
+      existing
+        .map((s) => s.email?.toLowerCase())
+        .filter((e): e is string => !!e)
+    );
+  }
+
+  // Normalize contact type strings from spreadsheets
+  function normalizeType(
+    raw: string | undefined
+  ): "TEAM" | "SUBCONTRACTOR" | "VENDOR" | "INSPECTOR" {
+    if (!raw) return "SUBCONTRACTOR";
+    const upper = raw.toUpperCase().trim();
+    if (upper.includes("TEAM") || upper.includes("INTERNAL") || upper.includes("EMPLOYEE"))
+      return "TEAM";
+    if (upper.includes("SUB") || upper.includes("CONTRACTOR") || upper.includes("TRADE"))
+      return "SUBCONTRACTOR";
+    if (upper.includes("VENDOR") || upper.includes("SUPPLIER") || upper.includes("MATERIAL"))
+      return "VENDOR";
+    if (upper.includes("INSPECT") || upper.includes("ENGINEER") || upper.includes("CONSULT"))
+      return "INSPECTOR";
+    return "SUBCONTRACTOR";
+  }
+
+  // Validate and prepare rows
+  const validRows: z.infer<typeof ImportRowSchema>[] = [];
+
+  for (let i = 0; i < rows.length; i++) {
+    const raw = rows[i];
+    const rowNum = i + 1;
+
+    // Normalize contact type before validation
+    if (raw.contactType) {
+      raw.contactType = normalizeType(raw.contactType);
+    }
+
+    // Clean empty strings to undefined for optional fields
+    const cleaned: Record<string, string | undefined> = {};
+    for (const [k, v] of Object.entries(raw)) {
+      cleaned[k] = v?.trim() || undefined;
+    }
+    // Name is required — keep as-is even if empty (validation will catch it)
+    cleaned.name = raw.name?.trim() || "";
+
+    const result = ImportRowSchema.safeParse(cleaned);
+    if (!result.success) {
+      const msg = result.error.issues.map((i) => i.message).join("; ");
+      errors.push({ row: rowNum, message: msg || "Invalid data" });
+      continue;
+    }
+
+    // Duplicate check
+    const email = result.data.email?.toLowerCase();
+    if (skipDupes && email && existingEmails.has(email)) {
+      skipped.push({ row: rowNum, reason: `Email ${result.data.email} already exists` });
+      continue;
+    }
+
+    // Track email for intra-batch deduplication
+    if (email) existingEmails.add(email);
+
+    validRows.push(result.data);
+  }
+
+  // Bulk create in a transaction
+  let created = 0;
+  if (validRows.length > 0) {
+    await db.$transaction(
+      validRows.map((row) =>
+        db.staff.create({
+          data: {
+            orgId: session.user.orgId!,
+            name: row.name,
+            company: row.company || null,
+            role: row.role || null,
+            contactType: row.contactType || "SUBCONTRACTOR",
+            email: row.email || null,
+            phone: row.phone || null,
+            location: row.location || null,
+            notes: row.notes || null,
+            createdById: session.user.id,
+          },
+        })
+      )
+    );
+    created = validRows.length;
+  }
+
+  revalidatePath("/dashboard/directory");
+  return { created, errors, skipped, total: rows.length };
+}
+
 /**
  * Export the full staff directory as a CSV string for download.
  * Ordered by contact type then name. All fields are double-quote escaped.
