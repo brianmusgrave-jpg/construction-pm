@@ -51,7 +51,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
   const [projects, phases, documents, staff] = await Promise.all([
     // Projects: search name, description, and site address
     db.project.findMany({
-      where: {
+      where: { orgId: session.user.orgId!,
         OR: [{ name: contains }, { description: contains }, { address: contains }],
       },
       select: { id: true, name: true, status: true, address: true },
@@ -95,6 +95,7 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
     // Staff: search name, company, role, and email
     db.staff.findMany({
       where: {
+        orgId: session.user.orgId!,
         OR: [
           { name: contains },
           { company: contains },

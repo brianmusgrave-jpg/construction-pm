@@ -71,6 +71,7 @@ export async function getFeatureToggles() {
   if (!session?.user) throw new Error("Unauthorized");
 
   const existing = await dbc.featureToggle.findMany({
+    where: { orgId: session.user.orgId! },
     orderBy: { featureKey: "asc" },
   });
 
@@ -80,10 +81,10 @@ export async function getFeatureToggles() {
 
   if (missing.length > 0) {
     await dbc.featureToggle.createMany({
-      data: missing.map((f) => ({ ...f, enabled: true })),
+      data: missing.map((f) => ({ ...f, enabled: true, orgId: session.user.orgId! })),
       skipDuplicates: true,
     });
-    return dbc.featureToggle.findMany({ orderBy: { featureKey: "asc" } });
+    return dbc.featureToggle.findMany({ where: { orgId: session.user.orgId! }, orderBy: { featureKey: "asc" } });
   }
 
   return existing;
@@ -144,14 +145,14 @@ export async function getSystemStats() {
     staffCount,
     activeProjectCount,
   ] = await Promise.all([
-    dbc.user.count(),
-    dbc.project.count(),
+    dbc.user.count({ where: { orgId: session.user.orgId! } }),
+    dbc.project.count({ where: { orgId: session.user.orgId! } }),
     dbc.phase.count(),
     dbc.document.count(),
     dbc.photo.count(),
-    dbc.activityLog.count(),
-    dbc.staff.count(),
-    dbc.project.count({ where: { status: "ACTIVE" } }),
+    dbc.activityLog.count({ where: { orgId: session.user.orgId! } }),
+    dbc.staff.count({ where: { orgId: session.user.orgId! } }),
+    dbc.project.count({ where: { orgId: session.user.orgId!, status: "ACTIVE" } }),
   ]);
 
   // Activity in the rolling 7-day window
@@ -194,6 +195,7 @@ export async function getUsers() {
   if (!can(role, "manage", "phase")) throw new Error("Forbidden");
 
   return dbc.user.findMany({
+    where: { orgId: session.user.orgId! },
     select: {
       id: true,
       name: true,
@@ -279,6 +281,7 @@ export async function exportAuditLog() {
   if (!can(role, "manage", "phase")) throw new Error("Forbidden");
 
   const logs = await dbc.activityLog.findMany({
+    where: { orgId: session.user.orgId! },
     include: {
       user: { select: { name: true, email: true } },
       project: { select: { name: true } },
@@ -300,4 +303,49 @@ export async function exportAuditLog() {
   });
 
   return [header, ...rows].join("\n");
+}
+
+
+// ── System Admin (SYSTEM_ADMIN only) ──
+
+/**
+ * Get overview stats for the system admin panel.
+ * Returns all organizations with user/project counts.
+ * This is NOT org-scoped — it queries across all orgs.
+ *
+ * Requires: SYSTEM_ADMIN role.
+ */
+export async function getSystemAdminStats() {
+  const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
+  if (session.user.role !== "SYSTEM_ADMIN") throw new Error("Forbidden — system admin only");
+
+  const [totalOrgs, totalUsers, totalProjects] = await Promise.all([
+    dbc.organization.count(),
+    dbc.user.count(),
+    dbc.project.count(),
+  ]);
+
+  const orgs = await dbc.organization.findMany({
+    include: {
+      _count: { select: { users: true, projects: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return {
+    totalOrgs,
+    totalUsers,
+    totalProjects,
+    orgs: orgs.map((org: any) => ({
+      id: org.id,
+      name: org.name,
+      slug: org.slug,
+      plan: org.plan,
+      status: org.status,
+      userCount: org._count.users,
+      projectCount: org._count.projects,
+      createdAt: org.createdAt.toISOString(),
+    })),
+  };
 }

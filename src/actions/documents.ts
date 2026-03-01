@@ -83,6 +83,7 @@ export async function createDocument(data: {
   // Activity log (awaited — important for document audit trails)
   await db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "DOCUMENT_UPLOADED",
       message: `Uploaded "${data.name}" to ${phase.name}`,
       projectId: phase.projectId,
@@ -141,6 +142,7 @@ export async function updateDocumentStatus(
 
   await db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "DOCUMENT_STATUS_CHANGED",
       message: `${status === "APPROVED" ? "Approved" : status === "REJECTED" ? "Rejected" : "Updated"} "${document.name}" in ${document.phase.name}`,
       projectId: document.phase.projectId,

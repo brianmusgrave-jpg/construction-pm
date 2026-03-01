@@ -55,7 +55,7 @@ async function requireAdmin() {
 export async function getReportSchedules(): Promise<ReportSchedule[]> {
   const session = await auth();
   if (!session?.user?.id) return [];
-  return db.reportSchedule.findMany({ orderBy: { createdAt: "desc" } });
+  return db.reportSchedule.findMany({ where: { orgId: session.user.orgId! }, orderBy: { createdAt: "desc" } });
 }
 
 // ── Mutations ──
@@ -80,9 +80,11 @@ export async function createReportSchedule(data: {
   includeProjects?: string[];
 }): Promise<void> {
   await requireAdmin();
+  const session = await auth();
   if (data.recipients.length === 0) throw new Error("At least one recipient required");
   await db.reportSchedule.create({
     data: {
+      orgId: session.user.orgId!,
       frequency: data.frequency,
       dayOfWeek: data.dayOfWeek ?? null,
       dayOfMonth: data.dayOfMonth ?? null,
@@ -132,9 +134,10 @@ export async function deleteReportSchedule(id: string): Promise<void> {
  * @returns `{ sent }` — the number of reports dispatched in this run.
  */
 export async function sendDueReports(): Promise<{ sent: number }> {
+  const session = await auth();
   const now = new Date();
   const schedules: ReportSchedule[] = await db.reportSchedule.findMany({
-    where: { active: true },
+    where: { orgId: session.user.orgId!, active: true },
   });
 
   let sent = 0;

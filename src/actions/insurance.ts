@@ -283,6 +283,7 @@ export async function getInsuranceComplianceReport() {
   if (!session?.user) throw new Error("Unauthorized");
 
   const staff = await db.staff.findMany({
+    where: { orgId: session.user.orgId! },
     include: {
       certificates: {
         orderBy: { expiryDate: "asc" },
@@ -317,6 +318,7 @@ export async function exportInsuranceCsv() {
   if (!session?.user) throw new Error("Unauthorized");
 
   const staff = await db.staff.findMany({
+    where: { orgId: session.user.orgId! },
     include: {
       certificates: { orderBy: { expiryDate: "asc" } },
       umbrellaPolicy: true,

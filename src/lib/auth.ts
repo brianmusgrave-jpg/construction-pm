@@ -3,8 +3,8 @@
  * @description NextAuth v5 configuration for Construction PM.
  *
  * Auth strategy: JWT sessions (no DB session table required).
- * The JWT stores user.id and user.role so server actions can check
- * permissions without a DB roundtrip.
+ * The JWT stores user.id, user.role, and org context (orgId, orgPlan, isOrgOwner)
+ * so server actions can check permissions and tenant scope without a DB roundtrip.
  *
  * Providers:
  *   1. Google OAuth — optional, only active when GOOGLE_CLIENT_ID is set.
@@ -63,8 +63,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = credentials.email as string;
         const password = (credentials.password as string) || "";
 
-        // Look up the user by email
-        const user = await dbc.user.findUnique({ where: { email } });
+        // Look up the user by email, include org info for JWT
+        const user = await dbc.user.findUnique({
+          where: { email },
+          include: { org: true },
+        });
         if (!user) return null;
 
         // If the user has a password hash, verify the provided password
@@ -75,7 +78,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
         // If no passwordHash, allow login with just email (legacy accounts)
 
-        return user;
+        // Attach org context for the JWT callback
+        return {
+          ...user,
+          orgPlan: user.org?.plan || null,
+        };
       },
     }),
   ],
@@ -89,26 +96,35 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     /**
      * jwt callback: runs when the JWT is created or refreshed.
-     * Copies user.id and user.role from the DB user record into the token
-     * so they're available in the session without additional DB queries.
+     * Copies user.id, user.role, and org context from the DB user record
+     * into the token so they're available in the session without DB queries.
+     *
+     * SYSTEM_ADMIN users have no orgId — they operate across all orgs.
      */
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as { role?: string }).role || "VIEWER"; // Default to lowest role
+        const u = user as any;
+        token.id = user.id!;
+        token.role = u.role || "VIEWER";
+        token.orgId = u.orgId || undefined;
+        token.orgPlan = u.orgPlan || undefined;
+        token.isOrgOwner = u.isOrgOwner || false;
       }
       return token;
     },
 
     /**
      * session callback: runs when session() is called in a server component.
-     * Copies id and role from the JWT token into the session object so
-     * client-side code and server actions can access them via session.user.
+     * Copies id, role, and org context from the JWT token into the session
+     * object so client-side code and server actions can access them.
      */
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.orgId = token.orgId as string | undefined;
+        session.user.orgPlan = token.orgPlan as string | undefined;
+        session.user.isOrgOwner = token.isOrgOwner as boolean | undefined;
       }
       return session;
     },

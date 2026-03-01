@@ -52,11 +52,13 @@ async function requireSettingsAccess() {
  * Default: `{ theme: "blue" }` — the Professional Blue preset.
  */
 export async function getOrgSettings() {
+  const session = await auth();
   let settings = await db.orgSettings.findFirst();
   if (!settings) {
     // Auto-seed on first access (e.g. fresh deployment or test environment)
     settings = await db.orgSettings.create({
-      data: { theme: "blue" },
+      data: {
+        orgId: session.user.orgId!, theme: "blue" },
     });
   }
   return settings;

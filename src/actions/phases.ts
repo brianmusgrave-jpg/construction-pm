@@ -94,6 +94,7 @@ export async function createPhase(data: z.infer<typeof CreatePhaseSchema>) {
   // Fire-and-forget activity log — don't block the response on logging
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "PHASE_CREATED",
       message: `Added phase "${parsed.name}"`,
       projectId: parsed.projectId,
@@ -209,6 +210,7 @@ export async function updatePhaseStatus(
   // Fire-and-forget activity log
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "PHASE_STATUS_CHANGED",
       message: `${phase.name} ${statusLabels[status] || "updated"}`,
       projectId: phase.projectId,
@@ -271,6 +273,7 @@ export async function assignStaffToPhase(
   // Fire-and-forget activity log
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "STAFF_ASSIGNED",
       message: `Assigned ${assignment.staff.name} to ${assignment.phase.name}${isOwner ? " as owner" : ""}`,
       projectId: assignment.phase.projectId,
@@ -306,6 +309,7 @@ export async function unassignStaffFromPhase(assignmentId: string) {
   // Fire-and-forget activity log
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "STAFF_UNASSIGNED",
       message: `Removed ${assignment.staff.name} from ${assignment.phase.name}`,
       projectId: assignment.phase.projectId,

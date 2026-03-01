@@ -51,7 +51,7 @@ export async function getProjectHealthReport() {
   if (!session?.user) throw new Error("Unauthorized");
 
   const projects = await db.project.findMany({
-    where: { members: { some: { userId: session.user.id } } },
+    where: { orgId: session.user.orgId!, members: { some: { userId: session.user.id } } },
     include: {
       phases: {
         select: {
@@ -191,7 +191,7 @@ export async function getActivityTimeline(days: number = 30) {
   since.setDate(since.getDate() - days);
 
   const activity = await db.activityLog.findMany({
-    where: {
+    where: { orgId: session.user.orgId!,
       project: { members: { some: { userId: session.user.id } } },
       createdAt: { gte: since },
     },
@@ -235,6 +235,7 @@ export async function getTeamPerformance() {
   if (!session?.user) throw new Error("Unauthorized");
 
   const staff = await db.staff.findMany({
+    where: { orgId: session.user.orgId! },
     include: {
       assignments: {
         include: {
@@ -377,7 +378,7 @@ export async function getJobPLReport(): Promise<JobPLRow[]> {
   if (!session?.user) throw new Error("Unauthorized");
 
   const projects = await db.project.findMany({
-    where: { status: { not: "ARCHIVED" } },
+    where: { orgId: session.user.orgId!, status: { not: "ARCHIVED" } },
     include: {
       phases: {
         select: {

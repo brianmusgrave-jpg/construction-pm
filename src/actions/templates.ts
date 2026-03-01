@@ -56,6 +56,7 @@ export async function getChecklistTemplates() {
   if (!session?.user) throw new Error("Unauthorized");
 
   return db.checklistTemplate.findMany({
+    where: { orgId: session.user.orgId! },
     include: {
       items: { orderBy: { order: "asc" } },
     },
@@ -78,13 +79,14 @@ export async function createChecklistTemplate(data: {
   name: string;
   items: string[];
 }) {
-  await requireAdmin();
+  const session = await requireAdmin();
 
   if (!data.name.trim()) throw new Error("Template name is required");
   if (data.items.length === 0) throw new Error("At least one item is required");
 
   const template = await db.checklistTemplate.create({
     data: {
+      orgId: session.user.orgId!,
       name: data.name.trim(),
       items: {
         create: data.items

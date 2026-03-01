@@ -78,6 +78,7 @@ export async function createStaff(data: {
 
   const staff = await db.staff.create({
     data: {
+      orgId: session.user.orgId!,
       name:        parsed.name,
       company:     parsed.company || null,
       role:        parsed.role || null,
@@ -209,6 +210,7 @@ export async function exportStaffCsv() {
   if (!session?.user) throw new Error("Unauthorized");
 
   const staff = await db.staff.findMany({
+    where: { orgId: session.user.orgId! },
     orderBy: [{ contactType: "asc" }, { name: "asc" }],
   });
 

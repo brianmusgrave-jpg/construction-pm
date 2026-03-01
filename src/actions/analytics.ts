@@ -66,7 +66,7 @@ export async function getAnalytics(range: AnalyticsDateRange = "6m"): Promise<An
     await Promise.all([
       // Project status distribution + per-project budgets and actual spend
       db.project.findMany({
-        where: { id: { in: projectIds } },
+        where: { orgId: session.user.orgId!, id: { in: projectIds } },
         select: {
           id: true,
           status: true,

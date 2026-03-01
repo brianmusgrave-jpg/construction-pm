@@ -76,7 +76,7 @@ export async function getActivityLogs(opts?: {
 
   const [logs, total] = await Promise.all([
     db.activityLog.findMany({
-      where,
+      where: { ...where, orgId: session.user.orgId! },
       include: {
         user: { select: { id: true, name: true, email: true, image: true } },
         project: { select: { id: true, name: true } },
@@ -215,6 +215,7 @@ export async function undoActivity(logId: string) {
   // Write an "Undo:" audit entry — preserves the trail even after reversal
   await db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: log.action,
       message: `Undo: ${log.message}`,
       data: { undoneLogId: log.id, ...data },

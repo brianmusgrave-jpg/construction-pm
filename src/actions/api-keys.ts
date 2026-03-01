@@ -38,7 +38,7 @@ import type { ApiKey } from "@/lib/db-types";
 async function requireAuth() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id;
+  return session;
 }
 
 // ── Queries ──
@@ -49,8 +49,9 @@ async function requireAuth() {
  * UI; the `prefix` field (e.g. "cpk_...a3f9") is used for display instead.
  */
 export async function getApiKeys(): Promise<ApiKey[]> {
-  await requireAuth();
-  return db.apiKey.findMany({ orderBy: { createdAt: "desc" } });
+  const session = await requireAuth();
+  return db.apiKey.findMany({
+    where: { orgId: session.user.orgId! }, orderBy: { createdAt: "desc" } });
 }
 
 // ── Mutations ──
@@ -68,7 +69,7 @@ export async function getApiKeys(): Promise<ApiKey[]> {
  *   The caller is responsible for presenting it to the user before navigating away.
  */
 export async function createApiKey(name: string, expiresAt?: string): Promise<{ key: string; id: string }> {
-  await requireAuth();
+  const session = await requireAuth();
   if (!name.trim()) throw new Error("Name is required");
 
   // Generate key: cpk_ prefix + 64 hex chars (32 random bytes)
@@ -81,6 +82,7 @@ export async function createApiKey(name: string, expiresAt?: string): Promise<{ 
 
   const record = await db.apiKey.create({
     data: {
+      orgId: session.user.orgId!,
       name: name.trim(),
       keyHash,
       prefix,

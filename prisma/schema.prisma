@@ -8,6 +8,23 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+
+// ── Multi-Tenant Enums (Sprint 12) ──
+
+enum OrgPlan {
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum OrgStatus {
+  ACTIVE
+  TRIAL
+  PAST_DUE
+  SUSPENDED
+  CANCELLED
+}
+
 // ── Auth Models (NextAuth) ──
 
 model Account {
@@ -50,6 +67,58 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+// ── Multi-Tenant Models (Sprint 12) ──
+
+model Organization {
+  id               String    @id @default(cuid())
+  name             String
+  slug             String    @unique
+  plan             OrgPlan   @default(STARTER)
+  status           OrgStatus @default(ACTIVE)
+  stripeCustomerId String?   @unique @map("stripe_customer_id")
+  stripeSubId      String?   @unique @map("stripe_sub_id")
+  aiTokenBudget    Int       @default(100000) @map("ai_token_budget")
+  aiTokenUsed      Int       @default(0) @map("ai_token_used")
+  billingCycleEnd  DateTime? @map("billing_cycle_end")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  users              User[]
+  projects           Project[]
+  staff              Staff[]
+  settings           OrgSettings[]
+  features           FeatureToggle[]
+  activityLogs       ActivityLog[]
+  apiKeys            ApiKey[]
+  webhooks           Webhook[]
+  reportSchedules    ReportSchedule[]
+  qbConnections      QuickBooksConnection[]
+  aiSettings         AISettings[]
+  aiUsageLogs        AIUsageLog[]
+  embeddings         Embedding[]
+  invitations        AccountInvitation[]
+  clientTokens       ClientToken[]
+  checklistTemplates ChecklistTemplate[]
+  subscription       Subscription?
+
+  @@map("organizations")
+}
+
+model Subscription {
+  id                  String    @id @default(cuid())
+  orgId               String    @unique @map("org_id")
+  stripeSubId         String    @unique @map("stripe_sub_id")
+  stripePriceId       String    @map("stripe_price_id")
+  status              String    // active, past_due, cancelled, trialing
+  currentPeriodStart  DateTime  @map("current_period_start")
+  currentPeriodEnd    DateTime  @map("current_period_end")
+  cancelAtPeriodEnd   Boolean   @default(false) @map("cancel_at_period_end")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  org                 Organization @relation(fields: [orgId], references: [id])
+
+  @@map("subscriptions")
+}
+
 // ── Core Models ──
 
 model User {
@@ -62,6 +131,9 @@ model User {
   image         String?
   role          UserRole  @default(VIEWER)
   passwordHash  String?   @map("password_hash") // bcrypt hash; null = legacy email-only login
+  orgId        String?  @map("org_id")
+  org          Organization? @relation(fields: [orgId], references: [id])
+  isOrgOwner   Boolean  @default(false) @map("is_org_owner")
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
@@ -97,6 +169,7 @@ model User {
 }
 
 enum UserRole {
+  SYSTEM_ADMIN
   ADMIN
   PROJECT_MANAGER
   CONTRACTOR
@@ -115,6 +188,8 @@ model Project {
   budget        Decimal?      @db.Decimal(12, 2)
   createdAt     DateTime      @default(now()) @map("created_at")
   updatedAt     DateTime      @updatedAt @map("updated_at")
+  orgId        String       @map("org_id")
+  org          Organization @relation(fields: [orgId], references: [id])
 
   members      ProjectMember[]
   phases       Phase[]
@@ -235,6 +310,8 @@ model Staff {
   uninsuredOverride Boolean @default(false) @map("uninsured_override")
   umbrellaPolicy    InsuranceCertificate? @relation("umbrella_coverage", fields: [umbrellaPolicyId], references: [id])
   umbrellaPolicyId  String? @map("umbrella_policy_id")
+  orgId             String  @map("org_id")
+  org               Organization @relation(fields: [orgId], references: [id])
 
   createdBy   User?   @relation("staff_created_by", fields: [createdById], references: [id])
   createdById String? @map("created_by_id")
@@ -329,6 +406,8 @@ model PhaseAssignment {
 
 model ChecklistTemplate {
   id    String @id @default(cuid())
+  orgId String  @map("org_id")
+  org   Organization  @relation(fields: [orgId], references: [id])
   name  String // "Site Work", "Permitting", etc.
   items ChecklistTemplateItem[]
 
@@ -536,6 +615,8 @@ model NotificationPreference {
 
 model ActivityLog {
   id        String       @id @default(cuid())
+  orgId     String      @map("org_id")
+  org       Organization  @relation(fields: [orgId], references: [id])
   action    ActivityType
   message   String
   data      Json?        // Flexible metadata (phaseId, staffId, oldStatus, newStatus, etc.)
@@ -610,6 +691,8 @@ model PhaseDependency {
 
 model OrgSettings {
   id           String   @id @default(cuid())
+  orgId        String   @map("org_id")
+  org          Organization  @relation(fields: [orgId], references: [id])
   theme        String   @default("blue")
   logoUrl      String?  @map("logo_url")
   logoMimeType String?  @map("logo_mime_type")
@@ -624,6 +707,8 @@ model OrgSettings {
 
 model FeatureToggle {
   id         String  @id @default(cuid())
+  orgId      String  @map("org_id")
+  org        Organization  @relation(fields: [orgId], references: [id])
   featureKey String  @unique @map("feature_key")
   enabled    Boolean @default(true)
   label      String  // Human-readable name
@@ -662,6 +747,8 @@ model Invitation {
 
 model AccountInvitation {
   id          String    @id @default(cuid())
+  orgId       String   @map("org_id")
+  org         Organization @relation(fields: [orgId], references: [id])
   email       String
   role        UserRole  @default(VIEWER)
   token       String    @unique
@@ -1018,6 +1105,8 @@ model VoiceNote {
 
 model ApiKey {
   id         String    @id @default(cuid())
+  orgId      String    @map("org_id")
+  org        Organization  @relation(fields: [orgId], references: [id])
   name       String
   keyHash    String    @unique @map("key_hash")
   prefix     String
@@ -1032,6 +1121,8 @@ model ApiKey {
 
 model Webhook {
   id     String   @id @default(cuid())
+  orgId  String   @map("org_id")
+  org    Organization  @relation(fields: [orgId], references: [id])
   name   String
   url    String
   secret String
@@ -1066,6 +1157,8 @@ model TotpSecret {
 
 model ReportSchedule {
   id        String         @id @default(cuid())
+  orgId     String         @map("org_id")
+  org       Organization  @relation(fields: [orgId], references: [id])
   frequency ReportFrequency
   dayOfWeek Int?           @map("day_of_week") // 0=Sun..6=Sat (weekly)
   dayOfMonth Int?          @map("day_of_month") // 1-28 (monthly)
@@ -1090,6 +1183,8 @@ enum ReportFrequency {
 
 model QuickBooksConnection {
   id           String   @id @default(cuid())
+  orgId        String   @map("org_id")
+  org          Organization  @relation(fields: [orgId], references: [id])
   companyId    String   @unique @map("company_id") // QB company/realm ID
   companyName  String?  @map("company_name")
   accessToken  String   @map("access_token") @db.Text
@@ -1309,6 +1404,8 @@ enum EstimateStatus {
 
 model ClientToken {
   id        String    @id @default(cuid())
+  orgId     String    @map("org_id")
+  org       Organization  @relation(fields: [orgId], references: [id])
   token     String    @unique
   label     String
   projectId String?   @map("project_id") // null = all projects (org-level)
@@ -1331,6 +1428,8 @@ enum AIProvider {
 /// Only one row exists; fetched via findFirst / upsert.
 model AISettings {
   id             String     @id @default(cuid())
+  orgId          String     @map("org_id")
+  org            Organization  @relation(fields: [orgId], references: [id])
   provider       AIProvider @default(OPENAI)
   /// Model identifier — e.g. "gpt-4o-mini", "gpt-4o", "claude-3-haiku-20240307"
   model          String     @default("gpt-4o-mini")
@@ -1349,6 +1448,8 @@ model AISettings {
 /// One row per AI API call, used for usage dashboards and cost controls.
 model AIUsageLog {
   id               String     @id @default(cuid())
+  orgId            String     @map("org_id")
+  org              Organization  @relation(fields: [orgId], references: [id])
   userId           String     @map("user_id")
   user             User       @relation("ai_usage_by_user", fields: [userId], references: [id], onDelete: Cascade)
   provider         AIProvider
@@ -1375,6 +1476,8 @@ model AIUsageLog {
 /// A future migration can replace this with a native pgvector column.
 model Embedding {
   id         String   @id @default(cuid())
+  orgId      String  @map("org_id")
+  org        Organization  @relation(fields: [orgId], references: [id])
   /// Type of the entity this embedding represents — e.g. "voice_note", "document".
   entityType String   @map("entity_type")
   /// ID of the entity in its own table (voiceNoteId, documentId, etc.).

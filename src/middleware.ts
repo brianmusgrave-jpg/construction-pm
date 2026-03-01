@@ -1,9 +1,13 @@
 /**
  * @file src/middleware.ts
- * @description NextAuth edge middleware for route protection. Defines a public
- * allowlist (/login, /register, /api/auth, /invite), redirects authenticated users
- * away from /login, enforces CONTRACTOR↔dashboard routing, and excludes static
- * assets from matching.
+ * @description NextAuth edge middleware for route protection.
+ *
+ * Route rules:
+ * - Public: /login, /register, /api/auth, /invite, /signup, /client/*
+ * - /system-admin/* — SYSTEM_ADMIN only
+ * - /contractor/* — CONTRACTOR only
+ * - /dashboard/* — all non-contractor authenticated users
+ * - Org status check: SUSPENDED/CANCELLED orgs get read-only banner (handled in layout)
  */
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
@@ -12,12 +16,15 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!req.auth;
 
-  // Public routes
-  const publicPaths = ["/login", "/register", "/api/auth", "/invite"];
+  // Public routes — no auth required
+  const publicPaths = ["/login", "/register", "/signup", "/api/auth", "/invite", "/client"];
   if (publicPaths.some((p) => pathname.startsWith(p))) {
     // Redirect logged-in users away from login page
     if (isLoggedIn && pathname === "/login") {
       const role = (req.auth?.user as { role?: string })?.role;
+      if (role === "SYSTEM_ADMIN") {
+        return NextResponse.redirect(new URL("/system-admin", req.url));
+      }
       const dest = role === "CONTRACTOR" ? "/contractor" : "/dashboard";
       return NextResponse.redirect(new URL(dest, req.url));
     }
@@ -38,6 +45,19 @@ export default auth((req) => {
 
   // Role-based routing
   const role = (req.auth?.user as { role?: string })?.role;
+
+  // System Admin routes — SYSTEM_ADMIN only
+  if (pathname.startsWith("/system-admin")) {
+    if (role !== "SYSTEM_ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+    return NextResponse.next();
+  }
+
+  // SYSTEM_ADMIN trying to access /dashboard gets redirected to /system-admin
+  if (role === "SYSTEM_ADMIN" && pathname.startsWith("/dashboard")) {
+    return NextResponse.redirect(new URL("/system-admin", req.url));
+  }
 
   // Contractors trying to access /dashboard get redirected to /contractor
   if (role === "CONTRACTOR" && pathname.startsWith("/dashboard")) {

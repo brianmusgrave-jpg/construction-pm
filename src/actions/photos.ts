@@ -81,6 +81,7 @@ export async function createPhoto(data: {
   // Fire-and-forget activity log
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "PHOTO_UPLOADED",
       message: `Added photo to ${phase.name}`,
       projectId: phase.projectId,
@@ -133,6 +134,7 @@ export async function createPhotoBatch(data: {
   // Fire-and-forget activity log for the whole batch
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "PHOTO_UPLOADED",
       message: `Added ${data.photos.length} photo${data.photos.length > 1 ? "s" : ""} to ${phase.name}`,
       projectId: phase.projectId,

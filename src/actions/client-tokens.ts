@@ -67,7 +67,7 @@ async function requirePM(projectId: string) {
     where: { projectId, userId: session.user.id, role: { in: ["PM", "ADMIN"] } },
   });
   if (!member) throw new Error("Insufficient permissions");
-  return session.user.id;
+  return session;
 }
 
 // ── Queries ──
@@ -89,7 +89,7 @@ export async function getClientTokens(projectId: string): Promise<ClientToken[]>
     where: { projectId, userId: session.user.id },
   });
   if (!member) return [];
-  return db.clientToken.findMany({ where: { projectId }, orderBy: { createdAt: "desc" } });
+  return db.clientToken.findMany({ where: { orgId: session.user.orgId!, projectId }, orderBy: { createdAt: "desc" } });
 }
 
 // ── Mutations ──
@@ -114,7 +114,7 @@ export async function createClientToken(data: {
   expiresAt?: string;
 }): Promise<ClientToken & { rawToken?: string }> {
   const validated = CreateTokenSchema.parse(data);
-  await requirePM(validated.projectId);
+  const session = await requirePM(validated.projectId);
 
   // 24 bytes = 48-char hex string (vs 32 bytes / 64 chars for API keys)
   const rawToken = randomBytes(24).toString("hex");
@@ -122,6 +122,7 @@ export async function createClientToken(data: {
 
   const ct = await db.clientToken.create({
     data: {
+      orgId: session.user.orgId!,
       token: tokenHashed,       // Only the hash is persisted
       label: validated.label,
       projectId: validated.projectId,

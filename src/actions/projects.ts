@@ -81,6 +81,7 @@ export async function createProjectWithPhases(data: {
 
   const project = await db.project.create({
     data: {
+      orgId: session.user.orgId!,
       name: parsed.name,
       description: parsed.description,
       address: parsed.address,
@@ -116,6 +117,7 @@ export async function createProjectWithPhases(data: {
         : undefined,
       activityLogs: {
         create: {
+          orgId: session.user.orgId!,
           userId: session.user.id,
           action: "PROJECT_CREATED",
           message: `Created project ${parsed.name}`,
@@ -157,6 +159,7 @@ export async function createProject(formData: FormData) {
 
   const project = await db.project.create({
     data: {
+      orgId: session.user.orgId!,
       name,
       description: (formData.get("description") as string) || undefined,
       address: (formData.get("address") as string) || undefined,
@@ -174,6 +177,7 @@ export async function createProject(formData: FormData) {
       },
       activityLogs: {
         create: {
+          orgId: session.user.orgId!,
           userId: session.user.id,
           action: "PROJECT_CREATED",
           message: `Created project ${name}`,
@@ -259,6 +263,7 @@ export async function archiveProject(projectId: string) {
 
   await db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "PROJECT_STATUS_CHANGED" as never,
       message: `Project archived`,
       data: { oldStatus: "ACTIVE", newStatus: "ARCHIVED" },
@@ -295,6 +300,7 @@ export async function restoreProject(projectId: string) {
 
   await db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "PROJECT_STATUS_CHANGED" as never,
       message: `Project restored from archive`,
       data: { oldStatus: "ARCHIVED", newStatus: "ACTIVE" },
@@ -321,6 +327,7 @@ export async function getProjects() {
 
   return db.project.findMany({
     where: {
+      orgId: session.user.orgId!,
       members: { some: { userId: session.user.id } },
     },
     include: {

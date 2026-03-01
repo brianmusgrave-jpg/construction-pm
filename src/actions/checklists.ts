@@ -83,6 +83,7 @@ export async function applyChecklistTemplate(
   // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "CHECKLIST_APPLIED",
       message: `Applied "${template.name}" checklist to ${checklist.phase.name}`,
       projectId: checklist.phase.projectId,
@@ -143,6 +144,7 @@ export async function toggleChecklistItem(itemId: string) {
   // Activity log — `wasCompleted` is the PRE-toggle state (used by undoActivity)
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "CHECKLIST_ITEM_TOGGLED",
       message: `${nowCompleting ? "Completed" : "Unchecked"} "${item.title}"`,
       projectId: item.checklist.phase.projectId,

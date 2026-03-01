@@ -36,11 +36,11 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db-types";
 import type { Webhook } from "@/lib/db-types";
 
-/** Internal helper — throws if not authenticated, returns userId. */
+/** Internal helper — throws if not authenticated, returns session. */
 async function requireAuth() {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Unauthenticated");
-  return session.user.id;
+  return session;
 }
 
 // WEBHOOK_EVENTS lives in lib/ to satisfy the "use server" export restriction
@@ -56,8 +56,8 @@ export type { WebhookEvent } from "@/lib/webhook-events";
  * Requires: authenticated session.
  */
 export async function getWebhooks(): Promise<Webhook[]> {
-  await requireAuth();
-  return db.webhook.findMany({ orderBy: { createdAt: "desc" } });
+  const session = await requireAuth();
+  return db.webhook.findMany({ where: { orgId: session.user.orgId! }, orderBy: { createdAt: "desc" } });
 }
 
 // ── Mutations ──
@@ -76,7 +76,7 @@ export async function createWebhook(data: {
   url: string;
   events: string[];
 }): Promise<void> {
-  await requireAuth();
+  const session = await requireAuth();
   if (!data.name.trim()) throw new Error("Name is required");
   if (!data.url.startsWith("https://")) throw new Error("URL must use HTTPS");
   if (data.events.length === 0) throw new Error("Select at least one event");
@@ -85,6 +85,7 @@ export async function createWebhook(data: {
   const secret = "whsec_" + randomBytes(24).toString("hex");
   await db.webhook.create({
     data: {
+      orgId: session.user.orgId!,
       name: data.name.trim(),
       url: data.url,
       secret,
@@ -146,8 +147,9 @@ export async function deleteWebhook(id: string): Promise<void> {
  * @param payload - Arbitrary event data to include in the `data` field
  */
 export async function dispatchWebhook(event: string, payload: Record<string, unknown>): Promise<void> {
+  const session = await auth();
   const webhooks: Webhook[] = await db.webhook.findMany({
-    where: { active: true },
+    where: { orgId: session.user.orgId!, active: true },
   });
 
   for (const wh of webhooks) {

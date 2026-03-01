@@ -114,6 +114,7 @@ export async function updateProfile(data: {
   if (memberships.length > 0) {
     await db.activityLog.createMany({
       data: memberships.map((m) => ({
+        orgId: session.user.orgId!,
         action: "MEMBER_UPDATED" as never,
         message: `Profile updated: ${Object.keys(changes).join(", ")}`,
         data: { userId: session.user.id, changes },

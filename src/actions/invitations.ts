@@ -114,6 +114,7 @@ export async function createInvitation(
   // Activity log — fire-and-forget (never block response on this write)
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "MEMBER_INVITED",
       message: `Invited ${normalizedEmail} as ${role.toLowerCase()}`,
       projectId,
@@ -260,6 +261,7 @@ export async function acceptInvitation(token: string) {
   // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "MEMBER_JOINED",
       message: `${session.user.name || session.user.email} joined as ${invitation.role.toLowerCase()}`,
       projectId: invitation.projectId,
@@ -352,6 +354,7 @@ export async function updateMemberRole(
   // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "MEMBER_UPDATED",
       message: `Changed ${member.user.name || member.user.email} role to ${newRole.toLowerCase()}`,
       projectId,
@@ -397,6 +400,7 @@ export async function removeMember(memberId: string, projectId: string) {
   // Activity log — fire-and-forget
   db.activityLog.create({
     data: {
+      orgId: session.user.orgId!,
       action: "MEMBER_REMOVED",
       message: `Removed ${member.user.name || member.user.email} from project`,
       projectId,
