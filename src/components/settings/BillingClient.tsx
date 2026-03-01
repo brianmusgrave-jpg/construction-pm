@@ -87,6 +87,41 @@ export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: Bi
   const pd = b.planDetails;
   const sb = statusBadge(b.status);
 
+  /** Redirect to Stripe Checkout for plan upgrade. */
+  async function handleUpgrade() {
+    const targetPlan = b.plan === "STARTER" ? "PRO" : "ENTERPRISE";
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: targetPlan }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.error(data.error || "Could not start checkout");
+      }
+    } catch {
+      toast.error("Failed to start checkout. Please try again.");
+    }
+  }
+
+  /** Redirect to Stripe Billing Portal for plan management. */
+  async function handleManagePlan() {
+    try {
+      const res = await fetch("/api/stripe/portal", { method: "POST" });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        toast.info(data.error || "Set up a subscription first to manage billing.");
+      }
+    } catch {
+      toast.error("Failed to open billing portal.");
+    }
+  }
+
   /** Handle ownership transfer with confirmation. */
   async function handleTransfer() {
     if (!transferTarget) return;
@@ -163,7 +198,7 @@ export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: Bi
           {b.plan !== "ENTERPRISE" && (
             <button
               className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              onClick={() => toast.info("Upgrade flow will be available with Stripe integration (Sprint 15).")}
+              onClick={handleUpgrade}
             >
               <ArrowUpRight className="w-4 h-4" />
               {b.plan === "STARTER" ? "Upgrade to Pro" : "Upgrade to Enterprise"}
@@ -171,9 +206,9 @@ export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: Bi
           )}
           <button
             className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
-            onClick={() => toast.info("Plan management will be available with Stripe integration (Sprint 15).")}
+            onClick={handleManagePlan}
           >
-            {b.plan === "ENTERPRISE" ? "Manage Plan" : "Cancel Plan"}
+            {b.stripeCustomerId ? "Manage Billing" : b.plan === "ENTERPRISE" ? "Manage Plan" : "Cancel Plan"}
           </button>
         </div>
       </div>
@@ -297,7 +332,7 @@ export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: Bi
             </div>
             <button
               className="ml-auto inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium"
-              onClick={() => toast.info("Stripe customer portal will be available in Sprint 15.")}
+              onClick={handleManagePlan}
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Update
@@ -309,7 +344,7 @@ export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: Bi
             <div>
               <p className="text-sm font-medium text-gray-700">No payment method on file</p>
               <p className="text-xs text-gray-500">
-                Payment collection will be set up with Stripe integration (Sprint 15).
+                Subscribe to a plan to add a payment method.
               </p>
             </div>
           </div>

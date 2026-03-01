@@ -198,11 +198,33 @@ export interface Invoice {
 }
 
 export async function getInvoiceHistory(): Promise<Invoice[]> {
-  await requireBillingAccess();
+  const session = await requireBillingAccess();
+  const orgId = session.user.orgId;
+  if (!orgId) return [];
 
-  // Stub: return empty array until Stripe integration (Sprint 15)
-  // When Stripe is live, this will call stripe.invoices.list({ customer })
-  return [];
+  // Try to fetch from Stripe if configured
+  try {
+    const { getStripe } = await import("@/lib/stripe");
+    const stripe = getStripe();
+    const org = await dbc.organization.findUnique({ where: { id: orgId } });
+    if (!org?.stripeCustomerId) return [];
+
+    const invoices = await stripe.invoices.list({
+      customer: org.stripeCustomerId,
+      limit: 24,
+    });
+
+    return invoices.data.map((inv: any) => ({
+      id: inv.id,
+      date: new Date(inv.created * 1000).toISOString(),
+      amount: `$${(inv.amount_paid / 100).toFixed(2)}`,
+      status: inv.status === "paid" ? "paid" : inv.status === "open" ? "open" : inv.status === "void" ? "void" : "draft",
+      pdfUrl: inv.invoice_pdf || null,
+    }));
+  } catch {
+    // Stripe not configured — return empty
+    return [];
+  }
 }
 
 /* ------------------------------------------------------------------ */
