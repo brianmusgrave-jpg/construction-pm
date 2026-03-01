@@ -208,6 +208,8 @@ model User {
   systemAdminLogs     SystemAdminLog[]      @relation("system_admin_logs")
   impersonationsAsAdmin  ImpersonationSession[] @relation("impersonation_admin")
   impersonationsAsTarget ImpersonationSession[] @relation("impersonation_target")
+  keeneyMode  Boolean  @default(false) @map("keeney_mode")
+  voiceMemos  VoiceMemo[] @relation("voice_memos")
 
   @@map("users")
 }
@@ -240,6 +242,7 @@ model Project {
   invitations  Invitation[]
   activityLogs ActivityLog[]
   dailyLogs    DailyLog[]
+  voiceMemos   VoiceMemo[]
 
   @@map("projects")
 }
@@ -1471,6 +1474,7 @@ model ClientToken {
 enum AIProvider {
   OPENAI
   ANTHROPIC
+  GROQ
 }
 
 /// Singleton workspace-level AI configuration.
@@ -1541,4 +1545,29 @@ model Embedding {
   @@unique([entityType, entityId])
   @@index([entityType])
   @@map("embeddings")
+}
+
+// ── Keeney Mode: Voice Memos (Sprint 21) ──
+
+model VoiceMemo {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  projectId   String?   @map("project_id")
+  audioUrl    String?   @map("audio_url")
+  transcript  String    @db.Text
+  parsedIntent Json     @map("parsed_intent")
+  actionType  String    @map("action_type")   // daily_log, punch_list, weather_delay, photo_note, general_note
+  commandType String    @map("command_type")   // voice_memo, flag_issue, weather_delay, quick_photo, etc.
+  language    String                            // detected language code (en, es, pt, fr, etc.)
+  source      String    @default("keeney_voice")
+  recordedAt  DateTime  @map("recorded_at")    // original recording timestamp (for offline queue accuracy)
+  processedAt DateTime? @map("processed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  user        User      @relation("voice_memos", fields: [userId], references: [id])
+  project     Project?  @relation(fields: [projectId], references: [id])
+
+  @@index([userId, createdAt])
+  @@index([projectId, createdAt])
+  @@map("voice_memos")
 }

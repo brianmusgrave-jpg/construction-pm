@@ -30,7 +30,9 @@ import { getReportSchedules } from "@/actions/report-schedules";
 import { QuickBooksSection } from "@/components/settings/QuickBooksSection";
 import { getQuickBooksConnection, getQuickBooksSyncLogs } from "@/actions/quickbooks";
 import { ProfileEditor } from "@/components/settings/ProfileEditor";
+import { KeeneyModeToggle } from "@/components/settings/KeeneyModeToggle";
 import { getProfile } from "@/actions/profile";
+import { getKeeneyModeStatus } from "@/actions/keeney";
 import { getLocale } from "@/i18n/locale";
 import { getTranslations } from "next-intl/server";
 
@@ -63,8 +65,11 @@ export default async function SettingsPage() {
     getQuickBooksSyncLogs().catch(() => []),
   ]);
 
-  // Profile data for self-service editing
-  const profile = await getProfile().catch(() => null);
+  // Profile data + Keeney Mode status
+  const [profile, keeneyMode] = await Promise.all([
+    getProfile().catch(() => null),
+    getKeeneyModeStatus().catch(() => false),
+  ]);
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -83,6 +88,12 @@ export default async function SettingsPage() {
       {/* Two-Factor Authentication */}
       <div className="mt-6">
         <TotpSection enabled={totpStatus.enabled} verified={totpStatus.verified} />
+      </div>
+
+      {/* Keeney Mode — voice-first interface (Sprint 21) */}
+      <div className="mt-6 bg-white rounded-xl border border-gray-200 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t("interface")}</h2>
+        <KeeneyModeToggle enabled={keeneyMode} />
       </div>
 
       {/* Language section */}

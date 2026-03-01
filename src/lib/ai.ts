@@ -19,7 +19,7 @@
 // ── Types ──────────────────────────────────────────────────────────────────
 
 /** AI provider identifier — matches the Prisma AIProvider enum. */
-export type AIProvider = "OPENAI" | "ANTHROPIC";
+export type AIProvider = "OPENAI" | "ANTHROPIC" | "GROQ";
 
 /** A single message in a conversation, following the OpenAI chat format. */
 export interface AIMessage {
@@ -82,6 +82,10 @@ const MODEL_PRICING: Record<string, [number, number]> = {
   "claude-3-5-sonnet-20241022": [3.0, 15.0],
   "claude-3-5-haiku-20241022": [0.8, 4.0],
   "claude-3-opus-20240229": [15.0, 75.0],
+  // Groq
+  "llama-3.3-70b-versatile": [0.59, 0.79],
+  "llama-3.1-8b-instant": [0.05, 0.08],
+  "whisper-large-v3": [0.111, 0], // per-hour rate, input only
 };
 
 /**
@@ -229,6 +233,146 @@ async function callAnthropic(
   };
 }
 
+// ── Groq request ─────────────────────────────────────────────────────────
+
+/**
+ * Make a chat completion request to the Groq API.
+ * Uses the OpenAI-compatible endpoint format.
+ */
+async function callGroq(
+  messages: AIMessage[],
+  model: string,
+  maxTokens: number,
+  temperature: number
+): Promise<AIResponse> {
+  const apiKey = process.env.GROQ_API_KEY;
+  if (!apiKey) {
+    return { text: null, success: false, error: "GROQ_API_KEY not configured", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 }, costUsd: 0 };
+  }
+
+  let raw: Response;
+  try {
+    raw = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature }),
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Network error";
+    return { text: null, success: false, error: msg, usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 }, costUsd: 0 };
+  }
+
+  if (!raw.ok) {
+    const body = await raw.text();
+    return { text: null, success: false, error: `Groq ${raw.status}: ${body.slice(0, 200)}`, usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 }, costUsd: 0 };
+  }
+
+  const data = await raw.json();
+  const promptTokens: number = data.usage?.prompt_tokens ?? 0;
+  const completionTokens: number = data.usage?.completion_tokens ?? 0;
+  const totalTokens: number = data.usage?.total_tokens ?? 0;
+  const text: string = data.choices?.[0]?.message?.content ?? "";
+
+  return {
+    text,
+    success: true,
+    usage: { promptTokens, completionTokens, totalTokens },
+    costUsd: estimateCost(promptTokens, completionTokens, model),
+  };
+}
+
+// ── Groq Whisper transcription ───────────────────────────────────────────
+
+/** Result from transcribing audio via Groq Whisper. */
+export interface TranscriptionResult {
+  text: string;
+  language: string;
+  success: boolean;
+  error?: string;
+}
+
+/**
+ * Transcribe audio using Groq Whisper Large v3.
+ * Falls back to OpenAI Whisper if Groq key isn't configured.
+ *
+ * @param audioBlob - Raw audio data (WebM/Opus, mp3, wav, etc.)
+ * @param languageHint - Optional ISO-639-1 language hint (e.g. "es", "pt")
+ * @returns Transcript text and detected language
+ */
+export async function transcribeAudio(
+  audioBlob: Blob,
+  languageHint?: string
+): Promise<TranscriptionResult> {
+  // Try Groq first (164x realtime, cheapest)
+  const groqKey = process.env.GROQ_API_KEY;
+  if (groqKey) {
+    try {
+      const formData = new FormData();
+      formData.append("file", audioBlob, "memo.webm");
+      formData.append("model", "whisper-large-v3");
+      formData.append("response_format", "verbose_json");
+      if (languageHint) formData.append("language", languageHint);
+
+      const res = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${groqKey}` },
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        return {
+          text: data.text ?? "",
+          language: data.language ?? languageHint ?? "en",
+          success: true,
+        };
+      }
+      // If Groq fails, fall through to OpenAI
+      console.warn("Groq Whisper failed, falling back to OpenAI:", res.status);
+    } catch (err) {
+      console.warn("Groq Whisper error, falling back to OpenAI:", err);
+    }
+  }
+
+  // Fallback: OpenAI Whisper
+  const openaiKey = process.env.OPENAI_API_KEY;
+  if (!openaiKey) {
+    return { text: "", language: "en", success: false, error: "No transcription API key configured (GROQ_API_KEY or OPENAI_API_KEY)" };
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("file", audioBlob, "memo.webm");
+    formData.append("model", "whisper-1");
+    formData.append("response_format", "verbose_json");
+    if (languageHint) formData.append("language", languageHint);
+
+    const res = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${openaiKey}` },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const body = await res.text();
+      return { text: "", language: "en", success: false, error: `OpenAI Whisper ${res.status}: ${body.slice(0, 200)}` };
+    }
+
+    const data = await res.json();
+    return {
+      text: data.text ?? "",
+      language: data.language ?? languageHint ?? "en",
+      success: true,
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Transcription network error";
+    return { text: "", language: "en", success: false, error: msg };
+  }
+}
+
 // ── Public API ────────────────────────────────────────────────────────────
 
 /**
@@ -288,10 +432,17 @@ export async function callAI(
   const temperature = options.temperature ?? 0.3;
 
   // Route to the appropriate provider
-  const response =
-    provider === "ANTHROPIC"
-      ? await callAnthropic(messages, model, maxTokens, temperature)
-      : await callOpenAI(messages, model, maxTokens, temperature);
+  let response: AIResponse;
+  switch (provider) {
+    case "ANTHROPIC":
+      response = await callAnthropic(messages, model, maxTokens, temperature);
+      break;
+    case "GROQ":
+      response = await callGroq(messages, model, maxTokens, temperature);
+      break;
+    default:
+      response = await callOpenAI(messages, model, maxTokens, temperature);
+  }
 
   // Sprint 16: Track token usage against org budget (fire-and-forget)
   if (options.orgId && response.success && response.usage.totalTokens > 0) {
