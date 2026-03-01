@@ -123,7 +123,7 @@ export default function SignupPage() {
       });
 
       if (result?.ok) {
-        router.push("/dashboard");
+        router.push("/onboarding");
       } else {
         router.push("/login");
       }

@@ -1315,5 +1315,12 @@
     "budgetExceeded": "AI budget exceeded",
     "budgetWarning": "{percent}% of AI budget used",
     "upgradeToUnlock": "Upgrade to Pro to unlock AI features"
+  },
+  "onboarding": {
+    "companyInfo": "Company Info",
+    "firstProject": "First Project",
+    "inviteTeam": "Invite Team",
+    "quickTour": "Quick Tour",
+    "allDone": "All Done!"
   }
 }

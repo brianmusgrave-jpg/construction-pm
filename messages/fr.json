@@ -1315,5 +1315,12 @@
     "budgetExceeded": "Budget IA dépassé",
     "budgetWarning": "{percent}% du budget IA utilisé",
     "upgradeToUnlock": "Passez au Pro pour débloquer les fonctionnalités IA"
+  },
+  "onboarding": {
+    "companyInfo": "Infos entreprise",
+    "firstProject": "Premier projet",
+    "inviteTeam": "Inviter l'équipe",
+    "quickTour": "Tour rapide",
+    "allDone": "Terminé !"
   }
 }
