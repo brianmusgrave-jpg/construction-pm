@@ -72,7 +72,7 @@ import {
   PenTool,
   Calculator,
 } from "lucide-react";
-import { PlayCircle } from "lucide-react";
+import { PlayCircle, CreditCard } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -337,6 +337,18 @@ function useGuides(t: (key: string) => string): GuideSection[] {
         { id: "ins-directory-search", titleKey: "articles.directorySearch", contentKey: "articles.directorySearchContent", tags: ["search", "filter", "directory", "find", "type"] },
         { id: "ins-location", titleKey: "articles.staffLocation", contentKey: "articles.staffLocationContent", tags: ["location", "city", "address", "staff", "directory"] },
         { id: "ins-job-pl", titleKey: "articles.jobPL", contentKey: "articles.jobPLContent", tags: ["profit", "loss", "P&L", "margin", "report", "financial"] },
+      ],
+    },
+    {
+      id: "billing-plans",
+      titleKey: "sections.billingPlans",
+      icon: <CreditCard className="w-5 h-5" />,
+      category: "admin",
+      articles: [
+        { id: "bill-plans", titleKey: "articles.plansOverviewTitle", contentKey: "articles.plansOverviewBody", tags: ["plan", "starter", "pro", "enterprise", "pricing", "subscription", "billing"] },
+        { id: "bill-ai-usage", titleKey: "articles.aiUsageTitle", contentKey: "articles.aiUsageBody", tags: ["AI", "token", "budget", "quota", "usage", "gating"] },
+        { id: "bill-qb-export", titleKey: "articles.qbExportTitle", contentKey: "articles.qbExportBody", tags: ["QuickBooks", "export", "invoice", "accounting", "QB"] },
+        { id: "bill-signup", titleKey: "articles.signupOnboardingTitle", contentKey: "articles.signupOnboardingBody", tags: ["signup", "onboarding", "trial", "register", "account", "company"] },
       ],
     },
     {
