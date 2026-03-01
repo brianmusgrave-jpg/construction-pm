@@ -477,7 +477,9 @@
     "project": "Proyecto",
     "phase": "Fase",
     "document": "Documento",
-    "staff": "Personal"
+    "staff": "Personal",
+    "voiceNote": "Nota de Voz",
+    "voiceMemo": "Memo de Voz"
   },
   "help": {
     "searchPlaceholder": "Buscar artículos de ayuda...",

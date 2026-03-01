@@ -25,6 +25,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
+import { semanticSearch } from "@/lib/embeddings";
 
 // Type lives in lib/ to satisfy the "use server" export restriction
 import type { SearchResult } from "@/lib/search-types";
@@ -149,6 +150,51 @@ export async function globalSearch(query: string): Promise<SearchResult[]> {
       subtitle: [s.role, s.company].filter(Boolean).join(" · "),
       href: `/dashboard/directory`,
     });
+  }
+
+  // Semantic search for voice notes/memos (Sprint 22 — #69)
+  try {
+    const semanticResults = await semanticSearch(
+      q,
+      ["voice_note", "voice_memo"],
+      5
+    );
+    const dbc = db as any;
+    for (const sr of semanticResults) {
+      const snippet = sr.content.slice(0, 80) + (sr.content.length > 80 ? "…" : "");
+      if (sr.entityType === "voice_note") {
+        // Resolve the voice note's parent phase → project for navigation
+        const note = await dbc.voiceNote.findUnique({
+          where: { id: sr.entityId },
+          select: { label: true, phase: { select: { id: true, name: true, project: { select: { id: true, name: true } } } } },
+        }).catch(() => null);
+        if (note?.phase) {
+          results.push({
+            type: "voice_note" as any,
+            id: sr.entityId,
+            title: note.label || snippet,
+            subtitle: `${note.phase.project.name} → ${note.phase.name} (${Math.round(sr.score * 100)}% match)`,
+            href: `/dashboard/projects/${note.phase.project.id}/phases/${note.phase.id}`,
+          });
+        }
+      } else if (sr.entityType === "voice_memo") {
+        const memo = await dbc.voiceMemo.findUnique({
+          where: { id: sr.entityId },
+          select: { actionType: true, project: { select: { id: true, name: true } } },
+        }).catch(() => null);
+        if (memo) {
+          results.push({
+            type: "voice_memo" as any,
+            id: sr.entityId,
+            title: snippet,
+            subtitle: `${memo.project?.name || "General"} · ${(memo.actionType || "note").replace("_", " ")} (${Math.round(sr.score * 100)}% match)`,
+            href: memo.project ? `/dashboard/projects/${memo.project.id}` : `/dashboard`,
+          });
+        }
+      }
+    }
+  } catch {
+    // Semantic search is best-effort — DB search results are always returned
   }
 
   return results;

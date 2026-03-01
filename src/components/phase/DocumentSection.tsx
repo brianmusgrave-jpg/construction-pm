@@ -553,6 +553,8 @@ export function DocumentSection({
               {/* AI Extraction panel */}
               <DocumentAIPanel
                 documentId={doc.id}
+                documentName={doc.name}
+                mimeType={doc.mimeType}
                 initialData={doc.extractedData ?? null}
               />
               </div>

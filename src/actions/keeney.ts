@@ -10,6 +10,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { generateEmbedding, storeEmbedding } from "@/lib/embeddings";
 
 // ── Types ──────────────────────────────────────────────────────────────
 
@@ -158,6 +159,16 @@ export async function processVoiceMemo(
     // 4. Send notifications (fire-and-forget)
     if (projectId && input.intent.notify.length > 0) {
       sendMemoNotifications(userId, projectId, input.intent).catch(() => {});
+    }
+
+    // Generate and store embedding for semantic search (fire-and-forget)
+    if (input.transcript) {
+      const embeddingContent = `${input.intent.summary}\n${input.intent.details}\n${input.transcript}`;
+      generateEmbedding(embeddingContent).then((vector) => {
+        if (vector) {
+          storeEmbedding("voice_memo", memo.id, embeddingContent, vector).catch(() => {});
+        }
+      }).catch(() => {});
     }
 
     return { success: true, memoId: memo.id, actionsTaken };

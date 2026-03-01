@@ -30,6 +30,7 @@ import {
   Layers,
   FileText,
   Users,
+  Mic,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -38,6 +39,8 @@ const typeIcons: Record<string, typeof FolderKanban> = {
   phase: Layers,
   document: FileText,
   staff: Users,
+  voice_note: Mic,
+  voice_memo: Mic,
 };
 
 export function SearchPalette() {
@@ -57,6 +60,8 @@ export function SearchPalette() {
     phase: t("phase"),
     document: t("document"),
     staff: t("staff"),
+    voice_note: t("voiceNote"),
+    voice_memo: t("voiceMemo"),
   };
 
   // Keyboard shortcut: Cmd+K / Ctrl+K

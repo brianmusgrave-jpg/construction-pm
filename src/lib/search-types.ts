@@ -15,7 +15,7 @@
  */
 export type SearchResult = {
   /** The kind of entity this result represents. */
-  type: "project" | "phase" | "document" | "staff";
+  type: "project" | "phase" | "document" | "staff" | "voice_note" | "voice_memo";
   /** The entity's database ID. */
   id: string;
   /** Primary display text (project name, phase name, document title, staff name). */

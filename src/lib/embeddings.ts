@@ -32,6 +32,8 @@ const EMBEDDING_MODEL = "text-embedding-3-small";
 /** Entity types that can have associated embeddings. */
 export type EmbeddingEntityType =
   | "voice_note"
+  | "voice_memo"
+  | "daily_log"
   | "document"
   | "phase"
   | "project"

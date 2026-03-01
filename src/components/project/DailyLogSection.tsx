@@ -35,8 +35,10 @@ import {
   Wrench,
   FileText,
   AlertTriangle,
+  Sparkles,
 } from "lucide-react";
 import { createDailyLog, deleteDailyLog } from "@/actions/daily-logs";
+import { generateDailyLogDraft } from "@/actions/ai-daily-log";
 import type { DailyLog } from "@/lib/db-types";
 import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
 
@@ -55,6 +57,7 @@ export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionP
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [aiGenerating, setAiGenerating] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
   const [form, setForm] = useState({
@@ -108,6 +111,33 @@ export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionP
     }
   };
 
+  const handleAIGenerate = async () => {
+    setAiGenerating(true);
+    setError(null);
+    try {
+      const draft = await generateDailyLogDraft(projectId, form.date || undefined);
+      if (!draft.success || !draft.draft) {
+        setError(draft.error || "AI generation failed");
+        return;
+      }
+      const d = draft.draft;
+      setForm((f) => ({
+        ...f,
+        workSummary: d.workSummary || f.workSummary,
+        issues: d.issues || f.issues,
+        notes: d.notes || f.notes,
+        weather: d.weather || f.weather,
+        crewCount: d.crewCount ? String(d.crewCount) : f.crewCount,
+        equipment: d.equipment || f.equipment,
+      }));
+      setShowForm(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "AI generation failed");
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-5">
       <div className="flex items-center justify-between mb-4">
@@ -118,15 +148,32 @@ export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionP
             ({logs.length} entries)
           </span>
         </h2>
-        {canCreate && (
-          <button
-            onClick={() => setShowForm((v) => !v)}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
-          >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">Add Entry</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {canCreate && (
+            <button
+              onClick={handleAIGenerate}
+              disabled={aiGenerating}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-purple-600 hover:text-purple-700 disabled:opacity-60"
+              title="Generate daily log draft from today's voice memos and activity"
+            >
+              {aiGenerating ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Sparkles className="w-3.5 h-3.5" />
+              )}
+              <span className="hidden sm:inline">AI Draft</span>
+            </button>
+          )}
+          {canCreate && (
+            <button
+              onClick={() => setShowForm((v) => !v)}
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-dark)]"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="hidden sm:inline">Add Entry</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {error && (

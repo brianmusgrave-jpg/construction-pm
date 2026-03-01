@@ -26,6 +26,7 @@ import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { callAI } from "@/lib/ai";
+import { generateEmbedding, storeEmbedding } from "@/lib/embeddings";
 
 // ── Zod Schema ──
 
@@ -243,6 +244,13 @@ export async function transcribeVoiceNote(noteId: string) {
     where: { id: noteId },
     data: { transcript },
   });
+
+  // Generate and store embedding for semantic search (fire-and-forget)
+  generateEmbedding(transcript).then((vector) => {
+    if (vector) {
+      storeEmbedding("voice_note", noteId, transcript, vector).catch(() => {});
+    }
+  }).catch(() => {});
 
   revalidatePath(`/dashboard/projects/${note.phase.projectId}`);
   return { transcript };
