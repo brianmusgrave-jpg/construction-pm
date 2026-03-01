@@ -137,6 +137,15 @@ export function ImportContactsModal({ onClose }: { onClose: () => void }) {
     setMappings((prev) => ({ ...prev, [header]: field }));
   };
 
+  // Fields already mapped (excluding current header's selection)
+  const usedFields = (excludeHeader: string): Set<string> => {
+    const used = new Set<string>();
+    for (const [h, f] of Object.entries(mappings)) {
+      if (h !== excludeHeader && f) used.add(f);
+    }
+    return used;
+  };
+
   const hasNameMapping = Object.values(mappings).includes("name");
 
   // ── Step 3: Preview & Import ──
@@ -318,11 +327,14 @@ export function ImportContactsModal({ onClose }: { onClose: () => void }) {
                           : "border-gray-300 text-gray-500"
                       )}
                     >
-                      {Object.entries(STAFF_FIELD_LABELS).map(([val, label]) => (
-                        <option key={val} value={val}>
-                          {label}
-                        </option>
-                      ))}
+                      {Object.entries(STAFF_FIELD_LABELS).map(([val, label]) => {
+                        const taken = val && usedFields(header).has(val);
+                        return (
+                          <option key={val} value={val} disabled={!!taken}>
+                            {label}{taken ? " ✓" : ""}
+                          </option>
+                        );
+                      })}
                     </select>
                   </div>
                 ))}
@@ -365,9 +377,9 @@ export function ImportContactsModal({ onClose }: { onClose: () => void }) {
                         </th>
                         {Object.entries(mappings)
                           .filter(([, f]) => f)
-                          .map(([, field]) => (
+                          .map(([header, field]) => (
                             <th
-                              key={field}
+                              key={`${header}-${field}`}
                               className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase"
                             >
                               {STAFF_FIELD_LABELS[field]}
