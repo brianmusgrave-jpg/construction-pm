@@ -115,12 +115,12 @@ export function DailyLogSection({ projectId, logs, canCreate }: DailyLogSectionP
     setAiGenerating(true);
     setError(null);
     try {
-      const draft = await generateDailyLogDraft(projectId, form.date || undefined);
-      if (!draft.success || !draft.draft) {
+      const draft: any = await generateDailyLogDraft(projectId, form.date || undefined);
+      if (draft.success === false) {
         setError(draft.error || "AI generation failed");
         return;
       }
-      const d = draft.draft;
+      const d = draft.draft || draft;
       setForm((f) => ({
         ...f,
         workSummary: d.workSummary || f.workSummary,
