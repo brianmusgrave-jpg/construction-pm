@@ -131,7 +131,7 @@ export function DocumentAIPanel({ documentId, documentName, mimeType, initialDat
     setAiAction("classify");
     setError(null);
     try {
-      const result = await classifyDocument(documentName, mimeType || "application/octet-stream");
+      const result: any = await classifyDocument(documentName, mimeType || "application/octet-stream");
       if (result.success && result.result) {
         setClassifyResult(result.result as ClassificationResult);
         setExpanded(true);
@@ -149,7 +149,7 @@ export function DocumentAIPanel({ documentId, documentName, mimeType, initialDat
     setAiAction("coi");
     setError(null);
     try {
-      const result = await extractCOIFields(documentId);
+      const result: any = await extractCOIFields(documentId);
       if (result.success && result.fields) {
         setCoiResult(result.fields as COIResult);
         setExpanded(true);
@@ -167,7 +167,7 @@ export function DocumentAIPanel({ documentId, documentName, mimeType, initialDat
     setAiAction("conflict");
     setError(null);
     try {
-      const result = await detectDocumentConflicts(documentId);
+      const result: any = await detectDocumentConflicts(documentId);
       if (result.success && result.result) {
         setConflictResult(result.result as ConflictResult);
         setExpanded(true);
