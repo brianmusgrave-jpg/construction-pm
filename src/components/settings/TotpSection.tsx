@@ -20,6 +20,7 @@
  */
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Shield,
   ShieldCheck,
@@ -39,6 +40,7 @@ interface TotpSectionProps {
 }
 
 export function TotpSection({ enabled: initEnabled, verified: initVerified }: TotpSectionProps) {
+  const t = useTranslations("settings");
   const confirm = useConfirmDialog();
   const [enabled, setEnabled] = useState(initEnabled);
   const [verified, setVerified] = useState(initVerified);
@@ -58,7 +60,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
       setSecret(res.secret);
       setStep("setup");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to set up 2FA");
+      setError(err instanceof Error ? err.message : t("twoFactorSetupFailed"));
     } finally {
       setLoading(false);
     }
@@ -79,17 +81,17 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
         setQrDataUrl(null);
         setSecret(null);
       } else {
-        setError(res.error ?? "Verification failed");
+        setError(res.error ?? t("twoFactorVerifyFailed"));
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Verification failed");
+      setError(err instanceof Error ? err.message : t("twoFactorVerifyFailed"));
     } finally {
       setLoading(false);
     }
   };
 
   const handleDisable = async () => {
-    if (!await confirm("Disable two-factor authentication? Your account will be less secure.", { danger: true })) return;
+    if (!await confirm(t("twoFactorDisableConfirm"), { danger: true })) return;
     setLoading(true);
     setError(null);
     try {
@@ -98,7 +100,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
       setVerified(false);
       setStep("idle");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to disable 2FA");
+      setError(err instanceof Error ? err.message : t("twoFactorDisableFailed"));
     } finally {
       setLoading(false);
     }
@@ -109,10 +111,10 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide flex items-center gap-2">
           <Shield className="w-4 h-4 text-[var(--color-primary)]" />
-          Two-Factor Authentication
+          {t("twoFactorTitle")}
           {enabled && verified && (
             <span className="text-xs font-medium text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full normal-case flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3" /> Enabled
+              <ShieldCheck className="w-3 h-3" /> {t("twoFactorEnabled")}
             </span>
           )}
         </h2>
@@ -129,7 +131,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
       {!enabled && step === "idle" && (
         <div>
           <p className="text-sm text-gray-600 mb-4">
-            Add an extra layer of security to your account using a TOTP authenticator app (Google Authenticator, Authy, 1Password, etc.).
+            {t("twoFactorDescription")}
           </p>
           <button
             onClick={handleSetup}
@@ -137,7 +139,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-lg disabled:opacity-60"
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Shield className="w-4 h-4" />}
-            Enable Two-Factor Authentication
+            {t("enableTwoFactor")}
           </button>
         </div>
       )}
@@ -145,8 +147,8 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
       {step === "setup" && qrDataUrl && (
         <div className="space-y-4">
           <div>
-            <p className="text-sm font-medium text-gray-800 mb-1">Step 1: Scan this QR code</p>
-            <p className="text-xs text-gray-500 mb-3">Open your authenticator app and scan the code below.</p>
+            <p className="text-sm font-medium text-gray-800 mb-1">{t("twoFactorScanQr")}</p>
+            <p className="text-xs text-gray-500 mb-3">{t("twoFactorScanQrDesc")}</p>
             <div className="inline-block p-3 bg-white border-2 border-gray-200 rounded-xl">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrDataUrl} alt="2FA QR Code" className="w-40 h-40" />
@@ -154,7 +156,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
           </div>
           {secret && (
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-1">Or enter this key manually:</p>
+              <p className="text-xs font-medium text-gray-500 mb-1">{t("twoFactorManualKey")}</p>
               <code className="block text-xs bg-gray-50 border border-gray-200 rounded px-3 py-2 font-mono tracking-widest select-all">
                 {secret.match(/.{1,4}/g)?.join(" ")}
               </code>
@@ -162,7 +164,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
           )}
           <form onSubmit={handleVerify} className="space-y-3">
             <div>
-              <p className="text-sm font-medium text-gray-800 mb-1">Step 2: Enter the 6-digit code</p>
+              <p className="text-sm font-medium text-gray-800 mb-1">{t("twoFactorEnterCode")}</p>
               <input
                 type="text"
                 inputMode="numeric"
@@ -180,7 +182,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
                 onClick={() => { setStep("idle"); setCode(""); setQrDataUrl(null); setSecret(null); }}
                 className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-200 rounded-md"
               >
-                Cancel
+                {t("twoFactorCancel")}
               </button>
               <button
                 type="submit"
@@ -188,7 +190,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
                 className="inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] rounded-md disabled:opacity-60"
               >
                 {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Key className="w-3.5 h-3.5" />}
-                Verify & Enable
+                {t("twoFactorVerify")}
               </button>
             </div>
           </form>
@@ -199,9 +201,9 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
         <div className="flex items-start gap-3">
           <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm text-gray-800 font-medium">Two-factor authentication is active</p>
+            <p className="text-sm text-gray-800 font-medium">{t("twoFactorActive")}</p>
             <p className="text-xs text-gray-500 mt-0.5">
-              Your account is protected with TOTP. You will be asked for a code on each sign-in.
+              {t("twoFactorActiveDesc")}
             </p>
             <button
               onClick={handleDisable}
@@ -209,7 +211,7 @@ export function TotpSection({ enabled: initEnabled, verified: initVerified }: To
               className="mt-3 inline-flex items-center gap-1.5 text-sm text-red-600 hover:text-red-800 disabled:opacity-60"
             >
               {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ShieldOff className="w-3.5 h-3.5" />}
-              Disable 2FA
+              {t("twoFactorDisable")}
             </button>
           </div>
         </div>
