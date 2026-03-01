@@ -61,6 +61,7 @@ model User {
   company       String?
   image         String?
   role          UserRole  @default(VIEWER)
+  passwordHash  String?   @map("password_hash") // bcrypt hash; null = legacy email-only login
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 
@@ -88,8 +89,9 @@ model User {
   paymentApps    PaymentApplication[] @relation("pay_app_created")
   drawings       Drawing[]            @relation("drawing_uploaded")
   estimates      Estimate[]           @relation("estimate_created")
-  totpSecret     TotpSecret?
-  aiUsageLogs    AIUsageLog[]         @relation("ai_usage_by_user")
+  totpSecret          TotpSecret?
+  aiUsageLogs         AIUsageLog[]          @relation("ai_usage_by_user")
+  accountInvitesSent  AccountInvitation[]   @relation("account_invitations_sent")
 
   @@map("users")
 }
@@ -652,6 +654,27 @@ model Invitation {
 
   @@index([projectId])
   @@map("invitations")
+}
+
+// ── Global Account Invitations (Sprint UX/Auth) ──
+// Separate from project-scoped Invitation model.
+// Admin creates these to invite new users to the workspace.
+
+model AccountInvitation {
+  id          String    @id @default(cuid())
+  email       String
+  role        UserRole  @default(VIEWER)
+  token       String    @unique
+  expiresAt   DateTime  @map("expires_at")
+  used        Boolean   @default(false)
+
+  invitedBy   User?     @relation("account_invitations_sent", fields: [invitedById], references: [id])
+  invitedById String?   @map("invited_by_id")
+
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([email])
+  @@map("account_invitations")
 }
 
 // ── GPS on Photos (Sprint H #32) ──

@@ -86,7 +86,10 @@
     "emailPlaceholder": "admin@constructionpm.com",
     "invalidCredentials": "Invalid credentials",
     "genericError": "Something went wrong. Please try again.",
-    "demoAccess": "Use <strong>admin@constructionpm.com</strong> for demo access"
+    "demoAccess": "Use <strong>admin@constructionpm.com</strong> for demo access",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordHint": "Leave blank if you haven't set a password yet"
   },
   "home": {
     "tagline": "Manage construction projects, track timelines, coordinate contractors, and keep every phase on schedule.",
@@ -1269,6 +1272,39 @@
     "auditExported": "Audit log exported",
     "auditNote": "Data Retention Note",
     "auditNoteDescription": "Exports up to 5,000 most recent entries. For complete data, contact your database administrator.",
-    "aiDescription": "Configure the AI provider, model, usage limits, and monitor API costs"
+    "aiDescription": "Configure the AI provider, model, usage limits, and monitor API costs",
+    "inviteUser": "Invite User",
+    "inviteUserTitle": "Invite New User",
+    "inviteDescription": "Generate a secure invite link to send to the new user. The link expires in 7 days and can only be used once.",
+    "inviteEmail": "Email address",
+    "inviteRoleLabel": "Role",
+    "generating": "Generating...",
+    "generateLink": "Generate Invite Link",
+    "cancel": "Cancel",
+    "done": "Done",
+    "inviteReady": "Invite link generated!",
+    "inviteReadyHint": "Copy this link and send it to the user. They'll use it to set their name and password.",
+    "inviteLinkLabel": "Invite link",
+    "inviteLinkCopied": "Link copied to clipboard",
+    "inviteExpiry": "This link expires in 7 days and can only be used once."
+  },
+  "activate": {
+    "subtitle": "Set up your account to get started",
+    "invitedAs": "You've been invited as",
+    "role": "Role",
+    "fullName": "Your name",
+    "fullNamePlaceholder": "John Smith",
+    "choosePassword": "Choose a password",
+    "passwordPlaceholder": "At least 8 characters",
+    "passwordHint": "Minimum 8 characters",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Repeat your password",
+    "activateButton": "Create Account & Sign In",
+    "activating": "Setting up your account...",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "genericError": "Something went wrong. Please try again.",
+    "successTitle": "Account Created!",
+    "successMessage": "Signing you in..."
   }
 }

@@ -2,18 +2,23 @@
 
 /**
  * @file src/app/(auth)/login/page.tsx
- * @description Credentials-based login form. Calls signIn("credentials") with
- * email and password; supports callbackUrl from searchParams. Wrapped in Suspense
- * for async searchParams access.
+ * @description Credentials-based login form. Accepts email + optional password.
+ * Backward compatible: accounts without a password (legacy/admin) can still log
+ * in with email only. New invited users must provide the password they set during
+ * account activation.
+ * Supports callbackUrl from searchParams. Wrapped in Suspense for async access.
  */
 
 import { signIn } from "next-auth/react";
 import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
@@ -21,10 +26,10 @@ function LoginForm() {
   const t = useTranslations("auth");
   const tc = useTranslations("common");
 
-  async function handleDevLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    await signIn("credentials", { email, callbackUrl });
+    await signIn("credentials", { email, password, callbackUrl });
     setLoading(false);
   }
 
@@ -45,7 +50,7 @@ function LoginForm() {
         </div>
       )}
 
-      <form onSubmit={handleDevLogin} className="space-y-3">
+      <form onSubmit={handleLogin} className="space-y-3">
         <div>
           <label
             htmlFor="email"
@@ -64,6 +69,36 @@ function LoginForm() {
             className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
           />
         </div>
+
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            {t("password")}
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t("passwordPlaceholder")}
+              className="w-full p-3 pr-10 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+            </button>
+          </div>
+          <p className="mt-1 text-xs text-gray-400">{t("passwordHint")}</p>
+        </div>
+
         <button
           type="submit"
           disabled={loading}

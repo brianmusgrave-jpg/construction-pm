@@ -8,8 +8,11 @@
  *
  * Providers:
  *   1. Google OAuth — optional, only active when GOOGLE_CLIENT_ID is set.
- *   2. Credentials (email-only) — looks up user by email, no password.
- *      Relies on invite-token flow to create accounts before login.
+ *   2. Credentials (email + optional password):
+ *      - If user has a passwordHash: requires correct password (bcrypt verify)
+ *      - If user has no passwordHash: email-only login still works (legacy accounts)
+ *      This allows existing admin/seed accounts to keep working while new
+ *      invited users must use the password they set during account activation.
  *
  * Custom pages:
  *   /login — used for both sign-in and auth errors.
@@ -24,7 +27,10 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
+
+const dbc = db as any;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   // PrismaAdapter handles User, Account, Session, VerificationToken tables.
@@ -42,20 +48,34 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         ]
       : []),
 
-    // Email-only credentials login. No password — users must be invited first.
-    // The authorize function returns the User record or null (rejected).
+    // Email + password credentials login.
+    // Backward compatible: users without a passwordHash can still log in with
+    // email only (legacy seed/admin accounts). New invited users set a password
+    // during account activation and must provide it to log in.
     Credentials({
       name: "Email Login",
       credentials: {
         email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email) return null;
         const email = credentials.email as string;
-        // Look up the user by email; return null if not found (login rejected).
-        const user = await db.user.findUnique({ where: { email } });
-        if (user) return user;
-        return null;
+        const password = (credentials.password as string) || "";
+
+        // Look up the user by email
+        const user = await dbc.user.findUnique({ where: { email } });
+        if (!user) return null;
+
+        // If the user has a password hash, verify the provided password
+        if (user.passwordHash) {
+          if (!password) return null; // Password required but not provided
+          const valid = await bcrypt.compare(password, user.passwordHash);
+          if (!valid) return null;
+        }
+        // If no passwordHash, allow login with just email (legacy accounts)
+
+        return user;
       },
     }),
   ],

@@ -45,20 +45,19 @@ import {
   Users,
   Server,
   Download,
-  Key,
   Shield,
-  Settings,
-  ChevronRight,
   UserCog,
   AlertTriangle,
-  Check,
-  X,
   HardDrive,
   FolderKanban,
   FileText,
   Camera,
   BarChart3,
   Bot,
+  UserPlus,
+  Copy,
+  Check,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -67,6 +66,7 @@ import {
   deactivateUser,
   exportAuditLog,
 } from "@/actions/admin";
+import { inviteGlobalUser } from "@/actions/userInvitations";
 import { AISettingsPanel } from "@/components/admin/AISettingsPanel";
 import type { AISettingsData, AIUsageSummary } from "@/actions/aiSettings";
 import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -135,6 +135,14 @@ export function AdminPanelClient({
   const [togglingKey, setTogglingKey] = useState<string | null>(null);
   const [changingRole, setChangingRole] = useState<string | null>(null);
 
+  // Invite modal state
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState("VIEWER");
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
+  const [inviteCopied, setInviteCopied] = useState(false);
+
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "features", label: t("tabs.features"), icon: <ToggleLeft className="w-4 h-4" /> },
     { key: "activity", label: t("tabs.activity"), icon: <Activity className="w-4 h-4" /> },
@@ -196,6 +204,40 @@ export function AdminPanelClient({
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : t("error"));
     }
+  }
+
+  // ── Invite User ──
+  async function handleInviteSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setInviteLoading(true);
+    try {
+      const result = await inviteGlobalUser(inviteEmail, inviteRole);
+      if (!result.success) {
+        toast.error(result.error || t("error"));
+      } else {
+        setInviteLink(result.inviteUrl || null);
+      }
+    } catch {
+      toast.error(t("error"));
+    } finally {
+      setInviteLoading(false);
+    }
+  }
+
+  async function handleCopyInviteLink() {
+    if (!inviteLink) return;
+    await navigator.clipboard.writeText(inviteLink);
+    setInviteCopied(true);
+    toast.success(t("inviteLinkCopied"));
+    setTimeout(() => setInviteCopied(false), 2000);
+  }
+
+  function resetInviteModal() {
+    setShowInvite(false);
+    setInviteEmail("");
+    setInviteRole("VIEWER");
+    setInviteLink(null);
+    setInviteCopied(false);
   }
 
   // ── Audit Export ──
@@ -319,7 +361,127 @@ export function AdminPanelClient({
       {/* ── User Management Tab ── */}
       {tab === "users" && (
         <div className="space-y-4">
-          <p className="text-sm text-gray-500">{t("usersDescription")}</p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-500">{t("usersDescription")}</p>
+            <button
+              onClick={() => setShowInvite(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <UserPlus className="w-4 h-4" />
+              {t("inviteUser")}
+            </button>
+          </div>
+
+          {/* Invite User Modal */}
+          {showInvite && (
+            <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+              <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+                <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                  <h2 className="text-base font-semibold text-gray-900">{t("inviteUserTitle")}</h2>
+                  <button onClick={resetInviteModal} className="text-gray-400 hover:text-gray-600">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="p-6">
+                  {!inviteLink ? (
+                    <form onSubmit={handleInviteSubmit} className="space-y-4">
+                      <p className="text-sm text-gray-500">{t("inviteDescription")}</p>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {t("inviteEmail")}
+                        </label>
+                        <input
+                          type="email"
+                          required
+                          value={inviteEmail}
+                          onChange={(e) => setInviteEmail(e.target.value)}
+                          placeholder="colleague@example.com"
+                          className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {t("inviteRoleLabel")}
+                        </label>
+                        <select
+                          value={inviteRole}
+                          onChange={(e) => setInviteRole(e.target.value)}
+                          className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                        >
+                          <option value="ADMIN">Admin</option>
+                          <option value="PROJECT_MANAGER">Project Manager</option>
+                          <option value="CONTRACTOR">Contractor</option>
+                          <option value="STAKEHOLDER">Stakeholder</option>
+                          <option value="VIEWER">Viewer</option>
+                        </select>
+                      </div>
+
+                      <div className="flex gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={resetInviteModal}
+                          className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
+                        >
+                          {t("cancel")}
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={inviteLoading}
+                          className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        >
+                          {inviteLoading ? t("generating") : t("generateLink")}
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+                        <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-medium text-green-900">{t("inviteReady")}</p>
+                          <p className="text-xs text-green-700 mt-0.5">{t("inviteReadyHint")}</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
+                          {t("inviteLinkLabel")}
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            readOnly
+                            value={inviteLink}
+                            className="flex-1 p-2.5 border border-gray-200 rounded-lg text-xs text-gray-600 bg-gray-50 font-mono overflow-hidden"
+                          />
+                          <button
+                            onClick={handleCopyInviteLink}
+                            className={`px-3 rounded-lg border transition-colors flex-shrink-0 ${
+                              inviteCopied
+                                ? "bg-green-50 border-green-200 text-green-600"
+                                : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                            }`}
+                          >
+                            {inviteCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          </button>
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1.5">{t("inviteExpiry")}</p>
+                      </div>
+
+                      <button
+                        onClick={resetInviteModal}
+                        className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                      >
+                        {t("done")}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <table className="w-full text-sm">

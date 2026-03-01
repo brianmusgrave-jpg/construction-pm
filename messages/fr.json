@@ -86,7 +86,10 @@
     "emailPlaceholder": "admin@constructionpm.com",
     "invalidCredentials": "Identifiants invalides",
     "genericError": "Quelque chose s'est mal passé. Veuillez réessayer.",
-    "demoAccess": "Utilisez <strong>admin@constructionpm.com</strong> pour un accès démo"
+    "demoAccess": "Utilisez <strong>admin@constructionpm.com</strong> pour un accès démo",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Saisissez votre mot de passe",
+    "passwordHint": "Laissez vide si vous n'avez pas encore défini de mot de passe"
   },
   "home": {
     "tagline": "Gérez vos projets de construction, suivez les délais, coordonnez les entrepreneurs et gardez chaque phase dans les temps.",
@@ -1269,6 +1272,39 @@
     "auditExported": "Journal d'audit exporté",
     "auditNote": "Note de Conservation des Données",
     "auditNoteDescription": "Exporte jusqu'à 5 000 entrées les plus récentes. Pour les données complètes, contactez votre administrateur.",
-    "aiDescription": "Configurer le fournisseur d'IA, le modèle, les limites d'utilisation et surveiller les coûts API"
+    "aiDescription": "Configurer le fournisseur d'IA, le modèle, les limites d'utilisation et surveiller les coûts API",
+    "inviteUser": "Inviter un Utilisateur",
+    "inviteUserTitle": "Inviter un Nouvel Utilisateur",
+    "inviteDescription": "Générez un lien d'invitation sécurisé à envoyer au nouvel utilisateur. Le lien expire dans 7 jours et ne peut être utilisé qu'une seule fois.",
+    "inviteEmail": "Adresse email",
+    "inviteRoleLabel": "Rôle",
+    "generating": "Génération...",
+    "generateLink": "Générer le Lien d'Invitation",
+    "cancel": "Annuler",
+    "done": "Terminé",
+    "inviteReady": "Lien d'invitation généré !",
+    "inviteReadyHint": "Copiez ce lien et envoyez-le à l'utilisateur. Ils l'utiliseront pour définir leur nom et mot de passe.",
+    "inviteLinkLabel": "Lien d'invitation",
+    "inviteLinkCopied": "Lien copié dans le presse-papiers",
+    "inviteExpiry": "Ce lien expire dans 7 jours et ne peut être utilisé qu'une seule fois."
+  },
+  "activate": {
+    "subtitle": "Configurez votre compte pour commencer",
+    "invitedAs": "Vous avez été invité en tant que",
+    "role": "Rôle",
+    "fullName": "Votre nom",
+    "fullNamePlaceholder": "Jean Dupont",
+    "choosePassword": "Choisissez un mot de passe",
+    "passwordPlaceholder": "Au moins 8 caractères",
+    "passwordHint": "Minimum 8 caractères",
+    "confirmPassword": "Confirmer le mot de passe",
+    "confirmPasswordPlaceholder": "Répétez votre mot de passe",
+    "activateButton": "Créer un Compte et Se Connecter",
+    "activating": "Configuration de votre compte...",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères",
+    "genericError": "Quelque chose s'est mal passé. Veuillez réessayer.",
+    "successTitle": "Compte Créé !",
+    "successMessage": "Connexion en cours..."
   }
 }

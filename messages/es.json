@@ -86,7 +86,10 @@
     "emailPlaceholder": "admin@constructionpm.com",
     "invalidCredentials": "Credenciales inválidas",
     "genericError": "Algo salió mal. Por favor, intenta de nuevo.",
-    "demoAccess": "Usa <strong>admin@constructionpm.com</strong> para acceso demo"
+    "demoAccess": "Usa <strong>admin@constructionpm.com</strong> para acceso demo",
+    "password": "Contraseña",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "passwordHint": "Deja en blanco si aún no has configurado una contraseña"
   },
   "home": {
     "tagline": "Gestiona proyectos de construcción, controla cronogramas, coordina contratistas y mantén cada fase al día.",
@@ -1269,6 +1272,39 @@
     "auditExported": "Registro de auditoría exportado",
     "auditNote": "Nota de Retención de Datos",
     "auditNoteDescription": "Exporta hasta 5.000 entradas más recientes. Para datos completos, contacte a su administrador de base de datos.",
-    "aiDescription": "Configurar el proveedor de IA, modelo, límites de uso y monitorear costos de API"
+    "aiDescription": "Configurar el proveedor de IA, modelo, límites de uso y monitorear costos de API",
+    "inviteUser": "Invitar Usuario",
+    "inviteUserTitle": "Invitar Nuevo Usuario",
+    "inviteDescription": "Genera un enlace de invitación seguro para enviarlo al nuevo usuario. El enlace caduca en 7 días y solo puede usarse una vez.",
+    "inviteEmail": "Dirección de email",
+    "inviteRoleLabel": "Rol",
+    "generating": "Generando...",
+    "generateLink": "Generar Enlace de Invitación",
+    "cancel": "Cancelar",
+    "done": "Listo",
+    "inviteReady": "¡Enlace de invitación generado!",
+    "inviteReadyHint": "Copia este enlace y envíalo al usuario. Lo usarán para establecer su nombre y contraseña.",
+    "inviteLinkLabel": "Enlace de invitación",
+    "inviteLinkCopied": "Enlace copiado al portapapeles",
+    "inviteExpiry": "Este enlace caduca en 7 días y solo puede usarse una vez."
+  },
+  "activate": {
+    "subtitle": "Configura tu cuenta para comenzar",
+    "invitedAs": "Has sido invitado como",
+    "role": "Rol",
+    "fullName": "Tu nombre",
+    "fullNamePlaceholder": "Juan García",
+    "choosePassword": "Elige una contraseña",
+    "passwordPlaceholder": "Al menos 8 caracteres",
+    "passwordHint": "Mínimo 8 caracteres",
+    "confirmPassword": "Confirmar contraseña",
+    "confirmPasswordPlaceholder": "Repite tu contraseña",
+    "activateButton": "Crear Cuenta e Iniciar Sesión",
+    "activating": "Configurando tu cuenta...",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+    "genericError": "Algo salió mal. Inténtalo de nuevo.",
+    "successTitle": "¡Cuenta Creada!",
+    "successMessage": "Iniciando sesión..."
   }
 }

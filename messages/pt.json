@@ -86,7 +86,10 @@
     "emailPlaceholder": "admin@constructionpm.com",
     "invalidCredentials": "Credenciais inválidas",
     "genericError": "Algo deu errado. Por favor, tente novamente.",
-    "demoAccess": "Use <strong>admin@constructionpm.com</strong> para acesso demo"
+    "demoAccess": "Use <strong>admin@constructionpm.com</strong> para acesso demo",
+    "password": "Senha",
+    "passwordPlaceholder": "Digite sua senha",
+    "passwordHint": "Deixe em branco se ainda não definiu uma senha"
   },
   "home": {
     "tagline": "Gerencie projetos de construção, acompanhe cronogramas, coordene empreiteiros e mantenha cada fase no prazo.",
@@ -1269,6 +1272,39 @@
     "auditExported": "Registro de auditoria exportado",
     "auditNote": "Nota de Retenção de Dados",
     "auditNoteDescription": "Exporta até 5.000 entradas mais recentes. Para dados completos, entre em contato com seu administrador de banco de dados.",
-    "aiDescription": "Configurar o provedor de IA, modelo, limites de uso e monitorar custos de API"
+    "aiDescription": "Configurar o provedor de IA, modelo, limites de uso e monitorar custos de API",
+    "inviteUser": "Convidar Usuário",
+    "inviteUserTitle": "Convidar Novo Usuário",
+    "inviteDescription": "Gere um link de convite seguro para enviar ao novo usuário. O link expira em 7 dias e só pode ser usado uma vez.",
+    "inviteEmail": "Endereço de email",
+    "inviteRoleLabel": "Função",
+    "generating": "Gerando...",
+    "generateLink": "Gerar Link de Convite",
+    "cancel": "Cancelar",
+    "done": "Concluído",
+    "inviteReady": "Link de convite gerado!",
+    "inviteReadyHint": "Copie este link e envie ao usuário. Eles o usarão para definir seu nome e senha.",
+    "inviteLinkLabel": "Link de convite",
+    "inviteLinkCopied": "Link copiado para a área de transferência",
+    "inviteExpiry": "Este link expira em 7 dias e só pode ser usado uma vez."
+  },
+  "activate": {
+    "subtitle": "Configure sua conta para começar",
+    "invitedAs": "Você foi convidado como",
+    "role": "Função",
+    "fullName": "Seu nome",
+    "fullNamePlaceholder": "João Silva",
+    "choosePassword": "Escolha uma senha",
+    "passwordPlaceholder": "Pelo menos 8 caracteres",
+    "passwordHint": "Mínimo 8 caracteres",
+    "confirmPassword": "Confirmar senha",
+    "confirmPasswordPlaceholder": "Repita sua senha",
+    "activateButton": "Criar Conta e Entrar",
+    "activating": "Configurando sua conta...",
+    "passwordMismatch": "As senhas não coincidem",
+    "passwordTooShort": "A senha deve ter pelo menos 8 caracteres",
+    "genericError": "Algo deu errado. Tente novamente.",
+    "successTitle": "Conta Criada!",
+    "successMessage": "Entrando..."
   }
 }
