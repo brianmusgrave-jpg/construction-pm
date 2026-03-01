@@ -28,9 +28,13 @@ import {
   Building2,
   Users,
   FolderKanban,
+  BookOpen,
+  Upload,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { transferOwnership } from "@/actions/billing";
+import { exportInvoicesToQB } from "@/actions/qb-export";
 import type { BillingInfo, Invoice, OrgAdminUser } from "@/actions/billing";
 
 interface BillingClientProps {
@@ -38,6 +42,8 @@ interface BillingClientProps {
   invoices: Invoice[];
   adminUsers: OrgAdminUser[];
   isOwner: boolean;
+  qbConnected?: boolean;
+  qbCompanyName?: string | null;
 }
 
 /* ------------------------------------------------------------------ */
@@ -78,10 +84,11 @@ function statusBadge(status: string): { color: string; label: string } {
 /*  Main Component                                                     */
 /* ------------------------------------------------------------------ */
 
-export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: BillingClientProps) {
+export function BillingClient({ billingInfo, invoices, adminUsers, isOwner, qbConnected, qbCompanyName }: BillingClientProps) {
   const [transferTarget, setTransferTarget] = useState("");
   const [transferring, setTransferring] = useState(false);
   const [showTransferConfirm, setShowTransferConfirm] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const b = billingInfo;
   const pd = b.planDetails;
@@ -400,7 +407,65 @@ export function BillingClient({ billingInfo, invoices, adminUsers, isOwner }: Bi
         )}
       </div>
 
-      {/* ── Section 6: Ownership Transfer (owner only) ── */}
+      {/* ── Section 6: QuickBooks Export (owner/admin) ── */}
+      {isOwner && (
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <BookOpen className="w-5 h-5 text-green-600" />
+            <h2 className="text-lg font-semibold text-gray-900">QuickBooks Export</h2>
+          </div>
+
+          {qbConnected ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span className="h-2 w-2 rounded-full bg-green-500" />
+                Connected to <strong>{qbCompanyName || "QuickBooks"}</strong>
+              </div>
+              <p className="text-sm text-gray-500">
+                Export your payment applications and invoices directly to QuickBooks.
+              </p>
+              <button
+                onClick={async () => {
+                  setExporting(true);
+                  try {
+                    const result = await exportInvoicesToQB();
+                    if (result.success) {
+                      toast.success(result.message);
+                    } else {
+                      toast.error(result.message);
+                    }
+                  } catch {
+                    toast.error("Export failed. Please try again.");
+                  } finally {
+                    setExporting(false);
+                  }
+                }}
+                disabled={exporting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+              >
+                {exporting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Upload className="w-4 h-4" />
+                )}
+                {exporting ? "Exporting..." : "Export to QuickBooks"}
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
+              <BookOpen className="w-5 h-5 text-gray-400" />
+              <div>
+                <p className="text-sm font-medium text-gray-700">QuickBooks not connected</p>
+                <p className="text-xs text-gray-500">
+                  Go to Settings → QuickBooks to connect your account and enable data export.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Section 7: Ownership Transfer (owner only) ── */}
       {isOwner && (
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-3 mb-4">

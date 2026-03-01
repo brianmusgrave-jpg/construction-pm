@@ -7,6 +7,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getBillingInfo, getInvoiceHistory, getOrgAdminUsers } from "@/actions/billing";
+import { getQBExportStatus } from "@/actions/qb-export";
 import { BillingClient } from "@/components/settings/BillingClient";
 
 export default async function BillingPage() {
@@ -21,10 +22,11 @@ export default async function BillingPage() {
     redirect("/dashboard");
   }
 
-  const [billingInfo, invoices, adminUsers] = await Promise.all([
+  const [billingInfo, invoices, adminUsers, qbStatus] = await Promise.all([
     getBillingInfo(),
     getInvoiceHistory(),
     isOwner ? getOrgAdminUsers() : Promise.resolve([]),
+    isOwner ? getQBExportStatus() : Promise.resolve({ connected: false, companyName: null, lastExportAt: null }),
   ]);
 
   return (
@@ -41,6 +43,8 @@ export default async function BillingPage() {
         invoices={invoices}
         adminUsers={adminUsers}
         isOwner={isOwner}
+        qbConnected={qbStatus.connected}
+        qbCompanyName={qbStatus.companyName}
       />
     </div>
   );
