@@ -14,6 +14,8 @@ import { OfflineIndicator } from "@/components/ui/OfflineIndicator";
 import { OfflineSyncProvider } from "@/components/ui/OfflineSyncProvider";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { getThemeCSS, getCustomColorCSS } from "@/lib/themes";
+import { db } from "@/lib/db";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,8 +57,30 @@ export default async function RootLayout({
   const locale = await getLocale();
   const messages = await getMessages();
 
+  // Resolve colour scheme: custom/logo colours override preset theme
+  let themeStyle: Record<string, string> = {};
+  try {
+    const orgSettings = await db.orgSettings.findFirst();
+    if (orgSettings) {
+      if (
+        (orgSettings.colorMode === "custom" || orgSettings.colorMode === "logo") &&
+        orgSettings.colorPrimary
+      ) {
+        themeStyle = getCustomColorCSS(
+          orgSettings.colorPrimary,
+          orgSettings.colorSecondary,
+          orgSettings.colorTertiary
+        );
+      } else {
+        themeStyle = getThemeCSS(orgSettings.theme);
+      }
+    }
+  } catch {
+    // DB not ready (e.g. first deploy) — fall through with defaults
+  }
+
   return (
-    <html lang={locale}>
+    <html lang={locale} style={themeStyle}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

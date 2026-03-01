@@ -734,15 +734,20 @@ model PhaseDependency {
 // ── Organization Settings (Theming) ──
 
 model OrgSettings {
-  id           String   @id @default(cuid())
-  orgId        String   @map("org_id")
-  org          Organization  @relation(fields: [orgId], references: [id])
-  theme        String   @default("blue")
-  logoUrl      String?  @map("logo_url")
-  logoMimeType String?  @map("logo_mime_type")
-  companyName  String?  @map("company_name")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  orgId          String   @map("org_id")
+  org            Organization  @relation(fields: [orgId], references: [id])
+  theme          String   @default("blue")
+  logoUrl        String?  @map("logo_url")
+  logoMimeType   String?  @map("logo_mime_type")
+  companyName    String?  @map("company_name")
+  // Custom color scheme fields (Sprint 19)
+  colorPrimary   String?  @map("color_primary")     // e.g. "#2563eb"
+  colorSecondary String?  @map("color_secondary")   // e.g. "#1e40af"
+  colorTertiary  String?  @map("color_tertiary")    // e.g. "#eff6ff"
+  colorMode      String   @default("preset") @map("color_mode") // "preset" | "custom" | "logo"
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("org_settings")
 }

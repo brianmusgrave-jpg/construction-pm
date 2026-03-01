@@ -11,6 +11,7 @@ import { getOrgSettings } from "@/actions/settings";
 import { getChecklistTemplates } from "@/actions/templates";
 import { ThemeSelector } from "@/components/settings/ThemeSelector";
 import { LogoUploader } from "@/components/settings/LogoUploader";
+import { ColorSchemeSection } from "@/components/settings/ColorSchemeSection";
 import { ChecklistTemplateManager } from "@/components/settings/ChecklistTemplateManager";
 import { NotificationSettings } from "@/components/settings/NotificationSettings";
 import {
@@ -103,6 +104,16 @@ export default async function SettingsPage() {
 
           <div className="border-t border-gray-100 pt-6">
             <ThemeSelector currentTheme={orgSettings.theme} />
+          </div>
+
+          <div className="border-t border-gray-100 pt-6">
+            <ColorSchemeSection
+              colorMode={orgSettings.colorMode}
+              colorPrimary={orgSettings.colorPrimary}
+              colorSecondary={orgSettings.colorSecondary}
+              colorTertiary={orgSettings.colorTertiary}
+              hasLogo={!!orgSettings.logoUrl}
+            />
           </div>
         </div>
       )}

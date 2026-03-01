@@ -25,8 +25,9 @@ import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
-import { THEME_PRESETS } from "@/lib/themes";
+import { THEME_PRESETS, passesWCAG } from "@/lib/themes";
 import { put, del } from "@vercel/blob";
+import { extractColorsFromUrl } from "@/lib/color-extract";
 
 // ── Auth helper ──
 
@@ -85,7 +86,14 @@ export async function updateTheme(themeId: string) {
   const settings = await getOrgSettings();
   await db.orgSettings.update({
     where: { id: settings.id },
-    data: { theme: themeId },
+    data: {
+      theme: themeId,
+      // Selecting a preset theme clears any custom colours
+      colorPrimary: null,
+      colorSecondary: null,
+      colorTertiary: null,
+      colorMode: "preset",
+    },
   });
 
   revalidatePath("/dashboard");
@@ -184,6 +192,115 @@ export async function updateCompanyName(name: string) {
     where: { id: settings.id },
     // Trim whitespace; empty string → null (show placeholder in UI)
     data: { companyName: name.trim() || null },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/contractor");
+  revalidatePath("/dashboard/settings");
+}
+
+// ── Custom Color Scheme (Sprint 19) ──
+
+/** Hex colour regex — validates #rrggbb format. */
+const HEX_RE = /^#[0-9a-fA-F]{6}$/;
+
+/**
+ * Save a custom colour scheme (1–3 user-picked colours).
+ * Switches the colour mode to "custom" and stores the raw hex values.
+ * Auto-generates dark/light/bg variants from the primary colour at render time.
+ *
+ * @param primary   - Required. The primary brand colour (hex).
+ * @param secondary - Optional. Darker accent / hover state colour.
+ * @param tertiary  - Optional. Light background tint colour.
+ */
+export async function saveCustomColors(
+  primary: string,
+  secondary?: string | null,
+  tertiary?: string | null
+) {
+  await requireSettingsAccess();
+
+  if (!HEX_RE.test(primary)) throw new Error("Invalid primary colour");
+  if (secondary && !HEX_RE.test(secondary)) throw new Error("Invalid secondary colour");
+  if (tertiary && !HEX_RE.test(tertiary)) throw new Error("Invalid tertiary colour");
+
+  const settings = await getOrgSettings();
+  await db.orgSettings.update({
+    where: { id: settings.id },
+    data: {
+      colorPrimary: primary.toLowerCase(),
+      colorSecondary: secondary?.toLowerCase() || null,
+      colorTertiary: tertiary?.toLowerCase() || null,
+      colorMode: "custom",
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/contractor");
+  revalidatePath("/dashboard/settings");
+}
+
+/**
+ * Extract palette options from the currently uploaded logo.
+ * Returns 2–3 palette suggestions the admin can choose from.
+ * Does NOT save anything — just returns suggestions.
+ */
+export async function extractLogoColors() {
+  await requireSettingsAccess();
+
+  const settings = await getOrgSettings();
+  if (!settings.logoUrl) throw new Error("No logo uploaded");
+
+  return extractColorsFromUrl(settings.logoUrl);
+}
+
+/**
+ * Apply one of the logo-extracted palettes.
+ * Stores the chosen colours and sets colorMode to "logo".
+ */
+export async function applyLogoPalette(
+  primary: string,
+  secondary: string,
+  tertiary: string
+) {
+  await requireSettingsAccess();
+
+  if (!HEX_RE.test(primary)) throw new Error("Invalid primary colour");
+  if (!HEX_RE.test(secondary)) throw new Error("Invalid secondary colour");
+  if (!HEX_RE.test(tertiary)) throw new Error("Invalid tertiary colour");
+
+  const settings = await getOrgSettings();
+  await db.orgSettings.update({
+    where: { id: settings.id },
+    data: {
+      colorPrimary: primary.toLowerCase(),
+      colorSecondary: secondary.toLowerCase(),
+      colorTertiary: tertiary.toLowerCase(),
+      colorMode: "logo",
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/contractor");
+  revalidatePath("/dashboard/settings");
+}
+
+/**
+ * Reset to preset theme mode — clears custom colours and sets mode back to "preset".
+ * The active preset theme (blue, orange, etc.) is not changed.
+ */
+export async function resetToPresetColors() {
+  await requireSettingsAccess();
+
+  const settings = await getOrgSettings();
+  await db.orgSettings.update({
+    where: { id: settings.id },
+    data: {
+      colorPrimary: null,
+      colorSecondary: null,
+      colorTertiary: null,
+      colorMode: "preset",
+    },
   });
 
   revalidatePath("/dashboard");
