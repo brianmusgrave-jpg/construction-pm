@@ -12,6 +12,7 @@ import { getUnreadCount } from "@/actions/notifications";
 import { OnboardingTour } from "@/components/help/OnboardingTour";
 import { InstallPrompt } from "@/components/ui/InstallPrompt";
 import { ConfirmDialogProvider } from "@/components/ui/ConfirmDialog";
+import ImpersonationBanner from "@/app/system-admin/components/ImpersonationBanner";
 
 export default async function DashboardLayout({
   children,
@@ -29,6 +30,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen bg-gray-50" style={themeVars as React.CSSProperties}>
+      <ImpersonationBanner />
       <Sidebar
         user={session.user}
         logoUrl={orgSettings.logoUrl}

@@ -100,6 +100,7 @@ model Organization {
   clientTokens       ClientToken[]
   checklistTemplates ChecklistTemplate[]
   subscription       Subscription?
+  adminLogs          SystemAdminLog[]  @relation("admin_log_org")
 
   @@map("organizations")
 }
@@ -117,6 +118,46 @@ model Subscription {
   org                 Organization @relation(fields: [orgId], references: [id])
 
   @@map("subscriptions")
+}
+
+/// Audit log for every action a SYSTEM_ADMIN takes in God-Mode.
+/// Separate from the per-org ActivityLog — this captures cross-org admin actions
+/// like impersonation, plan changes, feature flag overrides, and fix-it tool usage.
+model SystemAdminLog {
+  id          String   @id @default(cuid())
+  adminId     String   @map("admin_id")
+  action      String   // e.g. "impersonate_user", "change_plan", "toggle_feature", "resend_invite", "clear_phases"
+  targetOrgId String?  @map("target_org_id")
+  targetUserId String? @map("target_user_id")
+  detail      String?  // JSON or free-text description of what changed
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  admin       User         @relation("system_admin_logs", fields: [adminId], references: [id])
+  targetOrg   Organization? @relation("admin_log_org", fields: [targetOrgId], references: [id])
+
+  @@index([adminId])
+  @@index([targetOrgId])
+  @@map("system_admin_logs")
+}
+
+/// Short-lived impersonation tokens that let a SYSTEM_ADMIN view the app
+/// as any user without knowing their password. Tokens are single-use and expire
+/// after 30 minutes. The impersonated session shows a persistent warning banner.
+model ImpersonationSession {
+  id             String   @id @default(cuid())
+  adminId        String   @map("admin_id")
+  targetUserId   String   @map("target_user_id")
+  token          String   @unique  // 32-byte hex token
+  expiresAt      DateTime @map("expires_at")
+  usedAt         DateTime? @map("used_at")  // null = not yet consumed
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  admin          User     @relation("impersonation_admin", fields: [adminId], references: [id])
+  targetUser     User     @relation("impersonation_target", fields: [targetUserId], references: [id])
+
+  @@index([token])
+  @@index([adminId])
+  @@map("impersonation_sessions")
 }
 
 // ── Core Models ──
@@ -164,6 +205,9 @@ model User {
   totpSecret          TotpSecret?
   aiUsageLogs         AIUsageLog[]          @relation("ai_usage_by_user")
   accountInvitesSent  AccountInvitation[]   @relation("account_invitations_sent")
+  systemAdminLogs     SystemAdminLog[]      @relation("system_admin_logs")
+  impersonationsAsAdmin  ImpersonationSession[] @relation("impersonation_admin")
+  impersonationsAsTarget ImpersonationSession[] @relation("impersonation_target")
 
   @@map("users")
 }
