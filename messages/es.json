@@ -1309,5 +1309,11 @@
     "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "successTitle": "¡Cuenta Creada!",
     "successMessage": "Iniciando sesión..."
+  },
+  "aiGating": {
+    "proRequired": "Plan Pro requerido",
+    "budgetExceeded": "Presupuesto IA excedido",
+    "budgetWarning": "{percent}% del presupuesto IA utilizado",
+    "upgradeToUnlock": "Actualice a Pro para desbloquear funciones IA"
   }
 }

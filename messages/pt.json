@@ -1309,5 +1309,11 @@
     "genericError": "Algo deu errado. Tente novamente.",
     "successTitle": "Conta Criada!",
     "successMessage": "Entrando..."
+  },
+  "aiGating": {
+    "proRequired": "Plano Pro necessário",
+    "budgetExceeded": "Orçamento IA excedido",
+    "budgetWarning": "{percent}% do orçamento IA utilizado",
+    "upgradeToUnlock": "Atualize para Pro para desbloquear recursos IA"
   }
 }

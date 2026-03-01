@@ -43,6 +43,8 @@ export interface AIOptions {
   feature?: string;
   /** User ID for usage attribution. Omit to skip usage logging. */
   userId?: string;
+  /** Organization ID for quota checking and token tracking (Sprint 16). */
+  orgId?: string;
 }
 
 /** Structured response returned by `callAI()`. */
@@ -264,6 +266,22 @@ export async function callAI(
     };
   }
 
+  // Sprint 16: Check org AI quota (plan gating + token budget)
+  if (options.orgId) {
+    try {
+      const { checkAIQuota } = await import("@/lib/ai-quota");
+      await checkAIQuota(options.orgId);
+    } catch (err: any) {
+      return {
+        text: null,
+        success: false,
+        error: err.message || "ai_quota_exceeded",
+        usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 },
+        costUsd: 0,
+      };
+    }
+  }
+
   const provider: AIProvider = options.provider ?? (settings.provider as AIProvider);
   const model = options.model ?? settings.model;
   const maxTokens = options.maxTokens ?? settings.maxTokens;
@@ -274,6 +292,13 @@ export async function callAI(
     provider === "ANTHROPIC"
       ? await callAnthropic(messages, model, maxTokens, temperature)
       : await callOpenAI(messages, model, maxTokens, temperature);
+
+  // Sprint 16: Track token usage against org budget (fire-and-forget)
+  if (options.orgId && response.success && response.usage.totalTokens > 0) {
+    import("@/lib/ai-quota").then(({ trackAITokenUsage }) =>
+      trackAITokenUsage(options.orgId!, response.usage.totalTokens)
+    ).catch(() => {});
+  }
 
   // Fire-and-forget usage log — never block the caller on DB writes
   if (options.userId) {

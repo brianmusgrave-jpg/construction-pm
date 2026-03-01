@@ -1309,5 +1309,11 @@
     "genericError": "Quelque chose s'est mal passé. Veuillez réessayer.",
     "successTitle": "Compte Créé !",
     "successMessage": "Connexion en cours..."
+  },
+  "aiGating": {
+    "proRequired": "Plan Pro requis",
+    "budgetExceeded": "Budget IA dépassé",
+    "budgetWarning": "{percent}% du budget IA utilisé",
+    "upgradeToUnlock": "Passez au Pro pour débloquer les fonctionnalités IA"
   }
 }

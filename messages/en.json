@@ -1309,5 +1309,11 @@
     "genericError": "Something went wrong. Please try again.",
     "successTitle": "Account Created!",
     "successMessage": "Signing you in..."
+  },
+  "aiGating": {
+    "proRequired": "Pro plan required",
+    "budgetExceeded": "AI budget exceeded",
+    "budgetWarning": "{percent}% of AI budget used",
+    "upgradeToUnlock": "Upgrade to Pro to unlock AI features"
   }
 }
