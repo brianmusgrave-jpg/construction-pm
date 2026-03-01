@@ -76,7 +76,8 @@
     "contractorPortal": "Portail entrepreneur",
     "openMenu": "Ouvrir le menu",
     "activityLog": "Journal d'Activité",
-    "admin": "Admin"
+    "admin": "Admin",
+    "billing": "Facturation"
   },
   "auth": {
     "signIn": "Connexion",

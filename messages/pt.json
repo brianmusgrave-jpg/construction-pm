@@ -76,7 +76,8 @@
     "contractorPortal": "Portal do empreiteiro",
     "openMenu": "Abrir menu",
     "activityLog": "Registro de Atividade",
-    "admin": "Admin"
+    "admin": "Admin",
+    "billing": "Faturamento"
   },
   "auth": {
     "signIn": "Entrar",

@@ -76,7 +76,8 @@
     "contractorPortal": "Contractor Portal",
     "openMenu": "Open menu",
     "activityLog": "Activity Log",
-    "admin": "Admin"
+    "admin": "Admin",
+    "billing": "Billing"
   },
   "auth": {
     "signIn": "Sign In",

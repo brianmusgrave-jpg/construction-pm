@@ -76,7 +76,8 @@
     "contractorPortal": "Portal del contratista",
     "openMenu": "Abrir menú",
     "activityLog": "Registro de Actividad",
-    "admin": "Admin"
+    "admin": "Admin",
+    "billing": "Facturación"
   },
   "auth": {
     "signIn": "Iniciar sesión",

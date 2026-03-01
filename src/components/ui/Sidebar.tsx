@@ -44,6 +44,7 @@ import {
   HelpCircle,
   ScrollText,
   ShieldCheck,
+  CreditCard,
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 import { useTranslations } from "next-intl";
@@ -55,13 +56,14 @@ interface SidebarProps {
     email?: string | null;
     image?: string | null;
     role: string;
+    isOrgOwner?: boolean;
   };
   logoUrl?: string | null;
   companyName?: string | null;
   unreadCount?: number;
 }
 
-function getNavigation(role: string, t: (key: string) => string) {
+function getNavigation(role: string, isOrgOwner: boolean, t: (key: string) => string) {
   const base = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
     { name: t("projects"), href: "/dashboard/projects", icon: FolderKanban },
@@ -85,6 +87,15 @@ function getNavigation(role: string, t: (key: string) => string) {
     { name: t("help"), href: "/dashboard/help", icon: HelpCircle },
   ];
 
+  // Billing link for ADMIN or org owner — insert before help
+  if (role === "ADMIN" || isOrgOwner) {
+    managerNav.splice(managerNav.length - 1, 0, {
+      name: t("billing"),
+      href: "/dashboard/settings/billing",
+      icon: CreditCard,
+    });
+  }
+
   if (role === "ADMIN") {
     // Insert admin link before help
     managerNav.splice(managerNav.length - 1, 0, {
@@ -103,7 +114,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
   const [unreadCount, setUnreadCount] = useState(initialUnread);
   const t = useTranslations("nav");
   const tc = useTranslations("common");
-  const navigation = getNavigation(user.role, t);
+  const navigation = getNavigation(user.role, user.isOrgOwner === true, t);
 
   // Live unread count via SSE (#30)
   useNotificationSSE(setUnreadCount);
