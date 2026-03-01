@@ -81,6 +81,7 @@ export async function createReportSchedule(data: {
 }): Promise<void> {
   await requireAdmin();
   const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
   if (data.recipients.length === 0) throw new Error("At least one recipient required");
   await db.reportSchedule.create({
     data: {
@@ -135,6 +136,7 @@ export async function deleteReportSchedule(id: string): Promise<void> {
  */
 export async function sendDueReports(): Promise<{ sent: number }> {
   const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
   const now = new Date();
   const schedules: ReportSchedule[] = await db.reportSchedule.findMany({
     where: { orgId: session.user.orgId!, active: true },
