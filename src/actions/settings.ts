@@ -53,6 +53,7 @@ async function requireSettingsAccess() {
  */
 export async function getOrgSettings() {
   const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
   let settings = await db.orgSettings.findFirst();
   if (!settings) {
     // Auto-seed on first access (e.g. fresh deployment or test environment)

@@ -148,6 +148,7 @@ export async function deleteWebhook(id: string): Promise<void> {
  */
 export async function dispatchWebhook(event: string, payload: Record<string, unknown>): Promise<void> {
   const session = await auth();
+  if (!session?.user) throw new Error("Unauthorized");
   const webhooks: Webhook[] = await db.webhook.findMany({
     where: { orgId: session.user.orgId!, active: true },
   });
