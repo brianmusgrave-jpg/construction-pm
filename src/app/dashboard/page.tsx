@@ -32,6 +32,7 @@ import { getTranslations } from "next-intl/server";
 import { getLocale } from "@/i18n/locale";
 import { getAnalytics } from "@/actions/analytics";
 import { AnalyticsWidgets } from "@/components/dashboard/AnalyticsWidgets";
+import { InsightsPanel } from "@/components/dashboard/InsightsPanel";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -526,6 +527,13 @@ export default async function DashboardPage() {
           <p className="text-xs text-gray-400">{t("analyticsDescription")}</p>
         </div>
       ) : null}
+
+      {/* AI Proactive Insights — Sprint 23 (#75–#81) */}
+      {projects.length > 0 && (
+        <InsightsPanel
+          projects={projects.map((p: any) => ({ id: p.id, name: p.name }))}
+        />
+      )}
     </div>
   );
 }
