@@ -35,6 +35,7 @@ import { TeamSection } from "@/components/project/TeamSection";
 import { ClientTokenSection } from "@/components/project/ClientTokenSection";
 import { DailyLogSection } from "@/components/project/DailyLogSection";
 import { ProjectActions } from "@/components/project/ProjectActions";
+import PredictiveAnalyticsPanel from "@/components/project/PredictiveAnalyticsPanel";
 import { getProjectInvitations } from "@/actions/invitations";
 
 export default async function ProjectOverviewPage({
@@ -514,6 +515,11 @@ export default async function ProjectOverviewPage({
           {/* Client Portal Links */}
           {canManageBudget && clientTokens.length >= 0 && (
             <ClientTokenSection projectId={id} tokens={clientTokens} />
+          )}
+
+          {/* Predictive Analytics */}
+          {canManageBudget && (
+            <PredictiveAnalyticsPanel projectId={id} />
           )}
 
           {/* Recent Activity */}
