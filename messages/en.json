@@ -110,6 +110,7 @@
     "checklists": "Checklists",
     "awaitingApproval": "awaiting approval",
     "allClear": "all clear",
+    "nothingNeedsAttention": "Everything is on track",
     "pastDeadline": "past deadline",
     "onTrack": "on track",
     "needReview": "need review",
@@ -127,6 +128,7 @@
     "activity": "Activity",
     "noActivityYet": "No activity yet",
     "activityWillAppear": "Status changes and uploads will appear here",
+    "noUpcoming": "No phases starting soon",
     "analyticsComingSoon": "Analytics will appear here",
     "analyticsDescription": "As your projects generate data, budget charts, status breakdowns, and performance metrics will show up here."
   },

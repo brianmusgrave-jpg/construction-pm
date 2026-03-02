@@ -110,6 +110,7 @@
     "checklists": "Checklists",
     "awaitingApproval": "aguardando aprovação",
     "allClear": "tudo em dia",
+    "nothingNeedsAttention": "Tudo está em dia",
     "pastDeadline": "prazo expirado",
     "onTrack": "em dia",
     "needReview": "precisam de revisão",
@@ -127,6 +128,7 @@
     "activity": "Atividade",
     "noActivityYet": "Sem atividade",
     "activityWillAppear": "Mudanças de status e uploads aparecerão aqui",
+    "noUpcoming": "Nenhuma fase próxima",
     "analyticsComingSoon": "As análises aparecerão aqui",
     "analyticsDescription": "À medida que seus projetos gerarem dados, gráficos de orçamento e métricas de desempenho aparecerão aqui."
   },
