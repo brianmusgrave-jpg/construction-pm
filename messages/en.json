@@ -1826,5 +1826,28 @@
     "upcomingPayments": "Upcoming Payments",
     "cashFlowRisks": "Cash Flow Risks",
     "recommendations": "Recommendations"
+  },
+  "drawingAI": {
+    "title": "Drawing Intelligence",
+    "revisionAnalysis": "Revision Change Analysis",
+    "completenessCheck": "Drawing Set Completeness",
+    "noDrawings": "No drawings uploaded yet",
+    "selectDrawing": "Select a drawing…",
+    "analyzing": "Analyzing…",
+    "analyze": "Analyze Revision",
+    "analyzed": "Revision analysis complete",
+    "analyzeFailed": "Failed to analyze revision",
+    "checking": "Checking…",
+    "check": "Check Completeness",
+    "checked": "Completeness check complete",
+    "checkFailed": "Failed to check completeness",
+    "rfiRisk": "RFI Risk",
+    "impactAreas": "Impact Areas",
+    "coordinationNeeded": "Coordination Needed",
+    "recommendations": "Recommendations",
+    "disciplineCoverage": "Discipline Coverage",
+    "drawings": "drawings",
+    "missingDrawings": "Missing Drawings",
+    "versioningIssues": "Versioning Issues"
   }
 }

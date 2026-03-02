@@ -1826,5 +1826,28 @@
     "upcomingPayments": "Paiements à Venir",
     "cashFlowRisks": "Risques de Trésorerie",
     "recommendations": "Recommandations"
+  },
+  "drawingAI": {
+    "title": "Intelligence des Plans",
+    "revisionAnalysis": "Analyse des Changements de Révision",
+    "completenessCheck": "Complétude du Jeu de Plans",
+    "noDrawings": "Aucun plan téléchargé pour le moment",
+    "selectDrawing": "Sélectionner un plan…",
+    "analyzing": "Analyse en cours…",
+    "analyze": "Analyser la Révision",
+    "analyzed": "Analyse de révision terminée",
+    "analyzeFailed": "Échec de l'analyse de révision",
+    "checking": "Vérification en cours…",
+    "check": "Vérifier la Complétude",
+    "checked": "Vérification de complétude terminée",
+    "checkFailed": "Échec de la vérification de complétude",
+    "rfiRisk": "Risque de RFI",
+    "impactAreas": "Zones d'Impact",
+    "coordinationNeeded": "Coordination Nécessaire",
+    "recommendations": "Recommandations",
+    "disciplineCoverage": "Couverture par Discipline",
+    "drawings": "plans",
+    "missingDrawings": "Plans Manquants",
+    "versioningIssues": "Problèmes de Versionnage"
   }
 }

@@ -1826,5 +1826,28 @@
     "upcomingPayments": "Próximos Pagamentos",
     "cashFlowRisks": "Riscos de Fluxo de Caixa",
     "recommendations": "Recomendações"
+  },
+  "drawingAI": {
+    "title": "Inteligência de Desenhos",
+    "revisionAnalysis": "Análise de Alterações de Revisão",
+    "completenessCheck": "Completude do Conjunto de Desenhos",
+    "noDrawings": "Nenhum desenho carregado ainda",
+    "selectDrawing": "Selecionar um desenho…",
+    "analyzing": "Analisando…",
+    "analyze": "Analisar Revisão",
+    "analyzed": "Análise de revisão concluída",
+    "analyzeFailed": "Falha ao analisar revisão",
+    "checking": "Verificando…",
+    "check": "Verificar Completude",
+    "checked": "Verificação de completude concluída",
+    "checkFailed": "Falha ao verificar completude",
+    "rfiRisk": "Risco de RFI",
+    "impactAreas": "Áreas de Impacto",
+    "coordinationNeeded": "Coordenação Necessária",
+    "recommendations": "Recomendações",
+    "disciplineCoverage": "Cobertura por Disciplina",
+    "drawings": "desenhos",
+    "missingDrawings": "Desenhos Faltantes",
+    "versioningIssues": "Problemas de Versionamento"
   }
 }
