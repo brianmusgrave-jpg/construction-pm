@@ -211,6 +211,8 @@ model User {
   keeneyMode       Boolean  @default(false) @map("keeney_mode")
   dashboardLayout  Json?    @map("dashboard_layout") // Widget positions, visibility, collapsed state
   voiceMemos  VoiceMemo[] @relation("voice_memos")
+  gpsClockEntries   GpsClockEntry[]   @relation("gps_clock_created")
+  photoAnnotations  PhotoAnnotation[] @relation("photo_annotations")
 
   @@map("users")
 }
@@ -323,6 +325,7 @@ model Phase {
   paymentApps     PaymentApplication[]
   drawings        Drawing[]
   estimates       Estimate[]
+  gpsClockEntries GpsClockEntry[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -370,6 +373,7 @@ model Staff {
   rfiAssigned       RFI[]            @relation("rfi_assigned")
   submittalAssigned Submittal[]      @relation("submittal_assigned")
   timeEntryWorker   TimeEntry[]      @relation("time_entry_worker")
+  gpsClockEntries   GpsClockEntry[]  @relation("gps_clock_worker")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -1130,6 +1134,66 @@ enum TimeEntryStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+// ── GPS Clock Entries (Sprint 28) ──
+
+model GpsClockEntry {
+  id             String   @id @default(cuid())
+  clockInAt      DateTime @map("clock_in_at")
+  clockOutAt     DateTime? @map("clock_out_at")
+  clockInLat     Float    @map("clock_in_lat")
+  clockInLng     Float    @map("clock_in_lng")
+  clockInAccuracy Float?  @map("clock_in_accuracy")
+  clockOutLat    Float?   @map("clock_out_lat")
+  clockOutLng    Float?   @map("clock_out_lng")
+  clockOutAccuracy Float? @map("clock_out_accuracy")
+  hoursWorked    Float?   @map("hours_worked")
+  status         GpsClockStatus @default(CLOCKED_IN)
+  notes          String?  @db.Text
+
+  phase   Phase  @relation(fields: [phaseId], references: [id], onDelete: Cascade)
+  phaseId String @map("phase_id")
+
+  worker   Staff  @relation("gps_clock_worker", fields: [workerId], references: [id])
+  workerId String @map("worker_id")
+
+  createdBy   User   @relation("gps_clock_created", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([phaseId, status])
+  @@index([workerId])
+  @@map("gps_clock_entries")
+}
+
+enum GpsClockStatus {
+  CLOCKED_IN
+  CLOCKED_OUT
+}
+
+// ── Photo Annotations (Sprint 28) ──
+
+model PhotoAnnotation {
+  id       String @id @default(cuid())
+  photoId  String @map("photo_id")
+  type     String // "arrow" | "circle" | "rectangle" | "text"
+  x        Float  // normalised 0-1 position
+  y        Float
+  width    Float? // for rectangles
+  height   Float?
+  radius   Float? // for circles
+  color    String @default("#FF0000")
+  label    String? @db.Text
+
+  createdBy   User   @relation("photo_annotations", fields: [createdById], references: [id])
+  createdById String @map("created_by_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([photoId])
+  @@map("photo_annotations")
 }
 
 // ── Voice Notes (Sprint Z #55) ──

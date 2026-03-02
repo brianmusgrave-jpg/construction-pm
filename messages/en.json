@@ -1548,7 +1548,15 @@
     "photoAnalysis": "Analyze Photo",
     "photoAnalyzing": "Analyzing...",
     "photoFailed": "Photo analysis failed",
-    "applySuggestion": "Apply Suggestion"
+    "applySuggestion": "Apply Suggestion",
+    "analyzePhoto": "Analyze Photo",
+    "photoAIResults": "Photo AI Analysis",
+    "analyzingPhoto": "Analyzing photo...",
+    "photoAnalyzed": "Photo analysis complete",
+    "photoAnalysisFailed": "Photo analysis failed",
+    "createPunchItem": "Create Punch Item",
+    "itemCreated": "Punch list item created",
+    "noIssuesDetected": "No issues detected — looking good!"
   },
   "timeTrackingAI": {
     "title": "AI Time Tracking Intelligence",
@@ -1567,5 +1575,38 @@
     "projectedTotal": "Projected Hours",
     "projectedCost": "Projected Cost",
     "budgetUsed": "Budget Used"
+  },
+  "gpsClock": {
+    "title": "GPS Time Clock",
+    "clockIn": "Clock In",
+    "clockOut": "Clock Out",
+    "clockedIn": "Clocked In",
+    "clockedOut": "Clocked Out",
+    "acquiringGps": "Acquiring GPS...",
+    "gpsError": "Could not get GPS location",
+    "clockInSuccess": "Clocked in successfully",
+    "clockOutSuccess": "Clocked out — {hours} hours logged",
+    "clockInFailed": "Clock-in failed",
+    "clockOutFailed": "Clock-out failed",
+    "elapsed": "Elapsed",
+    "noActiveEntry": "Not clocked in",
+    "activeEntry": "Active clock-in",
+    "location": "Location",
+    "accuracy": "Accuracy"
+  },
+  "bulkPunchList": {
+    "title": "Bulk Operations",
+    "selectItems": "Select items to perform bulk actions",
+    "changeStatus": "Change Status",
+    "assignTo": "Assign To",
+    "changePriority": "Change Priority",
+    "apply": "Apply",
+    "exportCsv": "Export CSV",
+    "noSelection": "No items selected",
+    "statusUpdated": "{count} items updated",
+    "assigned": "{count} items assigned",
+    "priorityUpdated": "{count} items updated",
+    "exportFailed": "Export failed",
+    "updateFailed": "Update failed"
   }
 }

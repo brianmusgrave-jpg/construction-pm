@@ -1548,7 +1548,15 @@
     "photoAnalysis": "Analyser Photo",
     "photoAnalyzing": "Analyse en cours...",
     "photoFailed": "Échec de l'analyse photo",
-    "applySuggestion": "Appliquer la Suggestion"
+    "applySuggestion": "Appliquer la Suggestion",
+    "analyzePhoto": "Analyser Photo",
+    "photoAIResults": "Analyse AI de Photo",
+    "analyzingPhoto": "Analyse de la photo...",
+    "photoAnalyzed": "Analyse de photo terminée",
+    "photoAnalysisFailed": "Échec de l'analyse de photo",
+    "createPunchItem": "Créer un Élément",
+    "itemCreated": "Élément créé",
+    "noIssuesDetected": "Aucun problème détecté — tout est bon !"
   },
   "timeTrackingAI": {
     "title": "IA de Suivi du Temps",
@@ -1567,5 +1575,38 @@
     "projectedTotal": "Heures Projetées",
     "projectedCost": "Coût Projeté",
     "budgetUsed": "Budget Utilisé"
+  },
+  "gpsClock": {
+    "title": "Horloge GPS",
+    "clockIn": "Pointer Entrée",
+    "clockOut": "Pointer Sortie",
+    "clockedIn": "Entrée Pointée",
+    "clockedOut": "Sortie Pointée",
+    "acquiringGps": "Acquisition GPS...",
+    "gpsError": "Impossible d'obtenir la position GPS",
+    "clockInSuccess": "Entrée pointée avec succès",
+    "clockOutSuccess": "Sortie pointée — {hours} heures enregistrées",
+    "clockInFailed": "Échec du pointage d'entrée",
+    "clockOutFailed": "Échec du pointage de sortie",
+    "elapsed": "Écoulé",
+    "noActiveEntry": "Pas de pointage actif",
+    "activeEntry": "Pointage actif",
+    "location": "Emplacement",
+    "accuracy": "Précision"
+  },
+  "bulkPunchList": {
+    "title": "Opérations Groupées",
+    "selectItems": "Sélectionnez des éléments pour les actions groupées",
+    "changeStatus": "Changer le Statut",
+    "assignTo": "Attribuer À",
+    "changePriority": "Changer la Priorité",
+    "apply": "Appliquer",
+    "exportCsv": "Exporter CSV",
+    "noSelection": "Aucun élément sélectionné",
+    "statusUpdated": "{count} éléments mis à jour",
+    "assigned": "{count} éléments attribués",
+    "priorityUpdated": "{count} éléments mis à jour",
+    "exportFailed": "Échec de l'exportation",
+    "updateFailed": "Échec de la mise à jour"
   }
 }

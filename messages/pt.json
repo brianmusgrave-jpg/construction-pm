@@ -1548,7 +1548,15 @@
     "photoAnalysis": "Analisar Foto",
     "photoAnalyzing": "Analisando...",
     "photoFailed": "Falha na análise da foto",
-    "applySuggestion": "Aplicar Sugestão"
+    "applySuggestion": "Aplicar Sugestão",
+    "analyzePhoto": "Analisar Foto",
+    "photoAIResults": "Análise AI de Foto",
+    "analyzingPhoto": "Analisando foto...",
+    "photoAnalyzed": "Análise de foto concluída",
+    "photoAnalysisFailed": "Falha na análise de foto",
+    "createPunchItem": "Criar Item",
+    "itemCreated": "Item criado",
+    "noIssuesDetected": "Nenhum problema detectado — tudo certo!"
   },
   "timeTrackingAI": {
     "title": "IA de Controle de Horas",
@@ -1567,5 +1575,38 @@
     "projectedTotal": "Horas Projetadas",
     "projectedCost": "Custo Projetado",
     "budgetUsed": "Orçamento Usado"
+  },
+  "gpsClock": {
+    "title": "Relógio GPS",
+    "clockIn": "Registrar Entrada",
+    "clockOut": "Registrar Saída",
+    "clockedIn": "Entrada Registrada",
+    "clockedOut": "Saída Registrada",
+    "acquiringGps": "Obtendo GPS...",
+    "gpsError": "Não foi possível obter localização GPS",
+    "clockInSuccess": "Entrada registrada com sucesso",
+    "clockOutSuccess": "Saída registrada — {hours} horas registradas",
+    "clockInFailed": "Falha ao registrar entrada",
+    "clockOutFailed": "Falha ao registrar saída",
+    "elapsed": "Decorrido",
+    "noActiveEntry": "Sem entrada ativa",
+    "activeEntry": "Entrada ativa",
+    "location": "Localização",
+    "accuracy": "Precisão"
+  },
+  "bulkPunchList": {
+    "title": "Operações em Massa",
+    "selectItems": "Selecione itens para ações em massa",
+    "changeStatus": "Alterar Status",
+    "assignTo": "Atribuir A",
+    "changePriority": "Alterar Prioridade",
+    "apply": "Aplicar",
+    "exportCsv": "Exportar CSV",
+    "noSelection": "Nenhum item selecionado",
+    "statusUpdated": "{count} itens atualizados",
+    "assigned": "{count} itens atribuídos",
+    "priorityUpdated": "{count} itens atualizados",
+    "exportFailed": "Falha na exportação",
+    "updateFailed": "Falha na atualização"
   }
 }
