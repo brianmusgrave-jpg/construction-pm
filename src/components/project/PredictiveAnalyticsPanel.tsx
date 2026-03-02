@@ -18,9 +18,16 @@ import {
   CheckCircle2,
   Clock,
   BarChart3,
+  CloudRain,
+  FileWarning,
 } from "lucide-react";
 import { toast } from "sonner";
-import { predictScheduleRisks, forecastBudget } from "@/actions/ai-predictive";
+import {
+  predictScheduleRisks,
+  forecastBudget,
+  analyzeWeatherImpact,
+  detectCOPatterns,
+} from "@/actions/ai-predictive";
 
 interface PredictiveAnalyticsPanelProps {
   projectId: string;
@@ -36,6 +43,12 @@ export default function PredictiveAnalyticsPanel({
 
   const [budget, setBudget] = useState<any>(null);
   const [forecastingBudget, setForecastingBudget] = useState(false);
+
+  const [weather, setWeather] = useState<any>(null);
+  const [analyzingWeather, setAnalyzingWeather] = useState(false);
+
+  const [coPatterns, setCoPatterns] = useState<any>(null);
+  const [detectingPatterns, setDetectingPatterns] = useState(false);
 
   const handleScheduleRisk = async () => {
     setAnalyzingSchedule(true);
@@ -70,6 +83,42 @@ export default function PredictiveAnalyticsPanel({
       toast.error(t("budgetFailed"));
     } finally {
       setForecastingBudget(false);
+    }
+  };
+
+  const handleWeatherImpact = async () => {
+    setAnalyzingWeather(true);
+    setWeather(null);
+    try {
+      const result = await analyzeWeatherImpact(projectId);
+      if (result.success && result.analysis) {
+        setWeather(result.analysis);
+        toast.success(t("weatherAnalyzed"));
+      } else {
+        toast.error(result.error || t("weatherFailed"));
+      }
+    } catch {
+      toast.error(t("weatherFailed"));
+    } finally {
+      setAnalyzingWeather(false);
+    }
+  };
+
+  const handleCOPatterns = async () => {
+    setDetectingPatterns(true);
+    setCoPatterns(null);
+    try {
+      const result = await detectCOPatterns(projectId);
+      if (result.success && result.analysis) {
+        setCoPatterns(result.analysis);
+        toast.success(t("coAnalyzed"));
+      } else {
+        toast.error(result.error || t("coFailed"));
+      }
+    } catch {
+      toast.error(t("coFailed"));
+    } finally {
+      setDetectingPatterns(false);
     }
   };
 
@@ -308,6 +357,190 @@ export default function PredictiveAnalyticsPanel({
                   <CheckCircle2 className="w-3 h-3" /> {t("recommendations")}
                 </div>
                 {budget.recommendations.map((r: string, i: number) => (
+                  <div key={i} className="text-xs text-green-600 pl-4">• {r}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Weather Impact Analysis */}
+      <div className="bg-white rounded-md p-3 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <CloudRain className="w-4 h-4 text-amber-500" />
+            {t("weatherImpact")}
+          </div>
+          <button
+            onClick={handleWeatherImpact}
+            disabled={analyzingWeather}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50 transition-colors"
+          >
+            {analyzingWeather ? <Loader2 className="w-4 h-4 animate-spin" /> : <CloudRain className="w-4 h-4" />}
+            {analyzingWeather ? t("analyzing") : t("analyzeWeather")}
+          </button>
+        </div>
+
+        {weather && (
+          <div className="border border-amber-200 rounded-md p-3 space-y-3">
+            {/* Impact Score */}
+            <div className="flex items-center justify-between">
+              <span className={`text-2xl font-bold ${weather.impactScore >= 7 ? "text-red-600" : weather.impactScore >= 4 ? "text-yellow-600" : "text-green-600"}`}>
+                {weather.impactScore}/10
+              </span>
+              <span className={`text-xs px-2 py-0.5 rounded font-medium ${riskBadge(weather.overallImpact)}`}>
+                {weather.overallImpact} {t("impact")}
+              </span>
+            </div>
+
+            {/* Affected Phases */}
+            {weather.affectedPhases?.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="text-xs font-medium text-amber-600">{t("affectedPhases")}</div>
+                {weather.affectedPhases.map((phase: any, i: number) => (
+                  <div key={i} className="text-xs bg-gray-50 rounded px-2 py-1.5 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-700">{phase.phaseName}</span>
+                      <div className="flex gap-2">
+                        <span className={`px-1.5 py-0.5 rounded ${riskBadge(phase.outdoorExposure)}`}>
+                          {phase.outdoorExposure}
+                        </span>
+                        {phase.potentialDelayDays > 0 && (
+                          <span className="text-red-600">+{phase.potentialDelayDays}d</span>
+                        )}
+                      </div>
+                    </div>
+                    {phase.weatherRisks?.length > 0 && (
+                      <div className="text-gray-500">{phase.weatherRisks.join("; ")}</div>
+                    )}
+                    {phase.mitigations?.length > 0 && (
+                      <div className="text-amber-600 italic">{phase.mitigations[0]}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Seasonal Risks */}
+            {weather.seasonalRisks?.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-gray-600">{t("seasonalRisks")}</div>
+                {weather.seasonalRisks.map((sr: any, i: number) => (
+                  <div key={i} className="text-xs flex items-center gap-2 bg-gray-50 rounded px-2 py-1">
+                    <span className="font-medium text-gray-700 min-w-[90px]">{sr.period}</span>
+                    <span className={`px-1.5 py-0.5 rounded ${riskBadge(sr.risk)}`}>{sr.risk}</span>
+                    <span className="text-gray-500">{sr.description}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Recommendations */}
+            {weather.recommendations?.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-green-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> {t("recommendations")}
+                </div>
+                {weather.recommendations.map((r: string, i: number) => (
+                  <div key={i} className="text-xs text-green-600 pl-4">• {r}</div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Change Order Pattern Detection */}
+      <div className="bg-white rounded-md p-3 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <FileWarning className="w-4 h-4 text-amber-500" />
+            {t("coPatterns")}
+          </div>
+          <button
+            onClick={handleCOPatterns}
+            disabled={detectingPatterns}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-amber-600 text-white rounded-md hover:bg-amber-700 disabled:opacity-50 transition-colors"
+          >
+            {detectingPatterns ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileWarning className="w-4 h-4" />}
+            {detectingPatterns ? t("analyzing") : t("detectPatterns")}
+          </button>
+        </div>
+
+        {coPatterns && (
+          <div className="border border-amber-200 rounded-md p-3 space-y-3">
+            {/* Anomaly Score */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className={`text-2xl font-bold ${coPatterns.anomalyScore >= 7 ? "text-red-600" : coPatterns.anomalyScore >= 4 ? "text-yellow-600" : "text-green-600"}`}>
+                  {coPatterns.anomalyScore}/10
+                </span>
+                <div className="text-xs text-gray-500">
+                  {coPatterns.totalCOs} COs · {coPatterns.totalAmount}
+                </div>
+              </div>
+              <span className={`text-xs px-2 py-0.5 rounded font-medium ${riskBadge(coPatterns.overallRisk)}`}>
+                {coPatterns.overallRisk} {t("risk")}
+              </span>
+            </div>
+
+            {/* Frequency & Magnitude */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-gray-50 rounded p-2">
+                <div className="text-[10px] text-gray-400 uppercase">{t("frequency")}</div>
+                <div className="text-sm font-medium text-gray-700">{coPatterns.frequencyAnalysis?.cosPerMonth?.toFixed(1)} {t("perMonth")}</div>
+                <div className="text-xs text-gray-500">{coPatterns.frequencyAnalysis?.trend} — {coPatterns.frequencyAnalysis?.assessment}</div>
+              </div>
+              <div className="bg-gray-50 rounded p-2">
+                <div className="text-[10px] text-gray-400 uppercase">{t("magnitude")}</div>
+                <div className="text-sm font-medium text-gray-700">{coPatterns.magnitudeAnalysis?.averageAmount} {t("avg")}</div>
+                <div className="text-xs text-gray-500">{coPatterns.magnitudeAnalysis?.percentOfBudget} {t("ofBudget")}</div>
+              </div>
+            </div>
+
+            {/* Flagged Patterns */}
+            {coPatterns.flaggedPatterns?.length > 0 && (
+              <div className="space-y-1.5">
+                <div className="text-xs font-medium text-red-600 flex items-center gap-1">
+                  <AlertTriangle className="w-3 h-3" /> {t("flaggedPatterns")}
+                </div>
+                {coPatterns.flaggedPatterns.map((fp: any, i: number) => (
+                  <div key={i} className="text-xs bg-gray-50 rounded px-2 py-1.5 space-y-0.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-gray-700">{fp.pattern}</span>
+                      <span className={`px-1.5 py-0.5 rounded ${riskBadge(fp.severity)}`}>{fp.severity}</span>
+                    </div>
+                    <div className="text-gray-500">{fp.description}</div>
+                    {fp.affectedPhases?.length > 0 && (
+                      <div className="text-gray-400">{t("phases")}: {fp.affectedPhases.join(", ")}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Vendor Analysis */}
+            {coPatterns.vendorAnalysis?.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-amber-600">{t("vendorConcentration")}</div>
+                {coPatterns.vendorAnalysis.map((v: any, i: number) => (
+                  <div key={i} className="text-xs flex items-center justify-between bg-gray-50 rounded px-2 py-1">
+                    <span className="font-medium text-gray-700">{v.vendor}</span>
+                    <span className="text-gray-500">{v.coCount} COs · {v.totalAmount}</span>
+                    <span className="text-gray-400 italic">{v.assessment}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Recommendations */}
+            {coPatterns.recommendations?.length > 0 && (
+              <div className="space-y-1">
+                <div className="text-xs font-medium text-green-600 flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" /> {t("recommendations")}
+                </div>
+                {coPatterns.recommendations.map((r: string, i: number) => (
                   <div key={i} className="text-xs text-green-600 pl-4">• {r}</div>
                 ))}
               </div>

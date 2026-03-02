@@ -10,6 +10,7 @@
  * - Schedule Risk Prediction: Predict which phases are at risk of delay
  * - Budget Forecasting: Predict final project costs with confidence intervals
  * - Change Order Pattern Detection: Flag anomalous CO frequency / magnitude
+ * - Weather Impact Analysis: Predict weather-related delays for outdoor phases (Sprint 35)
  */
 
 import { auth } from "@/lib/auth";
@@ -365,5 +366,320 @@ ${payApps.length > 0 ? `Total billed: $${payApps.reduce((s: number, p: any) => s
     };
   } catch (err: any) {
     return { success: false, error: err.message || "Failed to forecast budget" };
+  }
+}
+
+// ── Weather Impact Analysis ──────────────────────────────────────────
+
+interface WeatherImpactResult {
+  success: boolean;
+  analysis?: {
+    overallImpact: string; // NONE, LOW, MODERATE, HIGH, SEVERE
+    impactScore: number; // 1-10
+    affectedPhases: {
+      phaseName: string;
+      outdoorExposure: string; // HIGH, MODERATE, LOW, NONE
+      weatherRisks: string[];
+      potentialDelayDays: number;
+      mitigations: string[];
+    }[];
+    seasonalRisks: {
+      period: string;
+      risk: string;
+      description: string;
+    }[];
+    recommendations: string[];
+  };
+  error?: string;
+}
+
+/**
+ * Analyze weather-related risks for a project's outdoor-dependent phases.
+ * Uses project location, schedule timeline, and phase types to predict
+ * weather-related delays and suggest mitigations.
+ */
+export async function analyzeWeatherImpact(
+  projectId: string
+): Promise<WeatherImpactResult> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  try {
+    const project = await dbc.project.findUnique({
+      where: { id: projectId },
+      select: { name: true, type: true, address: true, city: true, state: true },
+    });
+
+    if (!project) {
+      return { success: false, error: "Project not found" };
+    }
+
+    const phases = await db.phase.findMany({
+      where: { projectId },
+      orderBy: { sortOrder: "asc" },
+      select: {
+        name: true,
+        status: true,
+        progress: true,
+        estStart: true,
+        estEnd: true,
+      },
+    });
+
+    if (phases.length === 0) {
+      return { success: false, error: "No phases found" };
+    }
+
+    const today = new Date().toISOString().split("T")[0];
+    const location = [project.address, project.city, project.state].filter(Boolean).join(", ") || "Unknown location";
+
+    const phaseData = phases.map((p: any) => ({
+      name: p.name,
+      status: p.status,
+      progress: p.progress,
+      estStart: p.estStart ? p.estStart.toISOString().split("T")[0] : null,
+      estEnd: p.estEnd ? p.estEnd.toISOString().split("T")[0] : null,
+    }));
+
+    const response = await callAI(
+      [
+        {
+          role: "system",
+          content: `You are a construction weather risk analyst. Analyze a project's phases, location, and timeline to predict weather-related delays and impacts.
+
+Today's date: ${today}
+Project location: ${location}
+Project type: ${project.type || "Unknown"}
+
+Consider seasonal weather patterns, typical precipitation, temperature extremes, hurricane/storm seasons, and how they impact construction activities. Common weather-sensitive activities include: site work, excavation, concrete pours, roofing, exterior finishes, painting, landscaping, and foundation work.
+
+Return a JSON object with:
+- overallImpact: "NONE", "LOW", "MODERATE", "HIGH", or "SEVERE"
+- impactScore: Integer 1-10 (10 = highest weather risk)
+- affectedPhases: Array of phases with outdoor exposure, each with:
+  - phaseName: Phase name
+  - outdoorExposure: "HIGH", "MODERATE", "LOW", or "NONE" based on typical activities
+  - weatherRisks: Array of specific weather risks (e.g., "Heavy rainfall in April delays concrete")
+  - potentialDelayDays: Estimated additional delay days from weather
+  - mitigations: Array of weather mitigation strategies
+- seasonalRisks: Array of 2-4 upcoming seasonal risk periods with:
+  - period: e.g., "April-May 2026"
+  - risk: "LOW", "MODERATE", "HIGH"
+  - description: What weather risk applies
+- recommendations: Array of 3-5 weather-related scheduling recommendations
+
+Return ONLY valid JSON, no markdown.`,
+        },
+        {
+          role: "user",
+          content: `Analyze weather impacts for this project:
+
+Project: ${project.name}
+Location: ${location}
+Type: ${project.type || "General Construction"}
+
+Phases:
+${JSON.stringify(phaseData, null, 2)}`,
+        },
+      ],
+      {
+        feature: "ai_weather_impact",
+        userId: session.user.id,
+        temperature: 0.3,
+        maxTokens: 2000,
+      }
+    );
+
+    if (!response.success || !response.text) {
+      return { success: false, error: response.error || "AI analysis failed" };
+    }
+
+    const text = response.text || "";
+    const cleaned = text.replace(/```json\n?|\n?```/g, "").trim();
+    const result = JSON.parse(cleaned);
+
+    return {
+      success: true,
+      analysis: {
+        overallImpact: result.overallImpact || "LOW",
+        impactScore: result.impactScore || 3,
+        affectedPhases: result.affectedPhases || [],
+        seasonalRisks: result.seasonalRisks || [],
+        recommendations: result.recommendations || [],
+      },
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to analyze weather impact" };
+  }
+}
+
+// ── Change Order Pattern Detection ───────────────────────────────────
+
+interface COPatternResult {
+  success: boolean;
+  analysis?: {
+    overallRisk: string; // LOW, MODERATE, HIGH, CRITICAL
+    anomalyScore: number; // 1-10
+    totalCOs: number;
+    totalAmount: string;
+    frequencyAnalysis: {
+      cosPerMonth: number;
+      trend: string;
+      assessment: string;
+    };
+    magnitudeAnalysis: {
+      averageAmount: string;
+      largestCO: string;
+      percentOfBudget: string;
+      assessment: string;
+    };
+    flaggedPatterns: {
+      pattern: string;
+      severity: string;
+      description: string;
+      affectedPhases: string[];
+    }[];
+    vendorAnalysis: {
+      vendor: string;
+      coCount: number;
+      totalAmount: string;
+      assessment: string;
+    }[];
+    recommendations: string[];
+  };
+  error?: string;
+}
+
+/**
+ * Detect anomalous change order patterns — frequency spikes, magnitude outliers,
+ * vendor concentration, and scope creep indicators.
+ */
+export async function detectCOPatterns(
+  projectId: string
+): Promise<COPatternResult> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  try {
+    const project = await dbc.project.findUnique({
+      where: { id: projectId },
+      select: { name: true, budget: true, type: true },
+    });
+
+    if (!project) {
+      return { success: false, error: "Project not found" };
+    }
+
+    // Fetch all change orders with phase context
+    let changeOrders: any[] = [];
+    try {
+      changeOrders = await dbc.changeOrder.findMany({
+        where: { phase: { projectId } },
+        select: {
+          title: true,
+          description: true,
+          amount: true,
+          status: true,
+          reason: true,
+          category: true,
+          createdAt: true,
+          phase: { select: { name: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      });
+    } catch {
+      return { success: false, error: "Unable to fetch change orders" };
+    }
+
+    if (changeOrders.length === 0) {
+      return { success: false, error: "No change orders found for analysis" };
+    }
+
+    const coData = changeOrders.map((co: any) => ({
+      title: co.title,
+      description: co.description?.substring(0, 100),
+      amount: co.amount ? Number(co.amount) : 0,
+      status: co.status,
+      reason: co.reason,
+      category: co.category,
+      phase: co.phase?.name || "Unknown",
+      date: co.createdAt?.toISOString().split("T")[0],
+    }));
+
+    const response = await callAI(
+      [
+        {
+          role: "system",
+          content: `You are a construction change order analyst specializing in pattern detection and anomaly identification. Analyze a project's change order history to detect problematic patterns.
+
+Look for:
+1. Frequency anomalies — sudden spikes in CO volume
+2. Magnitude outliers — unusually large COs relative to project budget
+3. Scope creep — gradually increasing CO amounts over time
+4. Vendor/phase concentration — too many COs from one source
+5. Category patterns — design changes vs unforeseen conditions vs owner requests
+6. Budget erosion — cumulative CO impact approaching danger thresholds
+
+Return a JSON object with:
+- overallRisk: "LOW", "MODERATE", "HIGH", or "CRITICAL"
+- anomalyScore: Integer 1-10 (10 = most anomalous)
+- totalCOs: Number of change orders analyzed
+- totalAmount: String like "$125,000"
+- frequencyAnalysis: { cosPerMonth, trend ("INCREASING"/"STABLE"/"DECREASING"), assessment }
+- magnitudeAnalysis: { averageAmount, largestCO, percentOfBudget, assessment }
+- flaggedPatterns: Array of detected patterns with severity, description, affectedPhases
+- vendorAnalysis: Array of top CO sources by phase with counts, totals, assessments
+- recommendations: Array of 3-5 actionable recommendations
+
+Return ONLY valid JSON, no markdown.`,
+        },
+        {
+          role: "user",
+          content: `Detect change order patterns for this project:
+
+Project: ${project.name}
+Type: ${project.type || "Unknown"}
+Budget: ${project.budget ? `$${Number(project.budget).toLocaleString()}` : "Not set"}
+
+Change Orders (${changeOrders.length} total):
+${JSON.stringify(coData, null, 2)}`,
+        },
+      ],
+      {
+        feature: "ai_co_patterns",
+        userId: session.user.id,
+        temperature: 0.3,
+        maxTokens: 2000,
+      }
+    );
+
+    if (!response.success || !response.text) {
+      return { success: false, error: response.error || "AI analysis failed" };
+    }
+
+    const text = response.text || "";
+    const cleaned = text.replace(/```json\n?|\n?```/g, "").trim();
+    const result = JSON.parse(cleaned);
+
+    return {
+      success: true,
+      analysis: {
+        overallRisk: result.overallRisk || "LOW",
+        anomalyScore: result.anomalyScore || 3,
+        totalCOs: result.totalCOs || changeOrders.length,
+        totalAmount: result.totalAmount || "$0",
+        frequencyAnalysis: result.frequencyAnalysis || { cosPerMonth: 0, trend: "STABLE", assessment: "No data" },
+        magnitudeAnalysis: result.magnitudeAnalysis || { averageAmount: "$0", largestCO: "$0", percentOfBudget: "0%", assessment: "No data" },
+        flaggedPatterns: result.flaggedPatterns || [],
+        vendorAnalysis: result.vendorAnalysis || [],
+        recommendations: result.recommendations || [],
+      },
+    };
+  } catch (err: any) {
+    return { success: false, error: err.message || "Failed to detect CO patterns" };
   }
 }
