@@ -2,7 +2,7 @@
 // Cache-first strategy for static assets, network-first for API/pages
 // Offline mutation support via client messaging
 
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v4";
 const STATIC_CACHE = "static-" + CACHE_VERSION;
 const DATA_CACHE = "data-" + CACHE_VERSION;
 
@@ -84,12 +84,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Static assets (_next/static, images, fonts) — cache-first
+  // Static assets (_next/static, images, fonts) — stale-while-revalidate
+  // Returns cached immediately but fetches fresh copy in background to prevent stale CSS/JS
   if (
     url.pathname.startsWith("/_next/static/") ||
     url.pathname.match(/\.(png|jpg|jpeg|svg|gif|ico|woff2?|ttf|css|js)$/)
   ) {
-    event.respondWith(cacheFirst(request, STATIC_CACHE));
+    event.respondWith(staleWhileRevalidate(request, STATIC_CACHE));
     return;
   }
 
@@ -102,6 +103,30 @@ self.addEventListener("fetch", (event) => {
   // RSC payloads and other data — network-first
   event.respondWith(networkFirst(request, DATA_CACHE));
 });
+
+// Stale-while-revalidate: return cached immediately, fetch fresh in background
+async function staleWhileRevalidate(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+
+  // Always fetch a fresh copy in the background
+  const fetchPromise = fetch(request)
+    .then((response) => {
+      if (response.ok) {
+        cache.put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  // Return cached immediately if available, otherwise wait for network
+  if (cached) return cached;
+
+  const networkResponse = await fetchPromise;
+  if (networkResponse) return networkResponse;
+
+  return new Response("Offline", { status: 503, statusText: "Service Unavailable" });
+}
 
 // Cache-first: return cached if available, else fetch & cache
 async function cacheFirst(request, cacheName) {
