@@ -20,8 +20,19 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { consumeImpersonationToken } from "@/actions/system-admin";
+import { rateLimitHeaders } from "@/lib/rate-limit";
 
 export async function GET(req: NextRequest) {
+  // Rate limit: 10 attempts per minute per IP (brute-force protection)
+  const ip = req.headers.get("x-forwarded-for") || "unknown";
+  const rl = await rateLimitHeaders(`impersonate:${ip}`, 10, 60_000);
+  if (rl.limited) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429, headers: rl.headers }
+    );
+  }
+
   const token = req.nextUrl.searchParams.get("token");
   const exit = req.nextUrl.searchParams.get("exit");
 

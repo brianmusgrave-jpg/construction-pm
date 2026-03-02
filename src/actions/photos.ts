@@ -27,7 +27,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { can } from "@/lib/permissions";
+import { can, verifyProjectAccessViaPhase } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { del } from "@vercel/blob";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
@@ -58,8 +58,11 @@ export async function createPhoto(data: {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const userRole = session.user.role || "VIEWER";
-  if (!can(userRole, "create", "photo")) throw new Error("Forbidden");
+  // Verify project membership via phase and get project-level role
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, data.phaseId, session.user.role
+  );
+  if (!can(projectRole, "create", "photo")) throw new Error("Forbidden");
 
   const phase = await db.phase.findUnique({
     where: { id: data.phaseId },
@@ -111,8 +114,11 @@ export async function createPhotoBatch(data: {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const userRole = session.user.role || "VIEWER";
-  if (!can(userRole, "create", "photo")) throw new Error("Forbidden");
+  // Verify project membership via phase and get project-level role
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, data.phaseId, session.user.role
+  );
+  if (!can(projectRole, "create", "photo")) throw new Error("Forbidden");
 
   const phase = await db.phase.findUnique({
     where: { id: data.phaseId },
@@ -168,9 +174,6 @@ export async function deletePhoto(photoId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const userRole = session.user.role || "VIEWER";
-  if (!can(userRole, "delete", "photo")) throw new Error("Forbidden");
-
   const photo = await db.photo.findUnique({
     where: { id: photoId },
     include: {
@@ -178,6 +181,12 @@ export async function deletePhoto(photoId: string) {
     },
   });
   if (!photo) throw new Error("Photo not found");
+
+  // Verify project membership and get project-level role
+  const projectRole = await (await import("@/lib/permissions")).verifyProjectAccess(
+    session.user.id, photo.phase.projectId, session.user.role
+  );
+  if (!can(projectRole, "delete", "photo")) throw new Error("Forbidden");
 
   // Remove from Vercel Blob (failure is non-fatal)
   try {

@@ -27,7 +27,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { can } from "@/lib/permissions";
+import { can, verifyProjectAccessViaPhase, verifyProjectAccess } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 import { del } from "@vercel/blob";
 import { notify, getProjectMemberIds } from "@/lib/notifications";
@@ -57,8 +57,11 @@ export async function createDocument(data: {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const userRole = session.user.role || "VIEWER";
-  if (!can(userRole, "create", "document")) throw new Error("Forbidden");
+  // Verify project membership via phase and get project-level role
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, data.phaseId, session.user.role
+  );
+  if (!can(projectRole, "create", "document")) throw new Error("Forbidden");
 
   // Verify phase exists and fetch projectId for revalidation and notifications
   const phase = await db.phase.findUnique({
@@ -124,9 +127,6 @@ export async function updateDocumentStatus(
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const userRole = session.user.role || "VIEWER";
-  if (!can(userRole, "update", "document")) throw new Error("Forbidden");
-
   const document = await db.document.findUnique({
     where: { id: documentId },
     include: {
@@ -134,6 +134,12 @@ export async function updateDocumentStatus(
     },
   });
   if (!document) throw new Error("Document not found");
+
+  // Verify project membership and get project-level role
+  const projectRole = await verifyProjectAccess(
+    session.user.id, document.phase.projectId, session.user.role
+  );
+  if (!can(projectRole, "update", "document")) throw new Error("Forbidden");
 
   const updated = await db.document.update({
     where: { id: documentId },

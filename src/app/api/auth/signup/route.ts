@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
+import { rateLimitHeaders } from "@/lib/rate-limit";
 
 const dbc = db as any;
 
@@ -21,6 +22,16 @@ function slugify(name: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 signups per IP per minute (brute-force protection)
+  const ip = req.headers.get("x-forwarded-for") || "unknown";
+  const rl = await rateLimitHeaders(`signup:${ip}`, 5, 60_000);
+  if (rl.limited) {
+    return NextResponse.json(
+      { error: "Too many signup attempts. Please try again later." },
+      { status: 429, headers: rl.headers }
+    );
+  }
+
   try {
     const { companyName, email, password, fullName, plan } = await req.json();
 
@@ -33,6 +44,22 @@ export async function POST(req: NextRequest) {
     }
 
     const emailLower = email.trim().toLowerCase();
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailLower)) {
+      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    }
+
+    // Validate company name length
+    if (companyName.trim().length > 100) {
+      return NextResponse.json({ error: "Company name too long (max 100 characters)" }, { status: 400 });
+    }
+
+    // Validate full name length
+    if (fullName.trim().length > 100) {
+      return NextResponse.json({ error: "Name too long (max 100 characters)" }, { status: 400 });
+    }
 
     // Check if email already exists
     const existingUser = await dbc.user.findFirst({ where: { email: emailLower } });

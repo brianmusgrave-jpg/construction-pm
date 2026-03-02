@@ -21,7 +21,7 @@
 
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { can } from "@/lib/permissions";
+import { can, verifyProjectAccess, verifyProjectAccessViaPhase } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 
 // ── Mutations ──
@@ -38,7 +38,12 @@ export async function updateProjectBudget(
 ) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
-  if (!can(session.user.role || "VIEWER", "manage", "phase"))
+
+  // Verify project membership and get project-level role
+  const projectRole = await verifyProjectAccess(
+    session.user.id, projectId, session.user.role
+  );
+  if (!can(projectRole, "manage", "phase"))
     throw new Error("Forbidden");
 
   await db.project.update({
@@ -65,7 +70,12 @@ export async function updatePhaseCosts(
 ) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
-  if (!can(session.user.role || "VIEWER", "update", "phase"))
+
+  // Verify project membership via phase and get project-level role
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, phaseId, session.user.role
+  );
+  if (!can(projectRole, "update", "phase"))
     throw new Error("Forbidden");
 
   const phase = await db.phase.update({
@@ -105,6 +115,9 @@ export async function updatePhaseCosts(
 export async function getProjectBudgetSummary(projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
+
+  // Verify project membership (read access)
+  await verifyProjectAccess(session.user.id, projectId, session.user.role);
 
   const project = await db.project.findUnique({
     where: { id: projectId },

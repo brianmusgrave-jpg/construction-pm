@@ -36,7 +36,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { can } from "@/lib/permissions";
+import { can, verifyProjectAccessViaPhase } from "@/lib/permissions";
 import { revalidatePath } from "next/cache";
 
 // ── Queries ──
@@ -53,6 +53,9 @@ import { revalidatePath } from "next/cache";
 export async function getPunchListItems(phaseId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated");
+
+  // Verify project membership (read access)
+  await verifyProjectAccessViaPhase(session.user.id, phaseId, session.user.role);
 
   // dbc: db as any — punchListItem not in generated Prisma types yet
   const dbc = db as any;
@@ -87,6 +90,10 @@ export async function getPunchListItems(phaseId: string) {
 export async function getPunchListSummary(projectId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated");
+
+  // Verify project membership (read access)
+  const { verifyProjectAccess } = await import("@/lib/permissions");
+  await verifyProjectAccess(session.user.id, projectId, (session.user as any).role);
 
   const dbc = db as any;
   const items = await dbc.punchListItem.findMany({
@@ -134,8 +141,12 @@ export async function createPunchListItem(data: {
 }) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated");
-  const role = (session.user as any).role || "VIEWER";
-  if (!can(role, "create", "phase")) throw new Error("No permission");
+
+  // Verify project membership via phase and get project-level role
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, data.phaseId, (session.user as any).role
+  );
+  if (!can(projectRole, "create", "phase")) throw new Error("No permission");
 
   const dbc = db as any;
 
@@ -175,8 +186,19 @@ export async function createPunchListItem(data: {
 export async function updatePunchListStatus(itemId: string, status: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated");
-  const role = (session.user as any).role || "VIEWER";
-  if (!can(role, "update", "phase")) throw new Error("No permission");
+
+  // Look up the item to verify project membership
+  const dbc2 = db as any;
+  const existingItem = await dbc2.punchListItem.findUnique({
+    where: { id: itemId },
+    select: { phaseId: true },
+  });
+  if (!existingItem) throw new Error("Item not found");
+
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, existingItem.phaseId, (session.user as any).role
+  );
+  if (!can(projectRole, "update", "phase")) throw new Error("No permission");
 
   const dbc = db as any;
   const updateData: any = { status };
@@ -217,8 +239,19 @@ export async function updatePunchListItem(
 ) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated");
-  const role = (session.user as any).role || "VIEWER";
-  if (!can(role, "update", "phase")) throw new Error("No permission");
+
+  // Look up the item to verify project membership
+  const dbc2 = db as any;
+  const existingItem = await dbc2.punchListItem.findUnique({
+    where: { id: itemId },
+    select: { phaseId: true },
+  });
+  if (!existingItem) throw new Error("Item not found");
+
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, existingItem.phaseId, (session.user as any).role
+  );
+  if (!can(projectRole, "update", "phase")) throw new Error("No permission");
 
   const dbc = db as any;
   // Build the update payload — only include keys that were supplied
@@ -250,8 +283,19 @@ export async function updatePunchListItem(
 export async function deletePunchListItem(itemId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Not authenticated");
-  const role = (session.user as any).role || "VIEWER";
-  if (!can(role, "delete", "phase")) throw new Error("No permission");
+
+  // Look up the item to verify project membership
+  const dbc2 = db as any;
+  const existingItem = await dbc2.punchListItem.findUnique({
+    where: { id: itemId },
+    select: { phaseId: true },
+  });
+  if (!existingItem) throw new Error("Item not found");
+
+  const { role: projectRole } = await verifyProjectAccessViaPhase(
+    session.user.id, existingItem.phaseId, (session.user as any).role
+  );
+  if (!can(projectRole, "delete", "phase")) throw new Error("No permission");
 
   const dbc = db as any;
   await dbc.punchListItem.delete({ where: { id: itemId } });

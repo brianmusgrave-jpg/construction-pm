@@ -27,6 +27,7 @@
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { verifyProjectAccessViaPhase } from "@/lib/permissions";
 import { z } from "zod";
 
 // ── Zod Schema ──
@@ -49,6 +50,9 @@ const AddPhaseCommentSchema = z.object({
 export async function getPhaseComments(phaseId: string) {
   const session = await auth();
   if (!session?.user) throw new Error("Unauthorized");
+
+  // Verify project membership (read access)
+  await verifyProjectAccessViaPhase(session.user.id, phaseId, session.user.role);
 
   return db.phaseComment.findMany({
     where: { phaseId },
@@ -80,6 +84,9 @@ export async function addPhaseComment(
   if (!session?.user?.id) throw new Error("Unauthorized");
 
   const parsed = AddPhaseCommentSchema.parse(data);
+
+  // Verify project membership before allowing comment
+  await verifyProjectAccessViaPhase(session.user.id, parsed.phaseId, session.user.role);
 
   // Secondary trim guard — belt-and-suspenders against whitespace-only input
   if (!parsed.content.trim()) throw new Error("Comment cannot be empty");

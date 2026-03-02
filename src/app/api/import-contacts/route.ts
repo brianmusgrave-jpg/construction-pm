@@ -13,11 +13,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { can } from "@/lib/permissions";
 import * as XLSX from "xlsx";
+import { rateLimitHeaders } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
+
+  // Rate limit: 10 imports per minute per user
+  const rl = await rateLimitHeaders(`import:${session.user.id}`, 10, 60_000);
+  if (rl.limited) {
+    return NextResponse.json(
+      { error: "Too many import requests. Please try again later." },
+      { status: 429, headers: rl.headers }
+    );
+  }
 
   const userRole = session.user.role || "VIEWER";
   if (!can(userRole, "create", "staff"))
