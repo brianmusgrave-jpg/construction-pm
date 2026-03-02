@@ -131,6 +131,13 @@ export async function processVoiceMemo(
         }
         break;
 
+      case "time_entry":
+        if (projectId) {
+          await createTimeEntryFromMemo(userId, projectId, input);
+          actionsTaken.push("time_entry_created");
+        }
+        break;
+
       case "general_note":
       case "photo_note":
         // Just the VoiceMemo record is sufficient
@@ -244,6 +251,41 @@ async function createPunchListFromMemo(
       description: input.intent.details,
       priority: "MEDIUM",
       status: "OPEN",
+      createdById: userId,
+    },
+  });
+}
+
+async function createTimeEntryFromMemo(
+  userId: string,
+  projectId: string,
+  input: ProcessVoiceMemoInput
+) {
+  const dbc = db as any;
+
+  // Find the first active phase to attach time entries to
+  const phase = await dbc.phase.findFirst({
+    where: { project: { id: projectId } },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  if (!phase) return;
+
+  // Parse hours and worker names from the intent details
+  // Example: "John and Mike worked 8 hours each on framing today, cost code 310"
+  const hoursMatch = input.intent.details.match(/(\d+(?:\.\d+)?)\s*hours?/i);
+  const hours = hoursMatch ? parseFloat(hoursMatch[1]) : 8;
+  const costCodeMatch = input.intent.details.match(/cost\s*code\s*(\w+)/i);
+  const costCode = costCodeMatch ? costCodeMatch[1] : "";
+
+  await dbc.timeEntry.create({
+    data: {
+      phaseId: phase.id,
+      date: new Date(),
+      hours,
+      costCode,
+      description: input.intent.summary,
+      status: "PENDING",
       createdById: userId,
     },
   });

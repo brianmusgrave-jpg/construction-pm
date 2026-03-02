@@ -1533,5 +1533,39 @@
     "assistantTitle": "Assistant IA",
     "nothingNeedsAttention": "Tout est en ordre",
     "noUpcoming": "Aucune phase à venir"
+  },
+  "punchListAI": {
+    "title": "IA de Liste de Réserves",
+    "runPrediction": "Prédire l'Achèvement",
+    "predictionFailed": "Échec de la prédiction",
+    "openItems": "Ouverts",
+    "criticalBlockers": "Critiques",
+    "atRiskItems": "En Retard",
+    "avgResolution": "Résolution Moy.",
+    "estimatedCloseout": "Clôture Estimée",
+    "confidence": "Confiance",
+    "insights": "Analyses IA",
+    "photoAnalysis": "Analyser Photo",
+    "photoAnalyzing": "Analyse en cours...",
+    "photoFailed": "Échec de l'analyse photo",
+    "applySuggestion": "Appliquer la Suggestion"
+  },
+  "timeTrackingAI": {
+    "title": "IA de Suivi du Temps",
+    "detectAnomalies": "Détecter les Anomalies",
+    "forecastCosts": "Prévoir les Coûts de Main-d'œuvre",
+    "anomalyFailed": "Échec de la détection d'anomalies",
+    "forecastFailed": "Échec de la prévision",
+    "noAnomalies": "Aucune anomalie détectée",
+    "anomalyResults": "{count} anomalies dans {scanned} entrées",
+    "noAnomaliesFound": "Aucune anomalie — tout semble normal",
+    "more": "plus",
+    "laborForecast": "Prévision des Coûts de Main-d'œuvre",
+    "hoursToDate": "Heures à ce jour",
+    "costToDate": "Coût à ce jour",
+    "avgDaily": "Moy. Quotidienne",
+    "projectedTotal": "Heures Projetées",
+    "projectedCost": "Coût Projeté",
+    "budgetUsed": "Budget Utilisé"
   }
 }

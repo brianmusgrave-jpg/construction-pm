@@ -38,6 +38,8 @@ import { DrawingSection } from "@/components/phase/DrawingSection";
 import { getDrawings } from "@/actions/drawing";
 import { EstimateSection } from "@/components/phase/EstimateSection";
 import { getEstimates } from "@/actions/estimate";
+import PunchListAIPanel from "@/components/phase/PunchListAIPanel";
+import TimeTrackingAIPanel from "@/components/phase/TimeTrackingAIPanel";
 
 export default async function PhaseDetailPage({
   params,
@@ -167,6 +169,8 @@ export default async function PhaseDetailPage({
           canManage={canManage}
         />
 
+        {canManage && <PunchListAIPanel projectId={projectId} />}
+
         <RFISection
           phaseId={phaseId}
           rfis={rfiItems}
@@ -190,6 +194,8 @@ export default async function PhaseDetailPage({
           canEdit={canEdit}
           canManage={canManage}
         />
+
+        {canManage && <TimeTrackingAIPanel projectId={projectId} />}
 
         <InspectionSection
           phaseId={phaseId}

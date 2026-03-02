@@ -1533,5 +1533,39 @@
     "assistantTitle": "AI Assistant",
     "nothingNeedsAttention": "Everything is on track",
     "noUpcoming": "No phases starting soon"
+  },
+  "punchListAI": {
+    "title": "AI Punch List Intelligence",
+    "runPrediction": "Predict Completion",
+    "predictionFailed": "Failed to generate prediction",
+    "openItems": "Open Items",
+    "criticalBlockers": "Critical",
+    "atRiskItems": "Overdue",
+    "avgResolution": "Avg Resolution",
+    "estimatedCloseout": "Estimated Closeout",
+    "confidence": "Confidence",
+    "insights": "AI Insights",
+    "photoAnalysis": "Analyze Photo",
+    "photoAnalyzing": "Analyzing...",
+    "photoFailed": "Photo analysis failed",
+    "applySuggestion": "Apply Suggestion"
+  },
+  "timeTrackingAI": {
+    "title": "AI Time Tracking Intelligence",
+    "detectAnomalies": "Detect Anomalies",
+    "forecastCosts": "Forecast Labor Costs",
+    "anomalyFailed": "Anomaly detection failed",
+    "forecastFailed": "Labor forecast failed",
+    "noAnomalies": "No anomalies detected",
+    "anomalyResults": "{count} anomalies found in {scanned} entries",
+    "noAnomaliesFound": "No anomalies — all entries look normal",
+    "more": "more",
+    "laborForecast": "Labor Cost Forecast",
+    "hoursToDate": "Hours to Date",
+    "costToDate": "Cost to Date",
+    "avgDaily": "Avg Daily",
+    "projectedTotal": "Projected Hours",
+    "projectedCost": "Projected Cost",
+    "budgetUsed": "Budget Used"
   }
 }

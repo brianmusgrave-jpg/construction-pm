@@ -1533,5 +1533,39 @@
     "assistantTitle": "Assistente IA",
     "nothingNeedsAttention": "Tudo está em dia",
     "noUpcoming": "Nenhuma fase começando em breve"
+  },
+  "punchListAI": {
+    "title": "IA de Lista de Pendências",
+    "runPrediction": "Prever Conclusão",
+    "predictionFailed": "Falha ao gerar previsão",
+    "openItems": "Pendentes",
+    "criticalBlockers": "Críticos",
+    "atRiskItems": "Atrasados",
+    "avgResolution": "Resolução Média",
+    "estimatedCloseout": "Encerramento Estimado",
+    "confidence": "Confiança",
+    "insights": "Análises IA",
+    "photoAnalysis": "Analisar Foto",
+    "photoAnalyzing": "Analisando...",
+    "photoFailed": "Falha na análise da foto",
+    "applySuggestion": "Aplicar Sugestão"
+  },
+  "timeTrackingAI": {
+    "title": "IA de Controle de Horas",
+    "detectAnomalies": "Detectar Anomalias",
+    "forecastCosts": "Projetar Custos de Mão de Obra",
+    "anomalyFailed": "Falha na detecção de anomalias",
+    "forecastFailed": "Falha na projeção de custos",
+    "noAnomalies": "Nenhuma anomalia detectada",
+    "anomalyResults": "{count} anomalias em {scanned} registros",
+    "noAnomaliesFound": "Sem anomalias — todos os registros normais",
+    "more": "mais",
+    "laborForecast": "Projeção de Custos de Mão de Obra",
+    "hoursToDate": "Horas até Hoje",
+    "costToDate": "Custo até Hoje",
+    "avgDaily": "Média Diária",
+    "projectedTotal": "Horas Projetadas",
+    "projectedCost": "Custo Projetado",
+    "budgetUsed": "Orçamento Usado"
   }
 }
