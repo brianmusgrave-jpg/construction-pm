@@ -1504,5 +1504,29 @@
     "filter_schedule": "Calendrier",
     "filter_budget": "Budget",
     "filter_compliance": "Conformité"
+  },
+  "widgets": {
+    "customize": "Personnaliser",
+    "saving": "Enregistrement...",
+    "customizeTitle": "Personnaliser le Tableau de Bord",
+    "customizeHint": "Activez/désactivez les widgets, glissez pour réorganiser",
+    "resetLayout": "Réinitialiser les paramètres par défaut",
+    "dragToReorder": "Glissez pour réorganiser",
+    "resizeWidget": "Redimensionner",
+    "expand": "Développer",
+    "collapse": "Réduire",
+    "hiddenWidgets": "Widgets masqués",
+    "kpiTitle": "Indicateurs Clés",
+    "attentionTitle": "Nécessite Attention",
+    "projectsTitle": "Projets",
+    "upcomingTitle": "À Venir",
+    "notificationsTitle": "Notifications",
+    "activityTitle": "Activité Récente",
+    "analyticsTitle": "Analytique",
+    "analyticsEmpty": "Les analyses apparaîtront une fois que vous aurez des données de projet",
+    "insightsTitle": "Perspectives IA",
+    "assistantTitle": "Assistant IA",
+    "nothingNeedsAttention": "Tout est en ordre",
+    "noUpcoming": "Aucune phase à venir"
   }
 }

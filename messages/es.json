@@ -1504,5 +1504,29 @@
     "filter_schedule": "Cronograma",
     "filter_budget": "Presupuesto",
     "filter_compliance": "Cumplimiento"
+  },
+  "widgets": {
+    "customize": "Personalizar",
+    "saving": "Guardando...",
+    "customizeTitle": "Personalizar Panel",
+    "customizeHint": "Activa/desactiva widgets, arrastra para reordenar",
+    "resetLayout": "Restablecer valores predeterminados",
+    "dragToReorder": "Arrastra para reordenar",
+    "resizeWidget": "Redimensionar",
+    "expand": "Expandir",
+    "collapse": "Contraer",
+    "hiddenWidgets": "Widgets ocultos",
+    "kpiTitle": "Métricas Clave",
+    "attentionTitle": "Requiere Atención",
+    "projectsTitle": "Proyectos",
+    "upcomingTitle": "Próximamente",
+    "notificationsTitle": "Notificaciones",
+    "activityTitle": "Actividad Reciente",
+    "analyticsTitle": "Analíticas",
+    "analyticsEmpty": "Las analíticas aparecerán cuando tengas datos de proyectos",
+    "insightsTitle": "Perspectivas IA",
+    "assistantTitle": "Asistente IA",
+    "nothingNeedsAttention": "Todo está en orden",
+    "noUpcoming": "No hay fases próximas"
   }
 }

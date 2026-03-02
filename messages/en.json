@@ -1504,5 +1504,29 @@
     "filter_schedule": "Schedule",
     "filter_budget": "Budget",
     "filter_compliance": "Compliance"
+  },
+  "widgets": {
+    "customize": "Customize",
+    "saving": "Saving...",
+    "customizeTitle": "Customize Dashboard",
+    "customizeHint": "Toggle widgets on/off, drag to reorder",
+    "resetLayout": "Reset to defaults",
+    "dragToReorder": "Drag to reorder",
+    "resizeWidget": "Resize",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "hiddenWidgets": "Hidden widgets",
+    "kpiTitle": "Key Metrics",
+    "attentionTitle": "Needs Attention",
+    "projectsTitle": "Projects",
+    "upcomingTitle": "Starting Soon",
+    "notificationsTitle": "Notifications",
+    "activityTitle": "Recent Activity",
+    "analyticsTitle": "Analytics",
+    "analyticsEmpty": "Analytics will appear once you have project data",
+    "insightsTitle": "AI Insights",
+    "assistantTitle": "AI Assistant",
+    "nothingNeedsAttention": "Everything is on track",
+    "noUpcoming": "No phases starting soon"
   }
 }

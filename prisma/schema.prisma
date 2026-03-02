@@ -208,7 +208,8 @@ model User {
   systemAdminLogs     SystemAdminLog[]      @relation("system_admin_logs")
   impersonationsAsAdmin  ImpersonationSession[] @relation("impersonation_admin")
   impersonationsAsTarget ImpersonationSession[] @relation("impersonation_target")
-  keeneyMode  Boolean  @default(false) @map("keeney_mode")
+  keeneyMode       Boolean  @default(false) @map("keeney_mode")
+  dashboardLayout  Json?    @map("dashboard_layout") // Widget positions, visibility, collapsed state
   voiceMemos  VoiceMemo[] @relation("voice_memos")
 
   @@map("users")

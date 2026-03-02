@@ -1504,5 +1504,29 @@
     "filter_schedule": "Cronograma",
     "filter_budget": "Orçamento",
     "filter_compliance": "Conformidade"
+  },
+  "widgets": {
+    "customize": "Personalizar",
+    "saving": "Salvando...",
+    "customizeTitle": "Personalizar Painel",
+    "customizeHint": "Ativar/desativar widgets, arraste para reordenar",
+    "resetLayout": "Restaurar padrões",
+    "dragToReorder": "Arraste para reordenar",
+    "resizeWidget": "Redimensionar",
+    "expand": "Expandir",
+    "collapse": "Recolher",
+    "hiddenWidgets": "Widgets ocultos",
+    "kpiTitle": "Métricas Principais",
+    "attentionTitle": "Precisa de Atenção",
+    "projectsTitle": "Projetos",
+    "upcomingTitle": "Em Breve",
+    "notificationsTitle": "Notificações",
+    "activityTitle": "Atividade Recente",
+    "analyticsTitle": "Análises",
+    "analyticsEmpty": "As análises aparecerão quando você tiver dados de projetos",
+    "insightsTitle": "Insights IA",
+    "assistantTitle": "Assistente IA",
+    "nothingNeedsAttention": "Tudo está em dia",
+    "noUpcoming": "Nenhuma fase começando em breve"
   }
 }
