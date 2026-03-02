@@ -71,6 +71,7 @@ import {
   Timer,
   PenTool,
   Calculator,
+  Sparkles,
 } from "lucide-react";
 import { PlayCircle, CreditCard } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
@@ -337,6 +338,27 @@ function useGuides(t: (key: string) => string): GuideSection[] {
         { id: "ins-directory-search", titleKey: "articles.directorySearch", contentKey: "articles.directorySearchContent", tags: ["search", "filter", "directory", "find", "type"] },
         { id: "ins-location", titleKey: "articles.staffLocation", contentKey: "articles.staffLocationContent", tags: ["location", "city", "address", "staff", "directory"] },
         { id: "ins-job-pl", titleKey: "articles.jobPL", contentKey: "articles.jobPLContent", tags: ["profit", "loss", "P&L", "margin", "report", "financial"] },
+      ],
+    },
+    {
+      id: "security-hardening",
+      titleKey: "sections.securityHardening",
+      icon: <ShieldCheck className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "sec-hardening", titleKey: "articles.securityHardeningTitle", contentKey: "articles.securityHardeningBody", tags: ["security", "IDOR", "rate limiting", "CSP", "XSS", "multi-tenant", "protection", "hardening"] },
+      ],
+    },
+    {
+      id: "ai-features",
+      titleKey: "sections.aiFeatures",
+      icon: <Sparkles className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "ai-overview", titleKey: "articles.aiOverviewTitle", contentKey: "articles.aiOverviewBody", tags: ["AI", "overview", "GPT", "features", "pro", "enterprise", "intelligence"] },
+        { id: "ai-estimating", titleKey: "articles.aiEstimatingHelpTitle", contentKey: "articles.aiEstimatingHelpBody", tags: ["estimate", "scope", "AI", "takeoff", "historical", "review", "analysis"] },
+        { id: "ai-project-intel", titleKey: "articles.aiProjectIntelTitle", contentKey: "articles.aiProjectIntelBody", tags: ["predictive", "schedule risk", "budget forecast", "weather", "change order", "analytics", "intelligence"] },
+        { id: "ai-assistant", titleKey: "articles.aiAssistantHelpTitle", contentKey: "articles.aiAssistantHelpBody", tags: ["assistant", "chat", "AI", "tool calling", "actions", "queries", "natural language"] },
       ],
     },
     {
