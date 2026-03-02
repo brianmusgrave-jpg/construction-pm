@@ -48,18 +48,18 @@ export async function generateRFIDraft(
     try {
       const project = await dbc.project.findUnique({
         where: { id: projectId },
-        select: { name: true, type: true, location: true },
+        select: { name: true, status: true, address: true },
       });
       if (project) {
-        context += `Project: ${project.name}. Type: ${project.type || "Unknown"}. Location: ${project.location || "Unknown"}.`;
+        context += `Project: ${project.name}. Status: ${project.status || "Unknown"}. Address: ${project.address || "Unknown"}.`;
       }
       if (phaseId) {
         const phase = await db.phase.findUnique({
           where: { id: phaseId },
-          select: { name: true, type: true },
+          select: { name: true, status: true },
         });
         if (phase) {
-          context += ` Phase: ${phase.name} (${phase.type || "General"}).`;
+          context += ` Phase: ${phase.name} (${phase.status || "PENDING"}).`;
         }
       }
     } catch {
@@ -149,7 +149,7 @@ export async function suggestRFIResponse(
     const rfi = await dbc.rFI.findUnique({
       where: { id: rfiId },
       include: {
-        phase: { select: { name: true, type: true } },
+        phase: { select: { name: true, status: true } },
       },
     });
 
@@ -198,7 +198,7 @@ Return ONLY valid JSON, no markdown or explanation.`,
 
 Subject: "${rfi.subject}"
 Question: "${rfi.question}"
-Phase: ${rfi.phase?.name || "Unknown"} (${rfi.phase?.type || "Unknown"})
+Phase: ${rfi.phase?.name || "Unknown"} (${rfi.phase?.status || "Unknown"})
 Priority: ${rfi.priority}${pastContext}`,
         },
       ],

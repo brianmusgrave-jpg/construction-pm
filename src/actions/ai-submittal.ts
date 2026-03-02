@@ -46,7 +46,7 @@ export async function checkSubmittalCompleteness(
     const submittal = await dbc.submittal.findUnique({
       where: { id: submittalId },
       include: {
-        phase: { select: { name: true, type: true } },
+        phase: { select: { name: true, status: true } },
       },
     });
 
@@ -150,7 +150,7 @@ export async function generateSubmittalPackage(
     try {
       const project = await dbc.project.findUnique({
         where: { id: projectId },
-        select: { name: true, type: true },
+        select: { name: true, status: true },
       });
       if (project) {
         context += `Project: ${project.name}. Type: ${project.type || "Unknown"}.`;
@@ -158,10 +158,10 @@ export async function generateSubmittalPackage(
       if (phaseId) {
         const phase = await db.phase.findUnique({
           where: { id: phaseId },
-          select: { name: true, type: true },
+          select: { name: true, status: true },
         });
         if (phase) {
-          context += ` Phase: ${phase.name} (${phase.type || "General"}).`;
+          context += ` Phase: ${phase.name} (${phase.status || "General"}).`;
         }
       }
     } catch {

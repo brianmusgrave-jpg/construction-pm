@@ -217,7 +217,7 @@ export async function forecastBudget(
     // Fetch project with budget info
     const project = await dbc.project.findUnique({
       where: { id: projectId },
-      select: { name: true, budget: true, type: true },
+      select: { name: true, budget: true, status: true },
     });
 
     if (!project) {
@@ -231,8 +231,6 @@ export async function forecastBudget(
         name: true,
         status: true,
         progress: true,
-        budgetEstimate: true,
-        budgetActual: true,
       },
     });
 
@@ -283,8 +281,8 @@ export async function forecastBudget(
       phase: p.name,
       status: p.status,
       progress: p.progress,
-      estimated: p.budgetEstimate ? Number(p.budgetEstimate) : null,
-      actual: p.budgetActual ? Number(p.budgetActual) : null,
+      estimated: null,
+      actual: null,
     }));
 
     const coData = changeOrders.map((co: any) => ({
@@ -317,7 +315,7 @@ Return ONLY valid JSON, no markdown.`,
           content: `Forecast the budget for this project:
 
 Project: ${project.name}
-Type: ${project.type || "Unknown"}
+Type: ${project.status || "Unknown"}
 Overall Budget: ${project.budget ? `$${Number(project.budget).toLocaleString()}` : "Not set"}
 
 Phase Budget Data:
@@ -409,7 +407,7 @@ export async function analyzeWeatherImpact(
   try {
     const project = await dbc.project.findUnique({
       where: { id: projectId },
-      select: { name: true, type: true, address: true, city: true, state: true },
+      select: { name: true, status: true, address: true },
     });
 
     if (!project) {
@@ -433,7 +431,7 @@ export async function analyzeWeatherImpact(
     }
 
     const today = new Date().toISOString().split("T")[0];
-    const location = [project.address, project.city, project.state].filter(Boolean).join(", ") || "Unknown location";
+    const location = project.address || "Unknown location";
 
     const phaseData = phases.map((p: any) => ({
       name: p.name,
@@ -451,7 +449,7 @@ export async function analyzeWeatherImpact(
 
 Today's date: ${today}
 Project location: ${location}
-Project type: ${project.type || "Unknown"}
+Project type: ${project.status || "Unknown"}
 
 Consider seasonal weather patterns, typical precipitation, temperature extremes, hurricane/storm seasons, and how they impact construction activities. Common weather-sensitive activities include: site work, excavation, concrete pours, roofing, exterior finishes, painting, landscaping, and foundation work.
 
@@ -478,7 +476,7 @@ Return ONLY valid JSON, no markdown.`,
 
 Project: ${project.name}
 Location: ${location}
-Type: ${project.type || "General Construction"}
+Type: ${project.status || "General Construction"}
 
 Phases:
 ${JSON.stringify(phaseData, null, 2)}`,
@@ -567,7 +565,7 @@ export async function detectCOPatterns(
   try {
     const project = await dbc.project.findUnique({
       where: { id: projectId },
-      select: { name: true, budget: true, type: true },
+      select: { name: true, budget: true, status: true },
     });
 
     if (!project) {
@@ -642,7 +640,7 @@ Return ONLY valid JSON, no markdown.`,
           content: `Detect change order patterns for this project:
 
 Project: ${project.name}
-Type: ${project.type || "Unknown"}
+Type: ${project.status || "Unknown"}
 Budget: ${project.budget ? `$${Number(project.budget).toLocaleString()}` : "Not set"}
 
 Change Orders (${changeOrders.length} total):

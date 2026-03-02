@@ -79,8 +79,8 @@ export async function chatWithAssistant(
       dbc.project.findUnique({
         where: { id: projectId },
         select: {
-          name: true, budget: true, status: true, startDate: true,
-          endDate: true, address: true, description: true,
+          name: true, budget: true, status: true,
+          address: true, description: true,
         },
       }),
       dbc.phase.findMany({
@@ -115,9 +115,9 @@ export async function chatWithAssistant(
         orderBy: { scheduledAt: "desc" },
         select: { title: true, scheduledAt: true, result: true, completedAt: true },
       }).catch(() => []),
-      dbc.insurancePolicy.findMany({
+      dbc.insuranceCertificate.findMany({
         where: { projectId },
-        select: { type: true, carrier: true, expiresAt: true, status: true },
+        select: { coverageType: true, carrier: true, expiryDate: true, status: true },
       }).catch(() => []),
     ]);
 
@@ -135,7 +135,7 @@ PROJECT: ${project.name}
 Status: ${project.status}
 Address: ${project.address || "N/A"}
 Budget: $${totalBudget.toLocaleString()} | Spent: $${totalSpent.toLocaleString()} (${totalBudget > 0 ? ((totalSpent / totalBudget) * 100).toFixed(1) : 0}%)
-Timeline: ${project.startDate ? new Date(project.startDate).toLocaleDateString() : "TBD"} – ${project.endDate ? new Date(project.endDate).toLocaleDateString() : "TBD"}
+Timeline: ${project.estCompletion ? `Est. completion: ${new Date(project.estCompletion).toLocaleDateString()}` : "TBD"}
 
 PHASES (${phases.length}):
 ${phases.map((p: any) => `  - ${p.name}: ${p.status} (${p.progress ?? 0}% done) Budget $${Number(p.budget || 0).toLocaleString()} / Spent $${Number(p.actualCost || 0).toLocaleString()}`).join("\n")}
@@ -153,7 +153,7 @@ INSPECTIONS (${inspections.length} recent):
 ${inspections.slice(0, 5).map((i: any) => `  - ${i.title}: ${i.result || "Pending"} (${new Date(i.scheduledAt).toLocaleDateString()})`).join("\n") || "  None"}
 
 INSURANCE:
-${insurance.map((ins: any) => `  - ${ins.type}: ${ins.carrier} — expires ${ins.expiresAt ? new Date(ins.expiresAt).toLocaleDateString() : "N/A"} (${ins.status})`).join("\n") || "  None"}
+${insurance.map((ins: any) => `  - ${ins.coverageType}: ${ins.carrier} — expires ${ins.expiryDate ? new Date(ins.expiryDate).toLocaleDateString() : "N/A"} (${ins.status})`).join("\n") || "  None"}
 `.trim();
 
   const systemPrompt = `You are the AI Project Assistant for a construction project management platform.
@@ -342,7 +342,7 @@ export async function generateProactiveAlerts(): Promise<AlertsResponse> {
   // Get all projects user has access to
   const memberships = await dbc.projectMember.findMany({
     where: { userId: session.user.id },
-    select: { projectId: true, project: { select: { name: true, budget: true, status: true, endDate: true } } },
+    select: { projectId: true, project: { select: { name: true, budget: true, status: true, estCompletion: true } } },
   });
 
   const alerts: ProactiveAlert[] = [];
@@ -357,20 +357,20 @@ export async function generateProactiveAlerts(): Promise<AlertsResponse> {
 
     // ─ Insurance alerts ─
     try {
-      const policies = await dbc.insurancePolicy.findMany({
+      const policies = await dbc.insuranceCertificate.findMany({
         where: { projectId: pid },
-        select: { type: true, carrier: true, expiresAt: true, status: true },
+        select: { coverageType: true, carrier: true, expiryDate: true, status: true },
       });
       for (const pol of policies) {
-        if (pol.expiresAt) {
-          const exp = new Date(pol.expiresAt);
+        if (pol.expiryDate) {
+          const exp = new Date(pol.expiryDate);
           if (exp < now) {
             alerts.push({
               id: `alert-${++alertId}`,
               category: "insurance",
               severity: "critical",
-              title: `${pol.type} insurance expired`,
-              description: `${pol.carrier} ${pol.type} policy expired on ${exp.toLocaleDateString()}`,
+              title: `${pol.coverageType} insurance expired`,
+              description: `${pol.carrier} ${pol.coverageType} policy expired on ${exp.toLocaleDateString()}`,
               recommendation: "Contact carrier immediately to renew. Work may need to stop per contract terms.",
               projectId: pid,
               projectName: pname,
@@ -380,8 +380,8 @@ export async function generateProactiveAlerts(): Promise<AlertsResponse> {
               id: `alert-${++alertId}`,
               category: "insurance",
               severity: exp < sevenDays ? "critical" : "warning",
-              title: `${pol.type} insurance expiring soon`,
-              description: `${pol.carrier} ${pol.type} policy expires ${exp.toLocaleDateString()}`,
+              title: `${pol.coverageType} insurance expiring soon`,
+              description: `${pol.carrier} ${pol.coverageType} policy expires ${exp.toLocaleDateString()}`,
               recommendation: "Initiate renewal process now to avoid coverage gaps.",
               projectId: pid,
               projectName: pname,
@@ -483,8 +483,8 @@ export async function generateProactiveAlerts(): Promise<AlertsResponse> {
       }
 
       // Project-level deadline
-      if (mem.project.endDate) {
-        const projEnd = new Date(mem.project.endDate);
+      if (mem.project.estCompletion) {
+        const projEnd = new Date(mem.project.estCompletion);
         if (projEnd < now && mem.project.status !== "COMPLETE") {
           alerts.push({
             id: `alert-${++alertId}`,

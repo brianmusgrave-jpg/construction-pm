@@ -55,10 +55,10 @@ export async function generateEstimateFromScope(
     try {
       const project = await dbc.project.findUnique({
         where: { id: projectId },
-        select: { name: true, type: true, location: true, budget: true },
+        select: { name: true, status: true, address: true, budget: true },
       });
       if (project) {
-        projectContext = `Project: ${project.name}. Type: ${project.type || "Unknown"}. Location: ${project.location || "Unknown"}. Budget: $${project.budget ? Number(project.budget).toLocaleString() : "Not set"}.`;
+        projectContext = `Project: ${project.name}. Status: ${project.status || "Unknown"}. Address: ${project.address || "Unknown"}. Budget: $${project.budget ? Number(project.budget).toLocaleString() : "Not set"}.`;
       }
     } catch {
       // Continue without project context
@@ -147,7 +147,7 @@ export async function reviewEstimate(
       where: { id: estimateId },
       include: {
         items: true,
-        phase: { select: { name: true, type: true } },
+        phase: { select: { name: true, status: true } },
       },
     });
 
@@ -184,7 +184,7 @@ Return ONLY valid JSON, no markdown or explanation.`,
 
 Estimate: "${estimate.name}"
 ${estimate.description ? `Description: ${estimate.description}` : ""}
-Phase: ${estimate.phase?.name || "Unknown"} (${estimate.phase?.type || "Unknown"})
+Phase: ${estimate.phase?.name || "Unknown"} (${estimate.phase?.status || "Unknown"})
 Total: $${Number(estimate.totalCost).toLocaleString()}
 Status: ${estimate.status}
 
@@ -258,7 +258,7 @@ export async function compareEstimateHistorical(
     const estimate = await dbc.estimate.findUnique({
       where: { id: estimateId },
       include: {
-        phase: { select: { name: true, type: true } },
+        phase: { select: { name: true, status: true } },
       },
     });
 
@@ -279,7 +279,7 @@ export async function compareEstimateHistorical(
         select: {
           totalCost: true,
           name: true,
-          phase: { select: { name: true, type: true } },
+          phase: { select: { name: true, status: true } },
         },
         take: 50,
       });
