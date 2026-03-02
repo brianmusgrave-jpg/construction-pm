@@ -44,6 +44,9 @@ import GpsClockPanel from "@/components/phase/GpsClockPanel";
 import EstimateAIPanel from "@/components/phase/EstimateAIPanel";
 import RFIAIPanel from "@/components/phase/RFIAIPanel";
 import SubmittalAIPanel from "@/components/phase/SubmittalAIPanel";
+import ChangeOrderAIPanel from "@/components/phase/ChangeOrderAIPanel";
+import InspectionAIPanel from "@/components/phase/InspectionAIPanel";
+import MaterialAIPanel from "@/components/phase/MaterialAIPanel";
 
 export default async function PhaseDetailPage({
   params,
@@ -228,6 +231,13 @@ export default async function PhaseDetailPage({
           canRecord={canEdit}
         />
 
+        {canManage && (
+          <InspectionAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+          />
+        )}
+
         <SubcontractorBidSection
           phaseId={phaseId}
           bids={bids}
@@ -240,12 +250,28 @@ export default async function PhaseDetailPage({
           canManage={canManage}
         />
 
+        {canManage && (
+          <MaterialAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+            materials={materials}
+          />
+        )}
+
         <ChangeOrderSection
           phaseId={phaseId}
           changeOrders={changeOrders}
           canCreate={canEdit}
           canApprove={canManage}
         />
+
+        {canManage && (
+          <ChangeOrderAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+            changeOrders={changeOrders}
+          />
+        )}
 
         <LienWaiverSection
           phaseId={phaseId}
