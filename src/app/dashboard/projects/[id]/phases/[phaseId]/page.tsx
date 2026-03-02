@@ -42,6 +42,8 @@ import PunchListAIPanel from "@/components/phase/PunchListAIPanel";
 import TimeTrackingAIPanel from "@/components/phase/TimeTrackingAIPanel";
 import GpsClockPanel from "@/components/phase/GpsClockPanel";
 import EstimateAIPanel from "@/components/phase/EstimateAIPanel";
+import RFIAIPanel from "@/components/phase/RFIAIPanel";
+import SubmittalAIPanel from "@/components/phase/SubmittalAIPanel";
 
 export default async function PhaseDetailPage({
   params,
@@ -181,6 +183,14 @@ export default async function PhaseDetailPage({
           canManage={canManage}
         />
 
+        {canManage && (
+          <RFIAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+            rfis={rfiItems}
+          />
+        )}
+
         <SubmittalSection
           phaseId={phaseId}
           submittals={submittalItems}
@@ -188,6 +198,14 @@ export default async function PhaseDetailPage({
           canEdit={canEdit}
           canManage={canManage}
         />
+
+        {canManage && (
+          <SubmittalAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+            submittals={submittalItems}
+          />
+        )}
 
         <TimeTrackingSection
           phaseId={phaseId}
