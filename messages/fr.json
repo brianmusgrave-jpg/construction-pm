@@ -1484,5 +1484,25 @@
     "riskFactors": "Facteurs de Risque",
     "prevention": "Stratégies de Prévention",
     "frequency": "Fréquence"
+  },
+  "assistant": {
+    "title": "Assistant IA du Projet",
+    "tabChat": "Chat",
+    "tabAlerts": "Alertes",
+    "tabActions": "Actions",
+    "project": "Projet",
+    "chatEmpty": "Posez-moi toute question sur votre projet",
+    "chatHint": "Essayez: \"Quelles phases sont en retard?\" ou \"Planifier une inspection de charpente\"",
+    "inputPlaceholder": "Posez une question ou demandez une action...",
+    "error": "Une erreur est survenue. Veuillez réessayer.",
+    "loadingAlerts": "Analyse de vos projets à la recherche de problèmes...",
+    "noAlerts": "Aucune alerte — tout semble en ordre!",
+    "noActions": "Aucune action effectuée",
+    "noActionsHint": "Demandez à l'assistant de planifier des inspections, créer des éléments de punch list ou enregistrer des entrées quotidiennes",
+    "filter_all": "Toutes",
+    "filter_insurance": "Assurance",
+    "filter_schedule": "Calendrier",
+    "filter_budget": "Budget",
+    "filter_compliance": "Conformité"
   }
 }

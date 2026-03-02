@@ -33,6 +33,7 @@ import { getLocale } from "@/i18n/locale";
 import { getAnalytics } from "@/actions/analytics";
 import { AnalyticsWidgets } from "@/components/dashboard/AnalyticsWidgets";
 import { InsightsPanel } from "@/components/dashboard/InsightsPanel";
+import { AIAssistantPanel } from "@/components/dashboard/AIAssistantPanel";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -531,6 +532,13 @@ export default async function DashboardPage() {
       {/* AI Proactive Insights — Sprint 23 (#75–#81) */}
       {projects.length > 0 && (
         <InsightsPanel
+          projects={projects.map((p: any) => ({ id: p.id, name: p.name }))}
+        />
+      )}
+
+      {/* AI Assistant — Sprint 24 (#82–#84) */}
+      {projects.length > 0 && (
+        <AIAssistantPanel
           projects={projects.map((p: any) => ({ id: p.id, name: p.name }))}
         />
       )}

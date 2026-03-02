@@ -1484,5 +1484,25 @@
     "riskFactors": "Risk Factors",
     "prevention": "Prevention Strategies",
     "frequency": "Frequency"
+  },
+  "assistant": {
+    "title": "AI Project Assistant",
+    "tabChat": "Chat",
+    "tabAlerts": "Alerts",
+    "tabActions": "Actions",
+    "project": "Project",
+    "chatEmpty": "Ask me anything about your project",
+    "chatHint": "Try: \"What phases are behind schedule?\" or \"Schedule a framing inspection\"",
+    "inputPlaceholder": "Ask about your project or request an action...",
+    "error": "Something went wrong. Please try again.",
+    "loadingAlerts": "Scanning your projects for issues...",
+    "noAlerts": "No alerts — everything looks good!",
+    "noActions": "No actions taken yet",
+    "noActionsHint": "Ask the assistant to schedule inspections, create punch items, or log daily entries",
+    "filter_all": "All",
+    "filter_insurance": "Insurance",
+    "filter_schedule": "Schedule",
+    "filter_budget": "Budget",
+    "filter_compliance": "Compliance"
   }
 }
