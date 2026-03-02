@@ -77,7 +77,8 @@
     "openMenu": "Ouvrir le menu",
     "activityLog": "Journal d'Activité",
     "admin": "Admin",
-    "billing": "Facturation"
+    "billing": "Facturation",
+    "voiceMode": "Mode Vocal"
   },
   "auth": {
     "signIn": "Connexion",
@@ -432,8 +433,9 @@
     "interface": "Interface",
     "keeneyModeTitle": "Mode Keeney",
     "keeneyModeDescription": "Interface vocale — un bouton, parlez, c'est fait. Parfait pour le terrain.",
-    "keeneyEnabled": "Mode Keeney activé — le tableau de bord affichera l'interface vocale",
-    "keeneyDisabled": "Mode Keeney désactivé — retour au tableau de bord complet"
+    "keeneyEnabled": "Mode Keeney activé ! Cherchez le bouton micro sur votre tableau de bord.",
+    "keeneyDisabled": "Mode Keeney désactivé — retour au tableau de bord complet",
+    "keeneyTryNow": "Ouvrir le Mode Vocal maintenant"
   },
   "notifPrefs": {
     "title": "Préférences de notifications",
@@ -1409,6 +1411,7 @@
     "allDone": "Terminé !"
   },
   "keeney": {
+    "voiceMode": "Mode Vocal",
     "tapToStart": "Appuyez pour commencer",
     "listening": "Écoute en cours...",
     "processing": "Traitement...",

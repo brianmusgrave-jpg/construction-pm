@@ -77,7 +77,8 @@
     "openMenu": "Open menu",
     "activityLog": "Activity Log",
     "admin": "Admin",
-    "billing": "Billing"
+    "billing": "Billing",
+    "voiceMode": "Voice Mode"
   },
   "auth": {
     "signIn": "Sign In",
@@ -432,8 +433,9 @@
     "interface": "Interface",
     "keeneyModeTitle": "Keeney Mode",
     "keeneyModeDescription": "Voice-first interface — one button, speak, done. Perfect for field use.",
-    "keeneyEnabled": "Keeney Mode enabled — dashboard will show voice interface",
-    "keeneyDisabled": "Keeney Mode disabled — back to full dashboard"
+    "keeneyEnabled": "Keeney Mode enabled! Look for the mic button on your dashboard.",
+    "keeneyDisabled": "Keeney Mode disabled — back to full dashboard",
+    "keeneyTryNow": "Open Voice Mode now"
   },
   "notifPrefs": {
     "title": "Notification Preferences",
@@ -1409,6 +1411,7 @@
     "allDone": "All Done!"
   },
   "keeney": {
+    "voiceMode": "Voice Mode",
     "tapToStart": "Tap to start",
     "listening": "Listening...",
     "processing": "Processing...",

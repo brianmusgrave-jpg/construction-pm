@@ -1,7 +1,7 @@
 /**
  * @file src/app/dashboard/layout.tsx
- * @description Dashboard shell layout. Renders the Sidebar, OnboardingTour, and
- * InstallPrompt, and applies the org theme CSS variable for all dashboard pages.
+ * @description Dashboard shell layout. Renders the Sidebar, OnboardingTour,
+ * InstallPrompt, and Keeney FAB. Applies the org theme CSS variables.
  */
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -9,9 +9,11 @@ import { Sidebar } from "@/components/ui/Sidebar";
 import { getOrgSettings } from "@/actions/settings";
 import { getThemeCSS } from "@/lib/themes";
 import { getUnreadCount } from "@/actions/notifications";
+import { getKeeneyModeStatus } from "@/actions/keeney";
 import { OnboardingTour } from "@/components/help/OnboardingTour";
 import { InstallPrompt } from "@/components/ui/InstallPrompt";
 import { ConfirmDialogProvider } from "@/components/ui/ConfirmDialog";
+import { KeeneyFAB } from "@/components/keeney/KeeneyFAB";
 import ImpersonationBanner from "@/app/system-admin/components/ImpersonationBanner";
 
 export default async function DashboardLayout({
@@ -22,9 +24,10 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [orgSettings, unreadCount] = await Promise.all([
+  const [orgSettings, unreadCount, keeneyMode] = await Promise.all([
     getOrgSettings(),
     getUnreadCount(),
+    getKeeneyModeStatus().catch(() => false),
   ]);
   const themeVars = getThemeCSS(orgSettings.theme);
 
@@ -36,6 +39,7 @@ export default async function DashboardLayout({
         logoUrl={orgSettings.logoUrl}
         companyName={orgSettings.companyName}
         unreadCount={unreadCount}
+        keeneyMode={keeneyMode}
       />
       <main className="flex-1 overflow-auto pt-14 pb-16 lg:pt-0 lg:pb-0">
         <ConfirmDialogProvider>{children}</ConfirmDialogProvider>
@@ -45,6 +49,7 @@ export default async function DashboardLayout({
         userName={session.user.name || undefined}
       />
       <InstallPrompt />
+      <KeeneyFAB enabled={keeneyMode} />
     </div>
   );
 }

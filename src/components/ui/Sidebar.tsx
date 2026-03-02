@@ -45,6 +45,7 @@ import {
   ScrollText,
   ShieldCheck,
   CreditCard,
+  Mic,
 } from "lucide-react";
 import { SearchPalette, SearchButton } from "@/components/ui/SearchPalette";
 import { useTranslations } from "next-intl";
@@ -61,11 +62,13 @@ interface SidebarProps {
   logoUrl?: string | null;
   companyName?: string | null;
   unreadCount?: number;
+  keeneyMode?: boolean;
 }
 
-function getNavigation(role: string, isOrgOwner: boolean, t: (key: string) => string) {
+function getNavigation(role: string, isOrgOwner: boolean, t: (key: string) => string, keeneyMode?: boolean) {
   const base = [
     { name: t("dashboard"), href: "/dashboard", icon: LayoutDashboard },
+    ...(keeneyMode ? [{ name: t("voiceMode"), href: "/dashboard/keeney", icon: Mic }] : []),
     { name: t("projects"), href: "/dashboard/projects", icon: FolderKanban },
     { name: t("reports"), href: "/dashboard/reports", icon: BarChart3 },
   ];
@@ -108,13 +111,13 @@ function getNavigation(role: string, isOrgOwner: boolean, t: (key: string) => st
   return managerNav;
 }
 
-export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread = 0 }: SidebarProps) {
+export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread = 0, keeneyMode }: SidebarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(initialUnread);
   const t = useTranslations("nav");
   const tc = useTranslations("common");
-  const navigation = getNavigation(user.role, user.isOrgOwner === true, t);
+  const navigation = getNavigation(user.role, user.isOrgOwner === true, t, keeneyMode);
 
   // Live unread count via SSE (#30)
   useNotificationSSE(setUnreadCount);

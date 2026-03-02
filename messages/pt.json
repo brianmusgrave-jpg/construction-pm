@@ -77,7 +77,8 @@
     "openMenu": "Abrir menu",
     "activityLog": "Registro de Atividade",
     "admin": "Admin",
-    "billing": "Faturamento"
+    "billing": "Faturamento",
+    "voiceMode": "Modo Voz"
   },
   "auth": {
     "signIn": "Entrar",
@@ -432,8 +433,9 @@
     "interface": "Interface",
     "keeneyModeTitle": "Modo Keeney",
     "keeneyModeDescription": "Interface por voz — um botão, fale, pronto. Perfeito para uso em campo.",
-    "keeneyEnabled": "Modo Keeney ativado — o painel mostrará a interface de voz",
-    "keeneyDisabled": "Modo Keeney desativado — voltar ao painel completo"
+    "keeneyEnabled": "Modo Keeney ativado! Procure o botão de microfone no seu painel.",
+    "keeneyDisabled": "Modo Keeney desativado — voltar ao painel completo",
+    "keeneyTryNow": "Abrir Modo Voz agora"
   },
   "notifPrefs": {
     "title": "Preferências de notificação",
@@ -1409,6 +1411,7 @@
     "allDone": "Tudo pronto!"
   },
   "keeney": {
+    "voiceMode": "Modo Voz",
     "tapToStart": "Toque para começar",
     "listening": "Ouvindo...",
     "processing": "Processando...",
