@@ -47,6 +47,8 @@ import SubmittalAIPanel from "@/components/phase/SubmittalAIPanel";
 import ChangeOrderAIPanel from "@/components/phase/ChangeOrderAIPanel";
 import InspectionAIPanel from "@/components/phase/InspectionAIPanel";
 import MaterialAIPanel from "@/components/phase/MaterialAIPanel";
+import LienWaiverAIPanel from "@/components/phase/LienWaiverAIPanel";
+import PaymentAppAIPanel from "@/components/phase/PaymentAppAIPanel";
 
 export default async function PhaseDetailPage({
   params,
@@ -280,12 +282,28 @@ export default async function PhaseDetailPage({
           canManage={canManage}
         />
 
+        {canManage && (
+          <LienWaiverAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+            waivers={lienWaivers}
+          />
+        )}
+
         <PaymentApplicationSection
           phaseId={phaseId}
           applications={paymentApps}
           canEdit={canEdit}
           canManage={canManage}
         />
+
+        {canManage && (
+          <PaymentAppAIPanel
+            projectId={projectId}
+            phaseId={phaseId}
+            applications={paymentApps}
+          />
+        )}
 
         <DrawingSection
           phaseId={phaseId}
