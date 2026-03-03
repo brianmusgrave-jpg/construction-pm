@@ -9,6 +9,7 @@ import { defineConfig, devices } from "@playwright/test";
  * Test accounts (seeded via prisma/seed.ts):
  *   admin@constructionpm.com  — ADMIN role
  *   contractor@example.com    — CONTRACTOR role
+ *   pm@constructionpm.com     — PROJECT_MANAGER role (Sprint 38+)
  */
 export default defineConfig({
   testDir: "./e2e",
@@ -33,10 +34,10 @@ export default defineConfig({
       name: "auth-setup",
       testMatch: /auth\.setup\.ts/,
     },
-    // ── Desktop Chrome (authenticated admin — excludes unauth & contractor specs) ──
+    // ── Desktop Chrome (authenticated admin — excludes unauth, contractor & pm specs) ──
     {
       name: "chromium",
-      testIgnore: /auth\.spec\.ts|auth\.setup\.ts|client-portal\.spec\.ts|contractor\.spec\.ts|mobile\.spec\.ts/,
+      testIgnore: /auth\.spec\.ts|auth\.setup\.ts|client-portal\.spec\.ts|contractor\.spec\.ts|mobile\.spec\.ts|pm\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "e2e/.auth/admin.json",
@@ -60,6 +61,16 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         storageState: "e2e/.auth/contractor.json",
+      },
+      dependencies: ["auth-setup"],
+    },
+    // ── PM-scoped tests (PROJECT_MANAGER role) ──
+    {
+      name: "pm",
+      testMatch: /pm\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "e2e/.auth/pm.json",
       },
       dependencies: ["auth-setup"],
     },

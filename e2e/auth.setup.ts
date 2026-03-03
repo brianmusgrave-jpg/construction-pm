@@ -3,7 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 /**
- * Authenticates as admin and contractor, saving session state so
+ * Authenticates as admin, contractor, and PM, saving session state so
  * subsequent test files can reuse the logged-in session.
  *
  * In CI, auth may fail if test users don't exist in the production DB.
@@ -68,6 +68,28 @@ setup("authenticate as contractor", async ({ page }) => {
   } catch (error) {
     console.warn(
       `[auth.setup] Contractor login failed (expected in CI without seeded users): ${error}`
+    );
+    writeEmptyState(statePath);
+  }
+});
+
+setup("authenticate as pm", async ({ page }) => {
+  ensureAuthDir();
+  const statePath = path.join(AUTH_DIR, "pm.json");
+
+  try {
+    await page.goto("/login");
+    await page.getByLabel(/email/i).fill("pm@constructionpm.com");
+    await page.getByRole("button", { name: /sign in/i }).click();
+
+    // Project Managers redirect to /dashboard
+    await page.waitForURL("**/dashboard**", { timeout: 15_000 });
+    await expect(page.locator("body")).toBeVisible();
+
+    await page.context().storageState({ path: statePath });
+  } catch (error) {
+    console.warn(
+      `[auth.setup] PM login failed (expected in CI without seeded users): ${error}`
     );
     writeEmptyState(statePath);
   }

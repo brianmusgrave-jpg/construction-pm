@@ -48,6 +48,18 @@ async function main() {
     },
   });
 
+  // ── Create Sample Project Manager User (for E2E tests) ──
+  await db.user.upsert({
+    where: { email: "pm@constructionpm.com" },
+    update: { name: "Alex Rivera", role: "PROJECT_MANAGER" },
+    create: {
+      email: "pm@constructionpm.com",
+      name: "Alex Rivera",
+      role: "PROJECT_MANAGER",
+      company: "Construction PM",
+    },
+  });
+
   // ── Create Directory Contacts ──
   const staffMembers = await Promise.all([
     // TEAM - your own people
