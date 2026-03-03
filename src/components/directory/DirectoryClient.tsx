@@ -62,12 +62,16 @@ import {
   ShieldX,
   FileText,
   FileSpreadsheet,
+  UserPlus,
+  Copy,
+  Check,
 } from "lucide-react";
 import { ContactFormModal } from "./ContactFormModal";
 import { ImportContactsModal } from "./ImportContactsModal";
 import { InsurancePanel } from "./InsurancePanel";
 import { bulkDeleteStaff, bulkUpdateStaffType, exportStaffCsv } from "@/actions/staff";
 import { updateStaffRating, exportInsuranceCsv } from "@/actions/insurance";
+import { inviteGlobalUser } from "@/actions/userInvitations";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -112,9 +116,11 @@ interface DirectoryClientProps {
   contacts: Contact[];
   canManage: boolean;
   isPM: boolean;
+  isAdmin?: boolean;
+  userEmails?: string[];
 }
 
-export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientProps) {
+export function DirectoryClient({ contacts, canManage, isPM, isAdmin = false, userEmails = [] }: DirectoryClientProps) {
   const confirm = useConfirmDialog();
   const t = useTranslations("directory");
   const tc = useTranslations("common");
@@ -169,6 +175,45 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkMode, setBulkMode] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  // "Invite as User" from directory
+  const userEmailsSet = useMemo(() => new Set(userEmails.map((e) => e.toLowerCase())), [userEmails]);
+  const [inviteContact, setInviteContact] = useState<Contact | null>(null);
+  const [dirInviteRole, setDirInviteRole] = useState("VIEWER");
+  const [dirInviteLoading, setDirInviteLoading] = useState(false);
+  const [dirInviteLink, setDirInviteLink] = useState<string | null>(null);
+  const [dirInviteCopied, setDirInviteCopied] = useState(false);
+
+  function resetDirInvite() {
+    setInviteContact(null);
+    setDirInviteRole("VIEWER");
+    setDirInviteLink(null);
+    setDirInviteCopied(false);
+  }
+
+  async function handleDirInvite() {
+    if (!inviteContact?.email) return;
+    setDirInviteLoading(true);
+    try {
+      const result = await inviteGlobalUser(inviteContact.email, dirInviteRole);
+      if (!result.success) {
+        toast.error(result.error || t("somethingWentWrong"));
+      } else {
+        setDirInviteLink(result.inviteUrl || null);
+      }
+    } catch {
+      toast.error(t("somethingWentWrong"));
+    } finally {
+      setDirInviteLoading(false);
+    }
+  }
+
+  async function handleDirCopyLink() {
+    if (!dirInviteLink) return;
+    await navigator.clipboard.writeText(dirInviteLink);
+    setDirInviteCopied(true);
+    setTimeout(() => setDirInviteCopied(false), 2000);
+  }
 
   // Search & filter state
   const [searchQuery, setSearchQuery] = useState("");
@@ -532,6 +577,18 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
                         )}
                         {canManage && !bulkMode && (
                           <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all">
+                            {isAdmin && person.email && !userEmailsSet.has(person.email.toLowerCase()) && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setInviteContact(person);
+                                }}
+                                className="p-2 text-gray-300 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                                title={t("inviteAsUser")}
+                              >
+                                <UserPlus className="w-4 h-4" />
+                              </button>
+                            )}
                             <button
                               onClick={() => setInsurancePanel(person)}
                               className="p-2 text-gray-300 hover:text-[var(--color-primary)] hover:bg-gray-100 rounded-lg"
@@ -674,6 +731,115 @@ export function DirectoryClient({ contacts, canManage, isPM }: DirectoryClientPr
           )}
           onClose={() => setInsurancePanel(null)}
         />
+      )}
+
+      {/* ── Invite as User Modal ── */}
+      {inviteContact && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={resetDirInvite} />
+          <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <div>
+                <h2 className="text-base font-semibold text-gray-900">{t("inviteAsUser")}</h2>
+                <p className="text-xs text-gray-500 mt-0.5">{inviteContact.name}</p>
+              </div>
+              <button onClick={resetDirInvite} className="text-gray-400 hover:text-gray-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {!dirInviteLink ? (
+                <>
+                  <p className="text-sm text-gray-500">{t("inviteAsUserDescription")}</p>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("email")}</label>
+                    <input
+                      readOnly
+                      value={inviteContact.email ?? ""}
+                      className="w-full p-2.5 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{t("roleTrade")}</label>
+                    <select
+                      value={dirInviteRole}
+                      onChange={(e) => setDirInviteRole(e.target.value)}
+                      className="w-full p-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                    >
+                      <option value="ADMIN">Admin</option>
+                      <option value="PROJECT_MANAGER">Project Manager</option>
+                      <option value="CONTRACTOR">Contractor</option>
+                      <option value="STAKEHOLDER">Stakeholder</option>
+                      <option value="VIEWER">Viewer</option>
+                    </select>
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={resetDirInvite}
+                      className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
+                    >
+                      {tc("cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={dirInviteLoading}
+                      onClick={handleDirInvite}
+                      className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                    >
+                      {dirInviteLoading ? t("generating") : t("generateLink")}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3 p-4 bg-green-50 rounded-lg">
+                    <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-green-900">{t("inviteReady")}</p>
+                      <p className="text-xs text-green-700 mt-0.5">{t("inviteReadyHint")}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
+                      {t("inviteLinkLabel")}
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        readOnly
+                        value={dirInviteLink}
+                        className="flex-1 p-2.5 border border-gray-200 rounded-lg text-xs text-gray-600 bg-gray-50 font-mono overflow-hidden"
+                      />
+                      <button
+                        onClick={handleDirCopyLink}
+                        className={`px-3 rounded-lg border transition-colors flex-shrink-0 ${
+                          dirInviteCopied
+                            ? "bg-green-50 border-green-200 text-green-600"
+                            : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                        }`}
+                      >
+                        {dirInviteCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-400 mt-1.5">{t("inviteExpiry")}</p>
+                  </div>
+
+                  <button
+                    onClick={resetDirInvite}
+                    className="w-full px-4 py-2.5 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    {tc("done")}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

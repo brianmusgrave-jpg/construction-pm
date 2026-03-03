@@ -135,7 +135,7 @@ export async function extractColorsFromUrl(imageUrl: string): Promise<
   // Jimp — but to avoid adding native deps, we use a heuristic approach.
 
   // Try to use dynamic import of sharp if available, else fallback
-  let pixels: number[][] = [];
+  const pixels: number[][] = [];
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports

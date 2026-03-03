@@ -903,7 +903,15 @@
     "importSkippedCount": "{count} skipped (duplicate emails)",
     "importErrorCount": "{count} rows had errors",
     "importBackToUpload": "Choose different file",
-    "importBackToMapping": "Back to mapping"
+    "importBackToMapping": "Back to mapping",
+    "inviteAsUser": "Invite as User",
+    "inviteAsUserDescription": "Send this contact an invite link so they can create a login account. The link expires in 7 days.",
+    "generating": "Generating...",
+    "generateLink": "Generate Invite Link",
+    "inviteReady": "Invite link generated!",
+    "inviteReadyHint": "Copy this link and send it to the contact. They will use it to set their name and password.",
+    "inviteLinkLabel": "Invite link",
+    "inviteExpiry": "This link expires in 7 days and can only be used once."
   },
   "pwa": {
     "installTitle": "Install Construction PM",
@@ -1437,7 +1445,10 @@
     "inviteReadyHint": "Copy this link and send it to the user. They'll use it to set their name and password.",
     "inviteLinkLabel": "Invite link",
     "inviteLinkCopied": "Link copied to clipboard",
-    "inviteExpiry": "This link expires in 7 days and can only be used once."
+    "inviteExpiry": "This link expires in 7 days and can only be used once.",
+    "directoryMatchTitle": "This email is already in your Directory",
+    "directoryMatchHint": "{name} is in your Directory but doesn't have a login account yet. You can still send the invite.",
+    "sendInviteAnyway": "Send invite anyway"
   },
   "activate": {
     "subtitle": "Set up your account to get started",

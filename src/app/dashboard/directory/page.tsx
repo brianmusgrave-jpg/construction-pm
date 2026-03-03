@@ -34,12 +34,23 @@ export default async function DirectoryPage() {
   const userRole = session.user.role || "VIEWER";
   const canManage = can(userRole, "create", "staff");
   const isPM = userRole === "ADMIN" || userRole === "PROJECT_MANAGER";
+  const isAdmin = userRole === "ADMIN";
+
+  // Fetch existing user emails so the directory can hide "Invite as User"
+  // on contacts that already have an account.
+  const dbc = db as any;
+  const existingUsers = await dbc.user.findMany({ select: { email: true } });
+  const userEmails: string[] = existingUsers
+    .map((u: { email: string }) => u.email)
+    .filter(Boolean);
 
   return (
     <DirectoryClient
       contacts={contacts as never}
       canManage={canManage}
       isPM={isPM}
+      isAdmin={isAdmin}
+      userEmails={userEmails}
     />
   );
 }

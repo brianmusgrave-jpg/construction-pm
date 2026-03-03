@@ -903,7 +903,15 @@
     "importSkippedCount": "{count} ignorés (emails en double)",
     "importErrorCount": "{count} lignes avec des erreurs",
     "importBackToUpload": "Choisir un autre fichier",
-    "importBackToMapping": "Retour au mappage"
+    "importBackToMapping": "Retour au mappage",
+    "inviteAsUser": "Inviter comme Utilisateur",
+    "inviteAsUserDescription": "Envoyez à ce contact un lien d'invitation pour qu'il puisse créer un compte de connexion. Le lien expire dans 7 jours.",
+    "generating": "Génération en cours...",
+    "generateLink": "Générer le lien d'invitation",
+    "inviteReady": "Lien d'invitation généré !",
+    "inviteReadyHint": "Copiez ce lien et envoyez-le au contact. Il l'utilisera pour définir son nom et son mot de passe.",
+    "inviteLinkLabel": "Lien d'invitation",
+    "inviteExpiry": "Ce lien expire dans 7 jours et ne peut être utilisé qu'une seule fois."
   },
   "pwa": {
     "installTitle": "Installer Construction PM",
@@ -1437,7 +1445,10 @@
     "inviteReadyHint": "Copiez ce lien et envoyez-le à l'utilisateur. Ils l'utiliseront pour définir leur nom et mot de passe.",
     "inviteLinkLabel": "Lien d'invitation",
     "inviteLinkCopied": "Lien copié dans le presse-papiers",
-    "inviteExpiry": "Ce lien expire dans 7 jours et ne peut être utilisé qu'une seule fois."
+    "inviteExpiry": "Ce lien expire dans 7 jours et ne peut être utilisé qu'une seule fois.",
+    "directoryMatchTitle": "Cet e-mail est déjà dans votre Répertoire",
+    "directoryMatchHint": "{name} figure dans votre Répertoire mais n'a pas encore de compte de connexion. Vous pouvez quand même envoyer l'invitation.",
+    "sendInviteAnyway": "Envoyer l'invitation quand même"
   },
   "activate": {
     "subtitle": "Configurez votre compte pour commencer",

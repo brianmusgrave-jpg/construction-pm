@@ -903,7 +903,15 @@
     "importSkippedCount": "{count} omitidos (emails duplicados)",
     "importErrorCount": "{count} filas con errores",
     "importBackToUpload": "Elegir otro archivo",
-    "importBackToMapping": "Volver al mapeo"
+    "importBackToMapping": "Volver al mapeo",
+    "inviteAsUser": "Invitar como Usuario",
+    "inviteAsUserDescription": "Envía a este contacto un enlace de invitación para que pueda crear una cuenta de acceso. El enlace expira en 7 días.",
+    "generating": "Generando...",
+    "generateLink": "Generar Enlace de Invitación",
+    "inviteReady": "¡Enlace de invitación generado!",
+    "inviteReadyHint": "Copia este enlace y envíaselo al contacto. Lo usará para establecer su nombre y contraseña.",
+    "inviteLinkLabel": "Enlace de invitación",
+    "inviteExpiry": "Este enlace expira en 7 días y solo puede usarse una vez."
   },
   "pwa": {
     "installTitle": "Instalar Construction PM",
@@ -1437,7 +1445,10 @@
     "inviteReadyHint": "Copia este enlace y envíalo al usuario. Lo usarán para establecer su nombre y contraseña.",
     "inviteLinkLabel": "Enlace de invitación",
     "inviteLinkCopied": "Enlace copiado al portapapeles",
-    "inviteExpiry": "Este enlace caduca en 7 días y solo puede usarse una vez."
+    "inviteExpiry": "Este enlace caduca en 7 días y solo puede usarse una vez.",
+    "directoryMatchTitle": "Este correo ya está en tu Directorio",
+    "directoryMatchHint": "{name} está en tu Directorio pero todavía no tiene cuenta de acceso. Aún puedes enviar la invitación.",
+    "sendInviteAnyway": "Enviar invitación de todas formas"
   },
   "activate": {
     "subtitle": "Configura tu cuenta para comenzar",

@@ -21,14 +21,6 @@ interface ImpersonationData {
 export default function ImpersonationBanner() {
   const [data, setData] = useState<ImpersonationData | null>(null);
 
-  useEffect(() => {
-    // Read the impersonation cookie from document.cookie (client-side)
-    // The cookie is httpOnly so this won't work — instead we'll check a
-    // non-httpOnly signal cookie or use a server component approach.
-    // For now, we use a separate lightweight API to check impersonation status.
-    checkImpersonation();
-  }, []);
-
   async function checkImpersonation() {
     try {
       const res = await fetch("/api/impersonate/status");
@@ -45,6 +37,14 @@ export default function ImpersonationBanner() {
       // Not impersonating or API not available — banner stays hidden
     }
   }
+
+  useEffect(() => {
+    // Read the impersonation cookie from document.cookie (client-side)
+    // The cookie is httpOnly so this won't work — instead we'll check a
+    // non-httpOnly signal cookie or use a server component approach.
+    // For now, we use a separate lightweight API to check impersonation status.
+    checkImpersonation();
+  }, []);
 
   if (!data) return null;
 

@@ -66,7 +66,7 @@ import {
   deactivateUser,
   exportAuditLog,
 } from "@/actions/admin";
-import { inviteGlobalUser } from "@/actions/userInvitations";
+import { inviteGlobalUser, checkEmailInDirectory } from "@/actions/userInvitations";
 import { AISettingsPanel } from "@/components/admin/AISettingsPanel";
 import type { AISettingsData, AIUsageSummary } from "@/actions/aiSettings";
 import { useConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -142,6 +142,8 @@ export function AdminPanelClient({
   const [inviteLoading, setInviteLoading] = useState(false);
   const [inviteLink, setInviteLink] = useState<string | null>(null);
   const [inviteCopied, setInviteCopied] = useState(false);
+  // Directory cross-check: null = not checked, object = match found
+  const [directoryMatch, setDirectoryMatch] = useState<{ name?: string; company?: string | null } | null>(null);
 
   const tabs: { key: Tab; label: string; icon: React.ReactNode }[] = [
     { key: "features", label: t("tabs.features"), icon: <ToggleLeft className="w-4 h-4" /> },
@@ -211,11 +213,31 @@ export function AdminPanelClient({
     e.preventDefault();
     setInviteLoading(true);
     try {
+      // Cross-check with directory first (only when directoryMatch hasn't been acknowledged)
+      if (directoryMatch === null) {
+        const check = await checkEmailInDirectory(inviteEmail);
+        if (check.found) {
+          setDirectoryMatch({ name: check.name, company: check.company });
+          setInviteLoading(false);
+          return; // Show confirmation banner — don't send yet
+        }
+      }
+      await doSendInvite();
+    } catch {
+      toast.error(t("error"));
+      setInviteLoading(false);
+    }
+  }
+
+  async function doSendInvite() {
+    setInviteLoading(true);
+    try {
       const result = await inviteGlobalUser(inviteEmail, inviteRole);
       if (!result.success) {
         toast.error(result.error || t("error"));
       } else {
         setInviteLink(result.inviteUrl || null);
+        setDirectoryMatch(null);
       }
     } catch {
       toast.error(t("error"));
@@ -238,6 +260,7 @@ export function AdminPanelClient({
     setInviteRole("VIEWER");
     setInviteLink(null);
     setInviteCopied(false);
+    setDirectoryMatch(null);
   }
 
   // ── Audit Export ──
@@ -419,22 +442,53 @@ export function AdminPanelClient({
                         </select>
                       </div>
 
-                      <div className="flex gap-3 pt-2">
-                        <button
-                          type="button"
-                          onClick={resetInviteModal}
-                          className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
-                        >
-                          {t("cancel")}
-                        </button>
-                        <button
-                          type="submit"
-                          disabled={inviteLoading}
-                          className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
-                        >
-                          {inviteLoading ? t("generating") : t("generateLink")}
-                        </button>
-                      </div>
+                      {/* Directory match confirmation banner */}
+                      {directoryMatch && (
+                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm">
+                          <p className="font-medium text-amber-900">{t("directoryMatchTitle")}</p>
+                          <p className="text-amber-700 mt-0.5">
+                            {t("directoryMatchHint", {
+                              name: directoryMatch.name || inviteEmail,
+                            })}
+                          </p>
+                          <div className="flex gap-2 mt-3">
+                            <button
+                              type="button"
+                              onClick={() => setDirectoryMatch(null)}
+                              className="flex-1 px-3 py-2 border border-amber-300 text-amber-700 text-xs font-medium rounded-lg hover:bg-amber-100"
+                            >
+                              {t("cancel")}
+                            </button>
+                            <button
+                              type="button"
+                              disabled={inviteLoading}
+                              onClick={doSendInvite}
+                              className="flex-1 px-3 py-2 bg-amber-600 text-white text-xs font-medium rounded-lg hover:bg-amber-700 disabled:opacity-50 transition-colors"
+                            >
+                              {inviteLoading ? t("generating") : t("sendInviteAnyway")}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {!directoryMatch && (
+                        <div className="flex gap-3 pt-2">
+                          <button
+                            type="button"
+                            onClick={resetInviteModal}
+                            className="flex-1 px-4 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50"
+                          >
+                            {t("cancel")}
+                          </button>
+                          <button
+                            type="submit"
+                            disabled={inviteLoading}
+                            className="flex-1 px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                          >
+                            {inviteLoading ? t("generating") : t("generateLink")}
+                          </button>
+                        </div>
+                      )}
                     </form>
                   ) : (
                     <div className="space-y-4">

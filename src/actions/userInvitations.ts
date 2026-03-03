@@ -102,6 +102,32 @@ export async function inviteGlobalUser(
 }
 
 /**
+ * Check if an email address already exists as a directory contact (Staff)
+ * but not yet as a User account.
+ * Used by the admin invite flow to warn about directory matches.
+ */
+export async function checkEmailInDirectory(
+  email: string
+): Promise<{ found: boolean; name?: string; company?: string | null }> {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  // Only return a match if they are NOT already a User
+  const existingUser = await dbc.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true },
+  });
+  if (existingUser) return { found: false };
+
+  const staff = await dbc.staff.findFirst({
+    where: { email: normalizedEmail },
+    select: { name: true, company: true },
+  });
+
+  if (!staff) return { found: false };
+  return { found: true, name: staff.name, company: staff.company };
+}
+
+/**
  * Look up an AccountInvitation by token.
  * Returns the invite data (email, role) or null if not found / expired / used.
  */
