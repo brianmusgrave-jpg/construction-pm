@@ -123,3 +123,130 @@ test.describe("Help Center", () => {
     await expect(page.locator("body")).toBeVisible();
   });
 });
+
+// ── G-15: Locale persistence across navigation ───────────────────────────────
+
+test.describe("Locale Persistence (G-15)", () => {
+  test("locale cookie persists when navigating to a different page", async ({
+    page,
+  }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
+
+    // Switch to Spanish
+    const esButton = page.locator(
+      'button:has-text("Español"), [data-locale="es"], label:has-text("Español")'
+    );
+    if ((await esButton.count()) === 0) {
+      test.skip(true, "Spanish locale button not found on settings page");
+      return;
+    }
+
+    await esButton.first().click();
+    await page.waitForTimeout(2000); // Let locale cookie + any reload settle
+
+    // Navigate to a completely different page
+    await page.goto("/dashboard/projects", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1500);
+
+    // The projects page should now render in Spanish
+    const content = await page.textContent("body");
+    const hasSpanish =
+      content!.includes("Proyecto") ||
+      content!.includes("Proyectos") ||
+      content!.includes("Nuevo Proyecto") ||
+      content!.includes("nuevo") ||
+      content!.includes("Crear");
+    expect(hasSpanish).toBeTruthy();
+
+    // Restore English for subsequent tests
+    await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1000);
+    const enButton = page.locator(
+      'button:has-text("English"), [data-locale="en"], label:has-text("English")'
+    );
+    if ((await enButton.count()) > 0) {
+      await enButton.first().click();
+      await page.waitForTimeout(1000);
+    }
+  });
+
+  test("locale persists across dashboard and help center", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
+
+    // Switch to French
+    const frButton = page.locator(
+      'button:has-text("Français"), [data-locale="fr"], label:has-text("Français")'
+    );
+    if ((await frButton.count()) === 0) {
+      test.skip(true, "French locale button not found");
+      return;
+    }
+
+    await frButton.first().click();
+    await page.waitForTimeout(2000);
+
+    // Navigate to help center
+    await page.goto("/dashboard/help", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1500);
+
+    const content = await page.textContent("body");
+    // French UI words that should appear if locale persisted
+    const hasFrench =
+      content!.includes("Projet") ||
+      content!.includes("Aide") ||
+      content!.includes("Paramètres") ||
+      content!.includes("Tableau de bord") ||
+      content!.includes("Langue");
+    expect(hasFrench).toBeTruthy();
+
+    // Restore English
+    await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1000);
+    const enButton = page.locator('button:has-text("English"), [data-locale="en"]');
+    if ((await enButton.count()) > 0) {
+      await enButton.first().click();
+      await page.waitForTimeout(1000);
+    }
+  });
+
+  test("locale resets to English after explicit switch back", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/settings");
+    if (!authed) { test.skip(true, "No auth session"); return; }
+
+    // Switch to Portuguese
+    const ptButton = page.locator(
+      'button:has-text("Português"), [data-locale="pt"], label:has-text("Português")'
+    );
+    if ((await ptButton.count()) > 0) {
+      await ptButton.first().click();
+      await page.waitForTimeout(2000);
+    }
+
+    // Switch back to English
+    await page.goto("/dashboard/settings", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1000);
+    const enButton = page.locator(
+      'button:has-text("English"), [data-locale="en"], label:has-text("English")'
+    );
+    if ((await enButton.count()) === 0) {
+      test.skip(true, "English locale button not found");
+      return;
+    }
+    await enButton.first().click();
+    await page.waitForTimeout(2000);
+
+    // Navigate to projects — should be back in English
+    await page.goto("/dashboard/projects", { waitUntil: "domcontentloaded" });
+    await page.waitForTimeout(1500);
+
+    const content = await page.textContent("body");
+    // English UI: "Project" NOT "Projeto" / "Proyecto"
+    const hasEnglish =
+      content!.includes("Project") ||
+      content!.includes("New Project") ||
+      content!.toLowerCase().includes("create");
+    expect(hasEnglish).toBeTruthy();
+  });
+});

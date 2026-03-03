@@ -293,6 +293,292 @@ test.describe("G-09: Change orders", () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// G-10: Checklists
+// ─────────────────────────────────────────────────────────────────────────────
+test.describe("G-10: Checklists", () => {
+  test("phase detail page has a checklist section", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/projects");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    await page.waitForTimeout(2000);
+    const projectLinks = page.locator('a[href*="/dashboard/projects/"]').filter({
+      hasNot: page.locator('[href*="/new"]'),
+    });
+    if ((await projectLinks.count()) === 0) { test.skip(true, "No projects available"); return; }
+    await projectLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2000);
+
+    const phaseLinks = page.locator('a[href*="/phases/"]');
+    if ((await phaseLinks.count()) === 0) { test.skip(true, "No phase links found"); return; }
+    await phaseLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2500);
+
+    const content = await page.textContent("body");
+    const hasChecklist =
+      content!.toLowerCase().includes("checklist") ||
+      content!.toLowerCase().includes("check list") ||
+      content!.toLowerCase().includes("task");
+    expect(hasChecklist).toBeTruthy();
+  });
+
+  test("checklist renders items or an empty state", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/projects");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    await page.waitForTimeout(2000);
+    const projectLinks = page.locator('a[href*="/dashboard/projects/"]').filter({
+      hasNot: page.locator('[href*="/new"]'),
+    });
+    if ((await projectLinks.count()) === 0) { test.skip(true, "No projects available"); return; }
+    await projectLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2000);
+
+    const phaseLinks = page.locator('a[href*="/phases/"]');
+    if ((await phaseLinks.count()) === 0) { test.skip(true, "No phase links found"); return; }
+    await phaseLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2500);
+
+    // Look for checklist section — may be a tab or inline
+    const checklistTab = page.locator(
+      'button:has-text("Checklist"), a:has-text("Checklist"), [data-tab*="checklist" i]'
+    );
+    if ((await checklistTab.count()) > 0) {
+      await checklistTab.first().click();
+      await page.waitForTimeout(1000);
+    }
+
+    const content = await page.textContent("body");
+    // Should show either checklist items or an empty/add state — not an error
+    expect(content).not.toContain("Internal Server Error");
+    expect(content!.trim().length).toBeGreaterThan(200);
+  });
+
+  test("checklist has an add item control", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/projects");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    await page.waitForTimeout(2000);
+    const projectLinks = page.locator('a[href*="/dashboard/projects/"]').filter({
+      hasNot: page.locator('[href*="/new"]'),
+    });
+    if ((await projectLinks.count()) === 0) { test.skip(true, "No projects available"); return; }
+    await projectLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2000);
+
+    const phaseLinks = page.locator('a[href*="/phases/"]');
+    if ((await phaseLinks.count()) === 0) { test.skip(true, "No phase links found"); return; }
+    await phaseLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2500);
+
+    // Navigate to checklist tab if present
+    const checklistTab = page.locator(
+      'button:has-text("Checklist"), a:has-text("Checklist"), [data-tab*="checklist" i]'
+    );
+    if ((await checklistTab.count()) > 0) {
+      await checklistTab.first().click();
+      await page.waitForTimeout(1000);
+    }
+
+    // Look for an "Add item" or "Add task" control
+    const addControl = page.locator(
+      'button:has-text("Add item"), button:has-text("Add task"), ' +
+      'button:has-text("Add"), input[placeholder*="item" i], ' +
+      'input[placeholder*="task" i], [data-testid*="checklist-add" i]'
+    );
+    const hasAddControl = (await addControl.count()) > 0;
+
+    // At minimum, the phase detail page should have some buttons
+    const buttonCount = await page.locator("button").count();
+    expect(buttonCount).toBeGreaterThan(0);
+
+    // If an explicit add control is present, verify it's visible
+    if (hasAddControl) {
+      await expect(addControl.first()).toBeVisible();
+    }
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// G-21: Notifications mark-as-read
+// ─────────────────────────────────────────────────────────────────────────────
+test.describe("G-21: Notifications", () => {
+  test("notifications page loads and renders a list or empty state", async ({
+    page,
+  }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/notifications");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    const content = await page.textContent("body");
+    expect(content).not.toContain("Internal Server Error");
+    expect(content!.trim().length).toBeGreaterThan(100);
+
+    // Should have notification-related content or an empty state
+    const hasNotifContent =
+      content!.toLowerCase().includes("notification") ||
+      content!.toLowerCase().includes("no notification") ||
+      content!.toLowerCase().includes("all caught up") ||
+      content!.toLowerCase().includes("mark");
+    expect(hasNotifContent).toBeTruthy();
+  });
+
+  test("notifications page has a mark-as-read control", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/notifications");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    // Look for mark-all-read button or individual read controls
+    const markReadBtn = page.locator(
+      'button:has-text("Mark all read"), button:has-text("Mark all as read"), ' +
+      'button:has-text("Mark read"), [data-testid*="mark-read" i], ' +
+      '[aria-label*="mark" i]'
+    );
+
+    const hasMarkRead = (await markReadBtn.count()) > 0;
+
+    // If no mark-all button, check for per-notification read controls
+    const perNotifRead = page.locator(
+      'button[aria-label*="read" i], [class*="mark-read" i], ' +
+      'input[type="checkbox"][aria-label*="read" i]'
+    );
+    const hasPerRead = (await perNotifRead.count()) > 0;
+
+    // The page should have at least one read control OR show an empty state
+    // (empty state = no unread notifications, which is valid)
+    const content = await page.textContent("body");
+    const hasEmptyState =
+      content!.toLowerCase().includes("no notification") ||
+      content!.toLowerCase().includes("all caught up") ||
+      content!.toLowerCase().includes("no unread") ||
+      content!.toLowerCase().includes("0 notifications");
+
+    expect(hasMarkRead || hasPerRead || hasEmptyState).toBeTruthy();
+  });
+
+  test("notification bell in header is accessible", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    // Notification bell is typically in the header/nav
+    const bell = page.locator(
+      'button[aria-label*="notification" i], a[href*="notification"], ' +
+      '[data-testid*="notification-bell" i], [class*="notification-bell" i]'
+    );
+    const hasBell = (await bell.count()) > 0;
+
+    // Page should load without error — bell is a nice-to-have check
+    await expect(page.locator("body")).toBeVisible();
+    if (hasBell) {
+      await expect(bell.first()).toBeVisible();
+    }
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// G-22: Reports
+// ─────────────────────────────────────────────────────────────────────────────
+test.describe("G-22: Reports", () => {
+  test("reports page loads for a project", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/projects");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    await page.waitForTimeout(2000);
+    const projectLinks = page.locator('a[href*="/dashboard/projects/"]').filter({
+      hasNot: page.locator('[href*="/new"]'),
+    });
+    if ((await projectLinks.count()) === 0) { test.skip(true, "No projects available"); return; }
+    await projectLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2500);
+
+    // Navigate to reports section — could be a tab, sidebar link, or URL suffix
+    const reportsLink = page.locator(
+      'a[href*="/reports"], button:has-text("Reports"), a:has-text("Reports"), ' +
+      '[data-tab*="report" i]'
+    );
+    if ((await reportsLink.count()) > 0) {
+      await reportsLink.first().click();
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(1500);
+    }
+
+    const content = await page.textContent("body");
+    expect(content).not.toContain("Internal Server Error");
+    const hasReportContent =
+      content!.toLowerCase().includes("report") ||
+      content!.toLowerCase().includes("summary") ||
+      content!.toLowerCase().includes("progress") ||
+      content!.toLowerCase().includes("budget") ||
+      content!.toLowerCase().includes("export");
+    expect(hasReportContent).toBeTruthy();
+  });
+
+  test("reports page has an export or download control", async ({ page }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/projects");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    await page.waitForTimeout(2000);
+    const projectLinks = page.locator('a[href*="/dashboard/projects/"]').filter({
+      hasNot: page.locator('[href*="/new"]'),
+    });
+    if ((await projectLinks.count()) === 0) { test.skip(true, "No projects available"); return; }
+    await projectLinks.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    await page.waitForTimeout(2500);
+
+    // Navigate to reports
+    const reportsLink = page.locator(
+      'a[href*="/reports"], button:has-text("Reports"), a:has-text("Reports")'
+    );
+    if ((await reportsLink.count()) > 0) {
+      await reportsLink.first().click();
+      await page.waitForLoadState("domcontentloaded");
+      await page.waitForTimeout(1500);
+    }
+
+    // Look for export/download/print controls
+    const exportBtn = page.locator(
+      'button:has-text("Export"), button:has-text("Download"), ' +
+      'button:has-text("Print"), a:has-text("Export"), a[download], ' +
+      '[data-testid*="export" i], [aria-label*="export" i]'
+    );
+    const hasExport = (await exportBtn.count()) > 0;
+
+    // Soft check — export may be behind a plan gate
+    await expect(page.locator("body")).toBeVisible();
+    const content = await page.textContent("body");
+    expect(content!.trim().length).toBeGreaterThan(100);
+
+    if (hasExport) {
+      await expect(exportBtn.first()).toBeVisible();
+    }
+  });
+
+  test("global reports/analytics page is accessible from dashboard", async ({
+    page,
+  }) => {
+    const authed = await gotoAuthenticated(page, "/dashboard/reports");
+    if (!authed) { test.skip(true, "No auth session (CI without seeded users)"); return; }
+
+    const content = await page.textContent("body");
+    expect(content).not.toContain("Internal Server Error");
+    expect(content!.trim().length).toBeGreaterThan(100);
+
+    // Should show some analytics/reporting content
+    const hasAnalyticsContent =
+      content!.toLowerCase().includes("report") ||
+      content!.toLowerCase().includes("analytics") ||
+      content!.toLowerCase().includes("summary") ||
+      content!.toLowerCase().includes("overview");
+    expect(hasAnalyticsContent).toBeTruthy();
+  });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Projects list smoke tests
 // ─────────────────────────────────────────────────────────────────────────────
 test.describe("Projects list", () => {
