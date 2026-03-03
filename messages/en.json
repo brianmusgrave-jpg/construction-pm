@@ -827,6 +827,7 @@
     "inspectorDesc": "City inspectors, engineers, and consultants",
     "addContactModal": "Add Contact",
     "editContactModal": "Edit Contact",
+    "contactNoteNoLogin": "This adds a contact to the directory only — it does not create a login account. To invite someone to log in, go to Admin Panel → Users → Invite User.",
     "type": "Type",
     "nameField": "Name *",
     "company": "Company",

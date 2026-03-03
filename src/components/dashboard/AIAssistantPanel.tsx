@@ -86,9 +86,12 @@ export function AIAssistantPanel({ projects }: Props) {
   // Actions log
   const [actionLog, setActionLog] = useState<ExecutedAction[]>([]);
 
-  // Auto-scroll chat
+  // Auto-scroll chat — only when messages actually exist (avoids scrolling
+  // the page to the AI panel on initial dashboard load)
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messages.length > 0) {
+      chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   // ── Chat handler ──

@@ -826,6 +826,7 @@
     "inspectorLabel": "Inspectores",
     "inspectorDesc": "Inspectores municipales, ingenieros y consultores",
     "addContactModal": "Agregar contacto",
+    "contactNoteNoLogin": "Esto solo agrega un contacto al directorio — no crea una cuenta de acceso. Para invitar a alguien a iniciar sesión, ve a Panel de administración → Usuarios → Invitar usuario.",
     "editContactModal": "Editar contacto",
     "type": "Tipo",
     "nameField": "Nombre *",

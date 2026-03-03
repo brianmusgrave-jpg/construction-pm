@@ -137,9 +137,16 @@ export function ContactFormModal({ mode, contact, onClose }: ContactFormModalPro
 
       <div className="relative bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-auto">
         <div className="flex items-center justify-between p-5 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            {mode === "add" ? t("addContactModal") : t("editContactModal")}
-          </h2>
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {mode === "add" ? t("addContactModal") : t("editContactModal")}
+            </h2>
+            {mode === "add" && (
+              <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2 py-1 mt-1">
+                {t("contactNoteNoLogin")}
+              </p>
+            )}
+          </div>
           <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded">
             <X className="w-5 h-5" />
           </button>
