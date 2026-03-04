@@ -207,6 +207,7 @@ export async function activateAccount(
         name: existing.name || name.trim(),
         passwordHash,
         role: invite.role,
+        orgId: invite.orgId,
       },
     });
   } else {
@@ -218,6 +219,7 @@ export async function activateAccount(
         role: invite.role,
         passwordHash,
         emailVerified: new Date(), // Treat invite acceptance as email verification
+        orgId: invite.orgId,
       },
     });
   }
