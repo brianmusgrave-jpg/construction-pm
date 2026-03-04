@@ -496,33 +496,35 @@ export function AdminPanelClient({
                         <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-sm font-medium text-green-900">{t("inviteReady")}</p>
-                          <p className="text-xs text-green-700 mt-0.5">{t("inviteReadyHint")}</p>
+                          <p className="text-xs text-green-700 mt-0.5">{t("inviteReadyHint", { email: inviteEmail })}</p>
                         </div>
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-medium text-gray-500 mb-1.5 uppercase tracking-wide">
-                          {t("inviteLinkLabel")}
-                        </label>
-                        <div className="flex gap-2">
-                          <input
-                            readOnly
-                            value={inviteLink}
-                            className="flex-1 p-2.5 border border-gray-200 rounded-lg text-xs text-gray-600 bg-gray-50 font-mono overflow-hidden"
-                          />
-                          <button
-                            onClick={handleCopyInviteLink}
-                            className={`px-3 rounded-lg border transition-colors flex-shrink-0 ${
-                              inviteCopied
-                                ? "bg-green-50 border-green-200 text-green-600"
-                                : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                            }`}
-                          >
-                            {inviteCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                          </button>
+                      <details className="group">
+                        <summary className="text-xs text-gray-400 cursor-pointer hover:text-gray-600 select-none">
+                          {t("inviteBackupLabel")}
+                        </summary>
+                        <div className="mt-2">
+                          <div className="flex gap-2">
+                            <input
+                              readOnly
+                              value={inviteLink ?? ""}
+                              className="flex-1 p-2.5 border border-gray-200 rounded-lg text-xs text-gray-600 bg-gray-50 font-mono overflow-hidden"
+                            />
+                            <button
+                              onClick={handleCopyInviteLink}
+                              className={`px-3 rounded-lg border transition-colors flex-shrink-0 ${
+                                inviteCopied
+                                  ? "bg-green-50 border-green-200 text-green-600"
+                                  : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                              }`}
+                            >
+                              {inviteCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                            </button>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-1.5">{t("inviteExpiry")}</p>
                         </div>
-                        <p className="text-xs text-gray-400 mt-1.5">{t("inviteExpiry")}</p>
-                      </div>
+                      </details>
 
                       <button
                         onClick={resetInviteModal}
