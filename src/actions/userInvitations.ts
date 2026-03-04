@@ -230,5 +230,21 @@ export async function activateAccount(
     data: { used: true },
   });
 
+  // Auto-create a Staff (directory) entry if one doesn't already exist
+  // so the new user is immediately usable in project assignments, contacts, etc.
+  const existingStaff = await dbc.staff.findFirst({
+    where: { email: invite.email, orgId: invite.orgId },
+  });
+  if (!existingStaff) {
+    await dbc.staff.create({
+      data: {
+        name: name.trim(),
+        email: invite.email,
+        contactType: "TEAM",
+        orgId: invite.orgId,
+      },
+    });
+  }
+
   return { success: true, email: invite.email };
 }
