@@ -1,6 +1,6 @@
 {
-  "name": "Construction PM",
-  "short_name": "ConstructionPM",
+  "name": "AccuDone",
+  "short_name": "AccuDone",
   "description": "Construction Project Management Tool",
   "start_url": "/dashboard",
   "display": "standalone",

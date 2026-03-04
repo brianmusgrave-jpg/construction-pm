@@ -43,13 +43,13 @@ const barlowCondensed = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
-  title: "Construction PM",
+  title: "AccuDone",
   description: "Construction Project Management Tool",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Construction PM",
+    title: "AccuDone",
   },
   formatDetection: {
     telephone: true,

@@ -4,7 +4,7 @@
  */
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const FROM_EMAIL = "Construction PM <noreply@constructionpm.app>";
+const FROM_EMAIL = "AccuDone <noreply@constructionpm.app>";
 const APP_URL = process.env.NEXTAUTH_URL || "https://construction-pm-theta.vercel.app";
 
 interface SendEmailOptions {
@@ -57,14 +57,14 @@ function wrapHTML(content: string): string {
   <div style="max-width:560px;margin:0 auto;padding:32px 16px;">
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;">
       <div style="padding:24px 24px 0;">
-        <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:4px;">🚧 Construction PM</div>
+        <div style="font-size:18px;font-weight:700;color:#111827;margin-bottom:4px;">🚧 AccuDone</div>
       </div>
       <div style="padding:16px 24px 24px;">
         ${content}
       </div>
     </div>
     <div style="text-align:center;padding:16px;color:#9ca3af;font-size:12px;">
-      Construction PM · You received this because you're a project member
+      AccuDone · You received this because you're a project member
     </div>
   </div>
 </body>

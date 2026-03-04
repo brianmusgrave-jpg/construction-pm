@@ -159,7 +159,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
           className="text-lg font-bold truncate"
           style={{ color: "var(--nav-fg)", fontFamily: "var(--font-oswald, inherit)" }}
         >
-          {companyName || "Construction PM"}
+          {companyName || "AccuDone"}
         </span>
         {/* Close button — mobile only */}
         <button
@@ -279,7 +279,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
           className="text-base font-bold truncate"
           style={{ color: "var(--nav-fg)", fontFamily: "var(--font-oswald, inherit)" }}
         >
-          {companyName || "Construction PM"}
+          {companyName || "AccuDone"}
         </span>
         {unreadCount > 0 && (
           <Link

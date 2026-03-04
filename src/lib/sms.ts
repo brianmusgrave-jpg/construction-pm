@@ -79,7 +79,7 @@ export async function sendPhaseStatusSMS(
 
   return sendSMS({
     to: phone,
-    body: `[Construction PM] ${phaseName} is now "${label}" in ${projectName}.`,
+    body: `[AccuDone] ${phaseName} is now "${label}" in ${projectName}.`,
   });
 }
 
@@ -90,7 +90,7 @@ export async function sendReviewRequestSMS(
 ): Promise<boolean> {
   return sendSMS({
     to: phone,
-    body: `[Construction PM] Review requested for ${phaseName} in ${projectName}. Please check the app.`,
+    body: `[AccuDone] Review requested for ${phaseName} in ${projectName}. Please check the app.`,
   });
 }
 
@@ -101,7 +101,7 @@ export async function sendChecklistCompleteSMS(
 ): Promise<boolean> {
   return sendSMS({
     to: phone,
-    body: `[Construction PM] All checklist items complete for ${phaseName} in ${projectName}.`,
+    body: `[AccuDone] All checklist items complete for ${phaseName} in ${projectName}.`,
   });
 }
 
@@ -114,6 +114,6 @@ export async function sendDocumentStatusSMS(
   const label = status === "APPROVED" ? "approved" : "rejected";
   return sendSMS({
     to: phone,
-    body: `[Construction PM] Document "${documentName}" has been ${label} in ${projectName}.`,
+    body: `[AccuDone] Document "${documentName}" has been ${label} in ${projectName}.`,
   });
 }

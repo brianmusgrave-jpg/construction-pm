@@ -144,7 +144,7 @@ export default function SignupPage() {
           {/* Logo */}
           <div className="flex items-center justify-center gap-2 mb-8">
             <HardHat className="w-8 h-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Construction PM</span>
+            <span className="text-2xl font-bold text-gray-900">AccuDone</span>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
@@ -232,7 +232,7 @@ export default function SignupPage() {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
             <HardHat className="w-8 h-8 text-blue-600" />
-            <span className="text-2xl font-bold text-gray-900">Construction PM</span>
+            <span className="text-2xl font-bold text-gray-900">AccuDone</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Choose your plan</h1>
           <p className="text-gray-500">All plans include a 14-day free trial. Cancel anytime.</p>
