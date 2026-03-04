@@ -35,26 +35,54 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-sm space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">{tc("appName")}</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          {t("signInSubtitle")}
-        </p>
+      {/* Brand lockup */}
+      <div className="text-center space-y-1">
+        <div
+          className="inline-flex items-center justify-center w-14 h-14 mb-3 border-3"
+          style={{
+            backgroundColor: "var(--color-primary, #111010)",
+            borderColor: "var(--color-primary, #111010)",
+            boxShadow: "4px 4px 0 var(--nav-accent, #F5C800)",
+          }}
+        >
+          <span
+            className="text-2xl font-bold"
+            style={{
+              color: "var(--nav-accent, #F5C800)",
+              fontFamily: "var(--font-oswald, sans-serif)",
+              letterSpacing: "0.05em",
+            }}
+          >
+            AD
+          </span>
+        </div>
+        <h1
+          className="text-3xl font-bold tracking-wide"
+          style={{
+            color: "var(--color-primary, #111010)",
+            fontFamily: "var(--font-oswald, sans-serif)",
+            letterSpacing: "0.08em",
+          }}
+        >
+          {tc("appName")}
+        </h1>
+        <p className="text-sm text-gray-500">{t("signInSubtitle")}</p>
       </div>
 
       {error && (
-        <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg">
+        <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded">
           {error === "CredentialsSignin"
             ? t("invalidCredentials")
             : t("genericError")}
         </div>
       )}
 
-      <form onSubmit={handleLogin} className="space-y-3">
+      <form onSubmit={handleLogin} className="space-y-4">
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wider"
+            style={{ fontFamily: "var(--font-barlow-condensed, sans-serif)" }}
           >
             {t("emailAddress")}
           </label>
@@ -66,14 +94,25 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={t("emailPlaceholder")}
-            className="w-full p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+            className="w-full p-3 border-2 text-base outline-none transition-colors"
+            style={{
+              borderColor: "var(--color-primary, #111010)",
+              fontFamily: "var(--font-barlow-condensed, sans-serif)",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.boxShadow = "3px 3px 0 var(--nav-accent, #F5C800)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.boxShadow = "none";
+            }}
           />
         </div>
 
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-xs font-semibold text-gray-600 mb-1 uppercase tracking-wider"
+            style={{ fontFamily: "var(--font-barlow-condensed, sans-serif)" }}
           >
             {t("password")}
           </label>
@@ -85,7 +124,17 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={t("passwordPlaceholder")}
-              className="w-full p-3 pr-10 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] outline-none"
+              className="w-full p-3 pr-10 border-2 text-base outline-none transition-colors"
+              style={{
+                borderColor: "var(--color-primary, #111010)",
+                fontFamily: "var(--font-barlow-condensed, sans-serif)",
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.boxShadow = "3px 3px 0 var(--nav-accent, #F5C800)";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.boxShadow = "none";
+              }}
             />
             <button
               type="button"
@@ -102,7 +151,24 @@ function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full p-3 bg-[var(--color-primary)] text-white rounded-lg text-base font-medium hover:bg-[var(--color-primary-dark)] disabled:opacity-50 transition-colors"
+          className="w-full p-3 text-base font-bold uppercase tracking-widest transition-all disabled:opacity-50"
+          style={{
+            backgroundColor: "var(--color-primary, #111010)",
+            color: "var(--nav-accent, #F5C800)",
+            fontFamily: "var(--font-oswald, sans-serif)",
+            boxShadow: loading ? "none" : "4px 4px 0 var(--nav-accent, #F5C800)",
+            transform: "translate(0, 0)",
+          }}
+          onMouseEnter={(e) => {
+            if (!loading) {
+              e.currentTarget.style.transform = "translate(2px, 2px)";
+              e.currentTarget.style.boxShadow = "2px 2px 0 var(--nav-accent, #F5C800)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translate(0, 0)";
+            e.currentTarget.style.boxShadow = loading ? "none" : "4px 4px 0 var(--nav-accent, #F5C800)";
+          }}
         >
           {loading ? t("signingIn") : t("signIn")}
         </button>
@@ -118,7 +184,15 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: "var(--color-primary-bg, #f9fafb)" }}
+    >
+      {/* Accent stripe — top of screen */}
+      <div
+        className="fixed top-0 left-0 right-0 h-1"
+        style={{ backgroundColor: "var(--nav-accent, #F5C800)" }}
+      />
       <Suspense
         fallback={
           <div className="w-full max-w-sm text-center text-gray-500 text-sm">

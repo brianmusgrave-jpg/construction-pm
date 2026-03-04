@@ -28,6 +28,30 @@ export interface ThemePreset {
     /** Very light background tint — used for highlighted sections. */
     primaryBg: string;
   };
+  /**
+   * Optional chrome overrides — if provided, these replace the default
+   * sidebar/nav background, foreground, and accent colors. Used for
+   * brand skin themes like AccuDone.
+   */
+  chrome?: {
+    /** Sidebar/nav background color. */
+    navBg: string;
+    /** Sidebar/nav text color. */
+    navFg: string;
+    /** Sidebar/nav hover/active highlight color. */
+    navAccent: string;
+    /** Sidebar/nav active text color. */
+    navAccentFg: string;
+    /** Sidebar/nav border color. */
+    navBorder: string;
+  };
+  /**
+   * Optional app-level background override. Used for demo/recording skins
+   * to apply a dark full-canvas look (e.g. AccuDone dark demo skin).
+   */
+  appBg?: string;
+  /** If true, hides this theme from the standard settings picker (e.g. demo skins). */
+  hidden?: boolean;
 }
 
 /** All available theme presets, in display order. First entry is the default. */
@@ -87,6 +111,46 @@ export const THEME_PRESETS: ThemePreset[] = [
       primaryBg: "#f0fdf4",
     },
   },
+  // ── AccuDone brand themes ──
+  {
+    id: "accudone",
+    name: "AccuDone",
+    description: "Industrial, high-contrast",
+    colors: {
+      // Dark charcoal as primary: WCAG AA on white (16.1:1)
+      primary: "#111010",
+      primaryDark: "#000000",
+      primaryLight: "#333333",
+      primaryBg: "#f5f0e8",
+    },
+    chrome: {
+      navBg: "#111010",
+      navFg: "#f5f0e8",
+      navAccent: "#F5C800",
+      navAccentFg: "#111010",
+      navBorder: "#2a2a2a",
+    },
+  },
+  {
+    id: "accudone-demo",
+    name: "AccuDone Demo",
+    description: "Full dark skin for demo recordings",
+    hidden: true,
+    colors: {
+      primary: "#F5C800",
+      primaryDark: "#D4AD00",
+      primaryLight: "#FFF0A0",
+      primaryBg: "#1a1a1a",
+    },
+    chrome: {
+      navBg: "#111010",
+      navFg: "#f5f0e8",
+      navAccent: "#F5C800",
+      navAccentFg: "#111010",
+      navBorder: "#2a2a2a",
+    },
+    appBg: "#1C1C1C",
+  },
 ];
 
 /**
@@ -108,12 +172,24 @@ export function getThemeById(id: string): ThemePreset {
  */
 export function getThemeCSS(themeId: string): Record<string, string> {
   const theme = getThemeById(themeId);
-  return {
+  const base: Record<string, string> = {
     "--color-primary": theme.colors.primary,
     "--color-primary-dark": theme.colors.primaryDark,
     "--color-primary-light": theme.colors.primaryLight,
     "--color-primary-bg": theme.colors.primaryBg,
   };
+  if (theme.chrome) {
+    base["--nav-bg"] = theme.chrome.navBg;
+    base["--nav-fg"] = theme.chrome.navFg;
+    base["--nav-accent"] = theme.chrome.navAccent;
+    base["--nav-accent-fg"] = theme.chrome.navAccentFg;
+    base["--nav-border"] = theme.chrome.navBorder;
+  }
+  if (theme.appBg) {
+    base["--background"] = theme.appBg;
+    base["--foreground"] = "#f5f0e8";
+  }
+  return base;
 }
 
 // ── Custom Color Utilities (Sprint 19) ──

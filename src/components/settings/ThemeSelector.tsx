@@ -46,7 +46,7 @@ export function ThemeSelector({ currentTheme }: ThemeSelectorProps) {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {THEME_PRESETS.map((preset) => {
+        {THEME_PRESETS.filter((p) => !p.hidden).map((preset) => {
           const isActive = selected === preset.id;
           return (
             <button
@@ -66,20 +66,35 @@ export function ThemeSelector({ currentTheme }: ThemeSelectorProps) {
                 </div>
               )}
 
-              {/* Color swatches */}
+              {/* Color swatches — show chrome accent for brand themes */}
               <div className="flex items-center gap-2 mb-3">
                 <div
                   className="w-8 h-8 rounded-lg"
                   style={{ backgroundColor: preset.colors.primary }}
                 />
-                <div
-                  className="w-6 h-6 rounded-lg"
-                  style={{ backgroundColor: preset.colors.primaryDark }}
-                />
-                <div
-                  className="w-6 h-6 rounded-lg"
-                  style={{ backgroundColor: preset.colors.primaryLight }}
-                />
+                {preset.chrome ? (
+                  <>
+                    <div
+                      className="w-6 h-6 rounded-lg"
+                      style={{ backgroundColor: preset.chrome.navAccent }}
+                    />
+                    <div
+                      className="w-6 h-6 rounded-lg"
+                      style={{ backgroundColor: preset.chrome.navBg }}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className="w-6 h-6 rounded-lg"
+                      style={{ backgroundColor: preset.colors.primaryDark }}
+                    />
+                    <div
+                      className="w-6 h-6 rounded-lg"
+                      style={{ backgroundColor: preset.colors.primaryLight }}
+                    />
+                  </>
+                )}
                 <div
                   className="flex-1 h-6 rounded-lg"
                   style={{ backgroundColor: preset.colors.primaryBg }}

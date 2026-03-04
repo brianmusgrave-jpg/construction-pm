@@ -141,8 +141,11 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
 
   const sidebarContent = (
     <>
-      {/* Logo */}
-      <div className="flex items-center gap-2 px-4 py-5 border-b border-gray-200">
+      {/* Logo / brand header */}
+      <div
+        className="flex items-center gap-2 px-4 py-5 border-b"
+        style={{ borderColor: "var(--nav-border)" }}
+      >
         {logoUrl ? (
           <img
             src={logoUrl}
@@ -150,15 +153,19 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
             className="w-7 h-7 rounded object-contain"
           />
         ) : (
-          <HardHat className="w-7 h-7 text-[var(--color-primary)]" />
+          <HardHat className="w-7 h-7" style={{ color: "var(--nav-accent)" }} />
         )}
-        <span className="text-lg font-bold text-gray-900 truncate">
+        <span
+          className="text-lg font-bold truncate"
+          style={{ color: "var(--nav-fg)", fontFamily: "var(--font-oswald, inherit)" }}
+        >
           {companyName || "Construction PM"}
         </span>
         {/* Close button — mobile only */}
         <button
           onClick={() => setMobileOpen(false)}
-          className="ml-auto p-1 text-gray-400 hover:text-gray-600 lg:hidden"
+          className="ml-auto p-1 opacity-60 hover:opacity-100 lg:hidden"
+          style={{ color: "var(--nav-fg)" }}
         >
           <X className="w-5 h-5" />
         </button>
@@ -182,15 +189,19 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-[var(--color-primary-bg)] text-[var(--color-primary-dark)]"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                isActive ? "nav-item-active" : "nav-item-inactive"
               )}
             >
-              <item.icon className="w-5 h-5" />
+              <item.icon className="w-5 h-5 shrink-0" />
               {item.name}
               {item.href === "/dashboard/notifications" && unreadCount > 0 && (
-                <span className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full bg-[var(--color-primary)] text-white">
+                <span
+                  className="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-xs font-semibold rounded-full"
+                  style={{
+                    backgroundColor: "var(--nav-accent)",
+                    color: "var(--nav-accent-fg)",
+                  }}
+                >
                   {unreadCount > 99 ? "99+" : unreadCount}
                 </span>
               )}
@@ -199,23 +210,39 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
         })}
       </nav>
 
-      {/* User */}
-      <div className="border-t border-gray-200 p-4">
+      {/* User footer */}
+      <div
+        className="border-t p-4"
+        style={{ borderColor: "var(--nav-border)" }}
+      >
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-[var(--color-primary-bg)] flex items-center justify-center text-[var(--color-primary-dark)] text-sm font-medium shrink-0">
+          <div
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
+            style={{
+              backgroundColor: "var(--nav-accent)",
+              color: "var(--nav-accent-fg)",
+            }}
+          >
             {user.name?.[0] || user.email?.[0] || "?"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">
+            <p
+              className="text-sm font-medium truncate"
+              style={{ color: "var(--nav-fg)" }}
+            >
               {user.name || user.email}
             </p>
-            <p className="text-xs text-gray-500 capitalize">
+            <p
+              className="text-xs capitalize opacity-60"
+              style={{ color: "var(--nav-fg)" }}
+            >
               {user.role.replace("_", " ").toLowerCase()}
             </p>
           </div>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
-            className="p-1.5 text-gray-400 hover:text-gray-600 rounded"
+            className="p-1.5 rounded opacity-60 hover:opacity-100 transition-opacity"
+            style={{ color: "var(--nav-fg)" }}
             title={tc("signOut")}
           >
             <LogOut className="w-4 h-4" />
@@ -228,10 +255,13 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
   return (
     <>
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
+      <div
+        className="nav-chrome lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center gap-3 px-4 py-3 border-b"
+      >
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-1.5 -ml-1.5 text-gray-600 hover:text-gray-900 rounded-lg"
+          className="p-1.5 -ml-1.5 rounded-lg opacity-70 hover:opacity-100"
+          style={{ color: "var(--nav-fg)" }}
           aria-label="Open menu"
         >
           <Menu className="w-6 h-6" />
@@ -243,9 +273,12 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
             className="w-6 h-6 rounded object-contain"
           />
         ) : (
-          <HardHat className="w-6 h-6 text-[var(--color-primary)]" />
+          <HardHat className="w-6 h-6" style={{ color: "var(--nav-accent)" }} />
         )}
-        <span className="text-base font-bold text-gray-900 truncate">
+        <span
+          className="text-base font-bold truncate"
+          style={{ color: "var(--nav-fg)", fontFamily: "var(--font-oswald, inherit)" }}
+        >
           {companyName || "Construction PM"}
         </span>
         {unreadCount > 0 && (
@@ -253,8 +286,14 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
             href="/dashboard/notifications"
             className="ml-auto relative p-1.5"
           >
-            <Bell className="w-5 h-5 text-gray-600" />
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[var(--color-primary)] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+            <Bell className="w-5 h-5" style={{ color: "var(--nav-fg)" }} />
+            <span
+              className="absolute -top-0.5 -right-0.5 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center"
+              style={{
+                backgroundColor: "var(--nav-accent)",
+                color: "var(--nav-accent-fg)",
+              }}
+            >
               {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           </Link>
@@ -272,7 +311,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
       {/* Mobile sidebar drawer */}
       <div
         className={cn(
-          "lg:hidden fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl flex flex-col transition-transform duration-300 ease-in-out",
+          "nav-chrome lg:hidden fixed inset-y-0 left-0 z-50 w-72 shadow-xl flex flex-col transition-transform duration-300 ease-in-out",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -280,7 +319,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
       </div>
 
       {/* Desktop sidebar — always visible on lg+ */}
-      <div className="hidden lg:flex lg:flex-col w-64 bg-white border-r border-gray-200 shrink-0">
+      <div className="nav-chrome hidden lg:flex lg:flex-col w-64 border-r shrink-0">
         {sidebarContent}
       </div>
 
@@ -288,7 +327,7 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
       <SearchPalette />
 
       {/* Mobile bottom tab bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center bg-white border-t border-gray-200 safe-area-inset-bottom">
+      <div className="nav-chrome lg:hidden fixed bottom-0 left-0 right-0 z-40 flex items-center border-t safe-area-inset-bottom">
         {navigation.slice(0, 4).map((item) => {
           const isActive =
             pathname === item.href ||
@@ -297,17 +336,22 @@ export function Sidebar({ user, logoUrl, companyName, unreadCount: initialUnread
             <Link
               key={item.href}
               href={item.href}
-              className={cn(
-                "flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors relative",
-                isActive
-                  ? "text-[var(--color-primary)]"
-                  : "text-gray-500 hover:text-gray-700"
-              )}
+              className="flex-1 flex flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-opacity relative"
+              style={{
+                color: isActive ? "var(--nav-accent)" : "var(--nav-fg)",
+                opacity: isActive ? 1 : 0.6,
+              }}
             >
               <item.icon className="w-5 h-5" />
               <span>{item.name}</span>
               {item.href === "/dashboard/notifications" && unreadCount > 0 && (
-                <span className="absolute top-1.5 right-[calc(50%-14px)] w-4 h-4 bg-[var(--color-primary)] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                <span
+                  className="absolute top-1.5 right-[calc(50%-14px)] w-4 h-4 text-[9px] font-bold rounded-full flex items-center justify-center"
+                  style={{
+                    backgroundColor: "var(--nav-accent)",
+                    color: "var(--nav-accent-fg)",
+                  }}
+                >
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
