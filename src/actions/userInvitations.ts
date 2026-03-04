@@ -58,10 +58,13 @@ export async function inviteGlobalUser(
 
   const currentUser = await dbc.user.findUnique({
     where: { id: session.user.id },
-    select: { role: true },
+    select: { role: true, orgId: true },
   });
   if (!currentUser || currentUser.role !== "ADMIN") {
     return { success: false, error: "Only admins can invite users" };
+  }
+  if (!currentUser.orgId) {
+    return { success: false, error: "Your account is not associated with an organization" };
   }
 
   // Normalise email
@@ -94,6 +97,7 @@ export async function inviteGlobalUser(
       token,
       expiresAt,
       invitedById: session.user.id,
+      orgId: currentUser.orgId,
     },
   });
 
