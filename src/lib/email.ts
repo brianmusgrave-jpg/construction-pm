@@ -77,6 +77,31 @@ function btnHTML(text: string, url: string): string {
 
 // ── Specific email templates ──
 
+export async function sendAccountInviteEmail(
+  email: string,
+  role: string,
+  inviteToken: string,
+  inviterName: string
+): Promise<boolean> {
+  const inviteUrl = `${APP_URL}/invite/activate/${inviteToken}`;
+  const roleName = role.charAt(0) + role.slice(1).toLowerCase().replace(/_/g, " ");
+
+  return sendEmail({
+    to: email,
+    subject: `You've been invited to AccuDone`,
+    html: wrapHTML(`
+      <p style="color:#374151;font-size:14px;line-height:1.6;margin:0 0 12px;">
+        <strong>${inviterName}</strong> has invited you to join <strong>AccuDone</strong> as a <strong>${roleName}</strong>.
+      </p>
+      <p style="color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 4px;">
+        Click below to set up your account. This link expires in 7 days.
+      </p>
+      ${btnHTML("Accept Invitation", inviteUrl)}
+      <p style="color:#9ca3af;font-size:12px;margin-top:16px;">If you weren't expecting this invitation, you can ignore this email.</p>
+    `),
+  });
+}
+
 export async function sendInvitationEmail(
   email: string,
   projectName: string,
@@ -84,7 +109,7 @@ export async function sendInvitationEmail(
   inviteToken: string,
   inviterName: string
 ): Promise<boolean> {
-  const inviteUrl = `${APP_URL}/invite/${inviteToken}`;
+  const inviteUrl = `${APP_URL}/invite/activate/${inviteToken}`;
   const roleName = role.charAt(0) + role.slice(1).toLowerCase();
 
   return sendEmail({

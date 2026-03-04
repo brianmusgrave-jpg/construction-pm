@@ -21,6 +21,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { sendAccountInviteEmail } from "@/lib/email";
 import { randomBytes } from "crypto";
 import bcrypt from "bcryptjs";
 
@@ -100,6 +101,12 @@ export async function inviteGlobalUser(
       orgId: currentUser.orgId,
     },
   });
+
+  // Send invite email — fire and forget (don't block on email failure)
+  const inviterName = (session.user as any).name || "Your team";
+  sendAccountInviteEmail(normalizedEmail, role, token, inviterName).catch((err) =>
+    console.error("[invite] Failed to send invite email:", err)
+  );
 
   const inviteUrl = getInviteUrl(token);
   return { success: true, inviteUrl };
