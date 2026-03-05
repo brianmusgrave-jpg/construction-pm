@@ -621,7 +621,7 @@ export function HelpCenter({ userRole, initialSection, initialArticle }: Props) 
           {t("contactAdmin")}
         </p>
         <a
-          href="mailto:support@constructionpm.app"
+          href="mailto:support@accudone.app"
           className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-[var(--color-primary)] hover:bg-white/60 rounded-lg transition-colors"
         >
           <ExternalLink className="w-4 h-4" />
