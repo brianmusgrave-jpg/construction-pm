@@ -14,6 +14,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -145,7 +146,12 @@ function LoginForm() {
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
-          <p className="mt-1 text-xs text-gray-400">{t("passwordHint")}</p>
+          <div className="mt-1 flex justify-between items-center">
+            <p className="text-xs text-gray-400">{t("passwordHint")}</p>
+            <Link href="/forgot-password" className="text-xs text-blue-600 hover:text-blue-800">
+              {t("forgotPassword")}
+            </Link>
+          </div>
         </div>
 
         <button
@@ -178,6 +184,15 @@ function LoginForm() {
         className="text-xs text-center text-gray-400"
         dangerouslySetInnerHTML={{ __html: t("demoAccess") }}
       />
+
+      <div className="text-center space-x-3">
+        <Link href="/terms" className="text-xs text-gray-400 hover:text-gray-600">
+          Terms of Service
+        </Link>
+        <Link href="/privacy" className="text-xs text-gray-400 hover:text-gray-600">
+          Privacy Policy
+        </Link>
+      </div>
     </div>
   );
 }

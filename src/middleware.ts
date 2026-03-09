@@ -17,7 +17,7 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   // Public routes — no auth required
-  const publicPaths = ["/login", "/register", "/signup", "/api/auth", "/api/stripe/webhook", "/api/onboarding", "/onboarding", "/invite", "/client"];
+  const publicPaths = ["/login", "/register", "/signup", "/forgot-password", "/reset-password", "/api/auth", "/api/stripe/webhook", "/api/onboarding", "/api/health", "/onboarding", "/invite", "/client", "/terms", "/privacy"];
   if (publicPaths.some((p) => pathname.startsWith(p))) {
     // Redirect logged-in users away from login page
     if (isLoggedIn && pathname === "/login") {

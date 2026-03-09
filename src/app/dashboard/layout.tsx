@@ -14,6 +14,9 @@ import { OnboardingTour } from "@/components/help/OnboardingTour";
 import { InstallPrompt } from "@/components/ui/InstallPrompt";
 import { ConfirmDialogProvider } from "@/components/ui/ConfirmDialog";
 import { KeeneyFAB } from "@/components/keeney/KeeneyFAB";
+import { TosGate } from "@/components/legal/TosGate";
+import { FeedbackWidget } from "@/components/ui/FeedbackWidget";
+import { checkTosStatus } from "@/actions/tos";
 import ImpersonationBanner from "@/app/system-admin/components/ImpersonationBanner";
 
 export default async function DashboardLayout({
@@ -24,10 +27,11 @@ export default async function DashboardLayout({
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [orgSettings, unreadCount, keeneyMode] = await Promise.all([
+  const [orgSettings, unreadCount, keeneyMode, tosStatus] = await Promise.all([
     getOrgSettings(),
     getUnreadCount(),
     getKeeneyModeStatus().catch(() => false),
+    checkTosStatus().catch(() => ({ needsAcceptance: false, currentVersion: "1.0", acceptedVersion: null, acceptedAt: null })),
   ]);
   const themeVars = getThemeCSS(orgSettings.theme);
 
@@ -50,6 +54,13 @@ export default async function DashboardLayout({
       />
       <InstallPrompt />
       <KeeneyFAB enabled={keeneyMode} />
+      <FeedbackWidget />
+      {tosStatus.needsAcceptance && (
+        <TosGate
+          currentVersion={tosStatus.currentVersion}
+          isReaffirmation={!!tosStatus.acceptedVersion}
+        />
+      )}
     </div>
   );
 }

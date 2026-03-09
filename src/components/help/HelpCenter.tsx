@@ -5,12 +5,13 @@
  * @description Searchable in-app help documentation with accordion sections and
  *   expandable articles.
  *
- * Content: 30+ guide sections (returned by `useGuides`) covering getting-started,
+ * Content: 35+ guide sections (returned by `useGuides`) covering getting-started,
  *   all feature areas (projects, phases, checklists, documents, photos, team,
  *   notifications, comments, change orders, daily logs, inspections, materials,
  *   bids, offline mode, punch lists, RFIs, submittals, time tracking, estimates,
- *   drawings, lien waivers, payment apps, voice notes, analytics, insurance), and
- *   admin topics (advanced, settings, admin panel).
+ *   drawings, lien waivers, payment apps, voice notes, analytics, insurance,
+ *   password reset, terms & privacy, feedback & support), and admin topics
+ *   (system status, advanced, settings, admin panel).
  *
  * Role gating: the "admin" category sections (advanced, settings, admin panel) are
  *   hidden for roles other than ADMIN and PROJECT_MANAGER.
@@ -73,7 +74,7 @@ import {
   Calculator,
   Sparkles,
 } from "lucide-react";
-import { PlayCircle, CreditCard } from "lucide-react";
+import { PlayCircle, CreditCard, Lock, FileSignature, MessageSquarePlus, Activity } from "lucide-react";
 import { resetTour } from "./OnboardingTour";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -359,6 +360,42 @@ function useGuides(t: (key: string) => string): GuideSection[] {
         { id: "ai-estimating", titleKey: "articles.aiEstimatingHelpTitle", contentKey: "articles.aiEstimatingHelpBody", tags: ["estimate", "scope", "AI", "takeoff", "historical", "review", "analysis"] },
         { id: "ai-project-intel", titleKey: "articles.aiProjectIntelTitle", contentKey: "articles.aiProjectIntelBody", tags: ["predictive", "schedule risk", "budget forecast", "weather", "change order", "analytics", "intelligence"] },
         { id: "ai-assistant", titleKey: "articles.aiAssistantHelpTitle", contentKey: "articles.aiAssistantHelpBody", tags: ["assistant", "chat", "AI", "tool calling", "actions", "queries", "natural language"] },
+      ],
+    },
+    {
+      id: "password-reset",
+      titleKey: "sections.passwordReset",
+      icon: <Lock className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "pw-reset", titleKey: "articles.passwordResetTitle", contentKey: "articles.passwordReset", tags: ["password", "reset", "forgot", "login", "email", "security"] },
+      ],
+    },
+    {
+      id: "terms-privacy",
+      titleKey: "sections.termsPrivacy",
+      icon: <FileSignature className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "tos-privacy", titleKey: "articles.termsPrivacyTitle", contentKey: "articles.termsPrivacy", tags: ["terms", "service", "privacy", "policy", "legal", "acceptance", "TOS"] },
+      ],
+    },
+    {
+      id: "feedback-support",
+      titleKey: "sections.feedbackSupport",
+      icon: <MessageSquarePlus className="w-5 h-5" />,
+      category: "features",
+      articles: [
+        { id: "feedback-widget", titleKey: "articles.feedbackSupportTitle", contentKey: "articles.feedbackSupport", tags: ["feedback", "bug", "feature request", "support", "rating", "widget"] },
+      ],
+    },
+    {
+      id: "system-status",
+      titleKey: "sections.systemStatus",
+      icon: <Activity className="w-5 h-5" />,
+      category: "admin",
+      articles: [
+        { id: "sys-status", titleKey: "articles.systemStatusTitle", contentKey: "articles.systemStatus", tags: ["health", "status", "database", "monitoring", "uptime", "version"] },
       ],
     },
     {

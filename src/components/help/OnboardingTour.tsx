@@ -5,8 +5,8 @@
  * @description First-run modal tour shown to new users after a 1-second delay.
  *
  * Steps:
- *   - ADMIN_STEPS (10): Welcome, Projects, Phases, Team, Checklists, Change Orders,
- *     Analytics, Offline, Advanced, Notifications.
+ *   - ADMIN_STEPS (11): Welcome, Projects, Phases, Team, Checklists, Change Orders,
+ *     Analytics, Offline, Advanced, Feedback, Notifications.
  *   - CONTRACTOR_STEPS (5): Welcome, Assigned Phases, Upload Photos, Request Review,
  *     Offline.
  *   Component receives `userRole` and renders the appropriate step set.
@@ -47,6 +47,7 @@ import {
   BarChart3,
   Globe,
   BookOpen,
+  MessageSquarePlus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
@@ -123,6 +124,13 @@ const ADMIN_STEPS: TourStep[] = [
     descKey: "advancedDesc",
     tipKey: "advancedTip",
     learnMore: { section: "advanced", article: "adv-client-portal" },
+  },
+  {
+    icon: <MessageSquarePlus className="w-8 h-8" />,
+    titleKey: "feedbackTitle",
+    descKey: "feedbackDesc",
+    tipKey: "feedbackTip",
+    learnMore: { section: "feedback-support", article: "feedback-widget" },
   },
   {
     icon: <Bell className="w-8 h-8" />,

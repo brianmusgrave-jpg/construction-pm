@@ -210,9 +210,12 @@ model User {
   impersonationsAsTarget ImpersonationSession[] @relation("impersonation_target")
   keeneyMode       Boolean  @default(false) @map("keeney_mode")
   dashboardLayout  Json?    @map("dashboard_layout") // Widget positions, visibility, collapsed state
+  tosAcceptedAt    DateTime? @map("tos_accepted_at")  // When user last accepted TOS
+  tosVersion       String?   @map("tos_version")      // Which TOS version was accepted (e.g. "1.0")
   voiceMemos  VoiceMemo[] @relation("voice_memos")
   gpsClockEntries   GpsClockEntry[]   @relation("gps_clock_created")
   photoAnnotations  PhotoAnnotation[] @relation("photo_annotations")
+  feedbackSubmissions Feedback[] @relation("feedback_author")
 
   @@map("users")
 }
@@ -1635,4 +1638,20 @@ model VoiceMemo {
   @@index([userId, createdAt])
   @@index([projectId, createdAt])
   @@map("voice_memos")
+}
+
+// ── Feedback (Sprint 46) ──
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  category  String   @default("general") // general, bug, feature, other
+  message   String   @db.Text
+  rating    Int?     // 1-5 satisfaction rating (optional)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation("feedback_author", fields: [userId], references: [id])
+
+  @@index([userId, createdAt])
+  @@map("feedback")
 }

@@ -4,7 +4,10 @@
  * @file src/app/global-error.tsx
  * @description Global error boundary for the entire application. Displays the error
  * message, digest ID, stack trace (dev only), and a "Try again" reset button.
+ * Reports errors to Sentry when configured.
  */
+import * as Sentry from "@sentry/nextjs";
+import { useEffect } from "react";
 
 export default function GlobalError({
   error,
@@ -13,6 +16,9 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
   return (
     <html>
       <body style={{ padding: "2rem", fontFamily: "system-ui, sans-serif" }}>

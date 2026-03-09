@@ -228,7 +228,11 @@ export async function updateUserRole(userId: string, newRole: string) {
 
   await dbc.user.update({
     where: { id: userId },
-    data: { role: newRole },
+    data: {
+      role: newRole,
+      tosAcceptedAt: null, // Force TOS re-affirmation on role change
+      tosVersion: null,
+    },
   });
 
   revalidatePath("/dashboard/admin");

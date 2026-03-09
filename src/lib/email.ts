@@ -203,6 +203,28 @@ export async function sendReviewRequestEmail(
   });
 }
 
+export async function sendPasswordResetEmail(
+  email: string,
+  resetToken: string
+): Promise<boolean> {
+  const resetUrl = `${APP_URL}/reset-password/${resetToken}`;
+
+  return sendEmail({
+    to: email,
+    subject: "Reset your AccuDone password",
+    html: wrapHTML(`
+      <p style="color:#374151;font-size:14px;line-height:1.6;margin:0 0 12px;">
+        We received a request to reset the password for your AccuDone account.
+      </p>
+      <p style="color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 4px;">
+        Click below to set a new password. This link expires in 1 hour.
+      </p>
+      ${btnHTML("Reset Password", resetUrl)}
+      <p style="color:#9ca3af;font-size:12px;margin-top:16px;">If you didn't request this, you can safely ignore this email. Your password won't change.</p>
+    `),
+  });
+}
+
 export async function sendChecklistCompleteEmail(
   email: string,
   projectName: string,
