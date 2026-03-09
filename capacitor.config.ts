@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.constructionpm.app",
-  appName: "Construction PM",
+  appId: "com.accudone.app",
+  appName: "AccuDone",
   webDir: "out",
   server: {
     // In development, load from the live Vercel URL instead of the local build.
@@ -14,13 +14,13 @@ const config: CapacitorConfig = {
     SplashScreen: {
       launchShowDuration: 2000,
       launchAutoHide: true,
-      backgroundColor: "#1e293b", // slate-800 — matches app theme
+      backgroundColor: "#111010", // AccuDone dark — matches nav chrome
       showSpinner: true,
-      spinnerColor: "#3b82f6", // blue-500
+      spinnerColor: "#F5C800", // AccuDone yellow accent
     },
     StatusBar: {
       style: "DARK",
-      backgroundColor: "#1e293b",
+      backgroundColor: "#111010",
     },
     Keyboard: {
       resize: "body",
@@ -37,7 +37,7 @@ const config: CapacitorConfig = {
     },
   },
   ios: {
-    scheme: "ConstructionPM",
+    scheme: "AccuDone",
     contentInset: "automatic",
   },
   android: {
