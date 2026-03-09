@@ -12,7 +12,7 @@ import { db } from "@/lib/db";
 const dbc = db as any;
 
 /** Current TOS version — bump this whenever TOS content changes. */
-export const CURRENT_TOS_VERSION = "1.0";
+const CURRENT_TOS_VERSION = "1.0";
 
 /**
  * Check if the current user needs to accept (or re-accept) the TOS.
