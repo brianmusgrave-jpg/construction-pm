@@ -1440,7 +1440,8 @@
     "inviteExpiry": "Ce lien expire dans 7 jours et ne peut être utilisé qu'une seule fois.",
     "directoryMatchTitle": "Cet e-mail est déjà dans votre Répertoire",
     "directoryMatchHint": "{name} figure dans votre Répertoire mais n'a pas encore de compte de connexion. Vous pouvez quand même envoyer l'invitation.",
-    "sendInviteAnyway": "Envoyer l'invitation quand même"
+    "sendInviteAnyway": "Envoyer l'invitation quand même",
+    "inviteBackupLabel": "Lien de secours (si l'e-mail n'arrive pas)"
   },
   "activate": {
     "subtitle": "Configurez votre compte pour commencer",

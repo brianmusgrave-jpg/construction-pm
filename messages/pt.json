@@ -1440,7 +1440,8 @@
     "inviteExpiry": "Este link expira em 7 dias e só pode ser usado uma vez.",
     "directoryMatchTitle": "Este e-mail já está no seu Diretório",
     "directoryMatchHint": "{name} está no seu Diretório mas ainda não possui uma conta de acesso. Você ainda pode enviar o convite.",
-    "sendInviteAnyway": "Enviar convite mesmo assim"
+    "sendInviteAnyway": "Enviar convite mesmo assim",
+    "inviteBackupLabel": "Link de backup (se o e-mail não chegar)"
   },
   "activate": {
     "subtitle": "Configure sua conta para começar",

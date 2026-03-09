@@ -1440,7 +1440,8 @@
     "inviteExpiry": "Este enlace caduca en 7 días y solo puede usarse una vez.",
     "directoryMatchTitle": "Este correo ya está en tu Directorio",
     "directoryMatchHint": "{name} está en tu Directorio pero todavía no tiene cuenta de acceso. Aún puedes enviar la invitación.",
-    "sendInviteAnyway": "Enviar invitación de todas formas"
+    "sendInviteAnyway": "Enviar invitación de todas formas",
+    "inviteBackupLabel": "Enlace de respaldo (si no llega el correo)"
   },
   "activate": {
     "subtitle": "Configura tu cuenta para comenzar",
